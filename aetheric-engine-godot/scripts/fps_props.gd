@@ -1021,8 +1021,9 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 				_add_box(root, Vector3(sx * 0.13, 0.24, sz * 0.13), Vector3(0.04, 0.48, 0.04), MAHOGANY_DARK, true, 0.5)
 		_add_box(root, Vector3(0, 0.14, 0), Vector3(0.28, 0.03, 0.28), MAHOGANY, false, 0.5)
 	else:
+		# Upholstered stool — velvet seat, dark legs (not pale mesh wood)
 		_add_cylinder(root, Vector3(0, 0.5, 0), 0.18, 0.08, VELVET_GREEN.darkened(0.05), true, 0.9)
-		_add_cylinder(root, Vector3(0, 0.44, 0), 0.16, 0.04, MAHOGANY, false, 0.45)
+		_add_cylinder(root, Vector3(0, 0.44, 0), 0.16, 0.04, MAHOGANY_DARK, false, 0.45)
 		for a in [0.0, 90.0, 180.0, 270.0]:
 			var rad := deg_to_rad(a)
 			_add_cylinder(root, Vector3(cos(rad) * 0.11, 0.22, sin(rad) * 0.11), 0.025, 0.44, MAHOGANY_DARK, true)
