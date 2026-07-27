@@ -47,7 +47,8 @@
 - Loop18: hall shelves off doorway; conservatory corners; shelf brackets
 - Loop19: plant stems; drawing paintings; workshop clutter
 - Loop20: wainscot_height API; kitchen/workshop taller dado
-- Loop21: kitchen wainscot 2.15 / workshop 1.9; wall_vine ivy on conservatory plaster; workshop more shelves/tools
+- Loop21: taller wainscot; wall_vine; workshop denser
+- Loop22: wall_vine rewritten as dense ivy mats (not balloon poles); gallery more machines/crates; kitchen shelves raised
 
 ## Do not
 - Delete prop lists from fps_rooms
