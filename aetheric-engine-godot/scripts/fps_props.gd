@@ -383,19 +383,21 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
 		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Argand oil lamp: wide brass base, slender column, tall glass chimney
-	_add_cylinder(root, Vector3(0, 0.69, 0), 0.08, 0.05, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 0.78, 0), 0.03, 0.16, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.9, 0), 0.045, 0.05, BRASS, false, 0.28, true)
-	# Tall cool glass chimney (reads as lamp, not white drum)
-	_add_cylinder(root, Vector3(0, 1.05, 0), 0.04, 0.28, Color(0.75, 0.88, 0.92, 0.4), false, 0.1, true)
-	_add_cylinder(root, Vector3(0, 1.2, 0), 0.03, 0.03, BRASS, false, 0.28, true)
+	# Argand oil lamp — brass dominates so it never reads as a white candle
+	_add_cylinder(root, Vector3(0, 0.69, 0), 0.09, 0.06, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS.darkened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.92, 0), 0.05, 0.04, BRASS, false, 0.28, true)
+	# Glass chimney: cool tint, semi-opaque
+	_add_cylinder(root, Vector3(0, 1.08, 0), 0.038, 0.32, Color(0.65, 0.78, 0.85, 0.55), false, 0.15, true)
+	_add_cylinder(root, Vector3(0, 1.26, 0), 0.028, 0.035, BRASS, false, 0.28, true)
+	# Warm flame glow sphere
+	_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.035, Color(1.0, 0.75, 0.35))
 	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
 	_add_contact_shadow(root, 0.34, 0.34)
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.45
-	lamp.omni_range = 2.5
+	lamp.light_energy = 0.5
+	lamp.omni_range = 2.6
 	lamp.position = Vector3(0, 1.0, 0)
 	root.add_child(lamp)
 	return root
@@ -552,17 +554,20 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 
 static func _make_pot_rack(_prop: Dictionary) -> Node3D:
-	## Ceiling/wall copper pan rail — kitchen silhouette above empty plaster.
+	## Wall copper pan rail — larger pots so silhouette reads from room center.
 	var root := Node3D.new()
 	root.name = "PotRack"
-	_add_box(root, Vector3(0, 2.15, 0), Vector3(1.8, 0.06, 0.1), MAHOGANY_DARK, true, 0.5)
-	_add_box(root, Vector3(-0.85, 1.7, 0), Vector3(0.06, 0.9, 0.06), MAHOGANY, true, 0.5)
-	_add_box(root, Vector3(0.85, 1.7, 0), Vector3(0.06, 0.9, 0.06), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, 2.2, 0), Vector3(2.0, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
+	_add_box(root, Vector3(-0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
 	for i in 5:
-		var x := -0.6 + i * 0.3
-		_add_cylinder(root, Vector3(x, 2.05, 0.05), 0.012, 0.12, IRON, false, 0.4)
-		_add_cylinder(root, Vector3(x, 1.85, 0.08), 0.1 + (i % 2) * 0.03, 0.08, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(x, 1.78, 0.08), 0.11 + (i % 2) * 0.03, 0.03, COPPER.lightened(0.08), false, 0.35, true)
+		var x := -0.7 + i * 0.35
+		_add_cylinder(root, Vector3(x, 2.08, 0.06), 0.015, 0.14, IRON, false, 0.4)
+		var pr: float = 0.14 + (i % 3) * 0.03
+		_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, 0.12, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.04, COPPER.lightened(0.08), false, 0.35, true)
+		# handle
+		_add_box(root, Vector3(x + pr * 0.7, 1.82, 0.1), Vector3(0.04, 0.06, 0.1), COPPER, false, 0.35)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
