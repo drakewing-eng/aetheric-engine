@@ -60,7 +60,8 @@
 - Loop31: palm alpha bridges; workshop runner; exterior garden
 - Loop32: conservatory stone path; richer aetheric coils; denser garden
 - Loop33: dark conservatory paper; wall sconces hall+drawing; hall path
-- Loop34: wall sconces kitchen/gallery/workshop; thicker skirting; plant sink 0.26 max-h 1.15; gallery denser crates
+- Loop34: sconces more rooms; thicker skirting; plant sink
+- Loop35: denser Welsh dresser plates/copper; plant min-width 1.0 sink 0.28; morning+conservatory sconces
 
 ## Do not
 - Delete prop lists from fps_rooms
