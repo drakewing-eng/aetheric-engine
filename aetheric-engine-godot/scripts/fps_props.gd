@@ -753,10 +753,12 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
 			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
 			bp["solid"] = true
-			# FIXED_Y only — cross_planes doubled the pot silhouette (looked like two pots)
+			# FIXED_Y only — cross_planes doubled the pot silhouette.
+			# Mesh terracotta pot under card so feet never float if PNG pot is sparse.
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
-			bp["sink"] = 0.06
+			bp["sink"] = 0.1
+			bp["mesh_pot"] = true
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
 	root.name = "Plant"
@@ -1152,6 +1154,14 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	var solid: bool = prop.get("solid", true)
 	var face_camera: bool = bool(prop.get("face_camera", false))
 	var cross_planes: bool = bool(prop.get("cross_planes", face_camera))
+	var mesh_pot: bool = bool(prop.get("mesh_pot", false))
+
+	if mesh_pot:
+		# Real pot at ground so card foliage can float without whole plant hovering
+		var pot_s: float = clampf(width * 0.55, 0.35, 0.7)
+		_add_cylinder(root, Vector3(0, 0.18 * pot_s / 0.4, 0), 0.22 * pot_s / 0.4, 0.32 * pot_s / 0.4, CLAY, true, 0.72)
+		_add_cylinder(root, Vector3(0, 0.34 * pot_s / 0.4, 0), 0.26 * pot_s / 0.4, 0.05 * pot_s / 0.4, CLAY.lightened(0.1), false, 0.7)
+		_add_cylinder(root, Vector3(0, 0.36 * pot_s / 0.4, 0), 0.18 * pot_s / 0.4, 0.04 * pot_s / 0.4, Color(0.16, 0.1, 0.06), false)
 
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(width, height)
@@ -1164,7 +1174,7 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		mat.albedo_color = MAHOGANY
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	# Higher threshold kills dark rembg fringe on plant cutouts
-	mat.alpha_scissor_threshold = 0.55 if (face_camera or cross_planes) else 0.45
+	mat.alpha_scissor_threshold = 0.5 if (face_camera or cross_planes) else 0.45
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS

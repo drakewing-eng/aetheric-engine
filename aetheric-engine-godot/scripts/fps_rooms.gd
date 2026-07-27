@@ -429,6 +429,7 @@ const ROOMS := {
 			{"kind": "workbench", "pos": [0.2, 0.0, 2.2], "yaw": 180.0, "width": 2.0},
 			{"kind": "tool_rack", "pos": [-4.3, 0.0, 1.2], "yaw": 90.0},
 			{"kind": "tool_rack", "pos": [-4.3, 0.0, -1.5], "yaw": 90.0},
+			{"kind": "tool_rack", "pos": [-4.3, 0.0, 2.8], "yaw": 90.0},
 			{"kind": "crate", "pos": [3.5, 0.0, 2.5], "scale": 1.0},
 			{"kind": "crate", "pos": [2.9, 0.0, 2.9], "scale": 0.75},
 			{"kind": "crate", "pos": [-3.5, 0.0, 3.2], "scale": 0.9},
@@ -450,7 +451,10 @@ const ROOMS := {
 			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0},
 			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0},
 			{"kind": "tool_rack", "pos": [4.3, 0.0, 2.0], "yaw": -90.0},
-			# Floor density (was empty expanse)
+			{"kind": "tool_rack", "pos": [4.3, 0.0, -3.0], "yaw": -90.0},
+			# Warm hanging lights + denser floor
+			{"kind": "chandelier", "pos": [-2.0, 0.0, -1.0], "hang": 3.0},
+			{"kind": "chandelier", "pos": [2.0, 0.0, 1.0], "hang": 3.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -461,6 +465,7 @@ const ROOMS := {
 			{"kind": "crate", "pos": [-2.0, 0.0, 2.8], "scale": 0.55},
 			{"kind": "copper_pot", "pos": [2.2, 0.0, 1.2], "scale": 0.7},
 			{"kind": "stool", "pos": [-3.0, 0.0, 0.5], "yaw": 45.0},
+			{"kind": "workbench", "pos": [-2.0, 0.0, 3.0], "yaw": 10.0, "width": 1.8},
 		],
 		"doors": [
 			{
@@ -626,6 +631,11 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "width": 1.6, "height": 1.2},
 			{"kind": "copper_pot", "pos": [-2.8, 0.0, 2.5], "scale": 0.65},
 			{"kind": "crate", "pos": [2.6, 0.0, 2.0], "scale": 0.55},
+			# Side wall density (pale plaster expanse)
+			{"kind": "dresser", "pos": [-3.6, 0.0, -1.5], "yaw": 90.0},
+			{"kind": "copper_pot", "pos": [3.5, 0.0, 0.5], "scale": 1.0},
+			{"kind": "copper_pot", "pos": [3.5, 0.0, -0.2], "scale": 0.75},
+			{"kind": "crate", "pos": [-3.0, 0.0, 0.8], "scale": 0.6},
 		],
 		"doors": [
 			{
