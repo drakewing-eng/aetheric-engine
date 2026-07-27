@@ -108,6 +108,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_copper_pot(prop)
 		"pot_rack":
 			node = _make_pot_rack(prop)
+		"chandelier":
+			node = _make_chandelier(prop)
 		"chalk_board":
 			node = _make_chalk_board(prop)
 		"billboard_prop":
@@ -842,6 +844,30 @@ static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
 
 # ─── Features ────────────────────────────────────────────────────────────────
 
+static func _make_chandelier(_prop: Dictionary) -> Node3D:
+	## Simple brass gasolier hanging from ceiling — period silhouette.
+	var root := Node3D.new()
+	root.name = "Chandelier"
+	var hang: float = float(_prop.get("hang", 2.95))
+	_add_cylinder(root, Vector3(0, hang + 0.25, 0), 0.02, 0.5, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang, 0), 0.12, 0.06, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, hang - 0.08, 0), 0.22, 0.04, BRASS.darkened(0.08), false, 0.3, true)
+	for a in [0.0, 60.0, 120.0, 180.0, 240.0, 300.0]:
+		var rad := deg_to_rad(a)
+		var ax := cos(rad) * 0.28
+		var az := sin(rad) * 0.28
+		_add_box(root, Vector3(ax * 0.5, hang - 0.02, az * 0.5), Vector3(0.28, 0.025, 0.025), BRASS, false, 0.3)
+		_add_cylinder(root, Vector3(ax, hang - 0.12, az), 0.04, 0.08, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.05, 0.1, Color(0.85, 0.78, 0.55, 0.7), false, 0.2, true)
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.88, 0.6)
+	light.light_energy = 0.85
+	light.omni_range = 7.0
+	light.position = Vector3(0, hang - 0.2, 0)
+	root.add_child(light)
+	return root
+
+
 static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	## Marble surround + dark firebox + logs — not a white Minecraft slab.
 	var root := Node3D.new()
@@ -926,13 +952,16 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 2.5)
 	var h: float = feat.get("height", 3.2)
-	# Exterior garden plate (behind glass) — sky + foliage suggestion
-	_add_box(root, Vector3(0, h * 0.62, -0.18), Vector3(w - 0.05, h * 0.7, 0.04), Color(0.55, 0.68, 0.78), false, 0.95)
-	_add_box(root, Vector3(0, h * 0.18, -0.16), Vector3(w - 0.05, h * 0.28, 0.04), Color(0.22, 0.38, 0.18), false, 0.9)
-	# Soft tree/hedge blobs outside
-	for i in 3:
-		var fx := -w * 0.28 + i * (w * 0.28)
-		_add_sphere_blob(root, Vector3(fx, h * 0.32, -0.12), 0.28 + (i % 2) * 0.08, Color(0.18, 0.42, 0.16))
+	# Exterior garden (behind glass) — continuous sky + hedge, no floating mid-air balls
+	_add_box(root, Vector3(0, h * 0.68, -0.22), Vector3(w + 0.1, h * 0.72, 0.05), Color(0.52, 0.66, 0.78), false, 0.98)
+	# Distant lawn strip
+	_add_box(root, Vector3(0, h * 0.12, -0.2), Vector3(w + 0.1, h * 0.22, 0.05), Color(0.28, 0.42, 0.2), false, 0.92)
+	# Continuous hedge row (low, grounded)
+	_add_box(root, Vector3(0, h * 0.22, -0.15), Vector3(w * 0.92, h * 0.18, 0.12), Color(0.16, 0.36, 0.14), false, 0.88)
+	# Soft canopy tops on hedge (low only)
+	for i in 5:
+		var fx := -w * 0.38 + i * (w * 0.19)
+		_add_sphere_blob(root, Vector3(fx, h * 0.3, -0.14), 0.14 + (i % 2) * 0.04, Color(0.2, 0.4, 0.16))
 	# Perimeter iron
 	var bar := 0.06
 	_add_box(root, Vector3(0, bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)
