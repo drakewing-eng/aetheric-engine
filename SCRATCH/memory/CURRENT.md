@@ -1,33 +1,37 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-27  
+**Updated:** 2026-07-27 (visual loops 44–48 in progress)  
 **Project:** `/Users/babble/aetheric-engine`  
 **Godot:** `/Applications/Godot.app/Contents/MacOS/Godot`  
-**Unattended 10m visual scheduler:** OFF (cancelled)
+**Unattended 10m visual scheduler:** OFF  
+**This run:** human-directed 10 loops (`auto_loop_44`…); continuous; commit+push each PASS
 
 ## Open work (priority order)
 
-1. **Doors** — portal feels like closet; **fall through floor**. Prefer **closed door → direct room load + spawn** (not walk-into-portal). See [visual/open-bugs.md](visual/open-bugs.md).
-2. **Drawing room** — **ottoman under sofa** (clip).
-3. **Shelves** — same Minecraft-like bookshelves in kitchen etc.; need **room-specific identity**.
-4. **Uniqueness rule** — objects need design/identity; no lazy hero clones. See [visual/uniqueness-rule.md](visual/uniqueness-rule.md).
+1. **Doors** — **DONE loop 44**: closed leaf + solid backstop; E = teleport. Polish remaining (knob/gap feel).
+2. **Drawing room ottoman** — **DONE loop 45**: green ottoman **in front of** chesterfield (not under).
+3. **Shelves** — **DONE 45–47**: kitchen `crock_shelf`; workshop `tool_shelf`; books recolored; wall_shelf seeds.
+4. **Uniqueness** — **in progress 46–48**: seeds on pots/stools/crates/pot_racks/side_tables/prep still-life.
 
-**Effort suggested:** ~1h / ~6 focused passes. Full brief: [../NEXT_SESSION_VISUAL_PROMPT.md](../NEXT_SESSION_VISUAL_PROMPT.md).
+**Next loops (49–53):** screenshot QA polish — pot rack row still a bit uniform; plant clones; any remaining clip; keep doors solid.
 
-## Done recently (context only)
+## Done this session
 
-- ~44 capture dirs `auto_loop_0`…`43`; density/portals/wainscots/sconces/plants improved.
-- Summary: [../VISUAL_LOOP_7H_SUMMARY.md](../VISUAL_LOOP_7H_SUMMARY.md)
-- Dream: [../DREAM_AETHERIC_VISUAL_2026-07-27.md](../DREAM_AETHERIC_VISUAL_2026-07-27.md)
+| Loop | Note |
+|------|------|
+| 44 | Closed doors, shallow solid portal, E teleport |
+| 45 | Ottoman front of sofa; crock/tool shelves; book colours |
+| 46 | Seeds on copper/stool/crate/pot_rack |
+| 47 | Prep still-life variety; wall_shelf seeds; narrow door gaps |
+| 48 | Door brass furniture; side_table still-life styles |
 
 ## Engram on wake
 
 | Concept | Why |
 |---------|-----|
-| `aetheric__next_session_door_unique_props` | Live playtest directive |
-| `aetheric__dream_visual_2026_07_27` | Consolidated visual arc |
-| `helper:session_handoff_latest` | Latest handoff packet |
-| `aetheric__project_memory_tree` | This tree location + rules |
+| `helper:session_handoff_latest` | Latest handoff |
+| `aetheric__next_session_door_unique_props` | Original playtest directive |
+| `aetheric__visual_loop_run_44_53` | This 10-loop run |
 
 Map: [engram-bridge.md](engram-bridge.md)
 

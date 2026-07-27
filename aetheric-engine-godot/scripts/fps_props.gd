@@ -481,11 +481,12 @@ static func _make_tool_shelf(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_side_table(prop: Dictionary) -> Node3D:
-	## Tripod pedestal table with gallery rim, lamp, books.
+	## Tripod pedestal table with gallery rim; seed varies top dressing.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "SideTable"
+	var seed0: int = int(prop.get("seed", 0))
 	# Top with rim
 	_add_cylinder(root, Vector3(0, 0.62, 0), 0.3, 0.04, MAHOGANY, true)
 	_add_cylinder(root, Vector3(0, 0.65, 0), 0.31, 0.02, MAHOGANY_DARK, false)
@@ -497,21 +498,34 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
 		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Argand oil lamp — brass base + warm frosted chimney (not black tube)
-	_add_cylinder(root, Vector3(0, 0.69, 0), 0.09, 0.06, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.92, 0), 0.05, 0.04, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
-	_add_cylinder(root, Vector3(0, 1.25, 0), 0.03, 0.035, BRASS, false, 0.28, true)
-	_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.03, Color(1.0, 0.8, 0.4))
-	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
+	# Top dressing varies by seed (lamp / books / vase) — no identical still-lifes
+	var style := seed0 % 3
+	if style == 0:
+		_add_cylinder(root, Vector3(0, 0.69, 0), 0.09, 0.06, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.92, 0), 0.05, 0.04, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
+		_add_cylinder(root, Vector3(0, 1.25, 0), 0.03, 0.035, BRASS, false, 0.28, true)
+		_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.03, Color(1.0, 0.8, 0.4))
+		_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2 + seed0), false)
+	elif style == 1:
+		_add_box(root, Vector3(-0.05, 0.7, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
+		_add_box(root, Vector3(0.02, 0.75, 0.0), Vector3(0.12, 0.04, 0.16), _book_color(seed0 + 3), false)
+		_add_box(root, Vector3(0.08, 0.8, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
+		_add_cylinder(root, Vector3(0.12, 0.72, 0.1), 0.04, 0.12, CREAM.darkened(0.1), false, 0.75)
+	else:
+		_add_cylinder(root, Vector3(0, 0.72, 0), 0.07, 0.12, CLAY, false, 0.75)
+		_add_cylinder(root, Vector3(0, 0.85, 0), 0.05, 0.14, CLAY.lightened(0.08), false, 0.75)
+		_add_sphere_blob(root, Vector3(0.02, 0.98, 0.02), 0.05, Color(0.55, 0.2, 0.2))
+		_add_sphere_blob(root, Vector3(-0.03, 0.95, -0.02), 0.04, Color(0.7, 0.65, 0.3))
 	_add_contact_shadow(root, 0.34, 0.34)
-	var lamp := OmniLight3D.new()
-	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.55
-	lamp.omni_range = 2.6
-	lamp.position = Vector3(0, 1.0, 0)
-	root.add_child(lamp)
+	if style == 0:
+		var lamp := OmniLight3D.new()
+		lamp.light_color = Color(1.0, 0.85, 0.55)
+		lamp.light_energy = 0.55
+		lamp.omni_range = 2.6
+		lamp.position = Vector3(0, 1.0, 0)
+		root.add_child(lamp)
 	return root
 
 static func _make_hall_table(_prop: Dictionary) -> Node3D:
@@ -1396,15 +1410,16 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 		var uy: float = mid_rail_y + (leaf_h - mid_rail_y) * 0.52
 		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.5)
 		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
-	# Brass mortice-lock furniture
-	var knob_x := leaf_w - 0.15
+	# Brass mortice-lock furniture (reads clearly on closed leaf)
+	var knob_x := leaf_w - 0.18
 	var knob_y := mid_rail_y + 0.08
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.055), 0.04, 0.018, BRASS, false, 0.28, true)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.09), 0.03, 0.045, BRASS, false, 0.25, true)
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.09, 0.05), Vector3(0.045, 0.08, 0.014), BRASS, false, 0.28)
-	# Three butt hinges
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.04), Vector3(0.08, 0.14, 0.02), BRASS.darkened(0.15), false, 0.3)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.06), 0.045, 0.02, BRASS, false, 0.28, true)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.1), 0.035, 0.05, BRASS.lightened(0.1), false, 0.25, true)
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.1, 0.055), Vector3(0.05, 0.09, 0.016), BRASS, false, 0.28)
+	# Three butt hinges on hinge stile
 	for hy in [0.32, leaf_h * 0.5, leaf_h - 0.38]:
-		_add_box(leaf, Vector3(0.03, hy, 0.04), Vector3(0.045, 0.14, 0.035), BRASS, false, 0.32)
+		_add_box(leaf, Vector3(0.04, hy, 0.045), Vector3(0.05, 0.16, 0.04), BRASS, false, 0.32)
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
