@@ -49,7 +49,8 @@
 - Loop20: wainscot_height API; kitchen/workshop taller dado
 - Loop21: taller wainscot; wall_vine; workshop denser
 - Loop22: denser ivy attempt; gallery denser
-- Loop23: removed wall_vine (still balloon-like); more corner palms; kitchen range taller chimney+mantel; conservatory table seating
+- Loop23: removed balloon vines; denser palms; conservatory seating
+- Loop24: kitchen 2.45 / workshop 2.15 / conservatory 2.6 wainscot; layered exterior hedge; drawing denser seating
 
 ## Do not
 - Delete prop lists from fps_rooms
