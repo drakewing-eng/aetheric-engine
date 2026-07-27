@@ -343,8 +343,15 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [-3.5, 0.0, 1.2], "yaw": 90.0, "width": 1.2, "height": 2.0},
 			{"kind": "plant", "pos": [3.2, 0.0, 2.2], "scale": 0.95,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.75, "height": 1.15},
+			{"kind": "plant", "pos": [-2.5, 0.0, -2.8], "scale": 0.85},
 			{"kind": "stool", "pos": [1.2, 0.0, -1.2], "yaw": -20.0},
 			{"kind": "crate", "pos": [-2.8, 0.0, 2.5], "scale": 0.55},
+			# North wall dressing — period density (was empty expanse)
+			{"kind": "fireplace", "pos": [0.0, 0.0, -3.75], "yaw": 0.0},
+			{"kind": "armchair", "pos": [1.2, 0.0, -2.4], "yaw": -20.0, "fabric": Color(0.5, 0.35, 0.28)},
+			{"kind": "side_table", "pos": [-1.0, 0.0, -2.6], "yaw": 10.0},
+			{"kind": "chair", "pos": [-2.2, 0.0, -0.5], "yaw": 70.0, "fabric": Color(0.45, 0.42, 0.5)},
+			{"kind": "copper_pot", "pos": [3.0, 0.0, -0.5], "scale": 0.55},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -552,6 +559,13 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [-2.2, 0.0, -0.5], "yaw": 5.0},
 			{"kind": "chair", "pos": [2.0, 0.0, -0.2], "yaw": 160.0, "fabric": Color(0.45, 0.32, 0.2)},
 			{"kind": "copper_pot", "pos": [2.4, 0.0, -1.4], "scale": 0.7},
+			# North wall / shelf density (was empty plaster expanse behind range view)
+			{"kind": "bookshelf", "pos": [-3.2, 0.0, 3.3], "yaw": 180.0, "width": 1.3, "height": 1.8},
+			{"kind": "copper_pot", "pos": [2.0, 0.0, 3.2], "scale": 0.75},
+			{"kind": "copper_pot", "pos": [-2.0, 0.0, 3.15], "scale": 0.6},
+			{"kind": "crate", "pos": [3.4, 0.0, -0.5], "scale": 0.65},
+			{"kind": "stool", "pos": [-2.5, 0.0, 2.0], "yaw": 40.0},
+			{"kind": "side_table", "pos": [1.5, 0.0, -2.5], "yaw": 0.0},
 		],
 		"doors": [
 			{

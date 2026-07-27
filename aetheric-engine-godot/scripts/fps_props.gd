@@ -566,14 +566,33 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_tool_rack(_prop: Dictionary) -> Node3D:
+	## Wall rack with hanging hammers, wrenches, tongs — not bare iron bars.
 	var root := Node3D.new()
 	root.name = "ToolRack"
-	_add_box(root, Vector3(0, 1.1, 0), Vector3(1.4, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
-	_add_box(root, Vector3(0, 0.5, 0), Vector3(1.4, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
-	for i in 5:
-		var x := -0.5 + i * 0.25
-		_add_box(root, Vector3(x, 0.85, 0.02), Vector3(0.04, 0.55, 0.04), IRON, false, 0.4)
-		_add_box(root, Vector3(x, 1.15, 0.05), Vector3(0.08, 0.04, 0.18), IRON.lightened(0.1), false, 0.4)
+	_add_box(root, Vector3(0, 1.35, 0), Vector3(1.55, 0.1, 0.1), MAHOGANY_DARK, true, 0.5)
+	_add_box(root, Vector3(0, 0.55, 0), Vector3(1.55, 0.08, 0.1), MAHOGANY_DARK, true, 0.5)
+	_add_box(root, Vector3(-0.72, 0.95, 0), Vector3(0.08, 0.9, 0.08), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0.72, 0.95, 0), Vector3(0.08, 0.9, 0.08), MAHOGANY, true, 0.5)
+	# Pegs + tools
+	for i in 6:
+		var x := -0.55 + i * 0.22
+		_add_cylinder(root, Vector3(x, 1.28, 0.08), 0.015, 0.1, OAK, false, 0.55)
+		# tool shaft
+		_add_box(root, Vector3(x, 0.95, 0.1), Vector3(0.035, 0.55, 0.035), Color(0.25, 0.18, 0.1), false, 0.55)
+		# tool head (alternate hammer / wrench / tongs silhouette)
+		if i % 3 == 0:
+			_add_box(root, Vector3(x, 0.68, 0.12), Vector3(0.16, 0.08, 0.08), IRON, false, 0.4)
+		elif i % 3 == 1:
+			_add_box(root, Vector3(x, 0.7, 0.14), Vector3(0.12, 0.05, 0.18), IRON.lightened(0.08), false, 0.4)
+			_add_box(root, Vector3(x + 0.04, 0.66, 0.2), Vector3(0.04, 0.1, 0.04), IRON, false, 0.4)
+		else:
+			_add_box(root, Vector3(x, 0.72, 0.12), Vector3(0.08, 0.04, 0.14), IRON, false, 0.4)
+			_add_box(root, Vector3(x - 0.05, 0.68, 0.18), Vector3(0.04, 0.08, 0.04), IRON, false, 0.4)
+			_add_box(root, Vector3(x + 0.05, 0.68, 0.18), Vector3(0.04, 0.08, 0.04), IRON, false, 0.4)
+	# Lower shelf with spare bolts / copper bits
+	_add_cylinder(root, Vector3(-0.35, 0.62, 0.08), 0.04, 0.08, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.2, 0.62, 0.08), 0.035, 0.07, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0.25, 0.62, 0.08), Vector3(0.2, 0.04, 0.1), IRON, false, 0.45)
 	return root
 
 static func _make_crate(prop: Dictionary) -> Node3D:
@@ -689,28 +708,56 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)
 	var tall: bool = prop.get("tall", false)
-	# Terracotta pot with rim
+	# Leaf palette biased so auto-mat never picks iron/velvet
+	var leaf_a := Color(0.28, 0.48, 0.22)
+	var leaf_b := Color(0.2, 0.38, 0.16)
+	var leaf_c := Color(0.34, 0.52, 0.26)
+	var stem_col := Color(0.22, 0.32, 0.14)
+	# Terracotta pot with rim + soil
 	_add_cylinder(root, Vector3(0, 0.2 * scale, 0), 0.2 * scale, 0.36 * scale, CLAY, true, 0.72)
 	_add_cylinder(root, Vector3(0, 0.38 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.12), false, 0.7)
 	_add_cylinder(root, Vector3(0, 0.4 * scale, 0), 0.18 * scale, 0.04 * scale, Color(0.18, 0.12, 0.07), false)
 	# Stem
 	var stem_h := 0.55 * scale if tall else 0.28 * scale
-	_add_cylinder(root, Vector3(0, 0.42 * scale + stem_h * 0.5, 0), 0.03 * scale, stem_h, LEAF_DARK, false, 0.85)
-	# Canopy of overlapping leaf blobs at varied offsets
+	_add_cylinder(root, Vector3(0, 0.42 * scale + stem_h * 0.5, 0), 0.028 * scale, stem_h, stem_col, false, 0.9)
+	# Canopy: many small spheres/disks at offsets (bushier, less “stacked can”)
 	var base_y := 0.55 * scale + stem_h * 0.55
 	var blobs: Array = [
-		[Vector3(0, base_y, 0), 0.32 * scale, 0.38 * scale, LEAF],
-		[Vector3(0.16 * scale, base_y + 0.08 * scale, 0.05 * scale), 0.22 * scale, 0.28 * scale, LEAF_DARK],
-		[Vector3(-0.14 * scale, base_y + 0.05 * scale, -0.1 * scale), 0.2 * scale, 0.26 * scale, LEAF.lightened(0.08)],
-		[Vector3(0.05 * scale, base_y + 0.18 * scale, -0.08 * scale), 0.18 * scale, 0.22 * scale, LEAF],
-		[Vector3(-0.08 * scale, base_y + 0.15 * scale, 0.12 * scale), 0.16 * scale, 0.2 * scale, LEAF_DARK],
+		[Vector3(0, base_y, 0), 0.28 * scale, 0.22 * scale, leaf_a],
+		[Vector3(0.14 * scale, base_y + 0.06 * scale, 0.08 * scale), 0.18 * scale, 0.16 * scale, leaf_b],
+		[Vector3(-0.12 * scale, base_y + 0.04 * scale, -0.1 * scale), 0.17 * scale, 0.15 * scale, leaf_c],
+		[Vector3(0.08 * scale, base_y + 0.14 * scale, -0.06 * scale), 0.15 * scale, 0.14 * scale, leaf_a],
+		[Vector3(-0.1 * scale, base_y + 0.12 * scale, 0.1 * scale), 0.14 * scale, 0.13 * scale, leaf_b],
+		[Vector3(0.02 * scale, base_y + 0.2 * scale, 0.02 * scale), 0.16 * scale, 0.14 * scale, leaf_c],
+		[Vector3(0.18 * scale, base_y - 0.02 * scale, -0.04 * scale), 0.12 * scale, 0.12 * scale, leaf_a],
+		[Vector3(-0.16 * scale, base_y - 0.04 * scale, 0.06 * scale), 0.13 * scale, 0.12 * scale, leaf_b],
 	]
 	if tall:
-		blobs.append([Vector3(0.0, base_y + 0.35 * scale, 0.0), 0.2 * scale, 0.28 * scale, LEAF_DARK])
-		blobs.append([Vector3(0.1 * scale, base_y + 0.42 * scale, 0.05 * scale), 0.14 * scale, 0.18 * scale, LEAF])
+		blobs.append([Vector3(0.0, base_y + 0.32 * scale, 0.0), 0.18 * scale, 0.16 * scale, leaf_b])
+		blobs.append([Vector3(0.1 * scale, base_y + 0.4 * scale, 0.04 * scale), 0.12 * scale, 0.12 * scale, leaf_a])
+		blobs.append([Vector3(-0.08 * scale, base_y + 0.38 * scale, -0.05 * scale), 0.11 * scale, 0.11 * scale, leaf_c])
 	for b in blobs:
-		_add_cylinder(root, b[0], b[1], b[2], b[3], false, 0.92)
+		_add_sphere_blob(root, b[0], float(b[1]), b[3])
+	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
+
+
+static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color: Color) -> void:
+	## Soft foliage mass — sphere mesh, untextured leaf color (no iron/velvet).
+	var mi := MeshInstance3D.new()
+	var mesh := SphereMesh.new()
+	mesh.radius = radius
+	mesh.height = radius * 1.55
+	mesh.radial_segments = 10
+	mesh.rings = 6
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.92
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	mi.material_override = mat
+	mi.position = pos
+	parent.add_child(mi)
 
 static func _make_coat_stand(_prop: Dictionary) -> Node3D:
 	## Turned hall tree with brass hooks — 1850s entrance hall staple.
@@ -1109,8 +1156,11 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		tex_path = TEX_BRASS
 		metallic = 0.7
 		mat.roughness = minf(roughness, 0.4)
-	# Iron / dark metal
-	elif color.r < 0.32 and color.g < 0.32 and color.b < 0.35 and color.v < 0.35:
+	# Iron / dark metal (exclude plant greens — LEAF_DARK was matching iron)
+	elif (
+		color.r < 0.32 and color.g < 0.32 and color.b < 0.35 and color.v < 0.35
+		and color.g <= color.r + 0.04
+	):
 		tex_path = TEX_IRON
 		metallic = 0.65
 		mat.roughness = minf(roughness, 0.55)
