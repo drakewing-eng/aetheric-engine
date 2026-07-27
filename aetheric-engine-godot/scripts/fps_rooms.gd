@@ -55,7 +55,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "desk.png",
 				"width": 2.6,
 				"height": 1.15,
-				"sink": 0.08,
+				"sink": 0.12,
 			},
 			{
 				"kind": "billboard_prop",
@@ -64,7 +64,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "chair.png",
 				"width": 1.1,
 				"height": 1.35,
-				"sink": 0.06,
+				"sink": 0.1,
 			},
 			{
 				"kind": "billboard_prop",
@@ -73,7 +73,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "sofa.png",
 				"width": 1.65,
 				"height": 1.2,
-				"sink": 0.06,
+				"sink": 0.1,
 			},
 			{
 				"kind": "billboard_prop",
@@ -82,7 +82,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "armchair.png",
 				"width": 0.75,
 				"height": 1.15,
-				"sink": 0.05,
+				"sink": 0.08,
 			},
 			{
 				"kind": "billboard_prop",
@@ -91,7 +91,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
 				"height": 0.9,
-				"sink": 0.05,
+				"sink": 0.08,
 			},
 			{
 				"kind": "billboard_prop",
@@ -100,7 +100,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
 				"height": 0.9,
-				"sink": 0.05,
+				"sink": 0.08,
 			},
 			# Mesh armchair for a second seating angle (richer 3D silhouette)
 			{"kind": "armchair", "pos": [2.1, 0.0, 2.15], "yaw": -145.0},

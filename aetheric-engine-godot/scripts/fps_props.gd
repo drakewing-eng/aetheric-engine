@@ -663,8 +663,9 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
 			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
 			bp["solid"] = true
-			bp["face_camera"] = true  # plants always face player
-			bp["sink"] = 0.02
+			bp["face_camera"] = true
+			bp["cross_planes"] = true  # two cards at 90° — volume, not paper edge
+			bp["sink"] = 0.06
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
 	root.name = "Plant"
@@ -878,7 +879,7 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	var leaf := Node3D.new()
 	leaf.name = "DoorLeaf"
 	leaf.position = Vector3(-w * 0.5 + 0.05, 0.06, 0.04)
-	leaf.rotation_degrees.y = -28.0  # clearly ajar, Victorian house often left so
+	leaf.rotation_degrees.y = -48.0  # wide ajar so portal hallway is visible beyond
 	root.add_child(leaf)
 	# Polished mid-mahogany slab (lighter so panels read)
 	var door_wood := Color(0.38, 0.2, 0.1)
@@ -972,6 +973,8 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	## Alpha-cut painted card. Ground-aligned (bottom of quad on floor).
 	## face_camera=true → FIXED_Y billboard (plants); false → fixed room yaw (furniture).
+	## cross_planes=true (default for face_camera plants) → second card at 90° so
+	## the silhouette has volume from every angle (classic FPS tree trick).
 	var root := Node3D.new()
 	root.name = "BillboardProp"
 	var tex_path: String = prop.get("texture", "")
@@ -984,11 +987,10 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	y_off = y_off - sink
 	var solid: bool = prop.get("solid", true)
 	var face_camera: bool = bool(prop.get("face_camera", false))
+	var cross_planes: bool = bool(prop.get("cross_planes", face_camera))
 
-	var mi := MeshInstance3D.new()
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(width, height)
-	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	var tex := _load_tex(tex_path)
 	if tex:
@@ -1002,16 +1004,28 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
-	if face_camera:
-		# Plants: always face player so they don't look like paper edges
+	# Cross-plane plants stay world-fixed (two cards) so they have volume;
+	# single face_camera card uses FIXED_Y billboard.
+	if face_camera and not cross_planes:
 		mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	else:
 		mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
+
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
 	mi.material_override = mat
 	mi.position = Vector3(0, y_off, 0)
 	root.add_child(mi)
 
-	if not face_camera:
+	if cross_planes:
+		# Second card at 90° — reads as a plant from any walk-around angle
+		var mi_x := MeshInstance3D.new()
+		mi_x.mesh = mesh
+		mi_x.material_override = mat
+		mi_x.position = Vector3(0, y_off, 0)
+		mi_x.rotation_degrees.y = 90.0
+		root.add_child(mi_x)
+	elif not face_camera:
 		# Back face for fixed furniture cards only
 		var mi_b := MeshInstance3D.new()
 		mi_b.mesh = mesh
@@ -1024,7 +1038,8 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		var body := StaticBody3D.new()
 		var col := CollisionShape3D.new()
 		var shape := BoxShape3D.new()
-		shape.size = Vector3(width * 0.65, height * 0.75, 0.35)
+		var depth_col: float = width * 0.45 if cross_planes else 0.35
+		shape.size = Vector3(width * 0.65, height * 0.75, depth_col)
 		col.shape = shape
 		col.position = Vector3(0, maxf(y_off * 0.85, 0.35), 0)
 		body.add_child(col)

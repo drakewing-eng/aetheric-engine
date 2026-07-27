@@ -279,8 +279,8 @@ func _segments_with_gaps(left: float, right: float, gaps: Array) -> Array:
 
 
 func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: float) -> void:
-	## Only one room is loaded at a time — a short dim corridor behind the door
-	## reads as a passage instead of a solid exterior wall (Myst-style portal).
+	## Only one room is loaded at a time — a short Victorian passage behind the
+	## door reads as a hallway (Myst-style portal), not a solid exterior wall.
 	var p: Array = door.get("pos", [0, 0, 0])
 	var px := float(p[0])
 	var pz := float(p[2])
@@ -294,11 +294,12 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	var dw := absf(px + half_w)
 	var de := absf(px - half_w)
 	var m := minf(minf(dn, ds), minf(dw, de))
-	var depth := 2.2
+	var depth := 3.0
 	var root := Node3D.new()
 	root.name = "DoorPortal"
-	var floor_col := Color(0.18, 0.12, 0.08)
-	var wall_col := Color(0.28, 0.22, 0.16)
+	var floor_col := Color(0.22, 0.14, 0.09)
+	var wall_col := Color(0.38, 0.32, 0.26)
+	var paper_col := Color(0.42, 0.38, 0.32)
 	var out_dir := Vector3.ZERO
 	if is_equal_approx(m, dn):
 		out_dir = Vector3(0, 0, -1)
@@ -312,7 +313,7 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	else:
 		out_dir = Vector3(1, 0, 0)
 		root.position = Vector3(half_w, 0, pz)
-	# Orient local +Z along outward
+	# Orient local −Z along outward (into the portal)
 	if absf(out_dir.x) > 0.5:
 		root.rotation_degrees.y = -90.0 if out_dir.x > 0.0 else 90.0
 	elif out_dir.z > 0.0:
@@ -320,25 +321,50 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	else:
 		root.rotation_degrees.y = 0.0
 	add_child(root)
-	# Floor of portal
-	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.15, 0.04, depth), floor_col)
-	# Ceiling
-	_add_portal_box(root, Vector3(0, door_h + 0.05, -depth * 0.5), Vector3(door_w + 0.15, 0.06, depth), wall_col.darkened(0.15))
-	# Side walls
-	_add_portal_box(root, Vector3(-door_w * 0.5 - 0.04, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), wall_col)
-	_add_portal_box(root, Vector3(door_w * 0.5 + 0.04, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), wall_col)
-	# Far end dark wall (suggests more house beyond)
-	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.08), Color(0.08, 0.06, 0.05))
-	# Dim warm light inside passage
+	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	# Floor boards
+	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.2, 0.04, depth), floor_col, wood_tex, Vector3(1.5, 3.0, 1.0))
+	# Ceiling (slightly warm plaster)
+	_add_portal_box(root, Vector3(0, door_h + 0.08, -depth * 0.5), Vector3(door_w + 0.2, 0.08, depth), Color(0.55, 0.48, 0.38))
+	# Side walls: wainscot band + upper paper tone
+	var side_x := door_w * 0.5 + 0.05
+	for sx in [-side_x, side_x]:
+		_add_portal_box(root, Vector3(sx, 0.55, -depth * 0.5), Vector3(0.1, 1.1, depth), Color(0.28, 0.18, 0.12), wood_tex, Vector3(0.8, 2.0, 1.0))
+		_add_portal_box(root, Vector3(sx, 1.1 + (door_h - 1.1) * 0.5, -depth * 0.5), Vector3(0.09, door_h - 1.1, depth), paper_col)
+		# Chair rail
+		_add_portal_box(root, Vector3(sx, 1.12, -depth * 0.5), Vector3(0.12, 0.04, depth), Color(0.2, 0.12, 0.08))
+	# Far end: dark-but-not-black wall with a lit picture niche (reads as more house)
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.25, door_h + 0.15, 0.1), Color(0.14, 0.11, 0.09))
+	# Picture frame silhouette at far end
+	_add_portal_box(root, Vector3(0, door_h * 0.55, -depth + 0.06), Vector3(0.55, 0.7, 0.04), Color(0.35, 0.25, 0.12))
+	_add_portal_box(root, Vector3(0, door_h * 0.55, -depth + 0.08), Vector3(0.42, 0.55, 0.02), Color(0.25, 0.22, 0.28))
+	# Console table silhouette at far end (depth cue)
+	_add_portal_box(root, Vector3(0, 0.45, -depth + 0.35), Vector3(0.9, 0.06, 0.35), Color(0.18, 0.1, 0.06))
+	_add_portal_box(root, Vector3(-0.35, 0.22, -depth + 0.35), Vector3(0.06, 0.44, 0.06), Color(0.16, 0.09, 0.05))
+	_add_portal_box(root, Vector3(0.35, 0.22, -depth + 0.35), Vector3(0.06, 0.44, 0.06), Color(0.16, 0.09, 0.05))
+	# Warm corridor lights (mid + far) so passage is readable, not a black slab
 	var dim := OmniLight3D.new()
-	dim.light_color = Color(1.0, 0.82, 0.55)
-	dim.light_energy = 0.35
-	dim.omni_range = depth + 1.0
-	dim.position = Vector3(0, door_h * 0.6, -depth * 0.45)
+	dim.light_color = Color(1.0, 0.85, 0.6)
+	dim.light_energy = 0.55
+	dim.omni_range = depth + 1.5
+	dim.position = Vector3(0, door_h * 0.65, -depth * 0.35)
 	root.add_child(dim)
+	var far_l := OmniLight3D.new()
+	far_l.light_color = Color(1.0, 0.78, 0.5)
+	far_l.light_energy = 0.4
+	far_l.omni_range = 2.2
+	far_l.position = Vector3(0, door_h * 0.55, -depth + 0.5)
+	root.add_child(far_l)
 
 
-func _add_portal_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color) -> void:
+func _add_portal_box(
+	parent: Node3D,
+	pos: Vector3,
+	size: Vector3,
+	color: Color,
+	tex: Texture2D = null,
+	uv_scale: Vector3 = Vector3(1, 1, 1)
+) -> void:
 	var mi := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
 	mesh.size = size
@@ -346,6 +372,10 @@ func _add_portal_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color) 
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color
 	mat.roughness = 0.85
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	if tex:
+		mat.albedo_texture = tex
+		mat.uv1_scale = uv_scale
 	mi.material_override = mat
 	mi.position = pos
 	parent.add_child(mi)
