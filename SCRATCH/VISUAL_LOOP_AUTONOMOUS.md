@@ -54,7 +54,8 @@
 - Loop25: conservatory full dado; morning denser; portal lights; plant sink
 - Loop26: furniture sinks; plant alpha; gallery cooler light
 - Loop27: full-panel conservatory; plant shadow; kitchen darker
-- Loop28: no mid chair-rail on full panels; double crown cornice; gallery clear sightline to machines; hall west shelf
+- Loop28: no mid-rail full panels; double cornice; gallery aisle
+- Loop29: full-panel double-layer (no cream peek); fireplace mantel brass ornaments; drawing wainscot_height set
 
 ## Do not
 - Delete prop lists from fps_rooms
