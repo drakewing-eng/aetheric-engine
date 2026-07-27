@@ -383,17 +383,19 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
 		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Argand-style oil lamp (brass column + glass chimney, not modern drum shade)
-	_add_cylinder(root, Vector3(0, 0.7, 0), 0.06, 0.04, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 0.82, 0), 0.035, 0.2, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.98, 0), 0.055, 0.16, Color(0.7, 0.82, 0.88, 0.45), false, 0.12, true)
-	_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.04, BRASS, false, 0.28, true)
+	# Argand oil lamp: wide brass base, slender column, tall glass chimney
+	_add_cylinder(root, Vector3(0, 0.69, 0), 0.08, 0.05, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, 0.78, 0), 0.03, 0.16, BRASS.darkened(0.05), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.9, 0), 0.045, 0.05, BRASS, false, 0.28, true)
+	# Tall cool glass chimney (reads as lamp, not white drum)
+	_add_cylinder(root, Vector3(0, 1.05, 0), 0.04, 0.28, Color(0.75, 0.88, 0.92, 0.4), false, 0.1, true)
+	_add_cylinder(root, Vector3(0, 1.2, 0), 0.03, 0.03, BRASS, false, 0.28, true)
 	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
 	_add_contact_shadow(root, 0.34, 0.34)
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.4
-	lamp.omni_range = 2.4
+	lamp.light_energy = 0.45
+	lamp.omni_range = 2.5
 	lamp.position = Vector3(0, 1.0, 0)
 	root.add_child(lamp)
 	return root

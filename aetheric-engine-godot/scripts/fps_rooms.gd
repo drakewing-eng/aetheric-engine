@@ -328,13 +328,14 @@ const ROOMS := {
 		"spawn": [0.0, 0.0, 2.5],
 		"spawn_yaw": 0.0,
 		"wall_style": "victorian",
-		# Soft striped morning paper (pale blue-cream — keep distinct from drawing room)
-		"wallpaper": TEX + "wallpaper_morning.jpg",
+		# Soft hall paper has more texture than blank morning white (still distinct from drawing damask)
+		"wallpaper": TEX + "wallpaper_hall.jpg",
 		"wainscot": TEX + "wainscot_morning.jpg",
 		"floor_texture": TEX + "floor_morning.jpg",
 		"floor_color": Color(0.38, 0.28, 0.18),
-		"light_energy": 1.2,
-		"light_color": Color(0.95, 0.9, 0.78),
+		"light_energy": 1.25,
+		"light_color": Color(0.98, 0.92, 0.78),
+		"ceiling_color": Color(0.9, 0.88, 0.82),
 		"walls": {},
 		"features": [
 			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0},
@@ -449,6 +450,17 @@ const ROOMS := {
 			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0},
 			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0},
 			{"kind": "tool_rack", "pos": [4.3, 0.0, 2.0], "yaw": -90.0},
+			# Floor density (was empty expanse)
+			{
+				"kind": "rug",
+				"pos": [0.0, 0.0, 0.0],
+				"size": [2.0, 5.5],
+				"texture": "res://assets/rooms/textures/hall_runner.jpg",
+			},
+			{"kind": "crate", "pos": [1.5, 0.0, 3.0], "scale": 0.7},
+			{"kind": "crate", "pos": [-2.0, 0.0, 2.8], "scale": 0.55},
+			{"kind": "copper_pot", "pos": [2.2, 0.0, 1.2], "scale": 0.7},
+			{"kind": "stool", "pos": [-3.0, 0.0, 0.5], "yaw": 45.0},
 		],
 		"doors": [
 			{
@@ -610,6 +622,10 @@ const ROOMS := {
 			# Hanging copper rail over empty north plaster
 			{"kind": "pot_rack", "pos": [-1.8, 0.0, 3.35], "yaw": 0.0},
 			{"kind": "pot_rack", "pos": [1.8, 0.0, 3.35], "yaw": 0.0},
+			# High shelf of crocks on north wall
+			{"kind": "bookshelf", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "width": 1.6, "height": 1.2},
+			{"kind": "copper_pot", "pos": [-2.8, 0.0, 2.5], "scale": 0.65},
+			{"kind": "crate", "pos": [2.6, 0.0, 2.0], "scale": 0.55},
 		],
 		"doors": [
 			{
