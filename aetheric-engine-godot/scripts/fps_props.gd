@@ -663,6 +663,8 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
 			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
 			bp["solid"] = true
+			bp["face_camera"] = true  # plants always face player
+			bp["sink"] = 0.02
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
 	root.name = "Plant"
@@ -968,15 +970,20 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 # ─── Billboard hero furniture (painted cards) ────────────────────────────────
 
 static func _make_billboard_prop(prop: Dictionary) -> Node3D:
-	## Alpha-cut painted furniture card — fixed yaw (NOT camera billboard).
-	## Requires clean transparent PNG; studio-bg assets will look like brown squares.
+	## Alpha-cut painted card. Ground-aligned (bottom of quad on floor).
+	## face_camera=true → FIXED_Y billboard (plants); false → fixed room yaw (furniture).
 	var root := Node3D.new()
 	root.name = "BillboardProp"
 	var tex_path: String = prop.get("texture", "")
 	var width: float = prop.get("width", 1.0)
 	var height: float = prop.get("height", 1.1)
+	# Ground align: center of quad is at height/2 so feet sit on floor (y=0)
 	var y_off: float = prop.get("y_offset", height * 0.5)
+	# Slight sink so transparent padding doesn't make objects float
+	var sink: float = float(prop.get("sink", 0.04))
+	y_off = y_off - sink
 	var solid: bool = prop.get("solid", true)
+	var face_camera: bool = bool(prop.get("face_camera", false))
 
 	var mi := MeshInstance3D.new()
 	var mesh := QuadMesh.new()
@@ -989,34 +996,37 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		mat.albedo_color = Color(1, 1, 1)
 	else:
 		mat.albedo_color = MAHOGANY
-	# Alpha scissor hard-cuts bg; no soft edges that sort badly with furniture
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mat.alpha_scissor_threshold = 0.5
+	mat.alpha_scissor_threshold = 0.45
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
-	# IMPORTANT: do NOT set billboard_mode — furniture must keep room yaw
-	mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
+	if face_camera:
+		# Plants: always face player so they don't look like paper edges
+		mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	else:
+		mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
 	mi.material_override = mat
 	mi.position = Vector3(0, y_off, 0)
 	root.add_child(mi)
 
-	# Back-facing second quad — offset enough to avoid z-fight flicker while walking
-	var mi_b := MeshInstance3D.new()
-	mi_b.mesh = mesh
-	mi_b.material_override = mat
-	mi_b.position = Vector3(0, y_off, -0.04)
-	mi_b.rotation_degrees.y = 180.0
-	root.add_child(mi_b)
+	if not face_camera:
+		# Back face for fixed furniture cards only
+		var mi_b := MeshInstance3D.new()
+		mi_b.mesh = mesh
+		mi_b.material_override = mat
+		mi_b.position = Vector3(0, y_off, -0.05)
+		mi_b.rotation_degrees.y = 180.0
+		root.add_child(mi_b)
 
 	if solid:
 		var body := StaticBody3D.new()
 		var col := CollisionShape3D.new()
 		var shape := BoxShape3D.new()
-		shape.size = Vector3(width * 0.7, height * 0.85, 0.4)
+		shape.size = Vector3(width * 0.65, height * 0.75, 0.35)
 		col.shape = shape
-		col.position = Vector3(0, y_off * 0.9, 0)
+		col.position = Vector3(0, maxf(y_off * 0.85, 0.35), 0)
 		body.add_child(col)
 		root.add_child(body)
 

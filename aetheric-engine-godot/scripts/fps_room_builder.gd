@@ -27,15 +27,19 @@ func _build_room(room: Dictionary) -> void:
 	_add_ceiling(w, d, h, ceiling_tint)
 	_add_corner_posts(w, d, h, backing)
 
+	var doors: Array = room.get("doors", [])
+
 	if victorian:
 		var paper: String = room.get("wallpaper", "")
 		var wainscot: String = room.get("wainscot", "")
-		_add_victorian_wall("North", Vector3(0, h * 0.5, -d * 0.5), 0.0, w, h, paper, wainscot, backing)
-		_add_victorian_wall("West", Vector3(-w * 0.5, h * 0.5, 0), 90.0, d, h, paper, wainscot, backing)
-		_add_victorian_wall("East", Vector3(w * 0.5, h * 0.5, 0), -90.0, d, h, paper, wainscot, backing)
-		_add_victorian_wall("South", Vector3(0, h * 0.5, d * 0.5), 180.0, w, h, paper, wainscot, backing)
-		# Period skirting / baseboard along floor line (visual only)
+		# Split walls around door openings (no solid wall through an open door)
+		_add_victorian_facade("North", 0.0, w, h, paper, wainscot, backing, doors, w, d)
+		_add_victorian_facade("West", 90.0, d, h, paper, wainscot, backing, doors, w, d)
+		_add_victorian_facade("East", -90.0, d, h, paper, wainscot, backing, doors, w, d)
+		_add_victorian_facade("South", 180.0, w, h, paper, wainscot, backing, doors, w, d)
 		_add_skirting(w, d)
+		for door in doors:
+			_add_door_portal(door, w, d, h)
 	else:
 		var backdrop_tex: String = walls.get("backdrop", walls.get("north", ""))
 		if backdrop_tex != "":
@@ -49,13 +53,10 @@ func _build_room(room: Dictionary) -> void:
 		var le: float = float(room.get("light_energy", 1.2))
 		var lc: Color = room.get("light_color", Color(1.0, 0.9, 0.72))
 		_add_wall_lamp(Vector3(0, h * 0.55, -1.5), d, le, lc)
-		# Second warm fill so priority rooms feel candlelit Victorian, not flat office light.
 		_add_wall_lamp(Vector3(w * 0.25, h * 0.5, d * 0.15), d * 0.85, le * 0.55, lc)
-		# Corner fill for larger rooms (hall/gallery) — soft so not over-bright.
 		if w >= 12.0 or d >= 11.0:
 			_add_wall_lamp(Vector3(-w * 0.3, h * 0.48, -d * 0.2), d * 0.7, le * 0.4, lc)
 
-	var doors: Array = room.get("doors", [])
 	# Solid perimeter with gaps at doorways so the player can stand in a door and press E.
 	_add_bounds(w, d, h, doors)
 
@@ -141,6 +142,215 @@ func _add_wall_lamp(
 	lamp.position = pos
 	add_child(lamp)
 
+func _add_victorian_facade(
+	wall_name: String,
+	yaw_deg: float,
+	plane_w: float,
+	plane_h: float,
+	paper_tex: String,
+	wainscot_tex: String,
+	fallback: Color,
+	doors: Array,
+	room_w: float,
+	room_d: float,
+) -> void:
+	## Build this facade as horizontal segments with gaps where doors sit.
+	var gaps: Array = _door_gaps_on_wall(wall_name, doors, room_w, room_d)
+	var half := plane_w * 0.5
+	var segs: Array = _segments_with_gaps(-half, half, gaps)
+	var wall_center := _wall_center(wall_name, room_w, room_d, plane_h)
+	var i := 0
+	for seg in segs:
+		var a: float = float(seg[0])
+		var b: float = float(seg[1])
+		var seg_w: float = b - a
+		if seg_w < 0.12:
+			continue
+		var mid: float = (a + b) * 0.5
+		var pos := wall_center + _wall_tangent(wall_name) * mid
+		_add_victorian_wall(
+			"%s_seg%d" % [wall_name, i],
+			pos,
+			yaw_deg,
+			seg_w,
+			plane_h,
+			paper_tex,
+			wainscot_tex,
+			fallback,
+			false  # no expand into door openings
+		)
+		i += 1
+	# Lintel strip above each door opening (so the hole is door-height, not full wall)
+	for g in gaps:
+		var gc: float = float(g[0])
+		var gh: float = float(g[1])
+		var door_h: float = float(g[2]) if g.size() > 2 else 2.35
+		var lintel_h: float = maxf(0.25, plane_h - door_h - 0.05)
+		if lintel_h < 0.15:
+			continue
+		var lintel_y: float = door_h + lintel_h * 0.5
+		var pos2 := wall_center + _wall_tangent(wall_name) * gc
+		pos2.y = lintel_y
+		_add_wall_plane(
+			"%s_lintel" % wall_name,
+			pos2,
+			yaw_deg,
+			Vector2(gh * 2.0 + 0.1, lintel_h),
+			paper_tex,
+			fallback,
+			true
+		)
+
+
+func _wall_center(wall_name: String, room_w: float, room_d: float, plane_h: float) -> Vector3:
+	var y := plane_h * 0.5
+	match wall_name:
+		"North":
+			return Vector3(0, y, -room_d * 0.5)
+		"South":
+			return Vector3(0, y, room_d * 0.5)
+		"West":
+			return Vector3(-room_w * 0.5, y, 0)
+		"East":
+			return Vector3(room_w * 0.5, y, 0)
+		_:
+			return Vector3.ZERO
+
+
+func _wall_tangent(wall_name: String) -> Vector3:
+	## Unit axis along the wall (increasing gap coordinate).
+	match wall_name:
+		"North", "South":
+			return Vector3(1, 0, 0)
+		"West", "East":
+			return Vector3(0, 0, 1)
+		_:
+			return Vector3(1, 0, 0)
+
+
+func _door_gaps_on_wall(wall_name: String, doors: Array, room_w: float, room_d: float) -> Array:
+	## Returns [center_along_wall, half_width, door_height] for doors on this wall.
+	var out: Array = []
+	var half_w := room_w * 0.5
+	var half_d := room_d * 0.5
+	for door in doors:
+		var p: Array = door.get("pos", [0, 0, 0])
+		var px := float(p[0])
+		var pz := float(p[2])
+		var s: Array = door.get("size", [1.6, 2.4, 0.3])
+		var door_w: float = maxf(float(s[0]), 1.4)
+		var door_h: float = maxf(float(s[1]), 2.2)
+		var gap_half := door_w * 0.5 + 0.08
+		var dn := absf(pz + half_d)
+		var ds := absf(pz - half_d)
+		var dw := absf(px + half_w)
+		var de := absf(px - half_w)
+		var m := minf(minf(dn, ds), minf(dw, de))
+		if wall_name == "North" and is_equal_approx(m, dn):
+			out.append([px, gap_half, door_h])
+		elif wall_name == "South" and is_equal_approx(m, ds):
+			out.append([px, gap_half, door_h])
+		elif wall_name == "West" and is_equal_approx(m, dw):
+			out.append([pz, gap_half, door_h])
+		elif wall_name == "East" and is_equal_approx(m, de):
+			out.append([pz, gap_half, door_h])
+	return out
+
+
+func _segments_with_gaps(left: float, right: float, gaps: Array) -> Array:
+	## gaps: [center, half_width, ...]
+	var cuts: Array = gaps.duplicate()
+	cuts.sort_custom(func(a, b): return float(a[0]) < float(b[0]))
+	var segs: Array = []
+	var cursor := left
+	for g in cuts:
+		var c: float = float(g[0])
+		var hh: float = float(g[1])
+		var gl: float = c - hh
+		var gr: float = c + hh
+		if gl > cursor + 0.08:
+			segs.append([cursor, gl])
+		cursor = maxf(cursor, gr)
+	if right > cursor + 0.08:
+		segs.append([cursor, right])
+	if segs.is_empty():
+		segs.append([left, right])
+	return segs
+
+
+func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: float) -> void:
+	## Only one room is loaded at a time — a short dim corridor behind the door
+	## reads as a passage instead of a solid exterior wall (Myst-style portal).
+	var p: Array = door.get("pos", [0, 0, 0])
+	var px := float(p[0])
+	var pz := float(p[2])
+	var s: Array = door.get("size", [1.6, 2.4, 0.3])
+	var door_w: float = maxf(float(s[0]), 1.4)
+	var door_h: float = maxf(float(s[1]), 2.2)
+	var half_w := room_w * 0.5
+	var half_d := room_d * 0.5
+	var dn := absf(pz + half_d)
+	var ds := absf(pz - half_d)
+	var dw := absf(px + half_w)
+	var de := absf(px - half_w)
+	var m := minf(minf(dn, ds), minf(dw, de))
+	var depth := 2.2
+	var root := Node3D.new()
+	root.name = "DoorPortal"
+	var floor_col := Color(0.18, 0.12, 0.08)
+	var wall_col := Color(0.28, 0.22, 0.16)
+	var out_dir := Vector3.ZERO
+	if is_equal_approx(m, dn):
+		out_dir = Vector3(0, 0, -1)
+		root.position = Vector3(px, 0, -half_d)
+	elif is_equal_approx(m, ds):
+		out_dir = Vector3(0, 0, 1)
+		root.position = Vector3(px, 0, half_d)
+	elif is_equal_approx(m, dw):
+		out_dir = Vector3(-1, 0, 0)
+		root.position = Vector3(-half_w, 0, pz)
+	else:
+		out_dir = Vector3(1, 0, 0)
+		root.position = Vector3(half_w, 0, pz)
+	# Orient local +Z along outward
+	if absf(out_dir.x) > 0.5:
+		root.rotation_degrees.y = -90.0 if out_dir.x > 0.0 else 90.0
+	elif out_dir.z > 0.0:
+		root.rotation_degrees.y = 180.0
+	else:
+		root.rotation_degrees.y = 0.0
+	add_child(root)
+	# Floor of portal
+	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.15, 0.04, depth), floor_col)
+	# Ceiling
+	_add_portal_box(root, Vector3(0, door_h + 0.05, -depth * 0.5), Vector3(door_w + 0.15, 0.06, depth), wall_col.darkened(0.15))
+	# Side walls
+	_add_portal_box(root, Vector3(-door_w * 0.5 - 0.04, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), wall_col)
+	_add_portal_box(root, Vector3(door_w * 0.5 + 0.04, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), wall_col)
+	# Far end dark wall (suggests more house beyond)
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.08), Color(0.08, 0.06, 0.05))
+	# Dim warm light inside passage
+	var dim := OmniLight3D.new()
+	dim.light_color = Color(1.0, 0.82, 0.55)
+	dim.light_energy = 0.35
+	dim.omni_range = depth + 1.0
+	dim.position = Vector3(0, door_h * 0.6, -depth * 0.45)
+	root.add_child(dim)
+
+
+func _add_portal_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color) -> void:
+	var mi := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.85
+	mi.material_override = mat
+	mi.position = pos
+	parent.add_child(mi)
+
+
 func _add_victorian_wall(
 	wall_name: String,
 	pos: Vector3,
@@ -150,10 +360,11 @@ func _add_victorian_wall(
 	paper_tex: String,
 	wainscot_tex: String,
 	fallback: Color,
+	expand: bool = true,
 ) -> void:
 	## Paper sits slightly in front of wainscot to kill coplanar z-fighting.
 	## Chair rail covers the join (horizon shimmer when walking).
-	var cover_w := plane_w + WALL_OVERLAP * 2.0
+	var cover_w := plane_w + (WALL_OVERLAP * 2.0 if expand else 0.04)
 	var cover_h := plane_h + WALL_TRIM_Y * 2.0
 	# Leave a small vertical gap so layers don't share an edge in depth
 	var join := WAINSCOT_H

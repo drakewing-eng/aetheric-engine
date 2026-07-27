@@ -47,13 +47,15 @@ const ROOMS := {
 			#   sofa.png   = mahogany writing desk with still-life
 			#   chair.png  = red wing armchair
 			#   armchair.png = green side chair
+			# sink lowers card so feet touch floor (transparent padding in PNGs)
 			{
 				"kind": "billboard_prop",
 				"pos": [0.0, 0.0, -3.55],
 				"yaw": 0.0,
 				"texture": PROP_DIR + "desk.png",
 				"width": 2.6,
-				"height": 1.2,
+				"height": 1.15,
+				"sink": 0.08,
 			},
 			{
 				"kind": "billboard_prop",
@@ -61,7 +63,8 @@ const ROOMS := {
 				"yaw": -25.0,
 				"texture": PROP_DIR + "chair.png",
 				"width": 1.1,
-				"height": 1.4,
+				"height": 1.35,
+				"sink": 0.06,
 			},
 			{
 				"kind": "billboard_prop",
@@ -69,7 +72,8 @@ const ROOMS := {
 				"yaw": -90.0,
 				"texture": PROP_DIR + "sofa.png",
 				"width": 1.65,
-				"height": 1.25,
+				"height": 1.2,
+				"sink": 0.06,
 			},
 			{
 				"kind": "billboard_prop",
@@ -77,7 +81,8 @@ const ROOMS := {
 				"yaw": 100.0,
 				"texture": PROP_DIR + "armchair.png",
 				"width": 0.75,
-				"height": 1.2,
+				"height": 1.15,
+				"sink": 0.05,
 			},
 			{
 				"kind": "billboard_prop",
@@ -85,7 +90,8 @@ const ROOMS := {
 				"yaw": -15.0,
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
-				"height": 0.95,
+				"height": 0.9,
+				"sink": 0.05,
 			},
 			{
 				"kind": "billboard_prop",
@@ -93,7 +99,8 @@ const ROOMS := {
 				"yaw": 15.0,
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
-				"height": 0.95,
+				"height": 0.9,
+				"sink": 0.05,
 			},
 			# Mesh armchair for a second seating angle (richer 3D silhouette)
 			{"kind": "armchair", "pos": [2.1, 0.0, 2.15], "yaw": -145.0},
