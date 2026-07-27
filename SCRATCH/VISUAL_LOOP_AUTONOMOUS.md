@@ -40,7 +40,8 @@
 - Loop11: terracotta not wood barrels; morning denser
 - Loop12: no dual pots; conservatory mix; richer portals
 - Loop13: mesh fronds; kitchen art; workshop walls
-- Loop14: mesh plants bush discs (no pinwheels); chandelier/oil lamp cream shades not black; hall chandelier+plants
+- Loop14: bush plants; cream lamps; hall chandelier
+- Loop15: conservatory all short palms (no mesh toys); kitchen dimmer/darker ceiling; workshop wall paintings; drawing extra seating
 
 ## Do not
 - Delete prop lists from fps_rooms
