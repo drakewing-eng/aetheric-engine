@@ -38,7 +38,8 @@
 - Loop9: palm not fern; pot racks; Argand lamp
 - Loop10: mesh pots under plants; workshop denser; kitchen denser
 - Loop11: terracotta not wood barrels; morning denser
-- Loop12: disable mesh_pot dual-pot float; conservatory mesh+short palms; portal depth+runner+arch; kitchen lower light wash
+- Loop12: no dual pots; conservatory mix; richer portals
+- Loop13: mesh plants use fan fronds not topiary balls; kitchen wall paintings+warmer dim; workshop more wall tools/shelves
 
 ## Do not
 - Delete prop lists from fps_rooms
