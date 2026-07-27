@@ -56,7 +56,8 @@
 - Loop27: full-panel conservatory; plant shadow; kitchen darker
 - Loop28: no mid-rail full panels; double cornice; gallery aisle
 - Loop29: full-panel double-layer; fireplace ornaments
-- Loop30: conservatory solid walls use dark drawing wainscot; stone+wood door thresholds; ajar -52°; drawing plant denser
+- Loop30: dark conservatory panels; stone thresholds; ajar doors
+- Loop31: palm PNG vertical alpha bridges; workshop center runner; richer exterior garden; morning bookshelf
 
 ## Do not
 - Delete prop lists from fps_rooms
