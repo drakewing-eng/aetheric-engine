@@ -473,15 +473,22 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(-0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
 	_add_cylinder(root, Vector3(0.55, 1.3, 0.05), 0.22, 0.04, IRON.lightened(0.08), false, 0.35)
 	_add_cylinder(root, Vector3(0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
-	# Mantel shelf
+	# Mantel shelf + kettle / crock still-life
 	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), IRON.lightened(0.05), false, 0.45)
+	_add_cylinder(root, Vector3(-0.55, 1.58, 0.15), 0.08, 0.18, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.5, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.15), false, 0.8)
+	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.2, 0.04, 0.12), MAHOGANY, false, 0.5)
 	# Chimney flue + crown
 	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), IRON, true, 0.5)
 	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.7, 0.1, 0.55), IRON.darkened(0.05), false, 0.5)
+	# Hanging pan rail above range
+	_add_box(root, Vector3(0, 1.75, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
+	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.1, 0.08, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.35, 1.52, 0.38), 0.09, 0.07, COPPER.lightened(0.05), false, 0.35, true)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.5, 0.18)
-	fire.light_energy = 1.45
-	fire.omni_range = 5.5
+	fire.light_energy = 1.5
+	fire.omni_range = 5.8
 	fire.position = Vector3(0, 0.55, 0.55)
 	root.add_child(fire)
 	# Copper kettle on hotplate
@@ -917,16 +924,14 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["mesh_pot"] = false
 			var root_plant := _make_billboard_prop(bp)
 			_add_contact_shadow(root_plant, pw * 0.45, pw * 0.35)
-			# Flat leaf cards mid-height (side volume without pot orb / second pot)
-			var leaf_h := ph * 0.52
-			var leaf_a := Color(0.2, 0.4, 0.14)
-			var leaf_b := Color(0.14, 0.34, 0.1)
-			for i in 4:
-				var ang := float(i) * 0.9
-				var lx := cos(ang) * 0.12 * pw
-				var lz := sin(ang) * 0.12 * pw
-				var ly := leaf_h + float(i % 2) * 0.1
-				_add_box(root_plant, Vector3(lx, ly, lz), Vector3(0.14 * pw, 0.02, 0.18 * pw), leaf_a if i % 2 == 0 else leaf_b, false, 0.9)
+			# Subtle flat leaves for side volume (small, dark — not obvious cards)
+			var leaf_h := ph * 0.55
+			var leaf_a := Color(0.16, 0.34, 0.1)
+			for i in 3:
+				var ang := float(i) * 2.1
+				var lx := cos(ang) * 0.1 * pw
+				var lz := sin(ang) * 0.1 * pw
+				_add_box(root_plant, Vector3(lx, leaf_h + float(i) * 0.06, lz), Vector3(0.1 * pw, 0.015, 0.12 * pw), leaf_a, false, 0.92)
 			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"

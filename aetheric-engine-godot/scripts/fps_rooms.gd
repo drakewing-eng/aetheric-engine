@@ -473,6 +473,9 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.05},
 			{"kind": "crate", "pos": [3.0, 0.0, -2.5], "scale": 0.5},
 			{"kind": "copper_pot", "pos": [1.5, 0.0, 2.0], "scale": 0.45},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.8},
+			{"kind": "stool", "pos": [-1.8, 0.0, 1.5], "yaw": -20.0},
+			{"kind": "copper_pot", "pos": [2.8, 0.0, 1.2], "scale": 0.5},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -608,6 +611,9 @@ const ROOMS := {
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 7.0, "width": 1.0},
 			{"kind": "crate", "pos": [2.0, 0.0, 3.2], "scale": 0.55},
 			{"kind": "stool", "pos": [-2.5, 0.0, -0.5], "yaw": 30.0},
+			{"kind": "copper_pot", "pos": [3.0, 0.0, 2.5], "scale": 0.65},
+			{"kind": "crate", "pos": [-3.2, 0.0, 2.0], "scale": 0.5},
+			{"kind": "stool", "pos": [1.2, 0.0, -1.8], "yaw": -40.0},
 		],
 		"doors": [
 			{
