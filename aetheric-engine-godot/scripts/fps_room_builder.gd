@@ -130,12 +130,12 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		cmi.position = rails[i][0]
 		add_child(cmi)
 	# Crown moulding just under ceiling (breaks blank ceiling/wall join)
-	var mould_y := room_h - 0.1
+	var mould_y := room_h - 0.12
 	var moulds := [
-		[Vector3(0, mould_y, -half_d + 0.04), Vector3(w - 0.1, 0.1, 0.12)],
-		[Vector3(0, mould_y, half_d - 0.04), Vector3(w - 0.1, 0.1, 0.12)],
-		[Vector3(-half_w + 0.04, mould_y, 0), Vector3(0.12, 0.1, d - 0.1)],
-		[Vector3(half_w - 0.04, mould_y, 0), Vector3(0.12, 0.1, d - 0.1)],
+		[Vector3(0, mould_y, -half_d + 0.05), Vector3(w - 0.08, 0.14, 0.16)],
+		[Vector3(0, mould_y, half_d - 0.05), Vector3(w - 0.08, 0.14, 0.16)],
+		[Vector3(-half_w + 0.05, mould_y, 0), Vector3(0.16, 0.14, d - 0.08)],
+		[Vector3(half_w - 0.05, mould_y, 0), Vector3(0.16, 0.14, d - 0.08)],
 	]
 	for i in moulds.size():
 		var mmi := MeshInstance3D.new()
@@ -153,6 +153,27 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		mmi.material_override = mmat
 		mmi.position = moulds[i][0]
 		add_child(mmi)
+	# Second thinner crown step (period cornice depth)
+	var step_y := room_h - 0.22
+	for i in moulds.size():
+		var smi := MeshInstance3D.new()
+		smi.name = "CrownStep_%d" % i
+		var sm := BoxMesh.new()
+		var s: Vector3 = moulds[i][1]
+		sm.size = Vector3(s.x * 0.98, 0.06, s.z * 0.7 if s.z > s.x else s.z)
+		if s.x < s.z:
+			sm.size = Vector3(s.x * 0.7, 0.06, s.z * 0.98)
+		smi.mesh = sm
+		var smat := StandardMaterial3D.new()
+		smat.roughness = 0.5
+		if wood_tex:
+			smat.albedo_texture = wood_tex
+			smat.albedo_color = Color(0.78, 0.66, 0.52)
+		else:
+			smat.albedo_color = Color(0.25, 0.16, 0.1)
+		smi.material_override = smat
+		smi.position = Vector3(moulds[i][0].x, step_y, moulds[i][0].z)
+		add_child(smi)
 
 
 func _add_wall_lamp(
@@ -447,6 +468,7 @@ func _add_victorian_wall(
 
 	if full_panel:
 		# Full-height paneling (service rooms / conservatory solid walls)
+		# No mid-height chair rail — looks like a floating bar on solid panels
 		_add_wall_plane(
 			wall_name + "Wainscot",
 			pos + Vector3(0, 0, 0),
@@ -456,7 +478,8 @@ func _add_victorian_wall(
 			fallback,
 			true
 		)
-		_add_chair_rail(wall_name, pos, yaw_deg, cover_w, minf(1.15, join), inward)
+		# Subtle upper picture rail only
+		_add_chair_rail(wall_name, pos, yaw_deg, cover_w, plane_h - 0.35, inward)
 	else:
 		_add_wall_plane(
 			wall_name + "Wainscot",
