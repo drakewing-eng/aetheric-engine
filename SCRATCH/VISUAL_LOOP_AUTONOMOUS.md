@@ -41,7 +41,8 @@
 - Loop12: no dual pots; conservatory mix; richer portals
 - Loop13: mesh fronds; kitchen art; workshop walls
 - Loop14: bush plants; cream lamps; hall chandelier
-- Loop15: conservatory all short palms (no mesh toys); kitchen dimmer/darker ceiling; workshop wall paintings; drawing extra seating
+- Loop15: all-palm conservatory; dim kitchen; workshop paintings
+- Loop16: plant cards short+wide+deeper sink; gallery denser furniture/paintings; kitchen rug; morning gallery wallpaper
 
 ## Do not
 - Delete prop lists from fps_rooms
