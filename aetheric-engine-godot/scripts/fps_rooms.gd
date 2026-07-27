@@ -124,6 +124,10 @@ const ROOMS := {
 			{"kind": "crate", "pos": [-3.8, 0.0, 2.0], "scale": 0.55},
 			{"kind": "plant", "pos": [-3.9, 0.0, 0.5], "scale": 0.9,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.1},
+			{"kind": "wall_sconce", "pos": [-4.2, 0.0, -0.5], "yaw": 90.0, "height": 2.2},
+			{"kind": "wall_sconce", "pos": [4.2, 0.0, 1.0], "yaw": -90.0, "height": 2.2},
+			{"kind": "wall_sconce", "pos": [-1.5, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
+			{"kind": "wall_sconce", "pos": [1.5, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 		],
 		"doors": [
 			{
@@ -230,6 +234,11 @@ const ROOMS := {
 			{"kind": "wall_shelf", "pos": [3.5, 0.0, -4.7], "yaw": 0.0, "width": 2.0, "shelf_y": 1.9},
 			{"kind": "wall_shelf", "pos": [6.5, 0.0, 0.0], "yaw": -90.0, "width": 2.4, "shelf_y": 1.95},
 			{"kind": "wall_shelf", "pos": [-6.5, 0.0, 1.0], "yaw": 90.0, "width": 2.0, "shelf_y": 1.95},
+			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [6.5, 0.0, 2.0], "yaw": -90.0, "height": 2.2},
+			{"kind": "wall_sconce", "pos": [-6.5, 0.0, -1.5], "yaw": 90.0, "height": 2.2},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 7.0, "width": 1.1},
 		],
 		"doors": [
 			{
@@ -605,8 +614,8 @@ const ROOMS := {
 		"spawn": [0.0, 0.0, 3.0],
 		"spawn_yaw": 0.0,
 		"wall_style": "victorian",
-		"wallpaper": TEX + "wallpaper_conservatory.jpg",
-		# Dark mahogany on solid corners (cream conservatory wainscot read as blank plaster)
+		# Both layers dark panel — cream paper never peeks at solid corners
+		"wallpaper": TEX + "wainscot_drawing.jpg",
 		"wainscot": TEX + "wainscot_drawing.jpg",
 		"floor_texture": TEX + "floor_conservatory.jpg",
 		"floor_color": Color(0.36, 0.42, 0.32),

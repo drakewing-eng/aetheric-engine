@@ -115,6 +115,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_wall_vine(prop)
 		"floor_path":
 			node = _make_floor_path(prop)
+		"wall_sconce":
+			node = _make_wall_sconce(prop)
 		"chandelier":
 			node = _make_chandelier(prop)
 		"chalk_board":
@@ -569,6 +571,23 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
 		var ox := 0.03 * float((i % 3) - 1)
 		_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.85 + float(i % 2) * 0.1), 0.04, 0.48), STONE, false, 0.7)
+	return root
+
+
+static func _make_wall_sconce(prop: Dictionary) -> Node3D:
+	## Brass wall light — period sconce with warm omni.
+	var root := Node3D.new()
+	root.name = "WallSconce"
+	var y: float = float(prop.get("height", 2.1))
+	_add_box(root, Vector3(0, y, 0), Vector3(0.08, 0.12, 0.06), BRASS, false, 0.3)
+	_add_box(root, Vector3(0, y, 0.08), Vector3(0.04, 0.04, 0.12), BRASS.darkened(0.05), false, 0.3)
+	_add_cylinder(root, Vector3(0, y - 0.05, 0.16), 0.05, 0.1, Color(0.9, 0.85, 0.7), false, 0.45)
+	var lamp := OmniLight3D.new()
+	lamp.light_color = Color(1.0, 0.85, 0.55)
+	lamp.light_energy = 0.55
+	lamp.omni_range = 3.5
+	lamp.position = Vector3(0, y - 0.05, 0.2)
+	root.add_child(lamp)
 	return root
 
 
