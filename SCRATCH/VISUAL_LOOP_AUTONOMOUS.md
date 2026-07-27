@@ -53,7 +53,8 @@
 - Loop24: max service wainscots; layered hedge; drawing denser
 - Loop25: conservatory full dado; morning denser; portal lights; plant sink
 - Loop26: furniture sinks; plant alpha; gallery cooler light
-- Loop27: full-panel conservatory walls (no cream crown); plant contact shadow; kitchen darker ceiling; gallery aisle props
+- Loop27: full-panel conservatory; plant shadow; kitchen darker
+- Loop28: no mid chair-rail on full panels; double crown cornice; gallery clear sightline to machines; hall west shelf
 
 ## Do not
 - Delete prop lists from fps_rooms
