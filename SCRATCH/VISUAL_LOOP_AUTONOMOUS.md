@@ -66,7 +66,8 @@
 - Loop37: richer sink; denser workshop/drawing/hall
 - Loop38: thicker painting frames; richer prep; solid mirror
 - Loop39: denser tool racks; richer machines; crate battens
-- Loop40: denser workbench clutter+vice; hall table Argand lamp solid glass+clock; denser drawing props
+- Loop40: denser workbench/hall table; denser drawing
+- Loop41: plant mesh canopy blobs for side volume; richer stools; solid window glass+sky plate
 
 ## Do not
 - Delete prop lists from fps_rooms
