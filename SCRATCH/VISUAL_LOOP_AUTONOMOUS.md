@@ -58,7 +58,8 @@
 - Loop29: full-panel double-layer; fireplace ornaments
 - Loop30: dark conservatory panels; stone thresholds; ajar doors
 - Loop31: palm alpha bridges; workshop runner; exterior garden
-- Loop32: floor_path stone flags in conservatory; aetheric machine more coils+gauges; denser glass garden hedge
+- Loop32: conservatory stone path; richer aetheric coils; denser garden
+- Loop33: conservatory paper=dark panel; wall_sconce brass lights in hall+drawing; hall floor_path
 
 ## Do not
 - Delete prop lists from fps_rooms
