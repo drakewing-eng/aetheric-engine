@@ -37,7 +37,8 @@
 - Loop8: fern cleanup; morning hall paper; workshop runner; kitchen shelf
 - Loop9: palm not fern; pot racks; Argand lamp
 - Loop10: mesh pots under plants; workshop denser; kitchen denser
-- Loop11: CLAY no longer auto-woods (barrel bug); compact pots; morning extra paintings+chandelier
+- Loop11: terracotta not wood barrels; morning denser
+- Loop12: disable mesh_pot dual-pot float; conservatory mesh+short palms; portal depth+runner+arch; kitchen lower light wash
 
 ## Do not
 - Delete prop lists from fps_rooms
