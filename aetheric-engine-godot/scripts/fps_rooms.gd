@@ -681,6 +681,7 @@ const ROOMS := {
 			{"kind": "hall_table", "pos": [0.0, 0.0, 2.5], "yaw": 0.0},
 			{"kind": "stool", "pos": [0.8, 0.0, 2.8], "yaw": -20.0},
 			{"kind": "stool", "pos": [-0.8, 0.0, 2.8], "yaw": 20.0},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "length": 5.5, "width": 1.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.5],

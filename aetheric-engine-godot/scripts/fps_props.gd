@@ -113,6 +113,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_wall_shelf(prop)
 		"wall_vine":
 			node = _make_wall_vine(prop)
+		"floor_path":
+			node = _make_floor_path(prop)
 		"chandelier":
 			node = _make_chandelier(prop)
 		"chalk_board":
@@ -556,6 +558,20 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	return root
 
 
+static func _make_floor_path(prop: Dictionary) -> Node3D:
+	## Stone flag path — breaks plain floors (conservatory / hall).
+	var root := Node3D.new()
+	root.name = "FloorPath"
+	var length: float = float(prop.get("length", 3.5))
+	var width: float = float(prop.get("width", 0.9))
+	var n := int(clampf(length / 0.55, 3.0, 12.0))
+	for i in n:
+		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
+		var ox := 0.03 * float((i % 3) - 1)
+		_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.85 + float(i % 2) * 0.1), 0.04, 0.48), STONE, false, 0.7)
+	return root
+
+
 static func _make_wall_vine(prop: Dictionary) -> Node3D:
 	## Dense climbing ivy mat on plaster — not balloon poles.
 	var root := Node3D.new()
@@ -756,24 +772,25 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.15, 0.12, 0.95), MARBLE, true, 0.3)
 	# Main column
 	_add_cylinder(root, Vector3(0, height * 0.4, 0), 0.28, height * 0.55, BRASS, true, 0.3, true)
-	# Coil rings
-	for i in 4:
-		var y := 0.7 + i * 0.35
-		_add_cylinder(root, Vector3(0, y, 0), 0.48, 0.08, COPPER, false, 0.35, true)
-	# Glass aether chamber
-	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.35, height * 0.28, Color(0.55, 0.75, 0.85, 0.45), false, 0.15, true)
+	# Coil rings (tighter stack)
+	for i in 5:
+		var y := 0.65 + i * 0.28
+		_add_cylinder(root, Vector3(0, y, 0), 0.5 - float(i) * 0.02, 0.07, COPPER, false, 0.35, true)
+	# Glass aether chamber — solid cyan glass (alpha read black)
+	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.36, height * 0.28, Color(0.55, 0.8, 0.9), false, 0.25, true)
 	# Cap
-	_add_cylinder(root, Vector3(0, height * 0.88, 0), 0.4, 0.12, BRASS, true, 0.3, true)
-	_add_cylinder(root, Vector3(0, height * 0.95, 0), 0.12, 0.2, BRASS.lightened(0.1), true, 0.25, true)
-	# Side instrument boxes
+	_add_cylinder(root, Vector3(0, height * 0.88, 0), 0.42, 0.12, BRASS, true, 0.3, true)
+	_add_cylinder(root, Vector3(0, height * 0.96, 0), 0.14, 0.22, BRASS.lightened(0.1), true, 0.25, true)
+	# Side instrument boxes + gauges
 	_add_box(root, Vector3(0.65, 0.85, 0.1), Vector3(0.35, 0.55, 0.4), MAHOGANY, true, 0.45)
 	_add_box(root, Vector3(-0.65, 0.75, -0.1), Vector3(0.3, 0.4, 0.35), MAHOGANY, true, 0.45)
 	_add_cylinder(root, Vector3(0.65, 1.2, 0.1), 0.08, 0.12, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(-0.65, 1.05, -0.1), 0.07, 0.1, BRASS, false, 0.3, true)
 	# Cool aetheric glow
 	var glow := OmniLight3D.new()
 	glow.light_color = Color(0.45, 0.85, 0.95)
-	glow.light_energy = 1.2
-	glow.omni_range = 6.0
+	glow.light_energy = 1.4
+	glow.omni_range = 6.5
 	glow.position = Vector3(0, height * 0.65, 0)
 	root.add_child(glow)
 	var warm := OmniLight3D.new()
