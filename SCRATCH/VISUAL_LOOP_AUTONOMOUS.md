@@ -29,7 +29,8 @@
 - `8211021` wall openings + portal tunnels + ground billboards + face-camera plants
 - Loop1: cross-plane plants, richer portal hall, ajar doors, furniture sink
 - Loop2: screenshot camera yaw, wood doors, kitchen range, workshop spawn, conservatory density
-- Loop3: mesh plants use sphere canopy + leaf colors never iron; tool rack has hammers/wrenches; morning room fireplace+seating; kitchen wall shelves/pots
+- Loop3: mesh plants sphere canopy; tool rack tools; morning+kitchen density
+- Loop4: gallery machines continuous (no float); paintings use scene photos not empty wallpaper frames; hall/workshop/conservatory density
 
 ## Do not
 - Delete prop lists from fps_rooms
