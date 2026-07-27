@@ -109,6 +109,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_copper_pot(prop)
 		"pot_rack":
 			node = _make_pot_rack(prop)
+		"wall_shelf":
+			node = _make_wall_shelf(prop)
 		"chandelier":
 			node = _make_chandelier(prop)
 		"chalk_board":
@@ -552,6 +554,27 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	return root
 
 
+static func _make_wall_shelf(prop: Dictionary) -> Node3D:
+	## Long mid-wall plate shelf — breaks empty plaster expanse (kitchen/service rooms).
+	var root := Node3D.new()
+	root.name = "WallShelf"
+	var width: float = float(prop.get("width", 2.4))
+	var y: float = float(prop.get("shelf_y", 1.85))
+	_add_box(root, Vector3(0, y, 0), Vector3(width, 0.06, 0.18), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, y - 0.04, -0.06), Vector3(width, 0.12, 0.04), MAHOGANY_DARK, false, 0.5)
+	# Plates / jars along shelf
+	var n := int(clampf(width / 0.35, 4.0, 10.0))
+	for i in n:
+		var x := -width * 0.4 + float(i) * (width * 0.8 / float(maxi(n - 1, 1)))
+		if i % 3 == 0:
+			_add_cylinder(root, Vector3(x, y + 0.08, 0.02), 0.08, 0.04, CREAM, false, 0.7)
+		elif i % 3 == 1:
+			_add_cylinder(root, Vector3(x, y + 0.1, 0.02), 0.06, 0.12, COPPER, false, 0.35, true)
+		else:
+			_add_cylinder(root, Vector3(x, y + 0.09, 0.02), 0.07, 0.06, Color(0.75, 0.72, 0.65), false, 0.65)
+	return root
+
+
 static func _make_pot_rack(_prop: Dictionary) -> Node3D:
 	## Wall copper pan rail — larger pots so silhouette reads from room center.
 	var root := Node3D.new()
@@ -765,7 +788,7 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 				pw = ph * 0.78
 			bp["height"] = ph
 			bp["width"] = pw
-			bp["sink"] = 0.16
+			bp["sink"] = 0.2
 			bp["mesh_pot"] = false
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
