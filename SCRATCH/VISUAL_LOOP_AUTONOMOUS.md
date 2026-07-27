@@ -35,7 +35,8 @@
 - Loop6: FIXED_Y plants; glass garden; morning density; oil lamps
 - Loop7: glass hedge exterior; chandeliers; conservatory palms
 - Loop8: fern cleanup; morning hall paper; workshop runner; kitchen shelf
-- Loop9: swap fern cutouts→palm (black fern gone); larger kitchen pot racks; Argand lamp brass+flame; fern PNG cleaned
+- Loop9: palm not fern; pot racks; Argand lamp
+- Loop10: mesh terracotta under plant billboards (anti-float); workshop tool walls+chandeliers+bench; kitchen side dresser/pots
 
 ## Do not
 - Delete prop lists from fps_rooms
