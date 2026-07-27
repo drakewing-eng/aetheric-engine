@@ -1087,15 +1087,16 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	# Inner stop mould
 	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
 	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
-	# Threshold / saddle
-	_add_box(root, Vector3(0, 0.03, 0.02), Vector3(w + 0.08, 0.06, depth + 0.12), MAHOGANY_DARK, false, 0.45)
+	# Threshold / saddle (stone + wood — grounds the doorway)
+	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.14, 0.05, depth + 0.18), STONE, false, 0.65)
+	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.08, 0.04, depth + 0.1), MAHOGANY_DARK, false, 0.45)
 	# --- Door leaf (ajar so it reads as a door; leave walk gap) ---
 	var leaf_w := w - 0.1
 	var leaf_h := h - 0.12
 	var leaf := Node3D.new()
 	leaf.name = "DoorLeaf"
-	leaf.position = Vector3(-w * 0.5 + 0.05, 0.06, 0.04)
-	leaf.rotation_degrees.y = -48.0  # wide ajar so portal hallway is visible beyond
+	leaf.position = Vector3(-w * 0.5 + 0.05, 0.07, 0.04)
+	leaf.rotation_degrees.y = -52.0  # wide ajar so portal hallway is visible beyond
 	root.add_child(leaf)
 	# Polished mid-mahogany slab — colors biased so auto-mat picks WOOD not red velvet
 	var door_wood := Color(0.42, 0.28, 0.16)

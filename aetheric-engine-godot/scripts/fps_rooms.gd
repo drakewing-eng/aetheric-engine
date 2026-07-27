@@ -113,15 +113,17 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, -1.6], "yaw": 90.0, "width": 1.75, "height": 2.55},
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, 1.5], "yaw": 90.0, "width": 1.55, "height": 2.45},
 			{"kind": "plant", "pos": [3.8, 0.0, -3.8], "scale": 0.9,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 1.05},
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.05},
 			{"kind": "chandelier", "pos": [0.0, 0.0, -0.5], "hang": 3.15},
 			{"kind": "armchair", "pos": [-2.2, 0.0, 2.0], "yaw": 25.0, "fabric": Color(0.45, 0.18, 0.14)},
 			{"kind": "side_table", "pos": [-1.4, 0.0, 2.4], "yaw": 10.0},
 			{"kind": "plant", "pos": [-3.6, 0.0, -3.5], "scale": 0.85,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 1.0},
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.05},
 			{"kind": "chair", "pos": [1.8, 0.0, 1.5], "yaw": -40.0, "fabric": Color(0.4, 0.22, 0.16)},
 			{"kind": "side_table", "pos": [2.4, 0.0, 1.0], "yaw": 15.0},
 			{"kind": "crate", "pos": [-3.8, 0.0, 2.0], "scale": 0.55},
+			{"kind": "plant", "pos": [-3.9, 0.0, 0.5], "scale": 0.9,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.1},
 		],
 		"doors": [
 			{
@@ -591,13 +593,13 @@ const ROOMS := {
 		"spawn_yaw": 0.0,
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_conservatory.jpg",
-		"wainscot": TEX + "wainscot_conservatory.jpg",
+		# Dark mahogany on solid corners (cream conservatory wainscot read as blank plaster)
+		"wainscot": TEX + "wainscot_drawing.jpg",
 		"floor_texture": TEX + "floor_conservatory.jpg",
 		"floor_color": Color(0.36, 0.42, 0.32),
 		"ceiling_color": Color(0.68, 0.78, 0.72),
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
-		# Nearly full-height dado on solid panels (glass still primary)
 		"wainscot_height": 4.0,
 		"walls": {},
 		"features": [
