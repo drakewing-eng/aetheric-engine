@@ -1198,14 +1198,13 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	else:
 		mat.albedo_color = MAHOGANY
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	# Higher threshold kills dark rembg fringe on plant cutouts
-	mat.alpha_scissor_threshold = 0.5 if (face_camera or cross_planes) else 0.45
+	# Plants: lower scissor keeps pale stem/mid-frond links (high scissor caused floating crowns)
+	var is_plant_card := tex_path.find("plant_") >= 0
+	mat.alpha_scissor_threshold = 0.32 if is_plant_card else (0.48 if (face_camera or cross_planes) else 0.45)
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
-	# Cross-plane plants stay world-fixed (two cards) so they have volume;
-	# single face_camera card uses FIXED_Y billboard.
 	if face_camera and not cross_planes:
 		mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	else:

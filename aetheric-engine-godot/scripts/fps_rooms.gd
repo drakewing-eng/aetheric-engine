@@ -32,6 +32,10 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_drawing_room.jpg"},
 			{"kind": "painting", "pos": [-4.3, 1.85, 1.8], "yaw": 90.0, "width": 0.75, "height": 0.95,
 				"texture": "res://assets/rooms/richmond_entrance_hall.jpg"},
+			{"kind": "painting", "pos": [0.0, 2.15, -4.7], "yaw": 0.0, "width": 1.15, "height": 0.95,
+				"texture": "res://assets/rooms/richmond_drawing_room.jpg"},
+			{"kind": "painting", "pos": [3.2, 2.1, -4.7], "yaw": 0.0, "width": 0.85, "height": 0.8,
+				"texture": "res://assets/rooms/richmond_gallery.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.2, 4.42], "yaw": 180.0, "width": 1.55, "height": 2.4},
 		],
 		"props": [
@@ -448,9 +452,9 @@ const ROOMS := {
 		"wallpaper": TEX + "wallpaper_workshop.jpg",
 		"wainscot": TEX + "wainscot_workshop.jpg",
 		"floor_texture": TEX + "floor_workshop.jpg",
-		"floor_color": Color(0.22, 0.16, 0.11),
-		"light_energy": 1.15,
-		"light_color": Color(1.0, 0.82, 0.55),
+		"floor_color": Color(0.18, 0.13, 0.09),
+		"light_energy": 1.05,
+		"light_color": Color(1.0, 0.78, 0.5),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [4.85, 1.2, 0.0], "yaw": -90.0, "width": 1.55, "height": 2.4},
@@ -462,6 +466,8 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_gallery.jpg"},
 			{"kind": "painting", "pos": [0.0, 2.2, 4.2], "yaw": 180.0, "width": 1.0, "height": 0.75,
 				"texture": "res://assets/rooms/richmond_workshop.jpg"},
+			{"kind": "painting", "pos": [4.5, 2.0, 2.0], "yaw": -90.0, "width": 0.75, "height": 0.6,
+				"texture": "res://assets/rooms/richmond_kitchen.jpg"},
 		],
 		"props": [
 			{"kind": "workbench", "pos": [-2.5, 0.0, -2.8], "yaw": 0.0, "width": 2.8},
@@ -509,6 +515,12 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [2.2, 0.0, 1.2], "scale": 0.7},
 			{"kind": "stool", "pos": [-3.0, 0.0, 0.5], "yaw": 45.0},
 			{"kind": "workbench", "pos": [-2.0, 0.0, 3.0], "yaw": 10.0, "width": 1.8},
+			# Floor clutter / oil-stain still-life (breaks empty boards)
+			{"kind": "crate", "pos": [0.8, 0.0, -0.5], "scale": 0.5},
+			{"kind": "crate", "pos": [-0.6, 0.0, 0.8], "scale": 0.45},
+			{"kind": "copper_pot", "pos": [1.0, 0.0, 1.5], "scale": 0.55},
+			{"kind": "stool", "pos": [2.5, 0.0, 0.2], "yaw": -40.0},
+			{"kind": "wall_shelf", "pos": [-2.0, 0.0, 4.15], "yaw": 180.0, "width": 2.0, "shelf_y": 1.9},
 		],
 		"doors": [
 			{
@@ -649,10 +661,10 @@ const ROOMS := {
 		"wallpaper": TEX + "wallpaper_kitchen.jpg",
 		"wainscot": TEX + "wainscot_kitchen.jpg",
 		"floor_texture": TEX + "floor_kitchen.jpg",
-		"floor_color": Color(0.38, 0.3, 0.22),
-		"ceiling_color": Color(0.78, 0.72, 0.62),
-		"light_energy": 0.95,
-		"light_color": Color(1.0, 0.65, 0.35),
+		"floor_color": Color(0.34, 0.26, 0.18),
+		"ceiling_color": Color(0.72, 0.65, 0.55),
+		"light_energy": 0.88,
+		"light_color": Color(1.0, 0.62, 0.32),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [0.0, 1.15, -3.85], "yaw": 0.0, "width": 1.55, "height": 2.35},
