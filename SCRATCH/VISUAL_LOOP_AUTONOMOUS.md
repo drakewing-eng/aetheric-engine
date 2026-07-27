@@ -44,7 +44,8 @@
 - Loop15: all-palm conservatory; dim kitchen; workshop paintings
 - Loop16: short-wide palms; gallery denser; kitchen rug; morning pattern
 - Loop17: kitchen wall shelves; conservatory glass; plant sink
-- Loop18: hall shelves no longer span doorway; conservatory corner plant fill; wall_shelf brackets
+- Loop18: hall shelves off doorway; conservatory corners; shelf brackets
+- Loop19: plant scissor 0.32 keeps stems; drawing N wall paintings; workshop floor clutter; kitchen darker/warmer
 
 ## Do not
 - Delete prop lists from fps_rooms
