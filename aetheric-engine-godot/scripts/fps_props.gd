@@ -427,15 +427,20 @@ static func _make_hall_table(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(-0.28, 0.925, 0.02), Vector3(0.22, 0.008, 0.12), PAPER.darkened(0.08), false)
 	# Gloves / handkerchief
 	_add_box(root, Vector3(0.15, 0.87, 0.1), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.1), false, 0.9)
-	# Argand-style oil lamp (brass column + glass chimney)
-	_add_cylinder(root, Vector3(0.4, 0.95, -0.05), 0.05, 0.22, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.4, 1.12, -0.05), 0.035, 0.18, Color(0.7, 0.8, 0.85, 0.5), false, 0.15, true)
-	_add_cylinder(root, Vector3(0.4, 0.88, -0.05), 0.08, 0.04, BRASS, false, 0.3, true)
+	# Argand oil lamp (solid frosted chimney — alpha glass reads black)
+	_add_cylinder(root, Vector3(0.4, 0.9, -0.05), 0.07, 0.05, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.4, 1.0, -0.05), 0.028, 0.18, BRASS.darkened(0.05), false, 0.3, true)
+	_add_cylinder(root, Vector3(0.4, 1.15, -0.05), 0.04, 0.22, Color(0.88, 0.9, 0.85), false, 0.4)
+	_add_cylinder(root, Vector3(0.4, 1.28, -0.05), 0.025, 0.03, BRASS, false, 0.3, true)
+	_add_sphere_blob(root, Vector3(0.4, 1.08, -0.05), 0.025, Color(1.0, 0.8, 0.4))
+	# Small clock / vase
+	_add_cylinder(root, Vector3(-0.05, 0.95, -0.1), 0.05, 0.16, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(-0.05, 1.05, -0.1), Vector3(0.08, 0.08, 0.04), Color(0.85, 0.82, 0.75), false, 0.5)
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.55
-	lamp.omni_range = 3.0
-	lamp.position = Vector3(0.4, 1.25, -0.05)
+	lamp.light_energy = 0.6
+	lamp.omni_range = 3.2
+	lamp.position = Vector3(0.4, 1.2, -0.05)
 	root.add_child(lamp)
 	_add_contact_shadow(root, 0.78, 0.38)
 	return root
@@ -702,7 +707,7 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
 	_add_cylinder(root, Vector3(-width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
-	# Tools / gauges / paper / wrench
+	# Tools / gauges / paper / wrench / vice suggestion
 	_add_box(root, Vector3(-0.4, 0.93, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
 	_add_box(root, Vector3(0.3, 0.92, -0.1), Vector3(0.4, 0.03, 0.3), PAPER, false)
 	_add_box(root, Vector3(0.35, 0.94, -0.08), Vector3(0.28, 0.01, 0.2), PAPER.darkened(0.08), false)
@@ -710,6 +715,10 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(-0.7, 0.97, -0.15), 0.05, 0.14, COPPER, false, 0.35, true)
 	_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), IRON, false, 0.4)
 	_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), IRON.lightened(0.1), false, 0.4)
+	_add_box(root, Vector3(0.75, 0.98, -0.2), Vector3(0.2, 0.12, 0.15), IRON, false, 0.4)
+	_add_cylinder(root, Vector3(0.75, 1.08, -0.2), 0.03, 0.1, IRON.lightened(0.1), false, 0.4)
+	_add_box(root, Vector3(-0.55, 0.95, 0.0), Vector3(0.25, 0.02, 0.18), Color(0.2, 0.14, 0.1), false, 0.6)
+	_add_cylinder(root, Vector3(0.15, 0.98, 0.15), 0.04, 0.1, COPPER, false, 0.35, true)
 	_add_contact_shadow(root, width * 0.5, 0.55)
 	return root
 

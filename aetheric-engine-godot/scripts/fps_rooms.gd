@@ -130,6 +130,10 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [1.5, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 			{"kind": "stool", "pos": [0.5, 0.0, 1.2], "yaw": -15.0},
 			{"kind": "copper_pot", "pos": [-3.5, 0.0, 1.5], "scale": 0.5},
+			{"kind": "crate", "pos": [3.5, 0.0, 2.2], "scale": 0.5},
+			{"kind": "stool", "pos": [-1.5, 0.0, 0.8], "yaw": 50.0},
+			{"kind": "plant", "pos": [3.6, 0.0, -3.2], "scale": 0.85,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.1},
 		],
 		"doors": [
 			{
