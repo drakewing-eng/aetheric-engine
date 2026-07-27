@@ -372,19 +372,27 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	_add_portal_box(root, Vector3(0.35, 0.22, -depth + 0.4), Vector3(0.06, 0.44, 0.06), Color(0.18, 0.1, 0.06))
 	# Runner strip on portal floor
 	_add_portal_box(root, Vector3(0, 0.05, -depth * 0.5), Vector3(door_w * 0.45, 0.02, depth * 0.9), Color(0.35, 0.15, 0.1))
-	# Warm corridor lights
+	# Chair rail + skirting in portal
+	_add_portal_box(root, Vector3(0, 0.08, -depth * 0.5), Vector3(door_w + 0.15, 0.1, depth), Color(0.22, 0.14, 0.09), wood_tex, Vector3(1.5, 0.4, 1.0))
+	# Warm corridor lights + mid sconce glow
 	var dim := OmniLight3D.new()
 	dim.light_color = Color(1.0, 0.85, 0.6)
-	dim.light_energy = 0.7
-	dim.omni_range = depth + 1.8
+	dim.light_energy = 0.85
+	dim.omni_range = depth + 2.0
 	dim.position = Vector3(0, door_h * 0.65, -depth * 0.35)
 	root.add_child(dim)
 	var far_l := OmniLight3D.new()
 	far_l.light_color = Color(1.0, 0.78, 0.5)
-	far_l.light_energy = 0.55
-	far_l.omni_range = 2.5
+	far_l.light_energy = 0.65
+	far_l.omni_range = 2.8
 	far_l.position = Vector3(0, door_h * 0.55, -depth + 0.55)
 	root.add_child(far_l)
+	var side_l := OmniLight3D.new()
+	side_l.light_color = Color(1.0, 0.82, 0.55)
+	side_l.light_energy = 0.35
+	side_l.omni_range = 1.8
+	side_l.position = Vector3(door_w * 0.35, door_h * 0.55, -depth * 0.6)
+	root.add_child(side_l)
 
 
 func _add_portal_box(

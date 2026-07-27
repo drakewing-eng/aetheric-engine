@@ -372,6 +372,7 @@ const ROOMS := {
 		# Soft gallery paper for period pattern (morning white was too blank)
 		"wallpaper": TEX + "wallpaper_gallery.jpg",
 		"wainscot": TEX + "wainscot_morning.jpg",
+		"wainscot_height": 1.35,
 		"floor_texture": TEX + "floor_morning.jpg",
 		"floor_color": Color(0.38, 0.28, 0.18),
 		"light_energy": 1.15,
@@ -416,6 +417,11 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [3.0, 0.0, -0.5], "scale": 0.55},
 			{"kind": "hall_table", "pos": [-0.5, 0.0, 2.2], "yaw": 5.0},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 2.9},
+			{"kind": "plant", "pos": [3.0, 0.0, -2.5], "scale": 0.85,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.8, "height": 1.05},
+			{"kind": "side_table", "pos": [-2.8, 0.0, 2.0], "yaw": -10.0},
+			{"kind": "chair", "pos": [0.8, 0.0, 1.8], "yaw": 160.0, "fabric": Color(0.4, 0.3, 0.22)},
+			{"kind": "wall_shelf", "pos": [3.5, 0.0, 0.0], "yaw": -90.0, "width": 1.6, "shelf_y": 1.7},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -584,8 +590,8 @@ const ROOMS := {
 		"ceiling_color": Color(0.68, 0.78, 0.72),
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
-		# Tall green-tinted dado covers most solid plaster (glass walls still dominate)
-		"wainscot_height": 2.6,
+		# Nearly full-height dado on solid panels (glass still primary)
+		"wainscot_height": 3.2,
 		"walls": {},
 		"features": [
 			{"kind": "glass_wall", "pos": [4.35, 0.0, 0.0], "yaw": -90.0, "width": 3.8, "height": 3.5},
