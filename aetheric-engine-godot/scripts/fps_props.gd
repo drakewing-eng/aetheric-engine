@@ -758,6 +758,7 @@ static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 	root.name = "WallShelf"
 	var width: float = float(prop.get("width", 2.4))
 	var y: float = float(prop.get("shelf_y", 1.85))
+	var seed0: int = int(prop.get("seed", 0))
 	# Bracketed shelf: main board + two supports + back rail
 	_add_box(root, Vector3(0, y, 0.04), Vector3(width, 0.05, 0.16), MAHOGANY, true, 0.5)
 	_add_box(root, Vector3(0, y + 0.08, -0.02), Vector3(width * 0.98, 0.04, 0.04), MAHOGANY_DARK, false, 0.5)
@@ -766,43 +767,69 @@ static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 	var n := int(clampf(width / 0.38, 3.0, 8.0))
 	for i in n:
 		var x := -width * 0.38 + float(i) * (width * 0.76 / float(maxi(n - 1, 1)))
-		if i % 3 == 0:
-			_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.035, CREAM, false, 0.7)
-		elif i % 3 == 1:
-			_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.055, 0.1, COPPER, false, 0.35, true)
+		var kind := (i + seed0) % 4
+		if kind == 0:
+			_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07 + float(i % 2) * 0.015, 0.035, CREAM if (i + seed0) % 2 == 0 else CREAM.darkened(0.08), false, 0.7)
+		elif kind == 1:
+			_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.05 + float((i + seed0) % 3) * 0.01, 0.1, COPPER if i % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
+		elif kind == 2:
+			_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.055, 0.12, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.1), false, 0.75)
 		else:
 			_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.06, 0.05, Color(0.72, 0.68, 0.6), false, 0.65)
 	return root
 
 
-static func _make_pot_rack(_prop: Dictionary) -> Node3D:
-	## Wall copper pan rail — larger pots so silhouette reads from room center.
+static func _make_pot_rack(prop: Dictionary) -> Node3D:
+	## Wall copper pan rail — varied pan sizes/colours (no identical row).
 	var root := Node3D.new()
 	root.name = "PotRack"
+	var seed0: int = int(prop.get("seed", 0))
 	_add_box(root, Vector3(0, 2.2, 0), Vector3(2.0, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
 	_add_box(root, Vector3(-0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
 	_add_box(root, Vector3(0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
 	for i in 5:
 		var x := -0.7 + i * 0.35
 		_add_cylinder(root, Vector3(x, 2.08, 0.06), 0.015, 0.14, IRON, false, 0.4)
-		var pr: float = 0.14 + (i % 3) * 0.03
-		_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, 0.12, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.04, COPPER.lightened(0.08), false, 0.35, true)
-		# handle
-		_add_box(root, Vector3(x + pr * 0.7, 1.82, 0.1), Vector3(0.04, 0.06, 0.1), COPPER, false, 0.35)
+		var pr: float = 0.11 + float((i + seed0) % 4) * 0.025
+		var ph: float = 0.08 + float((i * 2 + seed0) % 3) * 0.03
+		var pcol := COPPER if (i + seed0) % 3 != 2 else COPPER.darkened(0.1)
+		_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, ph, pcol, false, 0.35, true)
+		_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.035, pcol.lightened(0.08), false, 0.35, true)
+		if (i + seed0) % 2 == 0:
+			_add_box(root, Vector3(x + pr * 0.7, 1.82, 0.1), Vector3(0.04, 0.06, 0.1), pcol, false, 0.35)
+		else:
+			_add_box(root, Vector3(x, 1.95, 0.12), Vector3(pr * 1.2, 0.02, 0.02), pcol.darkened(0.05), false, 0.35)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
+	## seed picks kettle / wide pan / tall stockpot so still-lifes aren't clones.
 	var root := Node3D.new()
 	root.name = "CopperPot"
 	var scale: float = prop.get("scale", 1.0)
-	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, COPPER, true, 0.35, true)
-	_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, COPPER.lightened(0.1), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.25 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.18, 0.1, 0.06), false)
-	# Bail handles both sides
-	_add_box(root, Vector3(0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), COPPER, false, 0.35)
-	_add_box(root, Vector3(-0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), COPPER, false, 0.35)
-	_add_box(root, Vector3(0, 0.3 * scale, 0), Vector3(0.34 * scale, 0.02 * scale, 0.02 * scale), COPPER.darkened(0.05), false, 0.35)
+	var seed0: int = int(prop.get("seed", 0))
+	var style := seed0 % 3
+	var col := COPPER if style != 2 else COPPER.darkened(0.08)
+	if style == 0:
+		# Classic kettle
+		_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, col, true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, col.lightened(0.1), false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.25 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.18, 0.1, 0.06), false)
+		_add_box(root, Vector3(0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), col, false, 0.35)
+		_add_box(root, Vector3(0, 0.3 * scale, 0), Vector3(0.34 * scale, 0.02 * scale, 0.02 * scale), col.darkened(0.05), false, 0.35)
+	elif style == 1:
+		# Wide shallow pan
+		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.18 * scale, 0.12 * scale, col.lightened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.15 * scale, 0), 0.19 * scale, 0.025 * scale, col, false, 0.3, true)
+		_add_box(root, Vector3(0.2 * scale, 0.1 * scale, 0), Vector3(0.12 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.2 * scale, 0.1 * scale, 0), Vector3(0.12 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
+	else:
+		# Tall stockpot with lid knob
+		_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.3 * scale, col.darkened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.125 * scale, 0.03 * scale, col, false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.36 * scale, 0), 0.04 * scale, 0.05 * scale, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
 	_add_contact_shadow(root, 0.18 * scale, 0.18 * scale)
 	return root
 
@@ -878,25 +905,49 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Crate"
 	var s: float = prop.get("scale", 1.0)
-	_add_box(root, Vector3(0, 0.22 * s, 0), Vector3(0.55 * s, 0.42 * s, 0.45 * s), OAK, true, 0.6)
-	_add_box(root, Vector3(0, 0.42 * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), OAK.darkened(0.1), false, 0.55)
-	# Batten straps
-	_add_box(root, Vector3(0, 0.22 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), OAK.darkened(0.15), false, 0.55)
-	_add_box(root, Vector3(0, 0.22 * s, -0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), OAK.darkened(0.15), false, 0.55)
+	var seed0: int = int(prop.get("seed", 0))
+	var wood := OAK if seed0 % 2 == 0 else OAK.darkened(0.12)
+	var h: float = 0.38 + float(seed0 % 3) * 0.04
+	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.6)
+	_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.55)
+	# Batten straps (orientation varies by seed)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(0, h * 0.5 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
+		_add_box(root, Vector3(0, h * 0.5 * s, -0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
+	else:
+		_add_box(root, Vector3(0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
+		_add_box(root, Vector3(-0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
+	if seed0 % 3 == 0:
+		_add_box(root, Vector3(0, h * 0.55 * s, 0.24 * s), Vector3(0.08 * s, 0.04 * s, 0.02 * s), IRON, false, 0.4)
 	_add_contact_shadow(root, 0.3 * s, 0.25 * s)
 	return root
 
-static func _make_stool(_prop: Dictionary) -> Node3D:
+static func _make_stool(prop: Dictionary) -> Node3D:
+	## seed: 0 tripod oak · 1 four-leg square · 2 padded seat
 	var root := Node3D.new()
 	root.name = "Stool"
-	_add_cylinder(root, Vector3(0, 0.48, 0), 0.2, 0.06, OAK, true, 0.55)
-	_add_cylinder(root, Vector3(0, 0.45, 0), 0.16, 0.03, OAK.darkened(0.1), false, 0.55)
-	for a in [0.0, 120.0, 240.0]:
-		var rad := deg_to_rad(a)
-		_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.24, sin(rad) * 0.13), 0.028, 0.48, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.03, sin(rad) * 0.13), 0.035, 0.04, MAHOGANY, true)
-	# Leg stretchers
-	_add_box(root, Vector3(0, 0.15, 0), Vector3(0.22, 0.025, 0.22), MAHOGANY_DARK, false, 0.5)
+	var seed0: int = int(prop.get("seed", 0))
+	var style := seed0 % 3
+	if style == 0:
+		_add_cylinder(root, Vector3(0, 0.48, 0), 0.2, 0.06, OAK, true, 0.55)
+		_add_cylinder(root, Vector3(0, 0.45, 0), 0.16, 0.03, OAK.darkened(0.1), false, 0.55)
+		for a in [0.0, 120.0, 240.0]:
+			var rad := deg_to_rad(a)
+			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.24, sin(rad) * 0.13), 0.028, 0.48, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.03, sin(rad) * 0.13), 0.035, 0.04, MAHOGANY, true)
+		_add_box(root, Vector3(0, 0.15, 0), Vector3(0.22, 0.025, 0.22), MAHOGANY_DARK, false, 0.5)
+	elif style == 1:
+		_add_box(root, Vector3(0, 0.5, 0), Vector3(0.36, 0.05, 0.36), OAK.lightened(0.05), true, 0.55)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_box(root, Vector3(sx * 0.13, 0.24, sz * 0.13), Vector3(0.04, 0.48, 0.04), MAHOGANY_DARK, true, 0.5)
+		_add_box(root, Vector3(0, 0.14, 0), Vector3(0.28, 0.03, 0.28), MAHOGANY, false, 0.5)
+	else:
+		_add_cylinder(root, Vector3(0, 0.5, 0), 0.18, 0.08, VELVET_GREEN.darkened(0.05), true, 0.9)
+		_add_cylinder(root, Vector3(0, 0.44, 0), 0.16, 0.04, MAHOGANY, false, 0.45)
+		for a in [0.0, 90.0, 180.0, 270.0]:
+			var rad := deg_to_rad(a)
+			_add_cylinder(root, Vector3(cos(rad) * 0.11, 0.22, sin(rad) * 0.11), 0.025, 0.44, MAHOGANY_DARK, true)
 	_add_contact_shadow(root, 0.22, 0.22)
 	return root
 
