@@ -384,20 +384,18 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
 		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Argand oil lamp — brass dominates so it never reads as a white candle
+	# Argand oil lamp — brass base + warm frosted chimney (not black tube)
 	_add_cylinder(root, Vector3(0, 0.69, 0), 0.09, 0.06, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS.darkened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(0, 0.92, 0), 0.05, 0.04, BRASS, false, 0.28, true)
-	# Glass chimney: cool tint, semi-opaque
-	_add_cylinder(root, Vector3(0, 1.08, 0), 0.038, 0.32, Color(0.65, 0.78, 0.85, 0.55), false, 0.15, true)
-	_add_cylinder(root, Vector3(0, 1.26, 0), 0.028, 0.035, BRASS, false, 0.28, true)
-	# Warm flame glow sphere
-	_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.035, Color(1.0, 0.75, 0.35))
+	_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
+	_add_cylinder(root, Vector3(0, 1.25, 0), 0.03, 0.035, BRASS, false, 0.28, true)
+	_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.03, Color(1.0, 0.8, 0.4))
 	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
 	_add_contact_shadow(root, 0.34, 0.34)
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.5
+	lamp.light_energy = 0.55
 	lamp.omni_range = 2.6
 	lamp.position = Vector3(0, 1.0, 0)
 	root.add_child(lamp)
@@ -773,35 +771,23 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	var leaf_b := Color(0.18, 0.36, 0.14)
 	var leaf_c := Color(0.32, 0.5, 0.24)
 	var stem_col := Color(0.2, 0.3, 0.12)
-	# Terracotta pot + soil (grounded silhouette)
+	# Terracotta pot + soil
 	_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.2 * scale, 0.34 * scale, CLAY, true, 0.88)
 	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.1), false, 0.88)
 	_add_cylinder(root, Vector3(0, 0.37 * scale, 0), 0.17 * scale, 0.04 * scale, Color(0.16, 0.1, 0.06), false, 0.9)
-	var stem_h := 0.5 * scale if tall else 0.26 * scale
+	var stem_h := 0.42 * scale if tall else 0.22 * scale
 	_add_cylinder(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, stem_col, false, 0.9)
-	# Palm-like fronds: thin boxes fanned outward (not stacked topiary balls)
+	# Bush canopy: layered horizontal discs + small spheres (no look_at pinwheels)
 	var crown_y := 0.42 * scale + stem_h
-	var frond_n := 8 if tall else 6
-	for i in frond_n:
-		var ang := float(i) * (TAU / float(frond_n)) + 0.15
-		var len_f := (0.38 if tall else 0.28) * scale
-		var tip := Vector3(cos(ang) * len_f * 0.55, crown_y + 0.08 * scale, sin(ang) * len_f * 0.55)
-		var leaf := MeshInstance3D.new()
-		var bm := BoxMesh.new()
-		bm.size = Vector3(0.06 * scale, 0.02 * scale, len_f)
-		leaf.mesh = bm
-		var lmat := StandardMaterial3D.new()
-		lmat.albedo_color = leaf_a if i % 2 == 0 else leaf_b
-		lmat.roughness = 0.9
-		lmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-		leaf.material_override = lmat
-		leaf.position = tip
-		leaf.look_at(Vector3(0, crown_y - 0.05 * scale, 0), Vector3.UP)
-		root.add_child(leaf)
-	# Soft crown mass at tip
-	_add_sphere_blob(root, Vector3(0, crown_y + 0.06 * scale, 0), 0.12 * scale, leaf_c)
-	if tall:
-		_add_sphere_blob(root, Vector3(0.05 * scale, crown_y + 0.14 * scale, 0.02 * scale), 0.09 * scale, leaf_a)
+	var layers := 4 if tall else 3
+	for li in layers:
+		var ly := crown_y + float(li) * 0.09 * scale
+		var lr := (0.22 - float(li) * 0.03) * scale
+		_add_cylinder(root, Vector3(0, ly, 0), lr, 0.05 * scale, leaf_a if li % 2 == 0 else leaf_b, false, 0.92)
+		_add_sphere_blob(root, Vector3(lr * 0.4, ly + 0.02 * scale, 0), lr * 0.45, leaf_c)
+		_add_sphere_blob(root, Vector3(-lr * 0.35, ly, lr * 0.3), lr * 0.4, leaf_a)
+		_add_sphere_blob(root, Vector3(0.05 * scale, ly + 0.03 * scale, -lr * 0.35), lr * 0.38, leaf_b)
+	_add_sphere_blob(root, Vector3(0, crown_y + float(layers) * 0.09 * scale, 0), 0.1 * scale, leaf_c)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
 
@@ -862,7 +848,7 @@ static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
 # ─── Features ────────────────────────────────────────────────────────────────
 
 static func _make_chandelier(_prop: Dictionary) -> Node3D:
-	## Simple brass gasolier hanging from ceiling — period silhouette.
+	## Brass gasolier — warm glass shades (never black iron).
 	var root := Node3D.new()
 	root.name = "Chandelier"
 	var hang: float = float(_prop.get("hang", 2.95))
@@ -875,10 +861,11 @@ static func _make_chandelier(_prop: Dictionary) -> Node3D:
 		var az := sin(rad) * 0.28
 		_add_box(root, Vector3(ax * 0.5, hang - 0.02, az * 0.5), Vector3(0.28, 0.025, 0.025), BRASS, false, 0.3)
 		_add_cylinder(root, Vector3(ax, hang - 0.12, az), 0.04, 0.08, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.05, 0.1, Color(0.85, 0.78, 0.55, 0.7), false, 0.2, true)
+		# Frosted glass shade — solid warm cream (alpha glass read black under metal mat)
+		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.055, 0.12, Color(0.92, 0.86, 0.7), false, 0.55)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.88, 0.6)
-	light.light_energy = 0.85
+	light.light_energy = 0.95
 	light.omni_range = 7.0
 	light.position = Vector3(0, hang - 0.2, 0)
 	root.add_child(light)
