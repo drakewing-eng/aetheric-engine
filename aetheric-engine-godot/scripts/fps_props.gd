@@ -1351,11 +1351,11 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	var vtex := _load_tex(view_path)
 	if vtex:
 		vmat.albedo_texture = vtex
-		vmat.albedo_color = Color(0.95, 0.95, 0.92)
+		vmat.albedo_color = Color(1.0, 1.0, 0.98)
 	else:
 		vmat.albedo_color = Color(0.45, 0.62, 0.78)
-	vmat.roughness = 0.95
-	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	vmat.roughness = 1.0
+	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	view_mi.material_override = vmat
 	view_mi.position = Vector3(0, h * 0.5, -0.07)
 	root.add_child(view_mi)
@@ -1600,12 +1600,13 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 		tex = _load_tex(ART_LANDSCAPES[0])
 	if tex:
 		cmat.albedo_texture = tex
-		cmat.albedo_color = Color(0.92, 0.88, 0.78)  # varnish warmth
+		cmat.albedo_color = Color(1.0, 0.98, 0.92)
 		cmat.uv1_scale = Vector3(1.0, 1.0, 1.0)
 	else:
-		cmat.albedo_color = Color(0.28, 0.35, 0.28)
-	cmat.roughness = 0.7
-	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		cmat.albedo_color = Color(0.35, 0.48, 0.55)
+	# Unshaded so landscapes stay readable in dim Victorian rooms
+	cmat.roughness = 0.85
+	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	canvas.material_override = cmat
 	canvas.position = Vector3(0, 0, 0.05)
 	root.add_child(canvas)
