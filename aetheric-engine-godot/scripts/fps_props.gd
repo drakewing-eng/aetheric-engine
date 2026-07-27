@@ -27,6 +27,11 @@ const STONE := Color(0.55, 0.52, 0.46)
 const CHALK := Color(0.35, 0.38, 0.32)
 
 const TEX_WOOD := "res://assets/rooms/textures/victorian/furniture_wood.jpg"
+const TEX_WOOD_MAHOGANY := "res://assets/rooms/textures/wood/wood_mahogany.jpg"
+const TEX_WOOD_OAK := "res://assets/rooms/textures/wood/wood_oak.jpg"
+const TEX_WOOD_PINE := "res://assets/rooms/textures/wood/wood_pine.jpg"
+const TEX_WOOD_SCRUBBED := "res://assets/rooms/textures/wood/wood_scrubbed.jpg"
+const TEX_WOOD_EBONY := "res://assets/rooms/textures/wood/wood_ebony.jpg"
 const TEX_VELVET_RED := "res://assets/rooms/textures/victorian/fabric_velvet_red.jpg"
 const TEX_VELVET_GREEN := "res://assets/rooms/textures/victorian/fabric_velvet_green.jpg"
 const TEX_VELVET_GREEN_DEEP := "res://assets/rooms/textures/victorian/fabric_velvet_green_deep.jpg"
@@ -38,6 +43,29 @@ const TEX_LINEN := "res://assets/rooms/textures/victorian/fabric_linen.jpg"
 const TEX_STONE := "res://assets/rooms/textures/victorian/stone_flag.jpg"
 const TEX_PLASTER := "res://assets/rooms/textures/victorian/plaster_cream.jpg"
 const TEX_MARBLE := "res://assets/rooms/textures/victorian/marble.jpg"
+
+# Victorian wall art — NEVER use room photos as paintings (reads as wrong window).
+const ART_LANDSCAPES := [
+	"res://assets/rooms/textures/art/landscape_pastoral.jpg",
+	"res://assets/rooms/textures/art/landscape_pastoral2.jpg",
+	"res://assets/rooms/textures/art/landscape_seascape.jpg",
+	"res://assets/rooms/textures/art/landscape_storm.jpg",
+	"res://assets/rooms/textures/art/landscape_park.jpg",
+]
+const ART_STILL_LIFES := [
+	"res://assets/rooms/textures/art/still_life_fruit.jpg",
+	"res://assets/rooms/textures/art/still_life_dark.jpg",
+]
+const VIEW_EXTERIORS := [
+	"res://assets/rooms/textures/views/view_garden.jpg",
+	"res://assets/rooms/textures/views/view_garden2.jpg",
+	"res://assets/rooms/textures/views/view_yard.jpg",
+	"res://assets/rooms/textures/views/view_street.jpg",
+	"res://assets/rooms/textures/views/view_night.jpg",
+]
+
+# Cached procedural textures (performance: generate once per process)
+static var _tex_cache: Dictionary = {}
 
 static func spawn_all(parent: Node3D, props: Array) -> void:
 	var root := Node3D.new()
@@ -690,11 +718,12 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	root.name = "PrepTable"
 	var width: float = prop.get("width", 1.8)
 	var seed0: int = int(prop.get("seed", 0))
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), OAK.lightened(0.15), true, 0.65)
-	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), OAK, false, 0.55)
+	# Scrubbed pale work-top (reads as board, not mahogany furniture)
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), Color(0.72, 0.62, 0.42), true, 0.72)
+	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), Color(0.55, 0.42, 0.28), false, 0.55)
 	for lx in [-width * 0.4, width * 0.4]:
 		for lz in [-0.32, 0.32]:
-			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), OAK.darkened(0.1), true, 0.5)
+			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), Color(0.38, 0.26, 0.14), true, 0.55)
 	# Stretchers
 	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
 	# Varied still-life — avoid clone white cylinders
@@ -1290,6 +1319,8 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_window(feat: Dictionary) -> Node3D:
+	## Sash-style window with OUTSIDE view plate behind glass (garden/street/yard).
+	## Never a room photo — that reads as a painting/mirror mistake.
 	var root := Node3D.new()
 	root.name = "Window"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -1297,24 +1328,56 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 1.1)
 	var h: float = feat.get("height", 1.85)
+	var seed0: int = int(feat.get("seed", int(absf(pos[0] * 10.0 + pos[2] * 3.0))))
 	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(w + 0.08, h + 0.08, 0.14), MAHOGANY, true, 0.35)
+	# Architrave + sill (period sash)
+	_add_box(root, Vector3(0, h + 0.04, 0.02), Vector3(w + 0.18, 0.08, 0.16), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(0, 0.04, 0.08), Vector3(w + 0.2, 0.08, 0.22), MAHOGANY, false, 0.42)
 	# Mullion cross
 	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(0.05, h - 0.15, 0.04), MAHOGANY_DARK, false, 0.4)
 	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(w - 0.15, 0.05, 0.04), MAHOGANY_DARK, false, 0.4)
-	# Solid cool glass panes (alpha glass often reads black)
-	var gcol := Color(0.62, 0.76, 0.88)
-	_add_box(root, Vector3(-w * 0.22, h * 0.72, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
-	_add_box(root, Vector3(w * 0.22, h * 0.72, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
-	_add_box(root, Vector3(-w * 0.22, h * 0.28, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
-	_add_box(root, Vector3(w * 0.22, h * 0.28, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
-	# Exterior sky plate
-	_add_box(root, Vector3(0, h * 0.5, -0.06), Vector3(w * 0.9, h * 0.9, 0.03), Color(0.52, 0.66, 0.8), false, 0.95)
-	# Cool window fill light
+	# Exterior view plate (behind glass)
+	var view_path: String = str(feat.get("view", ""))
+	if view_path == "" or view_path.find("richmond_") >= 0 or view_path.find("wallpaper_") >= 0:
+		view_path = VIEW_EXTERIORS[seed0 % VIEW_EXTERIORS.size()]
+	var view_mi := MeshInstance3D.new()
+	var vm := BoxMesh.new()
+	vm.size = Vector3(w * 0.92, h * 0.92, 0.02)
+	view_mi.mesh = vm
+	var vmat := StandardMaterial3D.new()
+	var vtex := _load_tex(view_path)
+	if vtex:
+		vmat.albedo_texture = vtex
+		vmat.albedo_color = Color(0.95, 0.95, 0.92)
+	else:
+		vmat.albedo_color = Color(0.45, 0.62, 0.78)
+	vmat.roughness = 0.95
+	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	view_mi.material_override = vmat
+	view_mi.position = Vector3(0, h * 0.5, -0.07)
+	root.add_child(view_mi)
+	# Cool glass panes over view (slight alpha so exterior reads through)
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.7, 0.82, 0.9, 0.22)
+	gmat.metallic = 0.15
+	gmat.roughness = 0.08
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for ox in [-1.0, 1.0]:
+		for oy in [0.72, 0.28]:
+			var pane := MeshInstance3D.new()
+			var pm := BoxMesh.new()
+			pm.size = Vector3(w * 0.38, h * 0.36, 0.015)
+			pane.mesh = pm
+			pane.material_override = gmat
+			pane.position = Vector3(ox * w * 0.22, h * oy, 0.04)
+			root.add_child(pane)
+	# One fill light only (perf: not every pane)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color(0.75, 0.85, 0.95)
-	fill.light_energy = 0.55
-	fill.omni_range = 4.0
-	fill.position = Vector3(0, h * 0.5, 0.4)
+	fill.light_color = Color(0.78, 0.88, 0.98)
+	fill.light_energy = 0.4
+	fill.omni_range = 3.5
+	fill.position = Vector3(0, h * 0.55, 0.35)
 	root.add_child(fill)
 	return root
 
@@ -1444,19 +1507,47 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
+	## Victorian overmantel / wall mirror: gilt frame + silvered glass that
+	## *reads as reflective* (metallic + env) — not a room photo in a frame.
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
 	root.position = Vector3(pos[0], pos[1], pos[2])
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
-	_add_box(root, Vector3(0, 0, 0), Vector3(1.1, 1.5, 0.1), BRASS, true, 0.4)
-	_add_box(root, Vector3(0, 0, 0.03), Vector3(0.95, 1.35, 0.04), Color(0.5, 0.36, 0.16), false, 0.4)
-	# Solid silvered glass (alpha glass often reads black)
-	_add_box(root, Vector3(0, 0, 0.06), Vector3(0.82, 1.18, 0.02), Color(0.7, 0.78, 0.85), false, 0.15)
+	var w: float = float(feat.get("width", 1.05))
+	var h: float = float(feat.get("height", 1.45))
+	# Ornate gilt frame + dark liner
+	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.08, h + 0.08, 0.1), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.03), Vector3(w - 0.02, h - 0.02, 0.04), BRASS.darkened(0.15), false, 0.35)
+	_add_box(root, Vector3(0, 0, 0.04), Vector3(w - 0.12, h - 0.12, 0.03), Color(0.18, 0.12, 0.08), false, 0.55)
+	# Crest
+	_add_box(root, Vector3(0, h * 0.5 + 0.06, 0.02), Vector3(0.18, 0.1, 0.05), BRASS.lightened(0.08), false, 0.3)
+	# Silvered plate — high metal, low roughness so room lights/env reflect
+	var glass := MeshInstance3D.new()
+	var gm := BoxMesh.new()
+	gm.size = Vector3(w - 0.18, h - 0.18, 0.015)
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.55, 0.62, 0.68)
+	gmat.metallic = 0.95
+	gmat.roughness = 0.06
+	gmat.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
+	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	glass.material_override = gmat
+	glass.position = Vector3(0, 0, 0.055)
+	root.add_child(glass)
+	# Soft catch-light so glass never reads as a black painting hole
+	var catch_l := OmniLight3D.new()
+	catch_l.light_color = Color(0.9, 0.92, 1.0)
+	catch_l.light_energy = 0.25
+	catch_l.omni_range = 1.6
+	catch_l.position = Vector3(0.15, 0.2, 0.35)
+	root.add_child(catch_l)
 	return root
 
 static func _make_painting(feat: Dictionary) -> Node3D:
-	## Gilt frame + canvas. Prefer scene photos over wallpaper (wallpaper reads as empty frame).
+	## Gilt-frame oil: landscape / still life / portrait — NEVER a room photo
+	## (room photos read as windows or nonsense mirrors).
 	var root := Node3D.new()
 	root.name = "Painting"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -1464,33 +1555,56 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 0.85)
 	var h: float = feat.get("height", 1.05)
-	# Outer gilt frame (thicker) + dark inner lip + cord
-	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.04, h + 0.04, 0.09), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.025), Vector3(w - 0.04, h - 0.04, 0.04), Color(0.22, 0.14, 0.08), false, 0.55)
-	_add_box(root, Vector3(0, h * 0.5 + 0.08, 0.01), Vector3(0.03, 0.12, 0.03), BRASS.darkened(0.1), false, 0.35)
+	var seed0: int = int(feat.get("seed", int(absf(pos[0] * 7.0 + pos[2] * 5.0 + w * 11.0))))
+	var kind: String = str(feat.get("art", "auto"))
+	# Outer gilt frame + dark liner + hanging cord knob
+	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.06, h + 0.06, 0.1), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.028), Vector3(w - 0.02, h - 0.02, 0.04), BRASS.darkened(0.12), false, 0.35)
+	_add_box(root, Vector3(0, 0, 0.035), Vector3(w - 0.12, h - 0.12, 0.03), Color(0.2, 0.12, 0.07), false, 0.55)
+	_add_box(root, Vector3(0, h * 0.5 + 0.09, 0.01), Vector3(0.04, 0.1, 0.03), BRASS.darkened(0.1), false, 0.35)
 	var canvas := MeshInstance3D.new()
 	var cm := BoxMesh.new()
-	cm.size = Vector3(w - 0.16, h - 0.16, 0.02)
+	cm.size = Vector3(w - 0.18, h - 0.18, 0.02)
 	canvas.mesh = cm
 	var cmat := StandardMaterial3D.new()
 	var tex_path: String = str(feat.get("texture", ""))
-	# Wallpaper-as-painting looks like empty frame — prefer a room scene fallback
-	if tex_path.find("wallpaper_") >= 0 or tex_path == "" or tex_path == TEX_WALLPAPER:
-		tex_path = "res://assets/rooms/richmond_drawing_room.jpg"
+	# Reject wrong textures that look like windows into rooms
+	var bad := (
+		tex_path == ""
+		or tex_path.find("wallpaper_") >= 0
+		or tex_path.find("richmond_") >= 0
+		or tex_path.find("view_") >= 0
+		or tex_path == TEX_WALLPAPER
+	)
+	if bad:
+		if kind == "still_life" or (kind == "auto" and seed0 % 5 == 0):
+			tex_path = ART_STILL_LIFES[seed0 % ART_STILL_LIFES.size()]
+		elif kind == "portrait" or (kind == "auto" and seed0 % 5 == 1):
+			# Character portraits as framed oils (period salon practice)
+			var portraits := [
+				"res://assets/portraits/portrait_bell.jpg",
+				"res://assets/portraits/portrait_selina.jpg",
+				"res://assets/portraits/portrait_amara.jpg",
+				"res://assets/portraits/portrait_clara.jpg",
+				"res://assets/portraits/portrait_rooke.jpg",
+				"res://assets/portraits/portrait_elspeth.jpg",
+			]
+			tex_path = portraits[seed0 % portraits.size()]
+		else:
+			tex_path = ART_LANDSCAPES[seed0 % ART_LANDSCAPES.size()]
 	var tex := _load_tex(tex_path)
 	if tex == null:
-		tex = _load_tex("res://assets/rooms/richmond_entrance_hall.jpg")
+		tex = _load_tex(ART_LANDSCAPES[0])
 	if tex:
 		cmat.albedo_texture = tex
-		cmat.albedo_color = Color(0.95, 0.92, 0.85)
+		cmat.albedo_color = Color(0.92, 0.88, 0.78)  # varnish warmth
 		cmat.uv1_scale = Vector3(1.0, 1.0, 1.0)
 	else:
-		# Painted landscape suggestion if assets missing
-		cmat.albedo_color = Color(0.28, 0.32, 0.38)
-	cmat.roughness = 0.75
+		cmat.albedo_color = Color(0.28, 0.35, 0.28)
+	cmat.roughness = 0.7
 	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	canvas.material_override = cmat
-	canvas.position = Vector3(0, 0, 0.045)
+	canvas.position = Vector3(0, 0, 0.05)
 	root.add_child(canvas)
 	return root
 
@@ -1612,13 +1726,37 @@ static func _load_tex(path: String) -> Texture2D:
 			return ImageTexture.create_from_image(img)
 	return null
 
+static func _wood_path_for_color(color: Color, size: Vector3) -> String:
+	## Species by colour + size: cutting boards/light oak ≠ polished mahogany tables.
+	var area := size.x * size.z
+	var bright := color.v
+	# Tiny light boards (prep surfaces, boxes) → scrubbed / pine
+	if bright > 0.55 or (area < 0.35 and bright > 0.4):
+		if color.g > color.r * 0.85 and bright > 0.6:
+			return TEX_WOOD_SCRUBBED
+		return TEX_WOOD_PINE
+	# Very dark frames / ebony accents
+	if bright < 0.22 or color.r < 0.2:
+		return TEX_WOOD_EBONY
+	# Red-brown polished furniture → mahogany
+	if color.r > color.g + 0.06 and color.r > 0.22 and bright < 0.45:
+		return TEX_WOOD_MAHOGANY
+	# Mid warm brown → oak (shelves, kitchen oak)
+	if bright >= 0.35:
+		return TEX_WOOD_OAK
+	# Fallback generic furniture wood
+	return TEX_WOOD
+
+
 static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardMaterial3D:
 	## Auto-pick wood/fabric/metal texture so furniture isn't flat Minecraft blocks.
+	## Wood species vary so boards ≠ tables ≠ shelves.
 	var mat := StandardMaterial3D.new()
 	mat.roughness = roughness
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	var tex_path := ""
 	var metallic := 0.0
+	var wood_tint := 0.32
 	# Copper
 	if color.r > 0.55 and color.g > 0.25 and color.g < 0.55 and color.b < 0.35 and color.r > color.g:
 		tex_path = TEX_COPPER
@@ -1644,7 +1782,13 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		and color.g < 0.42 and color.g > 0.08
 		and color.r < 0.72
 	):
-		tex_path = TEX_WOOD
+		tex_path = _wood_path_for_color(color, size)
+		# Larger furniture: coarser UV; small boards: finer grain
+		wood_tint = 0.38 if size.x * size.z < 0.4 else 0.26
+	# Light scrubbed oak / pale wood (prep tops)
+	elif color.r > 0.55 and color.g > 0.4 and color.b > 0.2 and color.r < 0.85 and color.g < 0.7:
+		tex_path = TEX_WOOD_SCRUBBED if color.v > 0.55 else TEX_WOOD_PINE
+		wood_tint = 0.42
 	# Red velvet (true fabric reds — high r, low g relative, not brown wood)
 	elif color.r > 0.45 and color.g < 0.22 and color.b < 0.22 and color.r > color.g + 0.25:
 		tex_path = TEX_VELVET_RED
@@ -1673,10 +1817,14 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 	var tex := _load_tex(tex_path)
 	if tex:
 		mat.albedo_texture = tex
-		mat.albedo_color = Color(1, 1, 1).lerp(color, 0.28)
+		mat.albedo_color = Color(1, 1, 1).lerp(color, wood_tint if tex_path.begins_with("res://assets/rooms/textures/wood") or tex_path == TEX_WOOD else 0.28)
 		mat.metallic = metallic
-		var u: float = clampf(size.x * 1.2 + size.z * 0.8, 0.6, 4.0)
-		var v: float = clampf(size.y * 1.4, 0.6, 4.0)
+		var u: float = clampf(size.x * 1.2 + size.z * 0.8, 0.5, 5.0)
+		var v: float = clampf(size.y * 1.4, 0.5, 5.0)
+		# Small boards: denser grain; large tabletops: broader planks
+		if size.x * size.z < 0.25:
+			u = clampf(u * 1.8, 1.0, 6.0)
+			v = clampf(v * 1.8, 1.0, 6.0)
 		mat.uv1_scale = Vector3(u, v, 1.0)
 	else:
 		mat.albedo_color = color
