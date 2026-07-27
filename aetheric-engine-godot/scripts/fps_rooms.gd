@@ -594,14 +594,7 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_gallery.jpg"},
 		],
 		"props": [
-			# Dense ivy mats on solid plaster only (not glass)
-			{"kind": "wall_vine", "pos": [-1.0, 0.0, -3.72], "yaw": 0.0, "width": 1.8, "height": 1.9},
-			{"kind": "wall_vine", "pos": [1.0, 0.0, -3.72], "yaw": 0.0, "width": 1.8, "height": 1.9},
-			{"kind": "wall_vine", "pos": [-3.72, 0.0, -2.2], "yaw": 90.0, "width": 1.5, "height": 1.85},
-			{"kind": "wall_vine", "pos": [3.72, 0.0, -2.2], "yaw": -90.0, "width": 1.5, "height": 1.85},
-			{"kind": "wall_vine", "pos": [-3.72, 0.0, -0.5], "yaw": 90.0, "width": 1.2, "height": 1.6},
-			{"kind": "wall_vine", "pos": [3.72, 0.0, -0.5], "yaw": -90.0, "width": 1.2, "height": 1.6},
-			# All short palm cards
+			# No wall_vine — mesh ivy read as balloon poles; dense palms + benches instead
 			{"kind": "plant", "pos": [2.5, 0.0, -2.2], "scale": 1.1,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.25},
 			{"kind": "plant", "pos": [-2.8, 0.0, -2.5], "scale": 1.15,
@@ -635,7 +628,7 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 1.0},
 			{"kind": "plant", "pos": [-3.5, 0.0, 2.4], "scale": 0.9,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 1.05},
-			# Corner fill — solid wall panels still read empty without dense pots
+			# Corner bank against solid plaster
 			{"kind": "plant", "pos": [-0.8, 0.0, -3.4], "scale": 1.0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.2},
 			{"kind": "plant", "pos": [0.8, 0.0, -3.4], "scale": 0.95,
@@ -648,7 +641,14 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.1},
 			{"kind": "plant", "pos": [3.8, 0.0, -1.5], "scale": 0.9,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.1},
+			{"kind": "plant", "pos": [-1.8, 0.0, -3.5], "scale": 1.1,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 1.0, "height": 1.3},
+			{"kind": "plant", "pos": [1.8, 0.0, -3.5], "scale": 1.1,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 1.0, "height": 1.3},
 			{"kind": "copper_pot", "pos": [0.0, 0.0, -3.2], "scale": 0.85},
+			{"kind": "hall_table", "pos": [0.0, 0.0, 2.5], "yaw": 0.0},
+			{"kind": "stool", "pos": [0.8, 0.0, 2.8], "yaw": -20.0},
+			{"kind": "stool", "pos": [-0.8, 0.0, 2.8], "yaw": 20.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.5],
