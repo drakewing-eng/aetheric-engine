@@ -45,7 +45,8 @@
 - Loop16: short-wide palms; gallery denser; kitchen rug; morning pattern
 - Loop17: kitchen wall shelves; conservatory glass; plant sink
 - Loop18: hall shelves off doorway; conservatory corners; shelf brackets
-- Loop19: plant scissor 0.32 keeps stems; drawing N wall paintings; workshop floor clutter; kitchen darker/warmer
+- Loop19: plant stems; drawing paintings; workshop clutter
+- Loop20: per-room wainscot_height (kitchen 1.75, workshop 1.55) — less blank plaster; conservatory greener floor
 
 ## Do not
 - Delete prop lists from fps_rooms
