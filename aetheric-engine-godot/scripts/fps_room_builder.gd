@@ -318,12 +318,12 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	var dw := absf(px + half_w)
 	var de := absf(px - half_w)
 	var m := minf(minf(dn, ds), minf(dw, de))
-	var depth := 3.0
+	var depth := 3.4
 	var root := Node3D.new()
 	root.name = "DoorPortal"
 	var floor_col := Color(0.22, 0.14, 0.09)
 	var wall_col := Color(0.38, 0.32, 0.26)
-	var paper_col := Color(0.42, 0.38, 0.32)
+	var paper_col := Color(0.48, 0.42, 0.34)
 	var out_dir := Vector3.ZERO
 	if is_equal_approx(m, dn):
 		out_dir = Vector3(0, 0, -1)
@@ -357,27 +357,30 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 		_add_portal_box(root, Vector3(sx, 1.1 + (door_h - 1.1) * 0.5, -depth * 0.5), Vector3(0.09, door_h - 1.1, depth), paper_col)
 		# Chair rail
 		_add_portal_box(root, Vector3(sx, 1.12, -depth * 0.5), Vector3(0.12, 0.04, depth), Color(0.2, 0.12, 0.08))
-	# Far end: dark-but-not-black wall with a lit picture niche (reads as more house)
-	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.25, door_h + 0.15, 0.1), Color(0.14, 0.11, 0.09))
-	# Picture frame silhouette at far end
-	_add_portal_box(root, Vector3(0, door_h * 0.55, -depth + 0.06), Vector3(0.55, 0.7, 0.04), Color(0.35, 0.25, 0.12))
-	_add_portal_box(root, Vector3(0, door_h * 0.55, -depth + 0.08), Vector3(0.42, 0.55, 0.02), Color(0.25, 0.22, 0.28))
-	# Console table silhouette at far end (depth cue)
-	_add_portal_box(root, Vector3(0, 0.45, -depth + 0.35), Vector3(0.9, 0.06, 0.35), Color(0.18, 0.1, 0.06))
-	_add_portal_box(root, Vector3(-0.35, 0.22, -depth + 0.35), Vector3(0.06, 0.44, 0.06), Color(0.16, 0.09, 0.05))
-	_add_portal_box(root, Vector3(0.35, 0.22, -depth + 0.35), Vector3(0.06, 0.44, 0.06), Color(0.16, 0.09, 0.05))
-	# Warm corridor lights (mid + far) so passage is readable, not a black slab
+	# Far end: warmer paper wall + second doorway silhouette (more house beyond)
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.25, door_h + 0.15, 0.1), Color(0.32, 0.28, 0.22))
+	# Recessed arch opening into darkness
+	_add_portal_box(root, Vector3(0, door_h * 0.45, -depth + 0.04), Vector3(door_w * 0.55, door_h * 0.75, 0.06), Color(0.06, 0.05, 0.04))
+	# Picture frame + console (depth cues)
+	_add_portal_box(root, Vector3(-door_w * 0.28, door_h * 0.62, -depth + 0.08), Vector3(0.4, 0.5, 0.03), Color(0.4, 0.28, 0.12))
+	_add_portal_box(root, Vector3(-door_w * 0.28, door_h * 0.62, -depth + 0.1), Vector3(0.3, 0.38, 0.02), Color(0.3, 0.26, 0.22))
+	_add_portal_box(root, Vector3(0, 0.45, -depth + 0.4), Vector3(0.95, 0.06, 0.35), Color(0.2, 0.12, 0.07), wood_tex, Vector3(1.2, 0.5, 1.0))
+	_add_portal_box(root, Vector3(-0.35, 0.22, -depth + 0.4), Vector3(0.06, 0.44, 0.06), Color(0.18, 0.1, 0.06))
+	_add_portal_box(root, Vector3(0.35, 0.22, -depth + 0.4), Vector3(0.06, 0.44, 0.06), Color(0.18, 0.1, 0.06))
+	# Runner strip on portal floor
+	_add_portal_box(root, Vector3(0, 0.05, -depth * 0.5), Vector3(door_w * 0.45, 0.02, depth * 0.9), Color(0.35, 0.15, 0.1))
+	# Warm corridor lights
 	var dim := OmniLight3D.new()
 	dim.light_color = Color(1.0, 0.85, 0.6)
-	dim.light_energy = 0.55
-	dim.omni_range = depth + 1.5
+	dim.light_energy = 0.7
+	dim.omni_range = depth + 1.8
 	dim.position = Vector3(0, door_h * 0.65, -depth * 0.35)
 	root.add_child(dim)
 	var far_l := OmniLight3D.new()
 	far_l.light_color = Color(1.0, 0.78, 0.5)
-	far_l.light_energy = 0.4
-	far_l.omni_range = 2.2
-	far_l.position = Vector3(0, door_h * 0.55, -depth + 0.5)
+	far_l.light_energy = 0.55
+	far_l.omni_range = 2.5
+	far_l.position = Vector3(0, door_h * 0.55, -depth + 0.55)
 	root.add_child(far_l)
 
 
