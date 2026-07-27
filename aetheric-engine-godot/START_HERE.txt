@@ -1,0 +1,32 @@
+AETHERIC ENGINE — FIRST-PERSON RICHMOND HOUSE
+=============================================
+
+You do NOT need to learn Godot. Grok writes the code. You play and give feedback.
+
+PLAY
+----
+  cd "/Users/babble/ gemini/antigravity/playground/aetheric-engine"
+  ./run-game.sh
+
+CONTROLS (diorama mode inside Richmond House)
+---------------------------------------------
+  Mouse       — turn left/right only (no looking up/down)
+  WASD / Arrows — walk
+  E           — talk to NPC or enter doorway
+  Esc         — release mouse (press again / click to recapture)
+
+CURRENT BUILD
+-------------
+  - Drawing Room + Entrance Hall + Gallery: walkable 3D loop (Victorian walls)
+  - Drawing Room south → Hall north · Hall east → Gallery west
+  - NPCs wander on patrol paths (Bell, Selina, Amara)
+  - Engram dialogue unchanged — type questions, they remember
+
+TELL GROK WHAT YOU WANT
+-----------------------
+  - "The west wall doesn't match the north wall"
+  - "Generate gallery walls like drawing room"
+  - "Bell should sit in the chair more often"
+  - "Add workshop and kitchen in first-person"
+
+Harrow apartment (later) will be isometric third-person — different mode.

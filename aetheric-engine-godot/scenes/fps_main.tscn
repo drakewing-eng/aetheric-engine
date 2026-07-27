@@ -1,0 +1,216 @@
+[gd_scene load_steps=7 format=3 uid="uid://fps_main_v1"]
+
+[ext_resource type="Script" path="res://scripts/fps_main.gd" id="1_fps"]
+[ext_resource type="Script" path="res://scripts/fps_player.gd" id="2_player"]
+[ext_resource type="Script" path="res://scripts/fps_room_builder.gd" id="3_builder"]
+[ext_resource type="Script" path="res://scripts/bridge_client.gd" id="4_bridge"]
+[ext_resource type="Script" path="res://scripts/dialogue_panel.gd" id="5_dialogue"]
+
+[sub_resource type="Environment" id="Environment_fps"]
+background_mode = 1
+background_color = Color(0.28, 0.20, 0.14, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.65, 0.55, 1)
+ambient_light_energy = 0.85
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.35
+height = 1.7
+
+[node name="FpsMain" type="Node3D"]
+script = ExtResource("1_fps")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fps")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 6, 0)
+light_energy = 0.9
+shadow_enabled = true
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+light_color = Color(1, 0.88, 0.72, 1)
+light_energy = 0.75
+omni_range = 18.0
+
+[node name="RoomBuilder" type="Node3D" parent="."]
+script = ExtResource("3_builder")
+
+[node name="Npcs" type="Node3D" parent="."]
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.2)
+script = ExtResource("2_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+current = true
+fov = 58.0
+
+[node name="InteractRay" type="RayCast3D" parent="Player/Head/Camera3D"]
+target_position = Vector3(0, 0, -3.5)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="HudLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 900.0
+offset_bottom = 90.0
+theme_override_colors/font_color = Color(0.85, 0.78, 0.62, 1)
+theme_override_font_sizes/font_size = 17
+text = "Richmond House"
+
+[node name="BridgeStatus" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -420.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.55, 0.78, 0.65, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 2
+text = "Bridge: checking…"
+
+[node name="InteractPrompt" type="Label" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -90.0
+offset_right = 240.0
+offset_bottom = -45.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "[E] Interact"
+
+[node name="Crosshair" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -12.0
+offset_right = 8.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.7, 0.6)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "+"
+
+[node name="BridgeClient" type="Node" parent="HUD"]
+unique_name_in_owner = true
+script = ExtResource("4_bridge")
+
+[node name="DialoguePanel" type="Control" parent="HUD"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("5_dialogue")
+
+[node name="Backdrop" type="ColorRect" parent="HUD/DialoguePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.04, 0.72)
+
+[node name="Panel" type="PanelContainer" parent="HUD/DialoguePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -520.0
+offset_top = -300.0
+offset_right = 520.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="HUD/DialoguePanel/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBox" type="HBoxContainer" parent="HUD/DialoguePanel/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Portrait" type="TextureRect" parent="HUD/DialoguePanel/Panel/Margin/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 320)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="HUD/DialoguePanel/Panel/Margin/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="NameLabel" type="Label" parent="HUD/DialoguePanel/Panel/Margin/HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.87, 0.69, 0.36, 1)
+theme_override_font_sizes/font_size = 28
+text = "NPC"
+
+[node name="ReplyLabel" type="RichTextLabel" parent="HUD/DialoguePanel/Panel/Margin/HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 200)
+bbcode_enabled = true
+text = "Ask a question…"
+fit_content = true
+scroll_active = true
+
+[node name="QuestionInput" type="LineEdit" parent="HUD/DialoguePanel/Panel/Margin/HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Ask anything (1856 knowledge only)…"
+
+[node name="AskButton" type="Button" parent="HUD/DialoguePanel/Panel/Margin/HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ask"
+
+[node name="StatusLabel" type="Label" parent="HUD/DialoguePanel/Panel/Margin/HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.65, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = ""

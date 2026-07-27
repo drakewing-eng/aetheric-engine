@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://fps_npc_v1"]
+
+[ext_resource type="Script" path="res://scripts/fps_npc.gd" id="1_npc"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_npc"]
+radius = 0.32
+height = 1.5
+
+[node name="FpsNpc" type="Node3D"]
+script = ExtResource("1_npc")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+
+[node name="Label3D" type="Label3D" parent="."]
+billboard = 2
+font_size = 32
+outline_size = 6
+modulate = Color(0.92, 0.84, 0.62, 1)
+text = "NPC"
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+shape = SubResource("CapsuleShape3D_npc")

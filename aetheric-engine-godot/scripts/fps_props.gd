@@ -1,0 +1,1115 @@
+extends RefCounted
+class_name FpsProps
+
+## Victorian 1856 furniture + set dressing for Richmond House (hybrid Myst approach).
+## Painted billboards for hero pieces; multi-part meshes for architecture/function props.
+
+const MAHOGANY := Color(0.30, 0.14, 0.08)
+const MAHOGANY_DARK := Color(0.18, 0.09, 0.05)
+const OAK := Color(0.42, 0.28, 0.14)
+const VELVET_RED := Color(0.55, 0.12, 0.16)
+const VELVET_GREEN := Color(0.24, 0.34, 0.24)
+const VELVET_GREEN_DEEP := Color(0.18, 0.28, 0.18)
+const LINEN := Color(0.78, 0.72, 0.58)
+const PAPER := Color(0.84, 0.78, 0.62)
+const BRASS := Color(0.74, 0.58, 0.28)
+const COPPER := Color(0.72, 0.42, 0.22)
+const IRON := Color(0.22, 0.22, 0.24)
+const MARBLE := Color(0.82, 0.80, 0.76)
+const INK := Color(0.10, 0.10, 0.14)
+const CANDLE := Color(0.95, 0.82, 0.45)
+const CREAM := Color(0.90, 0.86, 0.76)
+const LEAF := Color(0.22, 0.42, 0.18)
+const LEAF_DARK := Color(0.12, 0.28, 0.12)
+const CLAY := Color(0.55, 0.32, 0.22)
+const STONE := Color(0.55, 0.52, 0.46)
+const CHALK := Color(0.35, 0.38, 0.32)
+
+const TEX_WOOD := "res://assets/rooms/textures/victorian/furniture_wood.jpg"
+const TEX_VELVET_RED := "res://assets/rooms/textures/victorian/fabric_velvet_red.jpg"
+const TEX_VELVET_GREEN := "res://assets/rooms/textures/victorian/fabric_velvet_green.jpg"
+const TEX_VELVET_GREEN_DEEP := "res://assets/rooms/textures/victorian/fabric_velvet_green_deep.jpg"
+const TEX_WALLPAPER := "res://assets/rooms/textures/victorian/wallpaper_drawing.jpg"
+const TEX_COPPER := "res://assets/rooms/textures/victorian/metal_copper.jpg"
+const TEX_IRON := "res://assets/rooms/textures/victorian/metal_iron.jpg"
+const TEX_BRASS := "res://assets/rooms/textures/victorian/metal_brass.jpg"
+const TEX_LINEN := "res://assets/rooms/textures/victorian/fabric_linen.jpg"
+const TEX_STONE := "res://assets/rooms/textures/victorian/stone_flag.jpg"
+const TEX_PLASTER := "res://assets/rooms/textures/victorian/plaster_cream.jpg"
+const TEX_MARBLE := "res://assets/rooms/textures/victorian/marble.jpg"
+
+static func spawn_all(parent: Node3D, props: Array) -> void:
+	var root := Node3D.new()
+	root.name = "Props"
+	parent.add_child(root)
+	for prop in props:
+		var node := _build(prop)
+		if node:
+			root.add_child(node)
+
+static func spawn_features(parent: Node3D, features: Array) -> void:
+	var root := Node3D.new()
+	root.name = "Features"
+	parent.add_child(root)
+	for feat in features:
+		var node := _build_feature(feat)
+		if node:
+			root.add_child(node)
+
+static func _build(prop: Dictionary) -> Node3D:
+	var kind: String = prop.get("kind", "")
+	var node: Node3D = null
+	match kind:
+		"desk":
+			node = _make_desk(prop)
+		"chair":
+			node = _make_chair(prop)
+		"armchair":
+			node = _make_armchair(prop)
+		"sofa":
+			node = _make_sofa(prop)
+		"rug":
+			node = _make_rug(prop)
+		"bookshelf":
+			node = _make_bookshelf(prop)
+		"side_table":
+			node = _make_side_table(prop)
+		"fireplace":
+			node = _make_fireplace(prop)
+		"hall_table":
+			node = _make_hall_table(prop)
+		"workbench":
+			node = _make_workbench(prop)
+		"machine":
+			node = _make_machine(prop)
+		"aetheric_machine":
+			node = _make_aetheric_machine(prop)
+		"kitchen_range":
+			node = _make_kitchen_range(prop)
+		"dresser":
+			node = _make_dresser(prop)
+		"sink":
+			node = _make_sink(prop)
+		"prep_table":
+			node = _make_prep_table(prop)
+		"coat_stand":
+			node = _make_coat_stand(prop)
+		"umbrella_stand":
+			node = _make_umbrella_stand(prop)
+		"plant":
+			node = _make_plant(prop)
+		"tool_rack":
+			node = _make_tool_rack(prop)
+		"crate":
+			node = _make_crate(prop)
+		"stool":
+			node = _make_stool(prop)
+		"copper_pot":
+			node = _make_copper_pot(prop)
+		"chalk_board":
+			node = _make_chalk_board(prop)
+		"billboard_prop":
+			node = _make_billboard_prop(prop)
+		_:
+			return null
+	var pos: Array = prop.get("pos", [0, 0, 0])
+	node.position = Vector3(pos[0], pos[1], pos[2])
+	node.rotation_degrees.y = prop.get("yaw", 0.0)
+	return node
+
+static func _build_feature(feat: Dictionary) -> Node3D:
+	match feat.get("kind", ""):
+		"window":
+			return _make_window(feat)
+		"door_frame":
+			return _make_door_frame(feat)
+		"mirror":
+			return _make_mirror(feat)
+		"painting":
+			return _make_painting(feat)
+		"glass_wall":
+			return _make_glass_wall(feat)
+		_:
+			return null
+
+# ─── Drawing-room / gentry furniture ─────────────────────────────────────────
+
+static func _make_desk(prop: Dictionary) -> Node3D:
+	## Partner-style writing desk: leather top, pedestals, brass pulls, full still-life.
+	if prop.get("billboard", false) and prop.get("texture", "") != "":
+		return _make_billboard_prop(prop)
+	var root := Node3D.new()
+	root.name = "Desk"
+	var top_y := 0.78
+	# Top + edge banding
+	_add_box(root, Vector3(0, top_y, 0), Vector3(1.55, 0.055, 0.82), MAHOGANY, true, 0.45)
+	_add_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.42, 0.014, 0.7), Color(0.10, 0.16, 0.10), false, 0.72)
+	_add_box(root, Vector3(0, top_y - 0.04, 0), Vector3(1.52, 0.03, 0.8), MAHOGANY_DARK, false, 0.4)
+	# Kneehole + twin pedestals
+	_add_box(root, Vector3(-0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), MAHOGANY_DARK, true, 0.42)
+	# Drawers (3 per pedestal)
+	for side in [-1.0, 1.0]:
+		for i in 3:
+			var dy := 0.18 + i * 0.2
+			_add_box(root, Vector3(side * 0.52, dy, 0.35), Vector3(0.36, 0.16, 0.05), MAHOGANY, false, 0.48)
+			_add_cylinder(root, Vector3(side * 0.52, dy, 0.39), 0.014, 0.022, BRASS, false, 0.3, true)
+	# Center drawer over kneehole
+	_add_box(root, Vector3(0, top_y - 0.12, 0.34), Vector3(0.55, 0.12, 0.05), MAHOGANY, false, 0.48)
+	_add_cylinder(root, Vector3(0, top_y - 0.12, 0.38), 0.014, 0.022, BRASS, false, 0.3, true)
+	# Turned legs under pedestals
+	for lx in [-0.62, -0.42, 0.42, 0.62]:
+		for lz in [-0.28, 0.28]:
+			_add_cylinder(root, Vector3(lx, 0.08, lz), 0.035, 0.14, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.05, 0.035, MAHOGANY, true)
+	# Back gallery shelf
+	_add_box(root, Vector3(0, top_y + 0.22, -0.32), Vector3(1.4, 0.35, 0.06), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, top_y + 0.08, -0.28), Vector3(1.35, 0.04, 0.2), MAHOGANY_DARK, false, 0.45)
+	# Still life
+	_add_box(root, Vector3(0.28, top_y + 0.04, 0.12), Vector3(0.34, 0.012, 0.24), PAPER, false)
+	_add_box(root, Vector3(0.32, top_y + 0.05, 0.08), Vector3(0.22, 0.01, 0.16), PAPER.darkened(0.05), false)
+	_add_box(root, Vector3(-0.25, top_y + 0.04, -0.05), Vector3(0.28, 0.01, 0.2), PAPER, false)
+	_add_box(root, Vector3(0.05, top_y + 0.06, -0.12), Vector3(0.055, 0.05, 0.055), INK, false)
+	_add_cylinder(root, Vector3(0.12, top_y + 0.09, -0.08), 0.012, 0.14, MAHOGANY, false)
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.03, 0.18, CANDLE, false)
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.01, 0.15), 0.05, 0.04, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0.45, top_y + 0.05, -0.15), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
+	_add_contact_shadow(root, 0.9, 0.55)
+	var flame := OmniLight3D.new()
+	flame.light_color = Color(1.0, 0.78, 0.42)
+	flame.light_energy = 0.45
+	flame.omni_range = 2.6
+	flame.position = Vector3(-0.35, top_y + 0.28, 0.15)
+	root.add_child(flame)
+	return root
+
+static func _make_chair(prop: Dictionary) -> Node3D:
+	## Victorian side chair: balloon-ish back, upholstered seat, carved rail, splayed legs, stretcher.
+	if prop.get("billboard", false) and prop.get("texture", "") != "":
+		return _make_billboard_prop(prop)
+	var root := Node3D.new()
+	root.name = "Chair"
+	var fabric: Color = prop.get("fabric", VELVET_GREEN)
+	# Seat box + cushion
+	_add_box(root, Vector3(0, 0.44, 0.02), Vector3(0.52, 0.07, 0.5), MAHOGANY, true, 0.48)
+	_add_box(root, Vector3(0, 0.5, 0.02), Vector3(0.48, 0.07, 0.46), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.55, 0.02), Vector3(0.44, 0.035, 0.42), fabric.darkened(0.1), false, 0.92)
+	# Nailhead band
+	for i in 6:
+		var nx := -0.2 + i * 0.08
+		_add_cylinder(root, Vector3(nx, 0.47, 0.26), 0.01, 0.015, BRASS, false, 0.3, true)
+	# Back frame
+	_add_box(root, Vector3(0, 0.95, -0.2), Vector3(0.5, 0.85, 0.06), MAHOGANY, true, 0.45)
+	_add_box(root, Vector3(0, 1.28, -0.18), Vector3(0.46, 0.14, 0.07), MAHOGANY_DARK, false, 0.42)
+	# Pierced splat suggestion
+	_add_box(root, Vector3(0, 0.95, -0.17), Vector3(0.18, 0.55, 0.03), MAHOGANY_DARK, false, 0.5)
+	_add_box(root, Vector3(-0.12, 0.95, -0.17), Vector3(0.04, 0.5, 0.03), MAHOGANY, false, 0.5)
+	_add_box(root, Vector3(0.12, 0.95, -0.17), Vector3(0.04, 0.5, 0.03), MAHOGANY, false, 0.5)
+	# Side uprights
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.23, 0.85, -0.12), Vector3(0.05, 0.7, 0.08), MAHOGANY, true, 0.48)
+	# Cabriole-ish front legs (tapered stacked cylinders) + rear legs
+	for offset in [Vector3(-0.2, 0.22, 0.18), Vector3(0.2, 0.22, 0.18)]:
+		_add_cylinder(root, offset, 0.032, 0.42, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.045, 0.04, MAHOGANY, true)
+	for offset in [Vector3(-0.2, 0.22, -0.18), Vector3(0.2, 0.22, -0.18)]:
+		_add_cylinder(root, offset, 0.028, 0.42, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.04, 0.035, MAHOGANY, true)
+	# H-stretcher
+	_add_box(root, Vector3(0, 0.14, 0.0), Vector3(0.38, 0.03, 0.03), MAHOGANY, false, 0.5)
+	_add_box(root, Vector3(-0.19, 0.14, 0.0), Vector3(0.03, 0.03, 0.32), MAHOGANY, false, 0.5)
+	_add_box(root, Vector3(0.19, 0.14, 0.0), Vector3(0.03, 0.03, 0.32), MAHOGANY, false, 0.5)
+	_add_contact_shadow(root, 0.42, 0.4)
+	return root
+
+static func _make_armchair(prop: Dictionary) -> Node3D:
+	## Wing chair: deep seat, buttoned back suggestion, scrolled arms, claw feet.
+	if prop.get("billboard", false) and prop.get("texture", "") != "":
+		return _make_billboard_prop(prop)
+	var root := Node3D.new()
+	root.name = "Armchair"
+	var fabric: Color = prop.get("fabric", VELVET_RED)
+	# Seat base + plush cushion
+	_add_box(root, Vector3(0, 0.32, 0.06), Vector3(0.95, 0.18, 0.88), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.46, 0.08), Vector3(0.88, 0.16, 0.78), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.56, 0.1), Vector3(0.78, 0.08, 0.68), fabric.darkened(0.12), false, 0.92)
+	# Button tufts on seat
+	for bx in [-0.2, 0.0, 0.2]:
+		for bz in [-0.1, 0.12]:
+			_add_cylinder(root, Vector3(bx, 0.6, bz), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
+	# High back + wings
+	_add_box(root, Vector3(0, 0.95, -0.3), Vector3(0.9, 0.95, 0.16), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.35, -0.28), Vector3(0.82, 0.18, 0.12), MAHOGANY, false, 0.42)
+	# Wings
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.42, 1.05, -0.12), Vector3(0.14, 0.7, 0.45), fabric, true, 0.88)
+	# Arms
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.42, 0.62, 0.08), Vector3(0.16, 0.22, 0.72), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.42, 0.74, 0.18), Vector3(0.14, 0.1, 0.45), fabric.darkened(0.08), false, 0.9)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.55, 0.35), 0.06, 0.12, MAHOGANY, false, 0.45)
+	# Legs + feet
+	for sx in [-1.0, 1.0]:
+		_add_cylinder(root, Vector3(sx * 0.36, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.36, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.34, 0.14, -0.3), 0.038, 0.26, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.34, 0.02, -0.3), 0.05, 0.04, MAHOGANY, true)
+	# Skirt
+	_add_box(root, Vector3(0, 0.2, 0.08), Vector3(0.88, 0.08, 0.82), MAHOGANY_DARK, false, 0.42)
+	_add_contact_shadow(root, 0.72, 0.68)
+	return root
+
+static func _make_sofa(prop: Dictionary) -> Node3D:
+	## Chesterfield-style sofa: buttoned back, rolled arms, carved feet, skirt.
+	if prop.get("billboard", false) and prop.get("texture", "") != "":
+		return _make_billboard_prop(prop)
+	var root := Node3D.new()
+	root.name = "Sofa"
+	var width: float = prop.get("width", 2.3)
+	var fabric: Color = prop.get("fabric", VELVET_GREEN)
+	# Base frame
+	_add_box(root, Vector3(0, 0.22, 0.08), Vector3(width, 0.14, 0.92), MAHOGANY_DARK, true, 0.4)
+	# Seat body + 3 cushions
+	_add_box(root, Vector3(0, 0.4, 0.1), Vector3(width - 0.08, 0.2, 0.86), fabric, true, 0.9)
+	for i in 3:
+		var cx: float = (i - 1) * (width * 0.28)
+		_add_box(root, Vector3(cx, 0.54, 0.12), Vector3(width * 0.26, 0.12, 0.72), fabric.darkened(0.08), false, 0.92)
+		# button row
+		for j in 2:
+			_add_cylinder(root, Vector3(cx + (j - 0.5) * 0.12, 0.61, 0.05 + j * 0.15), 0.02, 0.02, fabric.darkened(0.22), false, 0.95)
+	# Back with button grid
+	_add_box(root, Vector3(0, 0.85, -0.3), Vector3(width, 0.78, 0.18), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.18, -0.28), Vector3(width - 0.1, 0.12, 0.1), MAHOGANY, false, 0.42)
+	for i in 5:
+		for j in 3:
+			var bx := (i - 2) * (width * 0.16)
+			var by := 0.7 + j * 0.18
+			_add_cylinder(root, Vector3(bx, by, -0.2), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
+	# Rolled arms
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * (width * 0.5 - 0.12), 0.6, 0.06), Vector3(0.22, 0.48, 0.86), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * (width * 0.5 - 0.12), 0.82, 0.2), 0.11, 0.35, fabric.darkened(0.05), false, 0.9)
+		_add_cylinder(root, Vector3(sx * (width * 0.5 - 0.12), 0.55, 0.38), 0.07, 0.14, MAHOGANY, false, 0.45)
+	# Turned legs
+	for x in range(-2, 3):
+		var lx := x * (width * 0.2)
+		_add_cylinder(root, Vector3(lx, 0.08, 0.32), 0.035, 0.14, MAHOGANY, true)
+		_add_cylinder(root, Vector3(lx, 0.08, -0.28), 0.035, 0.14, MAHOGANY, true)
+		_add_cylinder(root, Vector3(lx, 0.02, 0.32), 0.045, 0.03, MAHOGANY_DARK, true)
+	_add_contact_shadow(root, width * 0.5, 0.55)
+	return root
+
+static func _make_rug(prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Rug"
+	var size: Array = prop.get("size", [4.6, 3.4])
+	var tex_path: String = prop.get("texture", "")
+	var body := Node3D.new()
+	var mesh := PlaneMesh.new()
+	mesh.orientation = PlaneMesh.FACE_Y
+	mesh.size = Vector2(size[0], size[1])
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	if tex_path != "":
+		var tex: Texture2D = _load_tex(tex_path)
+		if tex:
+			mat.albedo_texture = tex
+			mat.uv1_scale = Vector3(size[0] * 0.35, size[1] * 0.35, 1.0)
+	mat.roughness = 0.95
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	mi.material_override = mat
+	body.add_child(mi)
+	body.position = Vector3(0, 0.02, 0)
+	root.add_child(body)
+	return root
+
+static func _make_bookshelf(prop: Dictionary) -> Node3D:
+	## Open shelves with visible book spines — not a black solid mass.
+	var root := Node3D.new()
+	root.name = "Bookshelf"
+	var width: float = prop.get("width", 1.7)
+	var height: float = prop.get("height", 2.5)
+	var depth: float = prop.get("depth", 0.36)
+	# Back panel (lighter wood so it doesn't read as a black monolith)
+	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), MAHOGANY, true, 0.5)
+	# Sides
+	_add_box(root, Vector3(-width * 0.5 + 0.03, height * 0.5, 0), Vector3(0.06, height, depth), MAHOGANY_DARK, true, 0.45)
+	_add_box(root, Vector3(width * 0.5 - 0.03, height * 0.5, 0), Vector3(0.06, height, depth), MAHOGANY_DARK, true, 0.45)
+	# Crown + base
+	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.06, 0.1, depth + 0.06), MAHOGANY, false, 0.42)
+	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(width + 0.04, 0.12, depth + 0.04), MAHOGANY_DARK, true, 0.42)
+	# Shelves + dense book rows
+	for i in 5:
+		var y: float = 0.38 + i * (height - 0.55) / 4.0
+		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), MAHOGANY, false, 0.48)
+		var x := -width * 0.38
+		var bi := 0
+		while x < width * 0.38:
+			var bw: float = 0.08 + float((i + bi) % 3) * 0.03
+			var bh: float = 0.16 + float((i * 3 + bi) % 4) * 0.04
+			_add_box(
+				root,
+				Vector3(x + bw * 0.5, y + 0.02 + bh * 0.5, depth * 0.05),
+				Vector3(bw * 0.92, bh, depth * 0.55),
+				_book_color(i + bi),
+				false,
+				0.75
+			)
+			x += bw + 0.01
+			bi += 1
+	_add_contact_shadow(root, width * 0.55, depth * 0.7)
+	return root
+
+static func _make_side_table(prop: Dictionary) -> Node3D:
+	## Tripod pedestal table with gallery rim, lamp, books.
+	if prop.get("billboard", false) and prop.get("texture", "") != "":
+		return _make_billboard_prop(prop)
+	var root := Node3D.new()
+	root.name = "SideTable"
+	# Top with rim
+	_add_cylinder(root, Vector3(0, 0.62, 0), 0.3, 0.04, MAHOGANY, true)
+	_add_cylinder(root, Vector3(0, 0.65, 0), 0.31, 0.02, MAHOGANY_DARK, false)
+	# Turned pedestal
+	_add_cylinder(root, Vector3(0, 0.48, 0), 0.08, 0.12, MAHOGANY, true)
+	_add_cylinder(root, Vector3(0, 0.32, 0), 0.045, 0.28, MAHOGANY_DARK, true)
+	_add_cylinder(root, Vector3(0, 0.14, 0), 0.1, 0.08, MAHOGANY, true)
+	# Tripartite feet
+	for a in [0.0, 120.0, 240.0]:
+		var rad := deg_to_rad(a)
+		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
+	# Lamp + book
+	_add_cylinder(root, Vector3(0, 0.72, 0), 0.04, 0.18, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.88, 0), 0.12, 0.14, CREAM.darkened(0.15), false, 0.85)
+	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
+	_add_contact_shadow(root, 0.34, 0.34)
+	var lamp := OmniLight3D.new()
+	lamp.light_color = Color(1.0, 0.85, 0.55)
+	lamp.light_energy = 0.35
+	lamp.omni_range = 2.2
+	lamp.position = Vector3(0, 0.95, 0)
+	root.add_child(lamp)
+	return root
+
+static func _make_hall_table(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "HallTable"
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(1.35, 0.05, 0.48), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, 0.4, 0), Vector3(1.2, 0.02, 0.42), MAHOGANY_DARK, false, 0.45)
+	for sx in [-1, 1]:
+		_add_cylinder(root, Vector3(sx * 0.52, 0.4, 0), 0.05, 0.78, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.52, 0.02, 0), 0.07, 0.04, MAHOGANY, true)
+	# Mail tray + calling cards
+	_add_box(root, Vector3(-0.25, 0.88, 0.05), Vector3(0.35, 0.04, 0.22), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(-0.25, 0.91, 0.05), Vector3(0.28, 0.01, 0.16), PAPER, false)
+	_add_box(root, Vector3(0.3, 0.9, 0.05), Vector3(0.18, 0.22, 0.12), _book_color(1), false)
+	_add_cylinder(root, Vector3(0.05, 0.95, -0.05), 0.03, 0.18, BRASS, false, 0.3, true)
+	_add_contact_shadow(root, 0.75, 0.35)
+	return root
+
+# ─── Kitchen identity ────────────────────────────────────────────────────────
+
+static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
+	## Cast-iron Victorian kitchen range — large signature read from doorway.
+	var root := Node3D.new()
+	root.name = "KitchenRange"
+	# Main iron body (wider/taller for doorway silhouette)
+	_add_box(root, Vector3(0, 0.6, 0), Vector3(2.15, 1.2, 0.85), IRON, true, 0.55)
+	# Oven doors
+	_add_box(root, Vector3(-0.5, 0.45, 0.4), Vector3(0.65, 0.5, 0.06), IRON.lightened(0.08), false, 0.5)
+	_add_box(root, Vector3(0.5, 0.45, 0.4), Vector3(0.65, 0.5, 0.06), IRON.lightened(0.08), false, 0.5)
+	_add_cylinder(root, Vector3(-0.5, 0.45, 0.46), 0.028, 0.2, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.5, 0.45, 0.46), 0.028, 0.2, BRASS, false, 0.3, true)
+	# Hotplate top
+	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), IRON.darkened(0.1), true, 0.4)
+	_add_cylinder(root, Vector3(-0.5, 1.3, 0.05), 0.2, 0.05, IRON.lightened(0.05), false, 0.35)
+	_add_cylinder(root, Vector3(0.5, 1.3, 0.05), 0.2, 0.05, IRON.lightened(0.05), false, 0.35)
+	# Chimney flue
+	_add_box(root, Vector3(0, 1.95, -0.15), Vector3(0.55, 1.35, 0.45), IRON, true, 0.5)
+	var fire := OmniLight3D.new()
+	fire.light_color = Color(1.0, 0.5, 0.18)
+	fire.light_energy = 1.35
+	fire.omni_range = 5.5
+	fire.position = Vector3(0, 0.6, 0.5)
+	root.add_child(fire)
+	_add_cylinder(root, Vector3(-0.5, 1.42, 0.05), 0.12, 0.18, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.5, 1.55, 0.05), 0.045, 0.1, COPPER, false, 0.35, true)
+	_add_contact_shadow(root, 1.15, 0.5)
+	return root
+
+static func _make_dresser(_prop: Dictionary) -> Node3D:
+	## Welsh dresser / plate rack — kitchen identity.
+	var root := Node3D.new()
+	root.name = "Dresser"
+	var w := 1.7
+	# Base cupboard
+	_add_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), OAK, true, 0.5)
+	_add_box(root, Vector3(-0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), OAK.darkened(0.1), false, 0.5)
+	_add_box(root, Vector3(0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), OAK.darkened(0.1), false, 0.5)
+	_add_cylinder(root, Vector3(-0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
+	# Upper plate rack open shelves
+	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(w, 0.08, 0.36), OAK, true, 0.5)
+	_add_box(root, Vector3(0, 2.0, -0.05), Vector3(w, 0.08, 0.36), OAK, true, 0.5)
+	_add_box(root, Vector3(0, 2.4, -0.05), Vector3(w, 0.1, 0.38), OAK, true, 0.5)
+	_add_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
+	_add_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
+	_add_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), OAK.darkened(0.15), false, 0.55)
+	# Plates on shelves
+	for i in 4:
+		var px := -0.55 + i * 0.35
+		_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.1, 0.03, CREAM, false)
+		_add_cylinder(root, Vector3(px, 2.08, 0.02), 0.09, 0.03, CREAM.darkened(0.05), false)
+	# Jars
+	_add_cylinder(root, Vector3(0.5, 1.2, 0.05), 0.07, 0.18, CLAY, false)
+	_add_cylinder(root, Vector3(0.65, 1.15, 0.0), 0.06, 0.14, CLAY.lightened(0.1), false)
+	_add_contact_shadow(root, 0.9, 0.3)
+	return root
+
+static func _make_sink(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Sink"
+	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.1, 0.85, 0.55), OAK, true, 0.5)
+	# Stoneware basin
+	_add_box(root, Vector3(0, 0.92, 0.05), Vector3(0.85, 0.12, 0.42), STONE, false, 0.4)
+	_add_box(root, Vector3(0, 0.88, 0.05), Vector3(0.7, 0.08, 0.3), Color(0.35, 0.4, 0.45), false, 0.25)
+	# Pump / spout
+	_add_cylinder(root, Vector3(0.25, 1.15, -0.1), 0.03, 0.35, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0.1, 1.28, 0.0), Vector3(0.35, 0.04, 0.04), BRASS, false, 0.3)
+	# Soap dish + cloth
+	_add_box(root, Vector3(-0.3, 0.98, 0.12), Vector3(0.14, 0.04, 0.1), CREAM, false)
+	_add_box(root, Vector3(-0.15, 0.95, 0.18), Vector3(0.2, 0.02, 0.12), Color(0.7, 0.75, 0.8), false)
+	_add_contact_shadow(root, 0.6, 0.35)
+	return root
+
+static func _make_prep_table(prop: Dictionary) -> Node3D:
+	## Scrubbed kitchen prep table — not a lab workbench.
+	var root := Node3D.new()
+	root.name = "PrepTable"
+	var width: float = prop.get("width", 1.8)
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), OAK.lightened(0.1), true, 0.65)
+	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), OAK, false, 0.55)
+	for lx in [-width * 0.4, width * 0.4]:
+		for lz in [-0.32, 0.32]:
+			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), OAK.darkened(0.1), true, 0.5)
+	# Flour sack (soft cylinder, not white cube), bowl, board, copper, rolling pin
+	_add_cylinder(root, Vector3(-0.4, 0.98, 0.1), 0.12, 0.22, CREAM.darkened(0.12), false, 0.9)
+	_add_cylinder(root, Vector3(-0.4, 1.1, 0.1), 0.08, 0.06, CREAM.darkened(0.2), false, 0.9)
+	_add_cylinder(root, Vector3(0.15, 0.9, -0.1), 0.12, 0.1, CREAM, false)
+	_add_box(root, Vector3(0.45, 0.88, 0.15), Vector3(0.3, 0.02, 0.18), MAHOGANY, false)
+	_add_cylinder(root, Vector3(-0.1, 0.95, 0.25), 0.09, 0.16, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.35, 0.9, -0.2), 0.025, 0.28, MAHOGANY_DARK, false, 0.55)
+	_add_cylinder(root, Vector3(0.55, 0.95, 0.05), 0.07, 0.14, COPPER.darkened(0.1), false, 0.35, true)
+	_add_contact_shadow(root, width * 0.5, 0.5)
+	return root
+
+static func _make_copper_pot(prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "CopperPot"
+	var scale: float = prop.get("scale", 1.0)
+	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, COPPER, true, 0.35, true)
+	_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, COPPER.lightened(0.1), false, 0.3, true)
+	_add_box(root, Vector3(0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), COPPER, false, 0.35)
+	return root
+
+# ─── Workshop ────────────────────────────────────────────────────────────────
+
+static func _make_workbench(prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Workbench"
+	var width: float = prop.get("width", 2.8)
+	_add_box(root, Vector3(0, 0.86, 0), Vector3(width, 0.07, 0.95), MAHOGANY_DARK, true, 0.45)
+	for lx in [-width * 0.38, width * 0.38]:
+		_add_box(root, Vector3(lx, 0.42, 0), Vector3(0.1, 0.84, 0.85), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, 0.42, 0), Vector3(width * 0.7, 0.08, 0.8), MAHOGANY, false, 0.5)
+	# Tools / gauges / paper
+	_add_box(root, Vector3(-0.4, 0.92, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
+	_add_box(root, Vector3(0.3, 0.91, -0.1), Vector3(0.4, 0.03, 0.3), PAPER, false)
+	_add_cylinder(root, Vector3(0.6, 0.95, 0.1), 0.06, 0.18, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(-0.7, 0.95, -0.15), 0.05, 0.14, COPPER, false, 0.35, true)
+	_add_box(root, Vector3(0.0, 0.93, 0.25), Vector3(0.5, 0.02, 0.08), IRON, false, 0.4)
+	_add_contact_shadow(root, width * 0.5, 0.55)
+	return root
+
+static func _make_tool_rack(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "ToolRack"
+	_add_box(root, Vector3(0, 1.1, 0), Vector3(1.4, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
+	_add_box(root, Vector3(0, 0.5, 0), Vector3(1.4, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
+	for i in 5:
+		var x := -0.5 + i * 0.25
+		_add_box(root, Vector3(x, 0.85, 0.02), Vector3(0.04, 0.55, 0.04), IRON, false, 0.4)
+		_add_box(root, Vector3(x, 1.15, 0.05), Vector3(0.08, 0.04, 0.18), IRON.lightened(0.1), false, 0.4)
+	return root
+
+static func _make_crate(prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Crate"
+	var s: float = prop.get("scale", 1.0)
+	_add_box(root, Vector3(0, 0.22 * s, 0), Vector3(0.55 * s, 0.42 * s, 0.45 * s), OAK, true, 0.6)
+	_add_box(root, Vector3(0, 0.42 * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), OAK.darkened(0.1), false, 0.55)
+	return root
+
+static func _make_stool(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Stool"
+	_add_cylinder(root, Vector3(0, 0.48, 0), 0.18, 0.05, OAK, true)
+	for a in [0.0, 120.0, 240.0]:
+		var rad := deg_to_rad(a)
+		_add_cylinder(root, Vector3(cos(rad) * 0.12, 0.24, sin(rad) * 0.12), 0.025, 0.48, MAHOGANY_DARK, true)
+	return root
+
+# ─── Gallery / aetheric ──────────────────────────────────────────────────────
+
+static func _make_machine(prop: Dictionary) -> Node3D:
+	## Secondary apparatus — gauges, pipes, plinth (not a plain can).
+	var root := Node3D.new()
+	root.name = "Machine"
+	var height: float = prop.get("height", 2.6)
+	_add_box(root, Vector3(0, 0.15, 0), Vector3(0.95, 0.3, 0.85), MAHOGANY_DARK, true, 0.45)
+	_add_cylinder(root, Vector3(0, height * 0.4, 0), 0.32, height * 0.55, BRASS, true, 0.35, true)
+	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.38, 0.08, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0, height * 0.85, 0), 0.18, 0.28, Color(0.62, 0.5, 0.22), true, 0.4, true)
+	# Side instrument
+	_add_box(root, Vector3(0.4, 0.55, 0.15), Vector3(0.28, 0.4, 0.32), MAHOGANY, true, 0.45)
+	_add_cylinder(root, Vector3(0.4, 0.82, 0.15), 0.08, 0.06, BRASS, false, 0.3, true)
+	# Pipe elbow
+	_add_cylinder(root, Vector3(-0.35, 0.7, 0.0), 0.05, 0.45, COPPER, false, 0.35, true)
+	_add_box(root, Vector3(-0.35, 0.95, 0.15), Vector3(0.1, 0.1, 0.35), COPPER, false, 0.35)
+	var glow := OmniLight3D.new()
+	glow.light_color = Color(0.55, 0.75, 0.85)
+	glow.light_energy = 0.45
+	glow.omni_range = 3.0
+	glow.position = Vector3(0, height * 0.55, 0.2)
+	root.add_child(glow)
+	return root
+
+static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
+	## Hero gallery machine: base plinth + brass column + coils + glass chamber + cyan glow.
+	var root := Node3D.new()
+	root.name = "AethericMachine"
+	var height: float = prop.get("height", 3.2)
+	# Stone/mahogany plinth
+	_add_box(root, Vector3(0, 0.2, 0), Vector3(1.4, 0.4, 1.2), MAHOGANY_DARK, true, 0.4)
+	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.15, 0.12, 0.95), MARBLE, true, 0.3)
+	# Main column
+	_add_cylinder(root, Vector3(0, height * 0.4, 0), 0.28, height * 0.55, BRASS, true, 0.3, true)
+	# Coil rings
+	for i in 4:
+		var y := 0.7 + i * 0.35
+		_add_cylinder(root, Vector3(0, y, 0), 0.48, 0.08, COPPER, false, 0.35, true)
+	# Glass aether chamber
+	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.35, height * 0.28, Color(0.55, 0.75, 0.85, 0.45), false, 0.15, true)
+	# Cap
+	_add_cylinder(root, Vector3(0, height * 0.88, 0), 0.4, 0.12, BRASS, true, 0.3, true)
+	_add_cylinder(root, Vector3(0, height * 0.95, 0), 0.12, 0.2, BRASS.lightened(0.1), true, 0.25, true)
+	# Side instrument boxes
+	_add_box(root, Vector3(0.65, 0.85, 0.1), Vector3(0.35, 0.55, 0.4), MAHOGANY, true, 0.45)
+	_add_box(root, Vector3(-0.65, 0.75, -0.1), Vector3(0.3, 0.4, 0.35), MAHOGANY, true, 0.45)
+	_add_cylinder(root, Vector3(0.65, 1.2, 0.1), 0.08, 0.12, BRASS, false, 0.3, true)
+	# Cool aetheric glow
+	var glow := OmniLight3D.new()
+	glow.light_color = Color(0.45, 0.85, 0.95)
+	glow.light_energy = 1.2
+	glow.omni_range = 6.0
+	glow.position = Vector3(0, height * 0.65, 0)
+	root.add_child(glow)
+	var warm := OmniLight3D.new()
+	warm.light_color = Color(0.9, 0.7, 0.4)
+	warm.light_energy = 0.35
+	warm.omni_range = 3.0
+	warm.position = Vector3(0.5, 0.9, 0.3)
+	root.add_child(warm)
+	_add_contact_shadow(root, 0.85, 0.7)
+	return root
+
+static func _make_chalk_board(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "ChalkBoard"
+	_add_box(root, Vector3(0, 1.2, 0), Vector3(1.4, 1.0, 0.06), MAHOGANY_DARK, true, 0.45)
+	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(1.25, 0.85, 0.02), CHALK, false, 0.85)
+	# Chalk tray
+	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(1.3, 0.05, 0.1), MAHOGANY, false, 0.5)
+	return root
+
+# ─── Conservatory / hall ─────────────────────────────────────────────────────
+
+static func _make_plant(prop: Dictionary) -> Node3D:
+	## Prefer painted plant card when texture actually loads; else mesh canopy.
+	## Never ship a solid brown quad (billboard fallback without texture).
+	var tex_path: String = prop.get("texture", "")
+	if tex_path != "":
+		var tex := _load_tex(tex_path)
+		if tex != null:
+			var bp := prop.duplicate()
+			bp["kind"] = "billboard_prop"
+			bp["texture"] = tex_path
+			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
+			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
+			bp["solid"] = true
+			return _make_billboard_prop(bp)
+	var root := Node3D.new()
+	root.name = "Plant"
+	var scale: float = prop.get("scale", 1.0)
+	var tall: bool = prop.get("tall", false)
+	# Terracotta pot with rim
+	_add_cylinder(root, Vector3(0, 0.2 * scale, 0), 0.2 * scale, 0.36 * scale, CLAY, true, 0.72)
+	_add_cylinder(root, Vector3(0, 0.38 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.12), false, 0.7)
+	_add_cylinder(root, Vector3(0, 0.4 * scale, 0), 0.18 * scale, 0.04 * scale, Color(0.18, 0.12, 0.07), false)
+	# Stem
+	var stem_h := 0.55 * scale if tall else 0.28 * scale
+	_add_cylinder(root, Vector3(0, 0.42 * scale + stem_h * 0.5, 0), 0.03 * scale, stem_h, LEAF_DARK, false, 0.85)
+	# Canopy of overlapping leaf blobs at varied offsets
+	var base_y := 0.55 * scale + stem_h * 0.55
+	var blobs: Array = [
+		[Vector3(0, base_y, 0), 0.32 * scale, 0.38 * scale, LEAF],
+		[Vector3(0.16 * scale, base_y + 0.08 * scale, 0.05 * scale), 0.22 * scale, 0.28 * scale, LEAF_DARK],
+		[Vector3(-0.14 * scale, base_y + 0.05 * scale, -0.1 * scale), 0.2 * scale, 0.26 * scale, LEAF.lightened(0.08)],
+		[Vector3(0.05 * scale, base_y + 0.18 * scale, -0.08 * scale), 0.18 * scale, 0.22 * scale, LEAF],
+		[Vector3(-0.08 * scale, base_y + 0.15 * scale, 0.12 * scale), 0.16 * scale, 0.2 * scale, LEAF_DARK],
+	]
+	if tall:
+		blobs.append([Vector3(0.0, base_y + 0.35 * scale, 0.0), 0.2 * scale, 0.28 * scale, LEAF_DARK])
+		blobs.append([Vector3(0.1 * scale, base_y + 0.42 * scale, 0.05 * scale), 0.14 * scale, 0.18 * scale, LEAF])
+	for b in blobs:
+		_add_cylinder(root, b[0], b[1], b[2], b[3], false, 0.92)
+	return root
+
+static func _make_coat_stand(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "CoatStand"
+	_add_cylinder(root, Vector3(0, 0.9, 0), 0.04, 1.75, MAHOGANY_DARK, true)
+	_add_cylinder(root, Vector3(0, 0.04, 0), 0.22, 0.06, MAHOGANY, true)
+	# Hooks
+	for a in [0.0, 72.0, 144.0, 216.0, 288.0]:
+		var rad := deg_to_rad(a)
+		_add_box(root, Vector3(cos(rad) * 0.18, 1.55, sin(rad) * 0.18), Vector3(0.18, 0.03, 0.03), BRASS, false, 0.3)
+	# Draped coat suggestion
+	_add_box(root, Vector3(0.12, 1.2, 0.05), Vector3(0.2, 0.7, 0.08), Color(0.25, 0.18, 0.12), false, 0.85)
+	return root
+
+static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "UmbrellaStand"
+	_add_cylinder(root, Vector3(0, 0.35, 0), 0.16, 0.65, MAHOGANY_DARK, true)
+	_add_cylinder(root, Vector3(0, 0.68, 0), 0.18, 0.05, BRASS, false, 0.3, true)
+	# Umbrella handles sticking up
+	_add_cylinder(root, Vector3(0.05, 0.95, 0.02), 0.02, 0.55, Color(0.15, 0.12, 0.1), false)
+	_add_cylinder(root, Vector3(-0.04, 0.9, -0.03), 0.02, 0.48, Color(0.2, 0.15, 0.12), false)
+	return root
+
+# ─── Features ────────────────────────────────────────────────────────────────
+
+static func _make_fireplace(_prop: Dictionary) -> Node3D:
+	## Marble surround + dark firebox + logs — not a white Minecraft slab.
+	var root := Node3D.new()
+	root.name = "Fireplace"
+	# Outer surround
+	_add_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), MARBLE, true, 0.35)
+	# Inner dark firebox recess
+	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), Color(0.06, 0.05, 0.05), false, 0.9)
+	# Mantel shelf
+	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
+	# Columns / pilasters
+	_add_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
+	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
+	# Hearth slab
+	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.5, 0.08, 0.55), STONE, true, 0.55)
+	# Logs + glow
+	_add_box(root, Vector3(-0.12, 0.22, 0.18), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
+	_add_box(root, Vector3(0.15, 0.28, 0.2), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
+	_add_box(root, Vector3(0.0, 0.34, 0.16), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
+	var fire := OmniLight3D.new()
+	fire.light_color = Color(1.0, 0.5, 0.2)
+	fire.light_energy = 1.15
+	fire.omni_range = 5.0
+	fire.position = Vector3(0, 0.48, 0.35)
+	root.add_child(fire)
+	# Warm emissive card in firebox
+	var em := MeshInstance3D.new()
+	var em_mesh := BoxMesh.new()
+	em_mesh.size = Vector3(0.7, 0.35, 0.04)
+	em.mesh = em_mesh
+	var emat := StandardMaterial3D.new()
+	emat.albedo_color = Color(1.0, 0.45, 0.12)
+	emat.emission_enabled = true
+	emat.emission = Color(1.0, 0.4, 0.08)
+	emat.emission_energy_multiplier = 2.2
+	em.material_override = emat
+	em.position = Vector3(0, 0.42, 0.22)
+	root.add_child(em)
+	return root
+
+static func _make_window(feat: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Window"
+	var pos: Array = feat.get("pos", [0, 0, 0])
+	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.rotation_degrees.y = feat.get("yaw", 0.0)
+	var w: float = feat.get("width", 1.1)
+	var h: float = feat.get("height", 1.85)
+	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(w, h, 0.14), MAHOGANY, true, 0.35)
+	# Mullion
+	_add_box(root, Vector3(0, h * 0.5, 0.04), Vector3(0.04, h - 0.2, 0.03), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(0, h * 0.5, 0.04), Vector3(w - 0.2, 0.04, 0.03), MAHOGANY_DARK, false, 0.4)
+	# Glass panes (slightly translucent cool)
+	var glass := MeshInstance3D.new()
+	var gm := BoxMesh.new()
+	gm.size = Vector3(w - 0.22, h - 0.22, 0.02)
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.55, 0.68, 0.82, 0.35)
+	gmat.metallic = 0.2
+	gmat.roughness = 0.12
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	glass.material_override = gmat
+	glass.position = Vector3(0, h * 0.5, 0.06)
+	root.add_child(glass)
+	# Cool window fill light
+	var fill := OmniLight3D.new()
+	fill.light_color = Color(0.75, 0.85, 0.95)
+	fill.light_energy = 0.35
+	fill.omni_range = 3.5
+	fill.position = Vector3(0, h * 0.5, 0.4)
+	root.add_child(fill)
+	return root
+
+static func _make_glass_wall(feat: Dictionary) -> Node3D:
+	## Conservatory iron-framed glass — thin bars + cool glass, no solid mint slab.
+	var root := Node3D.new()
+	root.name = "GlassWall"
+	var pos: Array = feat.get("pos", [0, 0, 0])
+	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.rotation_degrees.y = feat.get("yaw", 0.0)
+	var w: float = feat.get("width", 2.5)
+	var h: float = feat.get("height", 3.2)
+	# Perimeter iron only (not a solid fill wall)
+	var bar := 0.06
+	_add_box(root, Vector3(0, bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)
+	_add_box(root, Vector3(0, h - bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)
+	_add_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0), Vector3(bar, h, 0.08), IRON, true, 0.45)
+	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0), Vector3(bar, h, 0.08), IRON, true, 0.45)
+	# Mullion grid
+	for i in 4:
+		var fx := -w * 0.35 + i * (w * 0.23)
+		_add_box(root, Vector3(fx, h * 0.5, 0.01), Vector3(0.035, h - 0.12, 0.04), IRON.lightened(0.08), false, 0.45)
+	for j in 3:
+		var fy := h * 0.22 * (j + 1)
+		_add_box(root, Vector3(0, fy, 0.01), Vector3(w - 0.12, 0.035, 0.04), IRON.lightened(0.08), false, 0.45)
+	# Glass panes — low alpha cool blue-green
+	var glass := MeshInstance3D.new()
+	var gm := BoxMesh.new()
+	gm.size = Vector3(w - 0.12, h - 0.12, 0.015)
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.55, 0.72, 0.78, 0.22)
+	gmat.metallic = 0.25
+	gmat.roughness = 0.08
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	glass.material_override = gmat
+	glass.position = Vector3(0, h * 0.5, 0.03)
+	root.add_child(glass)
+	# Soft exterior-like fill (subtle)
+	var fill := OmniLight3D.new()
+	fill.light_color = Color(0.75, 0.88, 0.92)
+	fill.light_energy = 0.35
+	fill.omni_range = 4.0
+	fill.position = Vector3(0, h * 0.55, 0.55)
+	root.add_child(fill)
+	return root
+
+static func _make_door_frame(feat: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "DoorFrame"
+	var pos: Array = feat.get("pos", [0, 0, 0])
+	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.rotation_degrees.y = feat.get("yaw", 0.0)
+	var w: float = feat.get("width", 1.5)
+	var h: float = feat.get("height", 2.35)
+	_add_box(root, Vector3(-w * 0.5, h * 0.5, 0), Vector3(0.14, h, 0.22), MAHOGANY_DARK, true, 0.35)
+	_add_box(root, Vector3(w * 0.5, h * 0.5, 0), Vector3(0.14, h, 0.22), MAHOGANY_DARK, true, 0.35)
+	_add_box(root, Vector3(0, h, 0), Vector3(w + 0.14, 0.14, 0.24), MAHOGANY_DARK, true, 0.35)
+	# Threshold
+	_add_box(root, Vector3(0, 0.03, 0), Vector3(w, 0.06, 0.28), MAHOGANY, false, 0.4)
+	return root
+
+static func _make_mirror(feat: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Mirror"
+	var pos: Array = feat.get("pos", [0, 0, 0])
+	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.rotation_degrees.y = feat.get("yaw", 0.0)
+	_add_box(root, Vector3(0, 0, 0), Vector3(1.05, 1.45, 0.08), BRASS, true, 0.45)
+	_add_box(root, Vector3(0, 0, 0.02), Vector3(0.92, 1.32, 0.04), Color(0.55, 0.4, 0.18), false, 0.4)
+	var glass := MeshInstance3D.new()
+	var gm := BoxMesh.new()
+	gm.size = Vector3(0.78, 1.12, 0.015)
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.55, 0.62, 0.7, 0.55)
+	gmat.metallic = 0.85
+	gmat.roughness = 0.08
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glass.material_override = gmat
+	glass.position = Vector3(0, 0, 0.05)
+	root.add_child(glass)
+	return root
+
+static func _make_painting(feat: Dictionary) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Painting"
+	var pos: Array = feat.get("pos", [0, 0, 0])
+	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.rotation_degrees.y = feat.get("yaw", 0.0)
+	var w: float = feat.get("width", 0.85)
+	var h: float = feat.get("height", 1.05)
+	_add_box(root, Vector3(0, 0, 0), Vector3(w, h, 0.06), BRASS, true, 0.4)
+	var canvas := MeshInstance3D.new()
+	var cm := BoxMesh.new()
+	cm.size = Vector3(w - 0.12, h - 0.12, 0.02)
+	canvas.mesh = cm
+	var cmat := StandardMaterial3D.new()
+	var tex := _load_tex(feat.get("texture", TEX_WALLPAPER))
+	if tex:
+		cmat.albedo_texture = tex
+		cmat.uv1_scale = Vector3(1.2, 1.2, 1.0)
+	else:
+		cmat.albedo_color = Color(0.35, 0.28, 0.2)
+	cmat.roughness = 0.85
+	canvas.material_override = cmat
+	canvas.position = Vector3(0, 0, 0.04)
+	root.add_child(canvas)
+	return root
+
+# ─── Billboard hero furniture (painted cards) ────────────────────────────────
+
+static func _make_billboard_prop(prop: Dictionary) -> Node3D:
+	## Alpha-cut painted furniture card — fixed yaw (NOT camera billboard).
+	## Requires clean transparent PNG; studio-bg assets will look like brown squares.
+	var root := Node3D.new()
+	root.name = "BillboardProp"
+	var tex_path: String = prop.get("texture", "")
+	var width: float = prop.get("width", 1.0)
+	var height: float = prop.get("height", 1.1)
+	var y_off: float = prop.get("y_offset", height * 0.5)
+	var solid: bool = prop.get("solid", true)
+
+	var mi := MeshInstance3D.new()
+	var mesh := QuadMesh.new()
+	mesh.size = Vector2(width, height)
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	var tex := _load_tex(tex_path)
+	if tex:
+		mat.albedo_texture = tex
+		mat.albedo_color = Color(1, 1, 1)
+	else:
+		mat.albedo_color = MAHOGANY
+	# Alpha scissor hard-cuts bg; no soft edges that sort badly with furniture
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mat.alpha_scissor_threshold = 0.5
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
+	# IMPORTANT: do NOT set billboard_mode — furniture must keep room yaw
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
+	mi.material_override = mat
+	mi.position = Vector3(0, y_off, 0)
+	root.add_child(mi)
+
+	# Back-facing second quad for when viewed from behind
+	var mi_b := MeshInstance3D.new()
+	mi_b.mesh = mesh
+	mi_b.material_override = mat
+	mi_b.position = Vector3(0, y_off, -0.01)
+	mi_b.rotation_degrees.y = 180.0
+	root.add_child(mi_b)
+
+	if solid:
+		var body := StaticBody3D.new()
+		var col := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(width * 0.7, height * 0.85, 0.4)
+		col.shape = shape
+		col.position = Vector3(0, y_off * 0.9, 0)
+		body.add_child(col)
+		root.add_child(body)
+
+	_add_contact_shadow(root, width * 0.4, 0.32)
+	return root
+
+# ─── Materials / primitives ──────────────────────────────────────────────────
+
+static func _book_color(seed: int) -> Color:
+	var hues := [
+		Color(0.42, 0.16, 0.12),
+		Color(0.18, 0.22, 0.32),
+		Color(0.32, 0.24, 0.14),
+		Color(0.5, 0.12, 0.1),
+		Color(0.2, 0.3, 0.22),
+	]
+	return hues[seed % hues.size()]
+
+static func _load_tex(path: String) -> Texture2D:
+	if path == "":
+		return null
+	if ResourceLoader.exists(path):
+		var r = load(path)
+		if r is Texture2D:
+			return r
+	var abs_path := ProjectSettings.globalize_path(path)
+	if FileAccess.file_exists(abs_path):
+		var img := Image.new()
+		if img.load(abs_path) == OK:
+			return ImageTexture.create_from_image(img)
+	return null
+
+static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardMaterial3D:
+	## Auto-pick wood/fabric/metal texture so furniture isn't flat Minecraft blocks.
+	var mat := StandardMaterial3D.new()
+	mat.roughness = roughness
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	var tex_path := ""
+	var metallic := 0.0
+	# Copper
+	if color.r > 0.55 and color.g > 0.25 and color.g < 0.55 and color.b < 0.35 and color.r > color.g:
+		tex_path = TEX_COPPER
+		metallic = 0.75
+		mat.roughness = minf(roughness, 0.4)
+	# Brass / gold
+	elif color.r > 0.55 and color.g > 0.4 and color.b < 0.4 and color.r >= color.g:
+		tex_path = TEX_BRASS
+		metallic = 0.7
+		mat.roughness = minf(roughness, 0.4)
+	# Iron / dark metal
+	elif color.r < 0.32 and color.g < 0.32 and color.b < 0.35 and color.v < 0.35:
+		tex_path = TEX_IRON
+		metallic = 0.65
+		mat.roughness = minf(roughness, 0.55)
+	# Red velvet
+	elif color.r > 0.4 and color.r > color.g + 0.15 and color.r > color.b + 0.15:
+		tex_path = TEX_VELVET_RED
+	# Green velvet / leaf
+	elif color.g > color.r + 0.02 and color.g > color.b * 0.85 and color.g > 0.15:
+		if color.g < 0.28:
+			tex_path = TEX_VELVET_GREEN_DEEP
+		elif color.g > 0.35:
+			tex_path = TEX_VELVET_GREEN
+		else:
+			tex_path = TEX_VELVET_GREEN
+	# Linen / cream fabric
+	elif color.r > 0.7 and color.g > 0.65 and color.b > 0.5 and color.r - color.b < 0.25:
+		tex_path = TEX_LINEN
+	# Marble (very pale)
+	elif color.r > 0.75 and color.g > 0.72 and color.b > 0.68 and absf(color.r - color.g) < 0.08:
+		tex_path = TEX_MARBLE
+	# Stone / mid grey-brown
+	elif color.r > 0.45 and color.g > 0.42 and color.b > 0.36 and absf(color.r - color.g) < 0.1:
+		tex_path = TEX_STONE
+	# Mahogany / wood browns / oak
+	elif color.r > 0.12 and color.r >= color.g * 0.9 and color.r > color.b and color.g < 0.45:
+		tex_path = TEX_WOOD
+
+	var tex := _load_tex(tex_path)
+	if tex:
+		mat.albedo_texture = tex
+		mat.albedo_color = Color(1, 1, 1).lerp(color, 0.28)
+		mat.metallic = metallic
+		var u: float = clampf(size.x * 1.2 + size.z * 0.8, 0.6, 4.0)
+		var v: float = clampf(size.y * 1.4, 0.6, 4.0)
+		mat.uv1_scale = Vector3(u, v, 1.0)
+	else:
+		mat.albedo_color = color
+		mat.metallic = metallic
+	return mat
+
+static func _add_contact_shadow(parent: Node3D, rx: float, rz: float) -> void:
+	## Soft dark disc under furniture for grounding (Myst still-life weight).
+	var mi := MeshInstance3D.new()
+	mi.name = "ContactShadow"
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = rx
+	mesh.bottom_radius = rx
+	mesh.height = 0.015
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.02, 0.015, 0.01, 0.45)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
+	mi.position = Vector3(0, 0.01, 0)
+	mi.scale = Vector3(1.0, 1.0, rz / maxf(rx, 0.01))
+	parent.add_child(mi)
+
+static func _add_box(
+	parent: Node3D,
+	pos: Vector3,
+	size: Vector3,
+	color: Color,
+	solid: bool,
+	roughness: float = 0.8,
+) -> void:
+	var body := StaticBody3D.new() if solid else Node3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = _mat_for(color, roughness, size)
+	body.add_child(mi)
+	if solid:
+		var col := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = size
+		col.shape = shape
+		body.add_child(col)
+	body.position = pos
+	parent.add_child(body)
+
+static func _add_cylinder(
+	parent: Node3D,
+	pos: Vector3,
+	radius: float,
+	height: float,
+	color: Color,
+	solid: bool,
+	roughness: float = 0.75,
+	use_metal_tex: bool = false,
+) -> void:
+	var body := StaticBody3D.new() if solid else Node3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = height
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	if use_metal_tex or color.a >= 0.99:
+		mi.material_override = _mat_for(color, roughness, Vector3(radius * 2.0, height, radius * 2.0))
+		# Preserve alpha for glass-like cylinders
+		if color.a < 0.98:
+			var m: StandardMaterial3D = mi.material_override
+			m.albedo_color = color
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.metallic = 0.2
+			m.roughness = 0.12
+	else:
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = color
+		mat.roughness = roughness
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		if color.a < 0.98:
+			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mi.material_override = mat
+	body.add_child(mi)
+	if solid:
+		var col := CollisionShape3D.new()
+		var shape := CylinderShape3D.new()
+		shape.radius = radius
+		shape.height = height
+		col.shape = shape
+		body.add_child(col)
+	body.position = pos
+	parent.add_child(body)

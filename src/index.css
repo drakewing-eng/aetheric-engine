@@ -1,0 +1,183 @@
+:root {
+  /* Colors */
+  --bg-color: #0b0c10;
+  --bg-tint: #15181f;
+  --text-primary: #e6e8eb;
+  --text-secondary: #959ea6;
+  --accent-gold: #c8a96e;
+  --accent-gold-glow: rgba(200, 169, 110, 0.25);
+  --glow-cyan: #3fc1c9;
+  --glow-cyan-rgb: 63, 193, 201;
+  --glow-cyan-opaque: rgba(63, 193, 201, 0.15);
+  --border-color: rgba(200, 169, 110, 0.15);
+  
+  /* Fonts */
+  --font-sans: 'Outfit', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-victorian: 'IM Fell English', Georgia, serif;
+  
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(21, 24, 31, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 169, 110, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 169, 110, 0.6);
+}
+
+/* Glow Pulses */
+@keyframes pulse-cyan {
+  0% {
+    box-shadow: 0 0 10px rgba(var(--glow-cyan-rgb), 0.2), inset 0 0 10px rgba(var(--glow-cyan-rgb), 0.1);
+    border-color: rgba(var(--glow-cyan-rgb), 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(var(--glow-cyan-rgb), 0.5), inset 0 0 20px rgba(var(--glow-cyan-rgb), 0.25);
+    border-color: rgba(var(--glow-cyan-rgb), 0.6);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(var(--glow-cyan-rgb), 0.2), inset 0 0 10px rgba(var(--glow-cyan-rgb), 0.1);
+    border-color: rgba(var(--glow-cyan-rgb), 0.3);
+  }
+}
+
+.glow-cyan-active {
+  animation: pulse-cyan 3s infinite ease-in-out;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scanlines::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 20;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.crt-flicker {
+  position: relative;
+}
+.crt-flicker::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 21;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.27861; }
+  5% { opacity: 0.34769; }
+  10% { opacity: 0.23604; }
+  15% { opacity: 0.90626; }
+  20% { opacity: 0.18128; }
+  25% { opacity: 0.83891; }
+  30% { opacity: 0.65583; }
+  35% { opacity: 0.67807; }
+  40% { opacity: 0.26559; }
+  45% { opacity: 0.84693; }
+  50% { opacity: 0.96019; }
+  55% { opacity: 0.48594; }
+  60% { opacity: 0.29013; }
+  65% { opacity: 0.76071; }
+  70% { opacity: 0.52341; }
+  75% { opacity: 0.33722; }
+  80% { opacity: 0.92388; }
+  85% { opacity: 0.3386; }
+  90% { opacity: 0.27538; }
+  95% { opacity: 0.50205; }
+  100% { opacity: 0.27861; }
+}
+
+/* Map Room Hotspots */
+.hotspot-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--accent-gold);
+  background: rgba(200, 169, 110, 0.05);
+  box-shadow: 0 0 8px var(--accent-gold-glow);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.hotspot-ring:hover {
+  background: rgba(200, 169, 110, 0.2);
+  box-shadow: 0 0 15px var(--accent-gold), inset 0 0 10px var(--accent-gold-glow);
+  scale: 1.1;
+}
+
+.hotspot-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--accent-gold);
+  animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
+  pointer-events: none;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}

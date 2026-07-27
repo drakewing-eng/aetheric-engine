@@ -1,0 +1,21 @@
+# Dependencies & builds
+node_modules/
+dist/
+*.log
+
+# Godot local editor cache (regenerates on open)
+aetheric-engine-godot/.godot/
+**/.godot/
+
+# OS / editor junk
+.DS_Store
+*.swp
+*~
+
+# Large generated screenshot PNGs (keep markdown reports)
+SCRATCH/screenshots/**/*.png
+SCRATCH/screenshots/loop_*/**/*.png
+
+# Optional local-only
+.env
+.env.*
