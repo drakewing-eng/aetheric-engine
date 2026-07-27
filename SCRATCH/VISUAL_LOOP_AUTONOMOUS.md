@@ -51,7 +51,8 @@
 - Loop22: denser ivy attempt; gallery denser
 - Loop23: removed balloon vines; denser palms; conservatory seating
 - Loop24: max service wainscots; layered hedge; drawing denser
-- Loop25: conservatory wainscot 3.2; morning denser+shelf; portal brighter+skirting; plant max-h 1.2 sink 0.22
+- Loop25: conservatory full dado; morning denser; portal lights; plant sink
+- Loop26: drawing furniture deeper sink; plant scissor 0.28; conservatory wainscot 3.7; kitchen shelves 2.55; gallery cooler light
 
 ## Do not
 - Delete prop lists from fps_rooms
