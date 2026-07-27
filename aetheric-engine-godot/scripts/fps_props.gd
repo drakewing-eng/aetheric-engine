@@ -756,12 +756,17 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			# Mesh terracotta pot under card so feet never float if PNG pot is sparse.
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
-			# No mesh_pot — dual pot + FIXED_Y fronds read as floating tops.
-			# Ground via sink only; prefer short/wide cards so pot stays on floor.
-			bp["sink"] = 0.12
+			# Short/wide cards keep pot in lower half of billboard (less floating crown)
+			var ph: float = float(bp.get("height", 1.2))
+			var pw: float = float(bp.get("width", 0.85))
+			if ph > 1.25:
+				ph = 1.25
+			if pw < ph * 0.72:
+				pw = ph * 0.78
+			bp["height"] = ph
+			bp["width"] = pw
+			bp["sink"] = 0.16
 			bp["mesh_pot"] = false
-			if float(bp.get("height", 1.4)) > 1.5:
-				bp["height"] = float(bp.get("height", 1.4)) * 0.85
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
 	root.name = "Plant"
