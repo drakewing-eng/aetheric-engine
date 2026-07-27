@@ -59,7 +59,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "desk.png",
 				"width": 2.6,
 				"height": 1.15,
-				"sink": 0.12,
+				"sink": 0.16,
 			},
 			{
 				"kind": "billboard_prop",
@@ -68,7 +68,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "chair.png",
 				"width": 1.1,
 				"height": 1.35,
-				"sink": 0.1,
+				"sink": 0.14,
 			},
 			{
 				"kind": "billboard_prop",
@@ -77,7 +77,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "sofa.png",
 				"width": 1.65,
 				"height": 1.2,
-				"sink": 0.1,
+				"sink": 0.14,
 			},
 			{
 				"kind": "billboard_prop",
@@ -86,7 +86,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "armchair.png",
 				"width": 0.75,
 				"height": 1.15,
-				"sink": 0.08,
+				"sink": 0.12,
 			},
 			{
 				"kind": "billboard_prop",
@@ -95,7 +95,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
 				"height": 0.9,
-				"sink": 0.08,
+				"sink": 0.12,
 			},
 			{
 				"kind": "billboard_prop",
@@ -104,7 +104,7 @@ const ROOMS := {
 				"texture": PROP_DIR + "side_table.png",
 				"width": 0.55,
 				"height": 0.9,
-				"sink": 0.08,
+				"sink": 0.12,
 			},
 			# Mesh armchair for a second seating angle (richer 3D silhouette)
 			{"kind": "armchair", "pos": [2.1, 0.0, 2.15], "yaw": -145.0},
@@ -282,8 +282,9 @@ const ROOMS := {
 		"wainscot": TEX + "wainscot_gallery.jpg",
 		"floor_texture": TEX + "floor_gallery.jpg",
 		"floor_color": Color(0.16, 0.12, 0.09),
-		"light_energy": 1.05,
-		"light_color": Color(0.88, 0.85, 0.78),
+		"light_energy": 0.95,
+		"light_color": Color(0.85, 0.9, 0.95),
+		"wainscot_height": 1.25,
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [-7.85, 1.35, 0.0], "yaw": 90.0, "width": 1.6, "height": 2.5},
@@ -751,10 +752,11 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [3.5, 0.0, -2.5], "yaw": -90.0, "width": 1.2, "height": 1.6},
 			{"kind": "stool", "pos": [1.5, 0.0, 2.2], "yaw": -30.0},
 			# Plate rails sit just above tall wainscot
-			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.25},
-			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.25},
-			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.2},
-			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.2},
+			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.55},
+			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.55},
+			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.5},
+			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.5},
+			{"kind": "pot_rack", "pos": [0.0, 0.0, 3.35], "yaw": 0.0},
 		],
 		"doors": [
 			{

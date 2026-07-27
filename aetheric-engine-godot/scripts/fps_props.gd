@@ -1228,9 +1228,9 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	else:
 		mat.albedo_color = MAHOGANY
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	# Plants: lower scissor keeps pale stem/mid-frond links (high scissor caused floating crowns)
+	# Plants: low scissor keeps stem links; furniture cards keep cleaner cutouts
 	var is_plant_card := tex_path.find("plant_") >= 0
-	mat.alpha_scissor_threshold = 0.32 if is_plant_card else (0.48 if (face_camera or cross_planes) else 0.45)
+	mat.alpha_scissor_threshold = 0.28 if is_plant_card else 0.48
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
