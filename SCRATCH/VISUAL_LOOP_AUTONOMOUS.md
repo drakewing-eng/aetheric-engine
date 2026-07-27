@@ -50,7 +50,8 @@
 - Loop21: taller wainscot; wall_vine; workshop denser
 - Loop22: denser ivy attempt; gallery denser
 - Loop23: removed balloon vines; denser palms; conservatory seating
-- Loop24: kitchen 2.45 / workshop 2.15 / conservatory 2.6 wainscot; layered exterior hedge; drawing denser seating
+- Loop24: max service wainscots; layered hedge; drawing denser
+- Loop25: conservatory wainscot 3.2; morning denser+shelf; portal brighter+skirting; plant max-h 1.2 sink 0.22
 
 ## Do not
 - Delete prop lists from fps_rooms
