@@ -63,7 +63,8 @@
 - Loop34: sconces more rooms; thicker skirting; plant sink
 - Loop35: denser dresser; plant sink; more sconces
 - Loop36: chalk diagrams; coat hat; gallery path
-- Loop37: richer kitchen sink cupboard+jug; workshop stone path; denser drawing+hall props
+- Loop37: richer sink; denser workshop/drawing/hall
+- Loop38: thicker gilt painting frames; richer prep table crocks; solid silvered mirror; denser morning
 
 ## Do not
 - Delete prop lists from fps_rooms
