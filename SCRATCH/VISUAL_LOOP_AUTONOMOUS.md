@@ -57,7 +57,8 @@
 - Loop28: no mid-rail full panels; double cornice; gallery aisle
 - Loop29: full-panel double-layer; fireplace ornaments
 - Loop30: dark conservatory panels; stone thresholds; ajar doors
-- Loop31: palm PNG vertical alpha bridges; workshop center runner; richer exterior garden; morning bookshelf
+- Loop31: palm alpha bridges; workshop runner; exterior garden
+- Loop32: floor_path stone flags in conservatory; aetheric machine more coils+gauges; denser glass garden hedge
 
 ## Do not
 - Delete prop lists from fps_rooms
