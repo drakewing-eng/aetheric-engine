@@ -381,16 +381,18 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
 		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Lamp + book
-	_add_cylinder(root, Vector3(0, 0.72, 0), 0.04, 0.18, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.88, 0), 0.12, 0.14, CREAM.darkened(0.15), false, 0.85)
+	# Argand-style oil lamp (brass column + glass chimney, not modern drum shade)
+	_add_cylinder(root, Vector3(0, 0.7, 0), 0.06, 0.04, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, 0.82, 0), 0.035, 0.2, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.98, 0), 0.055, 0.16, Color(0.7, 0.82, 0.88, 0.45), false, 0.12, true)
+	_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.04, BRASS, false, 0.28, true)
 	_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2), false)
 	_add_contact_shadow(root, 0.34, 0.34)
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.35
-	lamp.omni_range = 2.2
-	lamp.position = Vector3(0, 0.95, 0)
+	lamp.light_energy = 0.4
+	lamp.omni_range = 2.4
+	lamp.position = Vector3(0, 1.0, 0)
 	root.add_child(lamp)
 	return root
 
@@ -742,8 +744,9 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
 			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
 			bp["solid"] = true
+			# FIXED_Y only — cross_planes doubled the pot silhouette (looked like two pots)
 			bp["face_camera"] = true
-			bp["cross_planes"] = true  # two cards at 90° — volume, not paper edge
+			bp["cross_planes"] = false
 			bp["sink"] = 0.06
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
@@ -915,7 +918,7 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_glass_wall(feat: Dictionary) -> Node3D:
-	## Conservatory iron-framed glass — thin bars + cool glass, no solid mint slab.
+	## Conservatory iron-framed glass with garden exterior (not blank white void).
 	var root := Node3D.new()
 	root.name = "GlassWall"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -923,7 +926,14 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 2.5)
 	var h: float = feat.get("height", 3.2)
-	# Perimeter iron only (not a solid fill wall)
+	# Exterior garden plate (behind glass) — sky + foliage suggestion
+	_add_box(root, Vector3(0, h * 0.62, -0.18), Vector3(w - 0.05, h * 0.7, 0.04), Color(0.55, 0.68, 0.78), false, 0.95)
+	_add_box(root, Vector3(0, h * 0.18, -0.16), Vector3(w - 0.05, h * 0.28, 0.04), Color(0.22, 0.38, 0.18), false, 0.9)
+	# Soft tree/hedge blobs outside
+	for i in 3:
+		var fx := -w * 0.28 + i * (w * 0.28)
+		_add_sphere_blob(root, Vector3(fx, h * 0.32, -0.12), 0.28 + (i % 2) * 0.08, Color(0.18, 0.42, 0.16))
+	# Perimeter iron
 	var bar := 0.06
 	_add_box(root, Vector3(0, bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)
 	_add_box(root, Vector3(0, h - bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)
@@ -931,8 +941,8 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0), Vector3(bar, h, 0.08), IRON, true, 0.45)
 	# Mullion grid
 	for i in 4:
-		var fx := -w * 0.35 + i * (w * 0.23)
-		_add_box(root, Vector3(fx, h * 0.5, 0.01), Vector3(0.035, h - 0.12, 0.04), IRON.lightened(0.08), false, 0.45)
+		var fx2 := -w * 0.35 + i * (w * 0.23)
+		_add_box(root, Vector3(fx2, h * 0.5, 0.01), Vector3(0.035, h - 0.12, 0.04), IRON.lightened(0.08), false, 0.45)
 	for j in 3:
 		var fy := h * 0.22 * (j + 1)
 		_add_box(root, Vector3(0, fy, 0.01), Vector3(w - 0.12, 0.035, 0.04), IRON.lightened(0.08), false, 0.45)
@@ -942,19 +952,18 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	gm.size = Vector3(w - 0.12, h - 0.12, 0.015)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.55, 0.72, 0.78, 0.22)
-	gmat.metallic = 0.25
-	gmat.roughness = 0.08
+	gmat.albedo_color = Color(0.65, 0.78, 0.82, 0.28)
+	gmat.metallic = 0.2
+	gmat.roughness = 0.1
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, h * 0.5, 0.03)
 	root.add_child(glass)
-	# Soft exterior-like fill (subtle)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color(0.75, 0.88, 0.92)
-	fill.light_energy = 0.35
-	fill.omni_range = 4.0
+	fill.light_color = Color(0.78, 0.9, 0.95)
+	fill.light_energy = 0.45
+	fill.omni_range = 4.5
 	fill.position = Vector3(0, h * 0.55, 0.55)
 	root.add_child(fill)
 	return root
