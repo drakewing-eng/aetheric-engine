@@ -1018,16 +1018,14 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 2.5)
 	var h: float = feat.get("height", 3.2)
-	# Exterior garden (behind glass) — continuous sky + hedge, no floating mid-air balls
-	_add_box(root, Vector3(0, h * 0.68, -0.22), Vector3(w + 0.1, h * 0.72, 0.05), Color(0.52, 0.66, 0.78), false, 0.98)
-	# Distant lawn strip
-	_add_box(root, Vector3(0, h * 0.12, -0.2), Vector3(w + 0.1, h * 0.22, 0.05), Color(0.28, 0.42, 0.2), false, 0.92)
-	# Continuous hedge row (low, grounded)
-	_add_box(root, Vector3(0, h * 0.22, -0.15), Vector3(w * 0.92, h * 0.18, 0.12), Color(0.16, 0.36, 0.14), false, 0.88)
-	# Soft canopy tops on hedge (low only)
-	for i in 5:
-		var fx := -w * 0.38 + i * (w * 0.19)
-		_add_sphere_blob(root, Vector3(fx, h * 0.3, -0.14), 0.14 + (i % 2) * 0.04, Color(0.2, 0.4, 0.16))
+	# Exterior garden plate: sky + lawn + layered hedge (grounded only)
+	_add_box(root, Vector3(0, h * 0.7, -0.24), Vector3(w + 0.15, h * 0.75, 0.05), Color(0.5, 0.64, 0.78), false, 0.98)
+	_add_box(root, Vector3(0, h * 0.1, -0.22), Vector3(w + 0.15, h * 0.2, 0.05), Color(0.3, 0.44, 0.22), false, 0.92)
+	_add_box(root, Vector3(0, h * 0.2, -0.16), Vector3(w * 0.95, h * 0.16, 0.14), Color(0.14, 0.34, 0.12), false, 0.88)
+	_add_box(root, Vector3(0, h * 0.28, -0.14), Vector3(w * 0.88, h * 0.1, 0.1), Color(0.18, 0.38, 0.14), false, 0.88)
+	for i in 6:
+		var fx := -w * 0.4 + i * (w * 0.16)
+		_add_sphere_blob(root, Vector3(fx, h * 0.32, -0.12), 0.12 + (i % 2) * 0.03, Color(0.18, 0.38, 0.14))
 	# Perimeter iron
 	var bar := 0.06
 	_add_box(root, Vector3(0, bar * 0.5, 0), Vector3(w, bar, 0.08), IRON, true, 0.45)

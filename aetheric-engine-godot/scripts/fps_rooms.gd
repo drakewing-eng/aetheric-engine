@@ -118,6 +118,9 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [-1.4, 0.0, 2.4], "yaw": 10.0},
 			{"kind": "plant", "pos": [-3.6, 0.0, -3.5], "scale": 0.85,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 1.0},
+			{"kind": "chair", "pos": [1.8, 0.0, 1.5], "yaw": -40.0, "fabric": Color(0.4, 0.22, 0.16)},
+			{"kind": "side_table", "pos": [2.4, 0.0, 1.0], "yaw": 15.0},
+			{"kind": "crate", "pos": [-3.8, 0.0, 2.0], "scale": 0.55},
 		],
 		"doors": [
 			{
@@ -456,7 +459,7 @@ const ROOMS := {
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_workshop.jpg",
 		"wainscot": TEX + "wainscot_workshop.jpg",
-		"wainscot_height": 1.9,
+		"wainscot_height": 2.15,
 		"floor_texture": TEX + "floor_workshop.jpg",
 		"floor_color": Color(0.18, 0.13, 0.09),
 		"light_energy": 1.05,
@@ -577,11 +580,12 @@ const ROOMS := {
 		"wallpaper": TEX + "wallpaper_conservatory.jpg",
 		"wainscot": TEX + "wainscot_conservatory.jpg",
 		"floor_texture": TEX + "floor_conservatory.jpg",
-		"floor_color": Color(0.38, 0.4, 0.34),
-		"ceiling_color": Color(0.7, 0.78, 0.74),
+		"floor_color": Color(0.36, 0.42, 0.32),
+		"ceiling_color": Color(0.68, 0.78, 0.72),
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
-		"wainscot_height": 1.0,
+		# Tall green-tinted dado covers most solid plaster (glass walls still dominate)
+		"wainscot_height": 2.6,
 		"walls": {},
 		"features": [
 			{"kind": "glass_wall", "pos": [4.35, 0.0, 0.0], "yaw": -90.0, "width": 3.8, "height": 3.5},
@@ -678,7 +682,7 @@ const ROOMS := {
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_kitchen.jpg",
 		"wainscot": TEX + "wainscot_kitchen.jpg",
-		"wainscot_height": 2.15,
+		"wainscot_height": 2.45,
 		"floor_texture": TEX + "floor_kitchen.jpg",
 		"floor_color": Color(0.34, 0.26, 0.18),
 		"ceiling_color": Color(0.72, 0.65, 0.55),
