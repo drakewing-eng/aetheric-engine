@@ -1,40 +1,33 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-27 (visual loops 44–53 complete)  
+**Updated:** 2026-07-27 (2h wall+wood goal run in progress)  
 **Project:** `/Users/babble/aetheric-engine`  
-**Godot:** `/Applications/Godot.app/Contents/MacOS/Godot`  
-**Unattended 10m visual scheduler:** OFF  
+**Primary goal:** `goal:aetheric_wall_wood_2h`  
+**Unattended 10m scheduler:** OFF  
 
-## Open work (after this run)
-
-1. **Playtest doors in-game** — closed leaf + E teleport should land in target room; verify no void fall.
-2. **Pot racks** — improved but still simple mesh pans; optional hero copper assets later.
-3. **Palm FIXED_Y** crown float (asset) — residual from 7h loop.
-4. **Wallpaper contrast** secondary rooms — residual.
-
-## Done this run (`auto_loop_44`…`51`+)
+## This run (loops 54+)
 
 | Loop | Note |
 |------|------|
-| 44 | Closed doors, solid backstop, E teleport |
-| 45 | Ottoman **in front** of sofa; crock/tool shelves; book colours |
-| 46 | Seeds on copper/stool/crate/pot_rack |
-| 47 | Prep still-life variety; wall_shelf seeds; narrow door gaps |
-| 48 | Door brass; side_table still-life styles |
-| 49 | Pot rack shape variety |
-| 50 | Fewer palm clones; dresser plate variety |
-| 51 | **FIX** `pcol` type inference — restored all props (brief empty-room regression) |
+| 54 | Landscapes/still-lifes/views/wood species assets + wall hanging rewrites |
+| 55 | Oak bookshelves, scrubbed prep tops |
+| 56 | Brighter unshaded art/views |
+| 57 | QuadMesh paintings (fix UV), pine crates, oak dresser |
 
-## Engram on wake
+## Open
 
-| Concept | Why |
-|---------|-----|
-| `helper:session_handoff_latest` | Latest handoff |
-| `aetheric__visual_loop_run_44_53` | This 10-loop run summary |
-| `aetheric__next_session_door_unique_props` | Original playtest directive (mostly done) |
+1. Verify paintings show readable landscapes after QuadMesh fix  
+2. Windows exterior views readable through glass  
+3. Mirrors reflective (metallic) not room photos  
+4. Continue wood uniqueness + density polish  
+5. Mid-run Engram handoff every ~4 loops  
 
-Map: [engram-bridge.md](engram-bridge.md)
+## Prior complete (44–53)
 
-## Code touch points
+Closed doors E-teleport; ottoman front of sofa; crock/tool shelves; uniqueness seeds.
 
-See [architecture/fps-visual.md](architecture/fps-visual.md).
+## Engram
+
+- `goal:aetheric_wall_wood_2h` + subgoals  
+- `helper:session_handoff_latest`  
+- `aetheric__visual_loop_run_44_53`  

@@ -656,10 +656,13 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 	root.name = "Dresser"
 	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.7
+	# Kitchen oak (lighter service wood, not drawing-room mahogany)
+	var oak_l := Color(0.52, 0.38, 0.2)
+	var oak_d := Color(0.4, 0.28, 0.14)
 	# Base cupboard
-	_add_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), OAK, true, 0.5)
-	_add_box(root, Vector3(-0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), OAK.darkened(0.1), false, 0.5)
-	_add_box(root, Vector3(0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), OAK.darkened(0.1), false, 0.5)
+	_add_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), oak_l, true, 0.55)
+	_add_box(root, Vector3(-0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), oak_d, false, 0.55)
+	_add_box(root, Vector3(0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), oak_d, false, 0.55)
 	_add_cylinder(root, Vector3(-0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
 	# Upper plate rack open shelves
@@ -980,10 +983,11 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 	root.name = "Crate"
 	var s: float = prop.get("scale", 1.0)
 	var seed0: int = int(prop.get("seed", 0))
-	var wood := OAK if seed0 % 2 == 0 else OAK.darkened(0.12)
+	# Pine packing crates (not furniture mahogany)
+	var wood := Color(0.62, 0.48, 0.28) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.24)
 	var h: float = 0.38 + float(seed0 % 3) * 0.04
-	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.6)
-	_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.55)
+	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.7)
+	_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.65)
 	# Batten straps (orientation varies by seed)
 	if seed0 % 2 == 0:
 		_add_box(root, Vector3(0, h * 0.5 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
@@ -1344,8 +1348,8 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	if view_path == "" or view_path.find("richmond_") >= 0 or view_path.find("wallpaper_") >= 0:
 		view_path = VIEW_EXTERIORS[seed0 % VIEW_EXTERIORS.size()]
 	var view_mi := MeshInstance3D.new()
-	var vm := BoxMesh.new()
-	vm.size = Vector3(w * 0.92, h * 0.92, 0.02)
+	var vm := QuadMesh.new()
+	vm.size = Vector2(w * 0.92, h * 0.92)
 	view_mi.mesh = vm
 	var vmat := StandardMaterial3D.new()
 	var vtex := _load_tex(view_path)
@@ -1356,6 +1360,7 @@ static func _make_window(feat: Dictionary) -> Node3D:
 		vmat.albedo_color = Color(0.45, 0.62, 0.78)
 	vmat.roughness = 1.0
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	view_mi.material_override = vmat
 	view_mi.position = Vector3(0, h * 0.5, -0.07)
 	root.add_child(view_mi)
@@ -1566,8 +1571,8 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0, 0.035), Vector3(w - 0.12, h - 0.12, 0.03), Color(0.2, 0.12, 0.07), false, 0.55)
 	_add_box(root, Vector3(0, h * 0.5 + 0.09, 0.01), Vector3(0.04, 0.1, 0.03), BRASS.darkened(0.1), false, 0.35)
 	var canvas := MeshInstance3D.new()
-	var cm := BoxMesh.new()
-	cm.size = Vector3(w - 0.18, h - 0.18, 0.02)
+	var cm := QuadMesh.new()
+	cm.size = Vector2(w - 0.18, h - 0.18)
 	canvas.mesh = cm
 	var cmat := StandardMaterial3D.new()
 	var tex_path: String = str(feat.get("texture", ""))
@@ -1580,10 +1585,9 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 		or tex_path == TEX_WALLPAPER
 	)
 	if bad:
-		if kind == "still_life" or (kind == "auto" and seed0 % 5 == 0):
+		if kind == "still_life":
 			tex_path = ART_STILL_LIFES[seed0 % ART_STILL_LIFES.size()]
-		elif kind == "portrait" or (kind == "auto" and seed0 % 5 == 1):
-			# Character portraits as framed oils (period salon practice)
+		elif kind == "portrait":
 			var portraits := [
 				"res://assets/portraits/portrait_bell.jpg",
 				"res://assets/portraits/portrait_selina.jpg",
@@ -1594,6 +1598,7 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 			]
 			tex_path = portraits[seed0 % portraits.size()]
 		else:
+			# default / landscape / auto → outdoor oil
 			tex_path = ART_LANDSCAPES[seed0 % ART_LANDSCAPES.size()]
 	var tex := _load_tex(tex_path)
 	if tex == null:
@@ -1601,14 +1606,13 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	if tex:
 		cmat.albedo_texture = tex
 		cmat.albedo_color = Color(1.0, 0.98, 0.92)
-		cmat.uv1_scale = Vector3(1.0, 1.0, 1.0)
 	else:
-		cmat.albedo_color = Color(0.35, 0.48, 0.55)
-	# Unshaded so landscapes stay readable in dim Victorian rooms
+		cmat.albedo_color = Color(0.4, 0.55, 0.65)
 	cmat.roughness = 0.85
 	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	cmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	canvas.material_override = cmat
-	canvas.position = Vector3(0, 0, 0.05)
+	canvas.position = Vector3(0, 0, 0.055)
 	root.add_child(canvas)
 	return root
 
