@@ -822,9 +822,12 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 				pw = ph * 0.85
 			bp["height"] = ph
 			bp["width"] = pw
-			bp["sink"] = 0.22
+			bp["sink"] = 0.24
 			bp["mesh_pot"] = false
-			return _make_billboard_prop(bp)
+			# Tiny soil disc under card — grounds without dual-pot silhouette
+			var root_plant := _make_billboard_prop(bp)
+			_add_contact_shadow(root_plant, pw * 0.35, pw * 0.28)
+			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)

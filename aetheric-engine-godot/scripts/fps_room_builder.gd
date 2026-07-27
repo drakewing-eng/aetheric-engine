@@ -435,8 +435,9 @@ func _add_victorian_wall(
 	var cover_w := plane_w + (WALL_OVERLAP * 2.0 if expand else 0.04)
 	var cover_h := plane_h + WALL_TRIM_Y * 2.0
 	# Leave a small vertical gap so layers don't share an edge in depth
-	var join := _wainscot_h
+	var join := minf(_wainscot_h, cover_h - 0.05)
 	var paper_overlap := 0.04  # paper tucks slightly behind rail
+	var full_panel := _wainscot_h >= plane_h - 0.15
 	var upper_h := cover_h - join + paper_overlap
 	var upper_y := join - paper_overlap * 0.5 + upper_h * 0.5 - WALL_TRIM_Y
 	var lower_y := join * 0.5
@@ -444,27 +445,40 @@ func _add_victorian_wall(
 	var yaw_rad := deg_to_rad(yaw_deg)
 	var inward := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.012
 
-	_add_wall_plane(
-		wall_name + "Wainscot",
-		pos + Vector3(0, lower_y - plane_h * 0.5, 0),
-		yaw_deg,
-		Vector2(cover_w, join + WALL_TRIM_Y * 0.5),
-		wainscot_tex,
-		fallback,
-		true
-	)
-	# Wallpaper offset inward (toward room) — stops flicker vs wainscot
-	_add_wall_plane(
-		wall_name + "Paper",
-		pos + Vector3(0, upper_y - plane_h * 0.5, 0) + inward,
-		yaw_deg,
-		Vector2(cover_w, upper_h),
-		paper_tex,
-		fallback,
-		true
-	)
-	# Dado / chair rail at join — physical strip so the meeting line never shimmers
-	_add_chair_rail(wall_name, pos, yaw_deg, cover_w, join, inward)
+	if full_panel:
+		# Full-height paneling (service rooms / conservatory solid walls)
+		_add_wall_plane(
+			wall_name + "Wainscot",
+			pos + Vector3(0, 0, 0),
+			yaw_deg,
+			Vector2(cover_w, cover_h),
+			wainscot_tex,
+			fallback,
+			true
+		)
+		_add_chair_rail(wall_name, pos, yaw_deg, cover_w, minf(1.15, join), inward)
+	else:
+		_add_wall_plane(
+			wall_name + "Wainscot",
+			pos + Vector3(0, lower_y - plane_h * 0.5, 0),
+			yaw_deg,
+			Vector2(cover_w, join + WALL_TRIM_Y * 0.5),
+			wainscot_tex,
+			fallback,
+			true
+		)
+		# Wallpaper offset inward (toward room) — stops flicker vs wainscot
+		_add_wall_plane(
+			wall_name + "Paper",
+			pos + Vector3(0, upper_y - plane_h * 0.5, 0) + inward,
+			yaw_deg,
+			Vector2(cover_w, upper_h),
+			paper_tex,
+			fallback,
+			true
+		)
+		# Dado / chair rail at join — physical strip so the meeting line never shimmers
+		_add_chair_rail(wall_name, pos, yaw_deg, cover_w, join, inward)
 
 func _add_stretched_wall(
 	wall_name: String,

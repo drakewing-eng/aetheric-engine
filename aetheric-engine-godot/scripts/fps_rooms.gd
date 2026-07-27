@@ -329,6 +329,10 @@ const ROOMS := {
 			{"kind": "crate", "pos": [-1.5, 0.0, 3.6], "scale": 0.55},
 			{"kind": "chair", "pos": [1.5, 0.0, -2.5], "yaw": -30.0, "fabric": Color(0.28, 0.2, 0.16)},
 			{"kind": "side_table", "pos": [0.0, 0.0, -2.8], "yaw": 5.0},
+			# Clear aisle center — pull side table off machine sightline
+			{"kind": "side_table", "pos": [-2.5, 0.0, 1.5], "yaw": 15.0},
+			{"kind": "stool", "pos": [2.8, 0.0, 1.2], "yaw": -25.0},
+			{"kind": "copper_pot", "pos": [3.5, 0.0, -3.5], "scale": 0.6},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, -1.0],
@@ -592,7 +596,7 @@ const ROOMS := {
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
 		# Nearly full-height dado on solid panels (glass still primary)
-		"wainscot_height": 3.7,
+		"wainscot_height": 4.0,
 		"walls": {},
 		"features": [
 			{"kind": "glass_wall", "pos": [4.35, 0.0, 0.0], "yaw": -90.0, "width": 3.8, "height": 3.5},
@@ -691,18 +695,18 @@ const ROOMS := {
 		"wainscot": TEX + "wainscot_kitchen.jpg",
 		"wainscot_height": 2.45,
 		"floor_texture": TEX + "floor_kitchen.jpg",
-		"floor_color": Color(0.34, 0.26, 0.18),
-		"ceiling_color": Color(0.72, 0.65, 0.55),
-		"light_energy": 0.88,
-		"light_color": Color(1.0, 0.62, 0.32),
+		"floor_color": Color(0.32, 0.24, 0.16),
+		"ceiling_color": Color(0.65, 0.58, 0.48),
+		"light_energy": 0.85,
+		"light_color": Color(1.0, 0.6, 0.3),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [0.0, 1.15, -3.85], "yaw": 0.0, "width": 1.55, "height": 2.35},
 			{"kind": "window", "pos": [4.35, 1.7, 0.5], "yaw": -90.0, "width": 1.1, "height": 1.5},
 			{"kind": "window", "pos": [-4.35, 1.7, 0.5], "yaw": 90.0, "width": 1.0, "height": 1.4},
-			{"kind": "painting", "pos": [-2.5, 2.1, 3.55], "yaw": 180.0, "width": 0.7, "height": 0.55,
+			{"kind": "painting", "pos": [-2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.7, "height": 0.55,
 				"texture": "res://assets/rooms/richmond_kitchen.jpg"},
-			{"kind": "painting", "pos": [2.5, 2.1, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
+			{"kind": "painting", "pos": [2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
 				"texture": "res://assets/rooms/richmond_workshop.jpg"},
 		],
 		"props": [
