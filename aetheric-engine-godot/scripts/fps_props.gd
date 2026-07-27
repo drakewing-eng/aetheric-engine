@@ -686,7 +686,12 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 	var scale: float = prop.get("scale", 1.0)
 	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, COPPER, true, 0.35, true)
 	_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, COPPER.lightened(0.1), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.25 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.18, 0.1, 0.06), false)
+	# Bail handles both sides
 	_add_box(root, Vector3(0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), COPPER, false, 0.35)
+	_add_box(root, Vector3(-0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), COPPER, false, 0.35)
+	_add_box(root, Vector3(0, 0.3 * scale, 0), Vector3(0.34 * scale, 0.02 * scale, 0.02 * scale), COPPER.darkened(0.05), false, 0.35)
+	_add_contact_shadow(root, 0.18 * scale, 0.18 * scale)
 	return root
 
 # ─── Workshop ────────────────────────────────────────────────────────────────
@@ -912,13 +917,16 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["mesh_pot"] = false
 			var root_plant := _make_billboard_prop(bp)
 			_add_contact_shadow(root_plant, pw * 0.45, pw * 0.35)
-			# Soft mesh canopy blobs mid-height only (side volume without second pot)
-			var leaf_h := ph * 0.55
-			var leaf_a := Color(0.22, 0.42, 0.16)
-			var leaf_b := Color(0.16, 0.36, 0.12)
-			_add_sphere_blob(root_plant, Vector3(0.08, leaf_h, 0.06), 0.12 * pw, leaf_a)
-			_add_sphere_blob(root_plant, Vector3(-0.1, leaf_h + 0.08, -0.05), 0.1 * pw, leaf_b)
-			_add_sphere_blob(root_plant, Vector3(0.02, leaf_h + 0.15, 0.02), 0.09 * pw, leaf_a)
+			# Flat leaf cards mid-height (side volume without pot orb / second pot)
+			var leaf_h := ph * 0.52
+			var leaf_a := Color(0.2, 0.4, 0.14)
+			var leaf_b := Color(0.14, 0.34, 0.1)
+			for i in 4:
+				var ang := float(i) * 0.9
+				var lx := cos(ang) * 0.12 * pw
+				var lz := sin(ang) * 0.12 * pw
+				var ly := leaf_h + float(i % 2) * 0.1
+				_add_box(root_plant, Vector3(lx, ly, lz), Vector3(0.14 * pw, 0.02, 0.18 * pw), leaf_a if i % 2 == 0 else leaf_b, false, 0.9)
 			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"
