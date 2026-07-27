@@ -1,0 +1,43 @@
+# Open visual / gameplay bugs (user playtest)
+
+Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SESSION_VISUAL_PROMPT.md](../../NEXT_SESSION_VISUAL_PROMPT.md).
+
+## 1. Doorways — closet + fall-through (P0)
+
+**Symptom:** Entering a doorway feels like a small closet, not the hall beyond; player **falls through the floor**.
+
+**Desired:** Stepping through / opening a door lands in the **target room** at its door spawn (e.g. entrance hall).
+
+**Preferred design (user):** Doors **closed** by default; on use → **direct room transition** (load room + teleport). Do not require walking into a portal volume that has no real floor.
+
+**Investigate:**
+
+- `fps_room_builder.gd` — `_add_door_portal` (short hallway stub)
+- Door interact / room switch / player controller
+- `fps_rooms.gd` — `doors[]` (`target`, `spawn`, `spawn_yaw`, `pos`)
+- Floor collision at thresholds vs portal depth
+
+## 2. Ottoman under sofa (P0 drawing room)
+
+**Symptom:** Ottoman sits **under** the sofa (clip).
+
+**Fix:** Reposition drawing_room props (billboard sofa vs mesh ottoman/armchair). Check y/sink and xz placement in `fps_rooms.gd`.
+
+## 3. Identical shelves / bookshelves (P1)
+
+**Symptom:** Same shelf unit in many rooms including **kitchen**; green patches + brown blocks; Minecraft-like.
+
+**Fix:**
+
+- Kitchen → plate dresser / crocks / copper (not library books)
+- Drawing/morning → true books with varied spines
+- Workshop → tools / timber / parts
+- Avoid shared generic green-blob + brown-cube still-lifes
+
+**Code:** `fps_props.gd` (`_make_bookshelf`, `_make_wall_shelf`, dresser), room prop lists in `fps_rooms.gd`.
+
+## 4. Remaining art debt (P2)
+
+- Palm FIXED_Y crown float (asset)
+- Paper-thin plants from extreme sides
+- Wallpaper contrast between secondary rooms

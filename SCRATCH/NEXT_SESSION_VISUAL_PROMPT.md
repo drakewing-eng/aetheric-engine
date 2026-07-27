@@ -2,9 +2,10 @@
 
 **Status:** Prior unattended 10m visual scheduler is STOPPED. Fresh session should execute human-directed ~1h work (~6 loops), not restart the old 10m scheduler.
 
+**Project memory tree (read first after Engram):** `SCRATCH/memory/INDEX.md` → `SCRATCH/memory/CURRENT.md`  
 **Project:** `/Users/babble/aetheric-engine`  
 **Godot:** `/Applications/Godot.app/Contents/MacOS/Godot`  
-**HEAD at handoff:** see `git log -3` (was `1b85acd` docs stop summary after loop 43)
+**HEAD at handoff:** see `git log -3`
 
 ## User directive (verbatim intent)
 
