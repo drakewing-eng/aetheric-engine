@@ -11,7 +11,7 @@ const TEX := "res://assets/rooms/textures/victorian/"
 const ROOMS := {
 	"drawing_room": {
 		"title": "Drawing Room",
-		"subtitle": "South door → Entrance Hall · walk to doorway · press E · WASD move",
+		"subtitle": "South door → Entrance Hall · approach closed door · press E · WASD move",
 		"size": [9.0, 10.0, 3.8],
 		"spawn": [0.0, 0.0, 2.5],
 		"spawn_yaw": 0.0,
@@ -180,7 +180,7 @@ const ROOMS := {
 	},
 	"entrance_hall": {
 		"title": "Entrance Hall",
-		"subtitle": "Walk to a doorway · press E to enter · Drawing · Gallery · Kitchen · Workshop · Morning Room",
+		"subtitle": "Closed doors · press E to enter · Drawing · Gallery · Kitchen · Workshop · Morning Room",
 		"size": [14.0, 10.0, 3.8],
 		# Face into hall toward furniture (not flat north wall)
 		"spawn": [0.0, 0.0, 1.2],

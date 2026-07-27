@@ -327,8 +327,8 @@ func _segments_with_gaps(left: float, right: float, gaps: Array) -> Array:
 
 
 func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: float) -> void:
-	## Only one room is loaded at a time — a short Victorian passage behind the
-	## door reads as a hallway (Myst-style portal), not a solid exterior wall.
+	## Closed-door design: shallow recess + SOLID backstop. No deep walkable
+	## "closet" hallway (that caused fall-through). Transition is E + teleport.
 	var p: Array = door.get("pos", [0, 0, 0])
 	var px := float(p[0])
 	var pz := float(p[2])
@@ -342,12 +342,10 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	var dw := absf(px + half_w)
 	var de := absf(px - half_w)
 	var m := minf(minf(dn, ds), minf(dw, de))
-	var depth := 3.4
+	var depth := 0.28  # shallow jamb recess only — not a walk-in corridor
 	var root := Node3D.new()
 	root.name = "DoorPortal"
 	var floor_col := Color(0.22, 0.14, 0.09)
-	var wall_col := Color(0.38, 0.32, 0.26)
-	var paper_col := Color(0.48, 0.42, 0.34)
 	var out_dir := Vector3.ZERO
 	if is_equal_approx(m, dn):
 		out_dir = Vector3(0, 0, -1)
@@ -361,7 +359,6 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	else:
 		out_dir = Vector3(1, 0, 0)
 		root.position = Vector3(half_w, 0, pz)
-	# Orient local −Z along outward (into the portal)
 	if absf(out_dir.x) > 0.5:
 		root.rotation_degrees.y = -90.0 if out_dir.x > 0.0 else 90.0
 	elif out_dir.z > 0.0:
@@ -370,50 +367,16 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 		root.rotation_degrees.y = 0.0
 	add_child(root)
 	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
-	# Floor boards
-	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.2, 0.04, depth), floor_col, wood_tex, Vector3(1.5, 3.0, 1.0))
-	# Ceiling (slightly warm plaster)
-	_add_portal_box(root, Vector3(0, door_h + 0.08, -depth * 0.5), Vector3(door_w + 0.2, 0.08, depth), Color(0.55, 0.48, 0.38))
-	# Side walls: wainscot band + upper paper tone
-	var side_x := door_w * 0.5 + 0.05
+	# Threshold board (visual floor in recess)
+	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.12, 0.04, depth), floor_col, wood_tex, Vector3(1.2, 1.0, 1.0))
+	# Jamb returns
+	var side_x := door_w * 0.5 + 0.04
 	for sx in [-side_x, side_x]:
-		_add_portal_box(root, Vector3(sx, 0.55, -depth * 0.5), Vector3(0.1, 1.1, depth), Color(0.28, 0.18, 0.12), wood_tex, Vector3(0.8, 2.0, 1.0))
-		_add_portal_box(root, Vector3(sx, 1.1 + (door_h - 1.1) * 0.5, -depth * 0.5), Vector3(0.09, door_h - 1.1, depth), paper_col)
-		# Chair rail
-		_add_portal_box(root, Vector3(sx, 1.12, -depth * 0.5), Vector3(0.12, 0.04, depth), Color(0.2, 0.12, 0.08))
-	# Far end: warmer paper wall + second doorway silhouette (more house beyond)
-	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.25, door_h + 0.15, 0.1), Color(0.32, 0.28, 0.22))
-	# Recessed arch opening into darkness
-	_add_portal_box(root, Vector3(0, door_h * 0.45, -depth + 0.04), Vector3(door_w * 0.55, door_h * 0.75, 0.06), Color(0.06, 0.05, 0.04))
-	# Picture frame + console (depth cues)
-	_add_portal_box(root, Vector3(-door_w * 0.28, door_h * 0.62, -depth + 0.08), Vector3(0.4, 0.5, 0.03), Color(0.4, 0.28, 0.12))
-	_add_portal_box(root, Vector3(-door_w * 0.28, door_h * 0.62, -depth + 0.1), Vector3(0.3, 0.38, 0.02), Color(0.3, 0.26, 0.22))
-	_add_portal_box(root, Vector3(0, 0.45, -depth + 0.4), Vector3(0.95, 0.06, 0.35), Color(0.2, 0.12, 0.07), wood_tex, Vector3(1.2, 0.5, 1.0))
-	_add_portal_box(root, Vector3(-0.35, 0.22, -depth + 0.4), Vector3(0.06, 0.44, 0.06), Color(0.18, 0.1, 0.06))
-	_add_portal_box(root, Vector3(0.35, 0.22, -depth + 0.4), Vector3(0.06, 0.44, 0.06), Color(0.18, 0.1, 0.06))
-	# Runner strip on portal floor
-	_add_portal_box(root, Vector3(0, 0.05, -depth * 0.5), Vector3(door_w * 0.45, 0.02, depth * 0.9), Color(0.35, 0.15, 0.1))
-	# Chair rail + skirting in portal
-	_add_portal_box(root, Vector3(0, 0.08, -depth * 0.5), Vector3(door_w + 0.15, 0.1, depth), Color(0.22, 0.14, 0.09), wood_tex, Vector3(1.5, 0.4, 1.0))
-	# Warm corridor lights + mid sconce glow
-	var dim := OmniLight3D.new()
-	dim.light_color = Color(1.0, 0.85, 0.6)
-	dim.light_energy = 0.85
-	dim.omni_range = depth + 2.0
-	dim.position = Vector3(0, door_h * 0.65, -depth * 0.35)
-	root.add_child(dim)
-	var far_l := OmniLight3D.new()
-	far_l.light_color = Color(1.0, 0.78, 0.5)
-	far_l.light_energy = 0.65
-	far_l.omni_range = 2.8
-	far_l.position = Vector3(0, door_h * 0.55, -depth + 0.55)
-	root.add_child(far_l)
-	var side_l := OmniLight3D.new()
-	side_l.light_color = Color(1.0, 0.82, 0.55)
-	side_l.light_energy = 0.35
-	side_l.omni_range = 1.8
-	side_l.position = Vector3(door_w * 0.35, door_h * 0.55, -depth * 0.6)
-	root.add_child(side_l)
+		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
+	# Solid backstop — blocks void; closed leaf also collides
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), Color(0.28, 0.18, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0), true)
+	# Lintel
+	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.18, 0.08, depth + 0.05), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
 
 
 func _add_portal_box(
@@ -422,8 +385,10 @@ func _add_portal_box(
 	size: Vector3,
 	color: Color,
 	tex: Texture2D = null,
-	uv_scale: Vector3 = Vector3(1, 1, 1)
+	uv_scale: Vector3 = Vector3(1, 1, 1),
+	solid: bool = false
 ) -> void:
+	var body: Node3D = StaticBody3D.new() if solid else Node3D.new()
 	var mi := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
 	mesh.size = size
@@ -436,8 +401,15 @@ func _add_portal_box(
 		mat.albedo_texture = tex
 		mat.uv1_scale = uv_scale
 	mi.material_override = mat
-	mi.position = pos
-	parent.add_child(mi)
+	body.add_child(mi)
+	if solid:
+		var col := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = size
+		col.shape = shape
+		body.add_child(col)
+	body.position = pos
+	parent.add_child(body)
 
 
 func _add_victorian_wall(

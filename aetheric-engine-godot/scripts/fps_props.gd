@@ -1196,19 +1196,20 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	# Threshold / saddle (stone + wood — grounds the doorway)
 	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.14, 0.05, depth + 0.18), STONE, false, 0.65)
 	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.08, 0.04, depth + 0.1), MAHOGANY_DARK, false, 0.45)
-	# --- Door leaf (ajar so it reads as a door; leave walk gap) ---
+	# --- Door leaf CLOSED (E teleports; do not leave walk-into-void gap) ---
 	var leaf_w := w - 0.1
 	var leaf_h := h - 0.12
 	var leaf := Node3D.new()
 	leaf.name = "DoorLeaf"
 	leaf.position = Vector3(-w * 0.5 + 0.05, 0.07, 0.04)
-	leaf.rotation_degrees.y = -52.0  # wide ajar so portal hallway is visible beyond
+	leaf.rotation_degrees.y = 0.0  # closed — room change is interact/teleport only
 	root.add_child(leaf)
 	# Polished mid-mahogany slab — colors biased so auto-mat picks WOOD not red velvet
 	var door_wood := Color(0.42, 0.28, 0.16)
 	var door_frame_col := Color(0.34, 0.22, 0.12)
 	var panel_field := Color(0.36, 0.24, 0.14)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, false, 0.42)
+	# solid=true so player cannot walk through the closed leaf into void
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, true, 0.42)
 	# Stiles & rails (classic 4-panel)
 	var stile := 0.11
 	var mid_rail_y := leaf_h * 0.4
