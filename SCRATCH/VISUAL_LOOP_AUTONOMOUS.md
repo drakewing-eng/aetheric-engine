@@ -36,7 +36,8 @@
 - Loop7: glass hedge exterior; chandeliers; conservatory palms
 - Loop8: fern cleanup; morning hall paper; workshop runner; kitchen shelf
 - Loop9: palm not fern; pot racks; Argand lamp
-- Loop10: mesh terracotta under plant billboards (anti-float); workshop tool walls+chandeliers+bench; kitchen side dresser/pots
+- Loop10: mesh pots under plants; workshop denser; kitchen denser
+- Loop11: CLAY no longer auto-woods (barrel bug); compact pots; morning extra paintings+chandelier
 
 ## Do not
 - Delete prop lists from fps_rooms
