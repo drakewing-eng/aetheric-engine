@@ -346,6 +346,13 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [-5.5, 0.0, 0.5], "yaw": 90.0},
 			{"kind": "stool", "pos": [2.8, 0.0, 1.2], "yaw": -25.0},
 			{"kind": "copper_pot", "pos": [3.5, 0.0, -3.5], "scale": 0.6},
+			{"kind": "wall_sconce", "pos": [-7.5, 0.0, 0.0], "yaw": 90.0, "height": 2.4},
+			{"kind": "wall_sconce", "pos": [7.5, 0.0, -1.5], "yaw": -90.0, "height": 2.4},
+			{"kind": "wall_sconce", "pos": [2.0, 0.0, -5.6], "yaw": 0.0, "height": 2.5},
+			{"kind": "wall_sconce", "pos": [-2.0, 0.0, -5.6], "yaw": 0.0, "height": 2.5},
+			{"kind": "crate", "pos": [4.0, 0.0, 4.0], "scale": 0.75},
+			{"kind": "crate", "pos": [-4.5, 0.0, 4.2], "scale": 0.6},
+			{"kind": "stool", "pos": [-4.0, 0.0, -3.0], "yaw": 40.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, -1.0],
@@ -571,6 +578,10 @@ const ROOMS := {
 			{"kind": "crate", "pos": [1.8, 0.0, -2.0], "scale": 0.65},
 			{"kind": "copper_pot", "pos": [-1.5, 0.0, -0.8], "scale": 0.7},
 			{"kind": "stool", "pos": [-0.2, 0.0, 2.5], "yaw": 15.0},
+			{"kind": "wall_sconce", "pos": [-4.3, 0.0, 0.0], "yaw": 90.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [4.3, 0.0, 1.5], "yaw": -90.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [-1.5, 0.0, -4.15], "yaw": 0.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [1.5, 0.0, -4.15], "yaw": 0.0, "height": 2.35},
 		],
 		"doors": [
 			{
@@ -788,6 +799,10 @@ const ROOMS := {
 			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.5},
 			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.5},
 			{"kind": "pot_rack", "pos": [0.0, 0.0, 3.35], "yaw": 0.0},
+			{"kind": "wall_sconce", "pos": [-3.8, 0.0, 2.0], "yaw": 90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [3.8, 0.0, 1.5], "yaw": -90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [-2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
+			{"kind": "wall_sconce", "pos": [2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
 		],
 		"doors": [
 			{

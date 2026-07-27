@@ -850,19 +850,18 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
 			# Short/wide cards; deep sink grounds pot in FIXED_Y view
-			var ph: float = float(bp.get("height", 1.2))
-			var pw: float = float(bp.get("width", 0.85))
-			if ph > 1.2:
-				ph = 1.2
-			if pw < ph * 0.8:
-				pw = ph * 0.85
+			var ph: float = float(bp.get("height", 1.15))
+			var pw: float = float(bp.get("width", 0.9))
+			if ph > 1.15:
+				ph = 1.15
+			if pw < ph * 0.85:
+				pw = ph * 0.9
 			bp["height"] = ph
 			bp["width"] = pw
-			bp["sink"] = 0.24
+			bp["sink"] = 0.26
 			bp["mesh_pot"] = false
-			# Tiny soil disc under card — grounds without dual-pot silhouette
 			var root_plant := _make_billboard_prop(bp)
-			_add_contact_shadow(root_plant, pw * 0.35, pw * 0.28)
+			_add_contact_shadow(root_plant, pw * 0.4, pw * 0.32)
 			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"

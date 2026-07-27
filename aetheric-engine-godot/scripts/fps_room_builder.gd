@@ -76,15 +76,15 @@ func _build_room(room: Dictionary) -> void:
 
 func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 	## Period baseboard — thick enough to mask floor/wall join shimmer.
-	var board_h := 0.14
-	var thick := 0.055
-	var half_w := w * 0.5 - 0.06
-	var half_d := d * 0.5 - 0.06
+	var board_h := 0.18
+	var thick := 0.07
+	var half_w := w * 0.5 - 0.05
+	var half_d := d * 0.5 - 0.05
 	var boards := [
-		[Vector3(0, board_h * 0.5, -half_d), Vector3(w - 0.15, board_h, thick)],
-		[Vector3(0, board_h * 0.5, half_d), Vector3(w - 0.15, board_h, thick)],
-		[Vector3(-half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.15)],
-		[Vector3(half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.15)],
+		[Vector3(0, board_h * 0.5, -half_d), Vector3(w - 0.12, board_h, thick)],
+		[Vector3(0, board_h * 0.5, half_d), Vector3(w - 0.12, board_h, thick)],
+		[Vector3(-half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.12)],
+		[Vector3(half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.12)],
 	]
 	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
 	for i in boards.size():
