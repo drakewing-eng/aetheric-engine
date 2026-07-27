@@ -661,10 +661,11 @@ static func _make_sink(_prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_prep_table(prop: Dictionary) -> Node3D:
-	## Scrubbed kitchen prep table — not a lab workbench.
+	## Scrubbed kitchen prep table — not a lab workbench. seed varies still-life.
 	var root := Node3D.new()
 	root.name = "PrepTable"
 	var width: float = prop.get("width", 1.8)
+	var seed0: int = int(prop.get("seed", 0))
 	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), OAK.lightened(0.15), true, 0.65)
 	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), OAK, false, 0.55)
 	for lx in [-width * 0.4, width * 0.4]:
@@ -672,21 +673,27 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), OAK.darkened(0.1), true, 0.5)
 	# Stretchers
 	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
-	# Flour sack, crocks, board, copper, rolling pin, knife, onions
-	_add_cylinder(root, Vector3(-0.45, 0.98, 0.12), 0.13, 0.24, CREAM.darkened(0.1), false, 0.92)
-	_add_cylinder(root, Vector3(-0.45, 1.12, 0.12), 0.09, 0.05, CREAM.darkened(0.18), false, 0.9)
-	_add_cylinder(root, Vector3(0.1, 0.9, -0.15), 0.13, 0.08, CREAM, false, 0.85)
-	_add_box(root, Vector3(0.42, 0.875, 0.12), Vector3(0.32, 0.02, 0.2), MAHOGANY, false, 0.55)
-	_add_box(root, Vector3(0.5, 0.89, 0.12), Vector3(0.22, 0.015, 0.04), IRON, false, 0.4)
-	_add_cylinder(root, Vector3(-0.12, 0.95, 0.22), 0.1, 0.18, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(0.32, 0.9, -0.22), 0.025, 0.3, MAHOGANY_DARK, false, 0.55)
-	_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.2, 0.9, -0.2), 0.04, 0.06, Color(0.55, 0.35, 0.15), false, 0.8)
-	_add_cylinder(root, Vector3(-0.12, 0.9, -0.22), 0.035, 0.05, Color(0.5, 0.32, 0.12), false, 0.8)
-	# Extra crockery density
-	_add_cylinder(root, Vector3(0.0, 0.92, 0.15), 0.07, 0.1, CREAM.darkened(0.05), false, 0.85)
-	_add_box(root, Vector3(-0.55, 0.88, -0.15), Vector3(0.18, 0.04, 0.14), Color(0.75, 0.7, 0.6), false, 0.7)
-	_add_cylinder(root, Vector3(0.2, 0.95, 0.2), 0.05, 0.12, COPPER.lightened(0.05), false, 0.35, true)
+	# Varied still-life — avoid clone white cylinders
+	if seed0 % 2 == 0:
+		_add_cylinder(root, Vector3(-0.45, 0.98, 0.12), 0.13, 0.24, CREAM.darkened(0.1), false, 0.92)
+		_add_cylinder(root, Vector3(-0.45, 1.12, 0.12), 0.09, 0.05, CREAM.darkened(0.18), false, 0.9)
+		_add_box(root, Vector3(0.1, 0.88, -0.12), Vector3(0.28, 0.05, 0.2), CREAM.darkened(0.05), false, 0.8)
+		_add_box(root, Vector3(0.42, 0.875, 0.12), Vector3(0.32, 0.02, 0.2), MAHOGANY, false, 0.55)
+		_add_box(root, Vector3(0.5, 0.89, 0.12), Vector3(0.22, 0.015, 0.04), IRON, false, 0.4)
+		_add_cylinder(root, Vector3(-0.12, 0.95, 0.22), 0.1, 0.18, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(0.32, 0.9, -0.22), 0.025, 0.3, MAHOGANY_DARK, false, 0.55)
+		_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.2, 0.9, -0.2), 0.04, 0.06, Color(0.55, 0.35, 0.15), false, 0.8)
+	else:
+		# Bread board, pie dish, tall crock, copper ladle
+		_add_box(root, Vector3(-0.4, 0.875, 0.1), Vector3(0.45, 0.025, 0.28), OAK.lightened(0.2), false, 0.65)
+		_add_cylinder(root, Vector3(-0.35, 0.92, 0.1), 0.12, 0.06, CREAM.darkened(0.12), false, 0.85)
+		_add_cylinder(root, Vector3(0.15, 1.0, 0.05), 0.09, 0.28, CLAY, false, 0.8)
+		_add_cylinder(root, Vector3(0.15, 1.16, 0.05), 0.07, 0.04, CLAY.darkened(0.1), false, 0.8)
+		_add_cylinder(root, Vector3(0.45, 0.95, -0.1), 0.11, 0.14, COPPER.lightened(0.05), false, 0.35, true)
+		_add_box(root, Vector3(0.55, 0.95, 0.05), Vector3(0.03, 0.2, 0.03), IRON, false, 0.4)
+		_add_cylinder(root, Vector3(-0.1, 0.9, -0.2), 0.05, 0.08, Color(0.6, 0.4, 0.2), false, 0.8)
+		_add_box(root, Vector3(0.3, 0.88, 0.2), Vector3(0.2, 0.03, 0.14), CREAM, false, 0.75)
 	_add_contact_shadow(root, width * 0.5, 0.5)
 	return root
 

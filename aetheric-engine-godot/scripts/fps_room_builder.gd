@@ -60,7 +60,7 @@ func _build_room(room: Dictionary) -> void:
 		if w >= 12.0 or d >= 11.0:
 			_add_wall_lamp(Vector3(-w * 0.3, h * 0.48, -d * 0.2), d * 0.7, le * 0.4, lc)
 
-	# Solid perimeter with gaps at doorways so the player can stand in a door and press E.
+	# Perimeter collision: small doorway approach gaps only (closed leaf blocks void).
 	_add_bounds(w, d, h, doors)
 
 	var features: Array = room.get("features", [])
@@ -659,7 +659,7 @@ func _add_bounds(w: float, d: float, h: float, doors: Array = []) -> void:
 	## north/south triggers).
 	var half_w := w * 0.5 - 0.2
 	var half_d := d * 0.5 - 0.2
-	var gap_half := 0.95  # half-width of walkable opening at each door
+	var gap_half := 0.55  # narrow approach gap — closed solid leaf blocks walk-into-void
 
 	# Collect door centers projected onto each wall
 	var north_gaps: Array = []  # x positions
