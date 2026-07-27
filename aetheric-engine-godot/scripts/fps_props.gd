@@ -615,26 +615,36 @@ static func _make_stool(_prop: Dictionary) -> Node3D:
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
 
 static func _make_machine(prop: Dictionary) -> Node3D:
-	## Secondary apparatus — gauges, pipes, plinth (not a plain can).
+	## Secondary apparatus — continuous column (no floating caps) + gauges/pipes.
 	var root := Node3D.new()
 	root.name = "Machine"
 	var height: float = prop.get("height", 2.6)
+	var col_h: float = maxf(height * 0.72, 1.4)
+	var col_mid: float = 0.35 + col_h * 0.5
 	_add_box(root, Vector3(0, 0.15, 0), Vector3(0.95, 0.3, 0.85), MAHOGANY_DARK, true, 0.45)
-	_add_cylinder(root, Vector3(0, height * 0.4, 0), 0.32, height * 0.55, BRASS, true, 0.35, true)
-	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.38, 0.08, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(0, height * 0.85, 0), 0.18, 0.28, Color(0.62, 0.5, 0.22), true, 0.4, true)
+	# Continuous brass body
+	_add_cylinder(root, Vector3(0, col_mid, 0), 0.34, col_h, BRASS, true, 0.35, true)
+	# Coil bands clamped to column (no floating disks)
+	for i in 3:
+		var y: float = 0.55 + i * (col_h * 0.28)
+		_add_cylinder(root, Vector3(0, y, 0), 0.4, 0.07, COPPER, false, 0.35, true)
+	# Cap sits ON column top
+	var top_y: float = 0.35 + col_h
+	_add_cylinder(root, Vector3(0, top_y, 0), 0.38, 0.1, BRASS.lightened(0.05), false, 0.32, true)
+	_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.14, 0.18, Color(0.62, 0.5, 0.22), false, 0.4, true)
 	# Side instrument
-	_add_box(root, Vector3(0.4, 0.55, 0.15), Vector3(0.28, 0.4, 0.32), MAHOGANY, true, 0.45)
-	_add_cylinder(root, Vector3(0.4, 0.82, 0.15), 0.08, 0.06, BRASS, false, 0.3, true)
-	# Pipe elbow
-	_add_cylinder(root, Vector3(-0.35, 0.7, 0.0), 0.05, 0.45, COPPER, false, 0.35, true)
-	_add_box(root, Vector3(-0.35, 0.95, 0.15), Vector3(0.1, 0.1, 0.35), COPPER, false, 0.35)
+	_add_box(root, Vector3(0.42, 0.55, 0.15), Vector3(0.28, 0.4, 0.32), MAHOGANY, true, 0.45)
+	_add_cylinder(root, Vector3(0.42, 0.82, 0.15), 0.08, 0.06, BRASS, false, 0.3, true)
+	# Pipe elbow grounded on body
+	_add_cylinder(root, Vector3(-0.38, 0.75, 0.0), 0.05, 0.5, COPPER, false, 0.35, true)
+	_add_box(root, Vector3(-0.38, 1.02, 0.15), Vector3(0.1, 0.1, 0.35), COPPER, false, 0.35)
 	var glow := OmniLight3D.new()
 	glow.light_color = Color(0.55, 0.75, 0.85)
 	glow.light_energy = 0.45
 	glow.omni_range = 3.0
-	glow.position = Vector3(0, height * 0.55, 0.2)
+	glow.position = Vector3(0, col_mid, 0.2)
 	root.add_child(glow)
+	_add_contact_shadow(root, 0.55, 0.5)
 	return root
 
 static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
@@ -1008,6 +1018,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_painting(feat: Dictionary) -> Node3D:
+	## Gilt frame + canvas. Prefer scene photos over wallpaper (wallpaper reads as empty frame).
 	var root := Node3D.new()
 	root.name = "Painting"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -1015,21 +1026,32 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 0.85)
 	var h: float = feat.get("height", 1.05)
-	_add_box(root, Vector3(0, 0, 0), Vector3(w, h, 0.06), BRASS, true, 0.4)
+	# Outer gilt frame + dark inner lip
+	_add_box(root, Vector3(0, 0, 0), Vector3(w, h, 0.07), BRASS, true, 0.35)
+	_add_box(root, Vector3(0, 0, 0.02), Vector3(w - 0.06, h - 0.06, 0.03), Color(0.22, 0.14, 0.08), false, 0.55)
 	var canvas := MeshInstance3D.new()
 	var cm := BoxMesh.new()
-	cm.size = Vector3(w - 0.12, h - 0.12, 0.02)
+	cm.size = Vector3(w - 0.14, h - 0.14, 0.02)
 	canvas.mesh = cm
 	var cmat := StandardMaterial3D.new()
-	var tex := _load_tex(feat.get("texture", TEX_WALLPAPER))
+	var tex_path: String = str(feat.get("texture", ""))
+	# Wallpaper-as-painting looks like empty frame — prefer a room scene fallback
+	if tex_path.find("wallpaper_") >= 0 or tex_path == "" or tex_path == TEX_WALLPAPER:
+		tex_path = "res://assets/rooms/richmond_drawing_room.jpg"
+	var tex := _load_tex(tex_path)
+	if tex == null:
+		tex = _load_tex("res://assets/rooms/richmond_entrance_hall.jpg")
 	if tex:
 		cmat.albedo_texture = tex
-		cmat.uv1_scale = Vector3(1.2, 1.2, 1.0)
+		cmat.albedo_color = Color(0.95, 0.92, 0.85)
+		cmat.uv1_scale = Vector3(1.0, 1.0, 1.0)
 	else:
-		cmat.albedo_color = Color(0.35, 0.28, 0.2)
-	cmat.roughness = 0.85
+		# Painted landscape suggestion if assets missing
+		cmat.albedo_color = Color(0.28, 0.32, 0.38)
+	cmat.roughness = 0.75
+	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	canvas.material_override = cmat
-	canvas.position = Vector3(0, 0, 0.04)
+	canvas.position = Vector3(0, 0, 0.045)
 	root.add_child(canvas)
 	return root
 

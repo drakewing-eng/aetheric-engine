@@ -175,8 +175,12 @@ const ROOMS := {
 			{"kind": "mirror", "pos": [-6.5, 1.7, -2.2], "yaw": 90.0},
 			{"kind": "painting", "pos": [3.5, 2.0, -4.7], "yaw": 0.0, "width": 1.0, "height": 1.15,
 				"texture": "res://assets/rooms/richmond_entrance_hall.jpg"},
-			{"kind": "painting", "pos": [-3.2, 2.0, -4.7], "yaw": 0.0, "width": 0.8, "height": 1.0,
-				"texture": TEX + "wallpaper_hall.jpg"},
+			{"kind": "painting", "pos": [-3.2, 2.0, -4.7], "yaw": 0.0, "width": 0.85, "height": 1.05,
+				"texture": "res://assets/rooms/richmond_drawing_room.jpg"},
+			{"kind": "painting", "pos": [6.4, 1.9, 2.2], "yaw": -90.0, "width": 0.9, "height": 1.1,
+				"texture": "res://assets/rooms/richmond_gallery.jpg"},
+			{"kind": "painting", "pos": [-6.4, 1.9, 1.5], "yaw": 90.0, "width": 0.75, "height": 0.95,
+				"texture": "res://assets/rooms/richmond_conservatory.jpg"},
 		],
 		"props": [
 			{
@@ -197,6 +201,8 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.8, "height": 1.2},
 			{"kind": "plant", "pos": [5.2, 0.0, -3.2], "scale": 0.95,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.85, "height": 1.25},
+			{"kind": "chair", "pos": [3.2, 0.0, 2.5], "yaw": -150.0, "fabric": Color(0.35, 0.22, 0.16)},
+			{"kind": "crate", "pos": [-5.8, 0.0, 2.8], "scale": 0.7},
 		],
 		"doors": [
 			{
@@ -414,6 +420,8 @@ const ROOMS := {
 			{"kind": "crate", "pos": [3.5, 0.0, 2.5], "scale": 1.0},
 			{"kind": "crate", "pos": [2.9, 0.0, 2.9], "scale": 0.75},
 			{"kind": "crate", "pos": [-3.5, 0.0, 3.2], "scale": 0.9},
+			{"kind": "crate", "pos": [3.8, 0.0, -2.8], "scale": 0.85},
+			{"kind": "crate", "pos": [-3.8, 0.0, -3.2], "scale": 0.7},
 			{"kind": "stool", "pos": [-1.5, 0.0, -1.8], "yaw": 30.0},
 			{"kind": "stool", "pos": [1.5, 0.0, -1.5], "yaw": -15.0},
 			{"kind": "stool", "pos": [0.0, 0.0, 1.4], "yaw": 10.0},
@@ -421,11 +429,15 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [3.5, 0.0, -0.7], "scale": 0.85},
 			{"kind": "copper_pot", "pos": [-1.5, 0.0, -2.5], "scale": 0.75},
 			{"kind": "copper_pot", "pos": [1.2, 0.0, -2.3], "scale": 0.65},
+			{"kind": "copper_pot", "pos": [-2.8, 0.0, 1.5], "scale": 0.9},
 			{"kind": "side_table", "pos": [3.5, 0.0, 1.0], "yaw": -15.0},
 			{"kind": "chair", "pos": [3.0, 0.0, 0.5], "yaw": 160.0},
 			{"kind": "bookshelf", "pos": [-4.2, 0.0, 2.5], "yaw": 90.0, "width": 1.4, "height": 2.1},
 			{"kind": "machine", "pos": [0.0, 0.0, 3.5], "yaw": 180.0, "height": 1.9},
+			{"kind": "machine", "pos": [3.6, 0.0, -3.2], "yaw": -30.0, "height": 1.7},
 			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0},
+			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0},
+			{"kind": "tool_rack", "pos": [4.3, 0.0, 2.0], "yaw": -90.0},
 		],
 		"doors": [
 			{
@@ -502,10 +514,21 @@ const ROOMS := {
 			{"kind": "plant", "pos": [-3.3, 0.0, -0.8], "scale": 1.0, "tall": true},
 			{"kind": "side_table", "pos": [1.8, 0.0, 1.0], "yaw": -25.0},
 			{"kind": "chair", "pos": [1.2, 0.0, 1.5], "yaw": 150.0, "fabric": Color(0.35, 0.4, 0.32)},
+			{"kind": "chair", "pos": [-1.8, 0.0, 1.6], "yaw": -140.0, "fabric": Color(0.32, 0.38, 0.3)},
 			{"kind": "stool", "pos": [-1.5, 0.0, 0.8], "yaw": 20.0},
 			{"kind": "copper_pot", "pos": [2.0, 0.0, -0.5], "scale": 0.7},
 			{"kind": "copper_pot", "pos": [-1.8, 0.0, 0.3], "scale": 0.55},
+			# Central console / fountain-like still-life (breaks empty floor)
 			{"kind": "hall_table", "pos": [0.0, 0.0, 0.2], "yaw": 0.0},
+			{"kind": "plant", "pos": [0.0, 0.0, -0.6], "scale": 0.7},
+			{"kind": "plant", "pos": [3.5, 0.0, 2.5], "scale": 0.85},
+			{"kind": "plant", "pos": [-3.5, 0.0, 2.4], "scale": 0.9, "tall": true},
+			{
+				"kind": "rug",
+				"pos": [0.0, 0.0, 0.5],
+				"size": [2.4, 2.0],
+				"texture": "res://assets/rooms/textures/rug_persian.jpg",
+			},
 		],
 		"doors": [
 			{
