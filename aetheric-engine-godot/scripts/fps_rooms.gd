@@ -451,7 +451,7 @@ const ROOMS := {
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_workshop.jpg",
 		"wainscot": TEX + "wainscot_workshop.jpg",
-		"wainscot_height": 1.55,
+		"wainscot_height": 1.9,
 		"floor_texture": TEX + "floor_workshop.jpg",
 		"floor_color": Color(0.18, 0.13, 0.09),
 		"light_energy": 1.05,
@@ -522,6 +522,10 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [1.0, 0.0, 1.5], "scale": 0.55},
 			{"kind": "stool", "pos": [2.5, 0.0, 0.2], "yaw": -40.0},
 			{"kind": "wall_shelf", "pos": [-2.0, 0.0, 4.15], "yaw": 180.0, "width": 2.0, "shelf_y": 1.9},
+			{"kind": "wall_shelf", "pos": [2.0, 0.0, 4.15], "yaw": 180.0, "width": 1.8, "shelf_y": 1.9},
+			{"kind": "tool_rack", "pos": [0.0, 0.0, 4.15], "yaw": 180.0},
+			{"kind": "crate", "pos": [-1.2, 0.0, -1.0], "scale": 0.6},
+			{"kind": "copper_pot", "pos": [-3.2, 0.0, -0.5], "scale": 0.8},
 		],
 		"doors": [
 			{
@@ -585,6 +589,11 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_gallery.jpg"},
 		],
 		"props": [
+			# Ivy on remaining solid plaster corners
+			{"kind": "wall_vine", "pos": [-1.2, 0.0, -3.7], "yaw": 0.0, "width": 1.6, "height": 2.6},
+			{"kind": "wall_vine", "pos": [1.2, 0.0, -3.7], "yaw": 0.0, "width": 1.6, "height": 2.6},
+			{"kind": "wall_vine", "pos": [-3.7, 0.0, -2.0], "yaw": 90.0, "width": 1.4, "height": 2.5},
+			{"kind": "wall_vine", "pos": [3.7, 0.0, -2.0], "yaw": -90.0, "width": 1.4, "height": 2.5},
 			# All short palm cards (mesh canopy still reads toy-like)
 			{"kind": "plant", "pos": [2.5, 0.0, -2.2], "scale": 1.1,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.25},
@@ -662,7 +671,7 @@ const ROOMS := {
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_kitchen.jpg",
 		"wainscot": TEX + "wainscot_kitchen.jpg",
-		"wainscot_height": 1.75,
+		"wainscot_height": 2.15,
 		"floor_texture": TEX + "floor_kitchen.jpg",
 		"floor_color": Color(0.34, 0.26, 0.18),
 		"ceiling_color": Color(0.72, 0.65, 0.55),
