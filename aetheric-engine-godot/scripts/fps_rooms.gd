@@ -353,6 +353,9 @@ const ROOMS := {
 			{"kind": "crate", "pos": [4.0, 0.0, 4.0], "scale": 0.75},
 			{"kind": "crate", "pos": [-4.5, 0.0, 4.2], "scale": 0.6},
 			{"kind": "stool", "pos": [-4.0, 0.0, -3.0], "yaw": 40.0},
+			{"kind": "floor_path", "pos": [0.0, 0.0, -2.0], "yaw": 0.0, "length": 6.0, "width": 1.2},
+			{"kind": "copper_pot", "pos": [1.5, 0.0, 2.5], "scale": 0.55},
+			{"kind": "stool", "pos": [3.5, 0.0, 0.5], "yaw": -20.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, -1.0],

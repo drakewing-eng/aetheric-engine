@@ -829,8 +829,16 @@ static func _make_chalk_board(_prop: Dictionary) -> Node3D:
 	root.name = "ChalkBoard"
 	_add_box(root, Vector3(0, 1.2, 0), Vector3(1.4, 1.0, 0.06), MAHOGANY_DARK, true, 0.45)
 	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(1.25, 0.85, 0.02), CHALK, false, 0.85)
-	# Chalk tray
+	# Chalk marks / diagrams
+	_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.55, 0.015, 0.01), Color(0.92, 0.92, 0.9), false, 0.95)
+	_add_box(root, Vector3(0.15, 1.25, 0.05), Vector3(0.4, 0.012, 0.01), Color(0.9, 0.9, 0.88), false, 0.95)
+	_add_box(root, Vector3(-0.1, 1.1, 0.05), Vector3(0.7, 0.01, 0.01), Color(0.88, 0.88, 0.85), false, 0.95)
+	_add_cylinder(root, Vector3(0.25, 1.05, 0.05), 0.12, 0.01, Color(0.9, 0.9, 0.88), false, 0.95)
+	# Chalk tray + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(1.3, 0.05, 0.1), MAHOGANY, false, 0.5)
+	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
+	_add_cylinder(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, CREAM.darkened(0.1), false)
+	_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.4, 0.55, 0.7), false)
 	return root
 
 # ─── Conservatory / hall ─────────────────────────────────────────────────────
@@ -932,7 +940,10 @@ static func _make_coat_stand(_prop: Dictionary) -> Node3D:
 	# Hanging coat / cloak suggestion (draped wool)
 	_add_box(root, Vector3(0.14, 1.15, 0.06), Vector3(0.22, 0.85, 0.1), Color(0.18, 0.14, 0.12), false, 0.88)
 	_add_box(root, Vector3(-0.1, 1.05, -0.08), Vector3(0.18, 0.55, 0.08), Color(0.22, 0.12, 0.1), false, 0.88)
-	_add_contact_shadow(root, 0.3, 0.3)
+	# Top hat on stand
+	_add_cylinder(root, Vector3(0.05, 1.85, 0.05), 0.1, 0.04, Color(0.08, 0.08, 0.09), false, 0.7)
+	_add_cylinder(root, Vector3(0.05, 1.95, 0.05), 0.07, 0.16, Color(0.1, 0.1, 0.11), false, 0.7)
+	_add_contact_shadow(root, 0.32, 0.32)
 	return root
 
 static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
@@ -946,8 +957,10 @@ static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0.05, 0.95, 0.02), 0.018, 0.7, Color(0.2, 0.12, 0.08), false, 0.55)
 	_add_cylinder(root, Vector3(-0.04, 0.88, -0.03), 0.016, 0.58, Color(0.12, 0.1, 0.1), false, 0.5)
 	_add_cylinder(root, Vector3(0.02, 0.82, -0.05), 0.015, 0.5, Color(0.35, 0.22, 0.12), false, 0.55)
+	_add_cylinder(root, Vector3(-0.06, 0.9, 0.04), 0.014, 0.55, Color(0.15, 0.12, 0.1), false, 0.5)
 	# Crook handle
 	_add_box(root, Vector3(0.05, 1.32, 0.02), Vector3(0.1, 0.03, 0.03), Color(0.2, 0.12, 0.08), false, 0.55)
+	_add_contact_shadow(root, 0.2, 0.2)
 	return root
 
 # ─── Features ────────────────────────────────────────────────────────────────
