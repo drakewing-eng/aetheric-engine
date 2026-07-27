@@ -772,10 +772,15 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 static func _make_stool(_prop: Dictionary) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Stool"
-	_add_cylinder(root, Vector3(0, 0.48, 0), 0.18, 0.05, OAK, true)
+	_add_cylinder(root, Vector3(0, 0.48, 0), 0.2, 0.06, OAK, true, 0.55)
+	_add_cylinder(root, Vector3(0, 0.45, 0), 0.16, 0.03, OAK.darkened(0.1), false, 0.55)
 	for a in [0.0, 120.0, 240.0]:
 		var rad := deg_to_rad(a)
-		_add_cylinder(root, Vector3(cos(rad) * 0.12, 0.24, sin(rad) * 0.12), 0.025, 0.48, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.24, sin(rad) * 0.13), 0.028, 0.48, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.03, sin(rad) * 0.13), 0.035, 0.04, MAHOGANY, true)
+	# Leg stretchers
+	_add_box(root, Vector3(0, 0.15, 0), Vector3(0.22, 0.025, 0.22), MAHOGANY_DARK, false, 0.5)
+	_add_contact_shadow(root, 0.22, 0.22)
 	return root
 
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
@@ -907,6 +912,13 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["mesh_pot"] = false
 			var root_plant := _make_billboard_prop(bp)
 			_add_contact_shadow(root_plant, pw * 0.45, pw * 0.35)
+			# Soft mesh canopy blobs mid-height only (side volume without second pot)
+			var leaf_h := ph * 0.55
+			var leaf_a := Color(0.22, 0.42, 0.16)
+			var leaf_b := Color(0.16, 0.36, 0.12)
+			_add_sphere_blob(root_plant, Vector3(0.08, leaf_h, 0.06), 0.12 * pw, leaf_a)
+			_add_sphere_blob(root_plant, Vector3(-0.1, leaf_h + 0.08, -0.05), 0.1 * pw, leaf_b)
+			_add_sphere_blob(root_plant, Vector3(0.02, leaf_h + 0.15, 0.02), 0.09 * pw, leaf_a)
 			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"
@@ -1074,29 +1086,23 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 1.1)
 	var h: float = feat.get("height", 1.85)
-	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(w, h, 0.14), MAHOGANY, true, 0.35)
-	# Mullion
-	_add_box(root, Vector3(0, h * 0.5, 0.04), Vector3(0.04, h - 0.2, 0.03), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(0, h * 0.5, 0.04), Vector3(w - 0.2, 0.04, 0.03), MAHOGANY_DARK, false, 0.4)
-	# Glass panes (slightly translucent cool)
-	var glass := MeshInstance3D.new()
-	var gm := BoxMesh.new()
-	gm.size = Vector3(w - 0.22, h - 0.22, 0.02)
-	glass.mesh = gm
-	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.55, 0.68, 0.82, 0.35)
-	gmat.metallic = 0.2
-	gmat.roughness = 0.12
-	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	glass.material_override = gmat
-	glass.position = Vector3(0, h * 0.5, 0.06)
-	root.add_child(glass)
+	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(w + 0.08, h + 0.08, 0.14), MAHOGANY, true, 0.35)
+	# Mullion cross
+	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(0.05, h - 0.15, 0.04), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(w - 0.15, 0.05, 0.04), MAHOGANY_DARK, false, 0.4)
+	# Solid cool glass panes (alpha glass often reads black)
+	var gcol := Color(0.62, 0.76, 0.88)
+	_add_box(root, Vector3(-w * 0.22, h * 0.72, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
+	_add_box(root, Vector3(w * 0.22, h * 0.72, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
+	_add_box(root, Vector3(-w * 0.22, h * 0.28, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
+	_add_box(root, Vector3(w * 0.22, h * 0.28, 0.04), Vector3(w * 0.38, h * 0.38, 0.02), gcol, false, 0.18)
+	# Exterior sky plate
+	_add_box(root, Vector3(0, h * 0.5, -0.06), Vector3(w * 0.9, h * 0.9, 0.03), Color(0.52, 0.66, 0.8), false, 0.95)
 	# Cool window fill light
 	var fill := OmniLight3D.new()
 	fill.light_color = Color(0.75, 0.85, 0.95)
-	fill.light_energy = 0.35
-	fill.omni_range = 3.5
+	fill.light_energy = 0.55
+	fill.omni_range = 4.0
 	fill.position = Vector3(0, h * 0.5, 0.4)
 	root.add_child(fill)
 	return root
