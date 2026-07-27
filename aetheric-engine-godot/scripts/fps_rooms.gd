@@ -348,6 +348,10 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_entrance_hall.jpg"},
 			{"kind": "painting", "pos": [3.55, 1.9, 2.0], "yaw": -90.0, "width": 0.7, "height": 0.9,
 				"texture": "res://assets/rooms/richmond_conservatory.jpg"},
+			{"kind": "painting", "pos": [-2.0, 2.05, -3.7], "yaw": 0.0, "width": 0.65, "height": 0.8,
+				"texture": "res://assets/rooms/richmond_gallery.jpg"},
+			{"kind": "painting", "pos": [2.2, 2.05, -3.7], "yaw": 0.0, "width": 0.6, "height": 0.75,
+				"texture": "res://assets/rooms/richmond_kitchen.jpg"},
 		],
 		"props": [
 			{"kind": "desk", "pos": [2.5, 0.0, -2.2], "yaw": -90.0},
@@ -370,6 +374,7 @@ const ROOMS := {
 			{"kind": "chair", "pos": [-2.2, 0.0, -0.5], "yaw": 70.0, "fabric": Color(0.35, 0.28, 0.2)},
 			{"kind": "copper_pot", "pos": [3.0, 0.0, -0.5], "scale": 0.55},
 			{"kind": "hall_table", "pos": [-0.5, 0.0, 2.2], "yaw": 5.0},
+			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 2.9},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],

@@ -21,7 +21,8 @@ const CANDLE := Color(0.95, 0.82, 0.45)
 const CREAM := Color(0.90, 0.86, 0.76)
 const LEAF := Color(0.22, 0.42, 0.18)
 const LEAF_DARK := Color(0.12, 0.28, 0.12)
-const CLAY := Color(0.55, 0.32, 0.22)
+# g high enough to avoid wood auto-texture (was brown → furniture_wood barrels)
+const CLAY := Color(0.78, 0.48, 0.28)
 const STONE := Color(0.55, 0.52, 0.46)
 const CHALK := Color(0.35, 0.38, 0.32)
 
@@ -757,7 +758,8 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			# Mesh terracotta pot under card so feet never float if PNG pot is sparse.
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
-			bp["sink"] = 0.1
+			# Sink so PNG pot sits in mesh pot; mesh_pot grounds if alpha eats pot
+			bp["sink"] = 0.14
 			bp["mesh_pot"] = true
 			return _make_billboard_prop(bp)
 	var root := Node3D.new()
@@ -1157,11 +1159,11 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	var mesh_pot: bool = bool(prop.get("mesh_pot", false))
 
 	if mesh_pot:
-		# Real pot at ground so card foliage can float without whole plant hovering
-		var pot_s: float = clampf(width * 0.55, 0.35, 0.7)
-		_add_cylinder(root, Vector3(0, 0.18 * pot_s / 0.4, 0), 0.22 * pot_s / 0.4, 0.32 * pot_s / 0.4, CLAY, true, 0.72)
-		_add_cylinder(root, Vector3(0, 0.34 * pot_s / 0.4, 0), 0.26 * pot_s / 0.4, 0.05 * pot_s / 0.4, CLAY.lightened(0.1), false, 0.7)
-		_add_cylinder(root, Vector3(0, 0.36 * pot_s / 0.4, 0), 0.18 * pot_s / 0.4, 0.04 * pot_s / 0.4, Color(0.16, 0.1, 0.06), false)
+		# Compact terracotta under card (not wood-textured barrels)
+		var pot_r: float = clampf(width * 0.22, 0.16, 0.32)
+		_add_cylinder(root, Vector3(0, 0.16, 0), pot_r, 0.28, CLAY, true, 0.85)
+		_add_cylinder(root, Vector3(0, 0.3, 0), pot_r * 1.12, 0.04, CLAY.lightened(0.12), false, 0.85)
+		_add_cylinder(root, Vector3(0, 0.32, 0), pot_r * 0.85, 0.03, Color(0.2, 0.14, 0.08), false, 0.9)
 
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(width, height)
@@ -1275,8 +1277,12 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		metallic = 0.65
 		mat.roughness = minf(roughness, 0.55)
 	# Mahogany / wood browns / oak FIRST — dark red-browns are wood, not velvet.
-	# (Old order mis-tagged door panels as red damask.)
-	elif color.r > 0.12 and color.r >= color.g * 0.85 and color.r > color.b and color.g < 0.48 and color.g > 0.08:
+	# Exclude terracotta/clay (g around 0.45–0.55 with high r).
+	elif (
+		color.r > 0.12 and color.r >= color.g * 0.85 and color.r > color.b
+		and color.g < 0.42 and color.g > 0.08
+		and color.r < 0.72
+	):
 		tex_path = TEX_WOOD
 	# Red velvet (true fabric reds — high r, low g relative, not brown wood)
 	elif color.r > 0.45 and color.g < 0.22 and color.b < 0.22 and color.r > color.g + 0.25:
