@@ -55,7 +55,8 @@
 - Loop26: furniture sinks; plant alpha; gallery cooler light
 - Loop27: full-panel conservatory; plant shadow; kitchen darker
 - Loop28: no mid-rail full panels; double cornice; gallery aisle
-- Loop29: full-panel double-layer (no cream peek); fireplace mantel brass ornaments; drawing wainscot_height set
+- Loop29: full-panel double-layer; fireplace ornaments
+- Loop30: conservatory solid walls use dark drawing wainscot; stone+wood door thresholds; ajar -52°; drawing plant denser
 
 ## Do not
 - Delete prop lists from fps_rooms
@@ -66,3 +67,7 @@
 ## Schedule
 - Every 10 minutes for ~7 hours (≈42 iterations)
 - Cancel scheduler task when 7h elapsed or user returns
+
+
+## Milestone 30
+~30 unattended visual loops on private GitHub. Rooms denser, doors/portals solid, tall service wainscots, hybrid furniture, plant grounding improved. Remaining: palm FIXED_Y crown float, rembg plant assets, more unique room wallpaper contrast.
