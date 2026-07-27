@@ -65,7 +65,8 @@
 - Loop36: chalk diagrams; coat hat; gallery path
 - Loop37: richer sink; denser workshop/drawing/hall
 - Loop38: thicker painting frames; richer prep; solid mirror
-- Loop39: denser tool racks two rows; richer secondary machines; crate battens; denser conservatory plants
+- Loop39: denser tool racks; richer machines; crate battens
+- Loop40: denser workbench clutter+vice; hall table Argand lamp solid glass+clock; denser drawing props
 
 ## Do not
 - Delete prop lists from fps_rooms
@@ -80,3 +81,7 @@
 
 ## Milestone 30
 ~30 unattended visual loops on private GitHub. Rooms denser, doors/portals solid, tall service wainscots, hybrid furniture, plant grounding improved. Remaining: palm FIXED_Y crown float, rembg plant assets, more unique room wallpaper contrast.
+
+
+## Milestone 40
+~40 unattended visual loops. Hybrid furniture, door portals, tall service wainscots, wall sconces, stone paths, denser period props across all rooms. Remaining: palm FIXED_Y crown float (asset), further unique wallpaper contrast.
