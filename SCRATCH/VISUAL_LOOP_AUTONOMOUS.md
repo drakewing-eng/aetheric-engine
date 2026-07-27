@@ -39,7 +39,8 @@
 - Loop10: mesh pots under plants; workshop denser; kitchen denser
 - Loop11: terracotta not wood barrels; morning denser
 - Loop12: no dual pots; conservatory mix; richer portals
-- Loop13: mesh plants use fan fronds not topiary balls; kitchen wall paintings+warmer dim; workshop more wall tools/shelves
+- Loop13: mesh fronds; kitchen art; workshop walls
+- Loop14: mesh plants bush discs (no pinwheels); chandelier/oil lamp cream shades not black; hall chandelier+plants
 
 ## Do not
 - Delete prop lists from fps_rooms
