@@ -46,7 +46,8 @@
 - Loop17: kitchen wall shelves; conservatory glass; plant sink
 - Loop18: hall shelves off doorway; conservatory corners; shelf brackets
 - Loop19: plant stems; drawing paintings; workshop clutter
-- Loop20: per-room wainscot_height (kitchen 1.75, workshop 1.55) — less blank plaster; conservatory greener floor
+- Loop20: wainscot_height API; kitchen/workshop taller dado
+- Loop21: kitchen wainscot 2.15 / workshop 1.9; wall_vine ivy on conservatory plaster; workshop more shelves/tools
 
 ## Do not
 - Delete prop lists from fps_rooms
