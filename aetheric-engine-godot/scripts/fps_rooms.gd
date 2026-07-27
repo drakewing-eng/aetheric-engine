@@ -592,7 +592,7 @@ const ROOMS := {
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
 		# Nearly full-height dado on solid panels (glass still primary)
-		"wainscot_height": 3.2,
+		"wainscot_height": 3.7,
 		"walls": {},
 		"features": [
 			{"kind": "glass_wall", "pos": [4.35, 0.0, 0.0], "yaw": -90.0, "width": 3.8, "height": 3.5},
