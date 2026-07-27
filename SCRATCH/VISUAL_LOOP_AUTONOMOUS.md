@@ -31,7 +31,8 @@
 - Loop2: screenshot camera yaw, wood doors, kitchen range, workshop spawn, conservatory density
 - Loop3: mesh plants sphere canopy; tool rack tools; morning+kitchen density
 - Loop4: gallery machines continuous; paintings scene photos; density
-- Loop5: plant PNG black rembg cleared; workbench light oak tops; kitchen pot racks; crown moulding; richer prep table
+- Loop5: plant PNG black cleared; workbench tops; pot racks; crown moulding
+- Loop6: plant FIXED_Y no double pot; glass walls show garden exterior; morning paintings+fabrics; Argand oil lamps on side tables
 
 ## Do not
 - Delete prop lists from fps_rooms
