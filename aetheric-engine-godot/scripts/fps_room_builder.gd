@@ -467,8 +467,7 @@ func _add_victorian_wall(
 	var inward := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.012
 
 	if full_panel:
-		# Full-height paneling (service rooms / conservatory solid walls)
-		# No mid-height chair rail — looks like a floating bar on solid panels
+		# Full-height paneling — both layers use panel texture so cream paper never peeks
 		_add_wall_plane(
 			wall_name + "Wainscot",
 			pos + Vector3(0, 0, 0),
@@ -478,7 +477,16 @@ func _add_victorian_wall(
 			fallback,
 			true
 		)
-		# Subtle upper picture rail only
+		_add_wall_plane(
+			wall_name + "Paper",
+			pos + inward,
+			yaw_deg,
+			Vector2(cover_w, cover_h),
+			wainscot_tex if wainscot_tex != "" else paper_tex,
+			fallback,
+			true
+		)
+		# Upper picture rail only (not mid-wall)
 		_add_chair_rail(wall_name, pos, yaw_deg, cover_w, plane_h - 0.35, inward)
 	else:
 		_add_wall_plane(

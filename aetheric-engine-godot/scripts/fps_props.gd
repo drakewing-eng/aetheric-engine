@@ -945,8 +945,11 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), MARBLE, true, 0.35)
 	# Inner dark firebox recess
 	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), Color(0.06, 0.05, 0.05), false, 0.9)
-	# Mantel shelf
+	# Mantel shelf + ornaments
 	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
+	_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0, 1.55, 0.08), Vector3(0.2, 0.12, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
 	# Columns / pilasters
 	_add_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
 	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
@@ -958,8 +961,8 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.0, 0.34, 0.16), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.5, 0.2)
-	fire.light_energy = 1.15
-	fire.omni_range = 5.0
+	fire.light_energy = 1.25
+	fire.omni_range = 5.5
 	fire.position = Vector3(0, 0.48, 0.35)
 	root.add_child(fire)
 	# Warm emissive card in firebox
@@ -971,10 +974,11 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	emat.albedo_color = Color(1.0, 0.45, 0.12)
 	emat.emission_enabled = true
 	emat.emission = Color(1.0, 0.4, 0.08)
-	emat.emission_energy_multiplier = 2.2
+	emat.emission_energy_multiplier = 2.4
 	em.material_override = emat
 	em.position = Vector3(0, 0.42, 0.22)
 	root.add_child(em)
+	_add_contact_shadow(root, 0.95, 0.55)
 	return root
 
 static func _make_window(feat: Dictionary) -> Node3D:
