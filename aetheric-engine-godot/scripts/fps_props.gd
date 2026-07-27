@@ -524,15 +524,22 @@ static func _make_sink(_prop: Dictionary) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Sink"
 	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.1, 0.85, 0.55), OAK, true, 0.5)
+	# Cupboard doors
+	_add_box(root, Vector3(-0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), OAK.darkened(0.08), false, 0.5)
+	_add_box(root, Vector3(0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), OAK.darkened(0.08), false, 0.5)
+	_add_cylinder(root, Vector3(-0.15, 0.4, 0.3), 0.015, 0.05, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.15, 0.4, 0.3), 0.015, 0.05, BRASS, false, 0.3, true)
 	# Stoneware basin
 	_add_box(root, Vector3(0, 0.92, 0.05), Vector3(0.85, 0.12, 0.42), STONE, false, 0.4)
 	_add_box(root, Vector3(0, 0.88, 0.05), Vector3(0.7, 0.08, 0.3), Color(0.35, 0.4, 0.45), false, 0.25)
 	# Pump / spout
 	_add_cylinder(root, Vector3(0.25, 1.15, -0.1), 0.03, 0.35, BRASS, false, 0.3, true)
 	_add_box(root, Vector3(0.1, 1.28, 0.0), Vector3(0.35, 0.04, 0.04), BRASS, false, 0.3)
-	# Soap dish + cloth
+	_add_cylinder(root, Vector3(-0.05, 1.25, 0.05), 0.025, 0.08, BRASS, false, 0.3, true)
+	# Soap dish + cloth + jug
 	_add_box(root, Vector3(-0.3, 0.98, 0.12), Vector3(0.14, 0.04, 0.1), CREAM, false)
 	_add_box(root, Vector3(-0.15, 0.95, 0.18), Vector3(0.2, 0.02, 0.12), Color(0.7, 0.75, 0.8), false)
+	_add_cylinder(root, Vector3(0.35, 1.0, 0.12), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
 	_add_contact_shadow(root, 0.6, 0.35)
 	return root
 
