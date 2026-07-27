@@ -126,34 +126,42 @@ func _shoot_room(room_id: String) -> void:
 	var spawn: Array = room.get("spawn", [0, 0, 0])
 	var spawn_yaw: float = float(room.get("spawn_yaw", 0.0))
 
-	# View 1: spawn eye-level looking spawn_yaw
+	# View 1: spawn eye-level looking spawn_yaw (nudge inward if spawn is near a wall)
+	var sx := float(spawn[0])
+	var sz := float(spawn[2])
+	var half_w := w * 0.5
+	var half_d := d * 0.5
+	# Keep camera at least ~1.6m inside walls so we never clip into door leaves
+	sx = clampf(sx, -half_w + 1.6, half_w - 1.6)
+	sz = clampf(sz, -half_d + 1.6, half_d - 1.6)
 	await _capture(
 		room_id + "_spawn",
-		Vector3(float(spawn[0]), 1.65, float(spawn[2])),
+		Vector3(sx, 1.65, sz),
 		spawn_yaw,
 		0.0
 	)
 
-	# View 2: from south looking north (room overview)
+	# View 2: from south looking north (Godot yaw 0 = look −Z)
+	# Stand well inside the south wall so ajar doors don't fill the frame.
 	await _capture(
 		room_id + "_from_south",
-		Vector3(0.0, 1.7, d * 0.35),
-		180.0,
+		Vector3(0.0, 1.7, half_d - 1.85),
+		0.0,
 		-5.0
 	)
 
-	# View 3: from north looking south
+	# View 3: from north looking south (yaw 180 = look +Z)
 	await _capture(
 		room_id + "_from_north",
-		Vector3(0.0, 1.7, -d * 0.35),
-		0.0,
+		Vector3(0.0, 1.7, -half_d + 1.85),
+		180.0,
 		-5.0
 	)
 
 	# View 4: elevated corner overview
 	await _capture(
 		room_id + "_corner",
-		Vector3(-w * 0.32, 2.1, d * 0.32),
+		Vector3(-w * 0.28, 2.1, d * 0.28),
 		-35.0,
 		-12.0
 	)

@@ -429,28 +429,46 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	## Cast-iron Victorian kitchen range — large signature read from doorway.
 	var root := Node3D.new()
 	root.name = "KitchenRange"
+	# Plinth / hearth base (stone)
+	_add_box(root, Vector3(0, 0.08, 0.05), Vector3(2.35, 0.16, 1.0), STONE, true, 0.7)
 	# Main iron body (wider/taller for doorway silhouette)
-	_add_box(root, Vector3(0, 0.6, 0), Vector3(2.15, 1.2, 0.85), IRON, true, 0.55)
-	# Oven doors
-	_add_box(root, Vector3(-0.5, 0.45, 0.4), Vector3(0.65, 0.5, 0.06), IRON.lightened(0.08), false, 0.5)
-	_add_box(root, Vector3(0.5, 0.45, 0.4), Vector3(0.65, 0.5, 0.06), IRON.lightened(0.08), false, 0.5)
-	_add_cylinder(root, Vector3(-0.5, 0.45, 0.46), 0.028, 0.2, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.5, 0.45, 0.46), 0.028, 0.2, BRASS, false, 0.3, true)
-	# Hotplate top
-	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), IRON.darkened(0.1), true, 0.4)
-	_add_cylinder(root, Vector3(-0.5, 1.3, 0.05), 0.2, 0.05, IRON.lightened(0.05), false, 0.35)
-	_add_cylinder(root, Vector3(0.5, 1.3, 0.05), 0.2, 0.05, IRON.lightened(0.05), false, 0.35)
-	# Chimney flue
-	_add_box(root, Vector3(0, 1.95, -0.15), Vector3(0.55, 1.35, 0.45), IRON, true, 0.5)
+	_add_box(root, Vector3(0, 0.65, 0), Vector3(2.15, 1.1, 0.85), IRON, true, 0.55)
+	# Side panels with rivet strip suggestion
+	_add_box(root, Vector3(-1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), IRON.darkened(0.08), false, 0.5)
+	_add_box(root, Vector3(1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), IRON.darkened(0.08), false, 0.5)
+	# Oven doors (fielded) + brass handles
+	_add_box(root, Vector3(-0.5, 0.48, 0.42), Vector3(0.68, 0.52, 0.06), IRON.lightened(0.1), false, 0.5)
+	_add_box(root, Vector3(0.5, 0.48, 0.42), Vector3(0.68, 0.52, 0.06), IRON.lightened(0.1), false, 0.5)
+	_add_box(root, Vector3(-0.5, 0.48, 0.46), Vector3(0.5, 0.36, 0.02), IRON.darkened(0.05), false, 0.55)
+	_add_box(root, Vector3(0.5, 0.48, 0.46), Vector3(0.5, 0.36, 0.02), IRON.darkened(0.05), false, 0.55)
+	_add_cylinder(root, Vector3(-0.5, 0.48, 0.5), 0.03, 0.18, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.5, 0.48, 0.5), 0.03, 0.18, BRASS, false, 0.3, true)
+	# Firebox opening glow
+	_add_box(root, Vector3(0, 0.35, 0.44), Vector3(0.55, 0.35, 0.04), Color(0.55, 0.22, 0.06), false, 0.9)
+	# Hotplate top with rings
+	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), IRON.darkened(0.12), true, 0.4)
+	_add_cylinder(root, Vector3(-0.55, 1.3, 0.05), 0.22, 0.04, IRON.lightened(0.08), false, 0.35)
+	_add_cylinder(root, Vector3(-0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
+	_add_cylinder(root, Vector3(0.55, 1.3, 0.05), 0.22, 0.04, IRON.lightened(0.08), false, 0.35)
+	_add_cylinder(root, Vector3(0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
+	# Mantel shelf
+	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), IRON.lightened(0.05), false, 0.45)
+	# Chimney flue + crown
+	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), IRON, true, 0.5)
+	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.7, 0.1, 0.55), IRON.darkened(0.05), false, 0.5)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.5, 0.18)
-	fire.light_energy = 1.35
+	fire.light_energy = 1.45
 	fire.omni_range = 5.5
-	fire.position = Vector3(0, 0.6, 0.5)
+	fire.position = Vector3(0, 0.55, 0.55)
 	root.add_child(fire)
-	_add_cylinder(root, Vector3(-0.5, 1.42, 0.05), 0.12, 0.18, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.5, 1.55, 0.05), 0.045, 0.1, COPPER, false, 0.35, true)
-	_add_contact_shadow(root, 1.15, 0.5)
+	# Copper kettle on hotplate
+	_add_cylinder(root, Vector3(-0.55, 1.45, 0.05), 0.13, 0.22, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.05, 0.1, COPPER, false, 0.35, true)
+	_add_box(root, Vector3(-0.35, 1.48, 0.05), Vector3(0.18, 0.03, 0.03), COPPER, false, 0.35)
+	# Iron skillet
+	_add_cylinder(root, Vector3(0.55, 1.36, 0.05), 0.16, 0.05, IRON.darkened(0.1), false, 0.4)
+	_add_contact_shadow(root, 1.2, 0.55)
 	return root
 
 static func _make_dresser(_prop: Dictionary) -> Node3D:
@@ -881,20 +899,20 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	leaf.position = Vector3(-w * 0.5 + 0.05, 0.06, 0.04)
 	leaf.rotation_degrees.y = -48.0  # wide ajar so portal hallway is visible beyond
 	root.add_child(leaf)
-	# Polished mid-mahogany slab (lighter so panels read)
-	var door_wood := Color(0.38, 0.2, 0.1)
-	var door_frame_col := Color(0.28, 0.14, 0.07)
-	var panel_field := Color(0.32, 0.16, 0.08)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, false, 0.4)
+	# Polished mid-mahogany slab — colors biased so auto-mat picks WOOD not red velvet
+	var door_wood := Color(0.42, 0.28, 0.16)
+	var door_frame_col := Color(0.34, 0.22, 0.12)
+	var panel_field := Color(0.36, 0.24, 0.14)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, false, 0.42)
 	# Stiles & rails (classic 4-panel)
 	var stile := 0.11
 	var mid_rail_y := leaf_h * 0.4
-	_add_box(leaf, Vector3(stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.38)
-	_add_box(leaf, Vector3(leaf_w - stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.38)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h - stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.38)
-	_add_box(leaf, Vector3(leaf_w * 0.5, stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.38)
-	_add_box(leaf, Vector3(leaf_w * 0.5, mid_rail_y, 0.028), Vector3(leaf_w - stile * 1.8, stile * 0.9, 0.025), door_frame_col, false, 0.38)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0.028), Vector3(stile * 0.8, leaf_h - stile * 2.0, 0.022), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.4)
+	_add_box(leaf, Vector3(leaf_w - stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.4)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h - stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.4)
+	_add_box(leaf, Vector3(leaf_w * 0.5, stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.4)
+	_add_box(leaf, Vector3(leaf_w * 0.5, mid_rail_y, 0.028), Vector3(leaf_w - stile * 1.8, stile * 0.9, 0.025), door_frame_col, false, 0.4)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0.028), Vector3(stile * 0.8, leaf_h - stile * 2.0, 0.022), door_frame_col, false, 0.4)
 	# Four fielded panels — raised lip + recessed field (readable silhouette)
 	var pw := (leaf_w - stile * 2.4) * 0.44
 	var ph_lo := mid_rail_y - stile * 1.5
@@ -903,12 +921,12 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 		var sx: float = float(side)
 		var lx: float = leaf_w * 0.5 + sx * (pw * 0.55 + stile * 0.2)
 		# lower panels
-		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), panel_field, false, 0.48)
-		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
+		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), panel_field, false, 0.5)
+		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
 		# upper panels
 		var uy: float = mid_rail_y + (leaf_h - mid_rail_y) * 0.52
-		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.48)
-		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
+		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.5)
+		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
 	# Brass mortice-lock furniture
 	var knob_x := leaf_w - 0.15
 	var knob_y := mid_rail_y + 0.08
@@ -1096,15 +1114,23 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		tex_path = TEX_IRON
 		metallic = 0.65
 		mat.roughness = minf(roughness, 0.55)
-	# Red velvet
-	elif color.r > 0.4 and color.r > color.g + 0.15 and color.r > color.b + 0.15:
+	# Mahogany / wood browns / oak FIRST — dark red-browns are wood, not velvet.
+	# (Old order mis-tagged door panels as red damask.)
+	elif color.r > 0.12 and color.r >= color.g * 0.85 and color.r > color.b and color.g < 0.48 and color.g > 0.08:
+		tex_path = TEX_WOOD
+	# Red velvet (true fabric reds — high r, low g relative, not brown wood)
+	elif color.r > 0.45 and color.g < 0.22 and color.b < 0.22 and color.r > color.g + 0.25:
 		tex_path = TEX_VELVET_RED
-	# Green velvet / leaf
-	elif color.g > color.r + 0.02 and color.g > color.b * 0.85 and color.g > 0.15:
+	# Green velvet (muted furniture fabric only — NOT bright plant leaf greens)
+	elif (
+		color.g > color.r + 0.02
+		and color.g > color.b * 0.85
+		and color.g > 0.15
+		and color.g < 0.38
+		and absf(color.r - color.b) < 0.12
+	):
 		if color.g < 0.28:
 			tex_path = TEX_VELVET_GREEN_DEEP
-		elif color.g > 0.35:
-			tex_path = TEX_VELVET_GREEN
 		else:
 			tex_path = TEX_VELVET_GREEN
 	# Linen / cream fabric
@@ -1116,9 +1142,6 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 	# Stone / mid grey-brown
 	elif color.r > 0.45 and color.g > 0.42 and color.b > 0.36 and absf(color.r - color.g) < 0.1:
 		tex_path = TEX_STONE
-	# Mahogany / wood browns / oak
-	elif color.r > 0.12 and color.r >= color.g * 0.9 and color.r > color.b and color.g < 0.45:
-		tex_path = TEX_WOOD
 
 	var tex := _load_tex(tex_path)
 	if tex:
