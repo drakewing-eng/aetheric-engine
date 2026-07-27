@@ -450,6 +450,11 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [3.4, 0.0, -1.5], "yaw": -90.0, "width": 1.2, "height": 2.0},
 			{"kind": "copper_pot", "pos": [-3.0, 0.0, -0.5], "scale": 0.55},
 			{"kind": "crate", "pos": [2.5, 0.0, 2.5], "scale": 0.5},
+			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -0.5], "yaw": 90.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [-1.5, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
+			{"kind": "wall_sconce", "pos": [1.5, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
+			{"kind": "stool", "pos": [0.5, 0.0, -1.5], "yaw": 25.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -702,6 +707,11 @@ const ROOMS := {
 			{"kind": "stool", "pos": [0.8, 0.0, 2.8], "yaw": -20.0},
 			{"kind": "stool", "pos": [-0.8, 0.0, 2.8], "yaw": 20.0},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "length": 5.5, "width": 1.0},
+			{"kind": "copper_pot", "pos": [0.4, 0.0, -1.5], "scale": 0.6},
+			{"kind": "copper_pot", "pos": [-0.5, 0.0, 1.0], "scale": 0.5},
+			{"kind": "wall_sconce", "pos": [0.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [-2.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [2.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.5],

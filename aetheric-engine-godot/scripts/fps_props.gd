@@ -506,14 +506,17 @@ static func _make_dresser(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), OAK.darkened(0.15), false, 0.55)
-	# Plates on shelves
-	for i in 4:
-		var px := -0.55 + i * 0.35
-		_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.1, 0.03, CREAM, false)
-		_add_cylinder(root, Vector3(px, 2.08, 0.02), 0.09, 0.03, CREAM.darkened(0.05), false)
-	# Jars
+	# Plates on shelves (more density)
+	for i in 5:
+		var px := -0.6 + i * 0.3
+		_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.09, 0.03, CREAM, false)
+		_add_cylinder(root, Vector3(px + 0.05, 2.08, 0.02), 0.085, 0.03, CREAM.darkened(0.05), false)
+		_add_cylinder(root, Vector3(px, 2.48, 0.0), 0.08, 0.025, CREAM.darkened(0.1), false)
+	# Jars + copper
 	_add_cylinder(root, Vector3(0.5, 1.2, 0.05), 0.07, 0.18, CLAY, false)
 	_add_cylinder(root, Vector3(0.65, 1.15, 0.0), 0.06, 0.14, CLAY.lightened(0.1), false)
+	_add_cylinder(root, Vector3(-0.5, 1.18, 0.05), 0.08, 0.16, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.3, 1.16, 0.0), 0.06, 0.12, COPPER.darkened(0.08), false, 0.35, true)
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root
 
@@ -850,18 +853,20 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
 			# Short/wide cards; deep sink grounds pot in FIXED_Y view
-			var ph: float = float(bp.get("height", 1.15))
-			var pw: float = float(bp.get("width", 0.9))
-			if ph > 1.15:
-				ph = 1.15
-			if pw < ph * 0.85:
-				pw = ph * 0.9
+			var ph: float = float(bp.get("height", 1.1))
+			var pw: float = float(bp.get("width", 0.95))
+			if ph > 1.1:
+				ph = 1.1
+			if pw < 1.0:
+				pw = maxf(pw, 1.0)
+			if pw < ph * 0.9:
+				pw = ph * 0.95
 			bp["height"] = ph
 			bp["width"] = pw
-			bp["sink"] = 0.26
+			bp["sink"] = 0.28
 			bp["mesh_pot"] = false
 			var root_plant := _make_billboard_prop(bp)
-			_add_contact_shadow(root_plant, pw * 0.4, pw * 0.32)
+			_add_contact_shadow(root_plant, pw * 0.45, pw * 0.35)
 			return root_plant
 	var root := Node3D.new()
 	root.name = "Plant"
