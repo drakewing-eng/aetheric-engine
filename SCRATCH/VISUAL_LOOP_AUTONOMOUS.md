@@ -67,7 +67,8 @@
 - Loop38: thicker painting frames; richer prep; solid mirror
 - Loop39: denser tool racks; richer machines; crate battens
 - Loop40: denser workbench/hall table; denser drawing
-- Loop41: plant mesh canopy blobs for side volume; richer stools; solid window glass+sky plate
+- Loop41: plant side volume; richer stools; solid windows
+- Loop42: plant side volume as flat leaf cards not orbs; copper pot bail handles; denser drawing props
 
 ## Do not
 - Delete prop lists from fps_rooms
