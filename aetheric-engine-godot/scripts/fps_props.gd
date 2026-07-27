@@ -1015,7 +1015,7 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.03, sin(rad) * 0.13), 0.035, 0.04, MAHOGANY, true)
 		_add_box(root, Vector3(0, 0.15, 0), Vector3(0.22, 0.025, 0.22), MAHOGANY_DARK, false, 0.5)
 	elif style == 1:
-		_add_box(root, Vector3(0, 0.5, 0), Vector3(0.36, 0.05, 0.36), OAK.lightened(0.05), true, 0.55)
+		_add_box(root, Vector3(0, 0.5, 0), Vector3(0.36, 0.05, 0.36), Color(0.42, 0.3, 0.16), true, 0.55)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
 				_add_box(root, Vector3(sx * 0.13, 0.24, sz * 0.13), Vector3(0.04, 0.48, 0.04), MAHOGANY_DARK, true, 0.5)
