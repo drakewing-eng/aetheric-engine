@@ -48,7 +48,8 @@
 - Loop19: plant stems; drawing paintings; workshop clutter
 - Loop20: wainscot_height API; kitchen/workshop taller dado
 - Loop21: taller wainscot; wall_vine; workshop denser
-- Loop22: wall_vine rewritten as dense ivy mats (not balloon poles); gallery more machines/crates; kitchen shelves raised
+- Loop22: denser ivy attempt; gallery denser
+- Loop23: removed wall_vine (still balloon-like); more corner palms; kitchen range taller chimney+mantel; conservatory table seating
 
 ## Do not
 - Delete prop lists from fps_rooms
