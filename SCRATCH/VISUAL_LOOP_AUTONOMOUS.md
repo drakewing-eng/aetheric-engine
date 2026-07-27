@@ -52,7 +52,8 @@
 - Loop23: removed balloon vines; denser palms; conservatory seating
 - Loop24: max service wainscots; layered hedge; drawing denser
 - Loop25: conservatory full dado; morning denser; portal lights; plant sink
-- Loop26: drawing furniture deeper sink; plant scissor 0.28; conservatory wainscot 3.7; kitchen shelves 2.55; gallery cooler light
+- Loop26: furniture sinks; plant alpha; gallery cooler light
+- Loop27: full-panel conservatory walls (no cream crown); plant contact shadow; kitchen darker ceiling; gallery aisle props
 
 ## Do not
 - Delete prop lists from fps_rooms
