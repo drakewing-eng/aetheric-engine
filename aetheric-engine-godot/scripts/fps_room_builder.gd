@@ -7,6 +7,8 @@ const WALL_OVERLAP := 0.45
 const WALL_TRIM_Y := 0.35
 const WAINSCOT_H := 1.15
 
+var _wainscot_h: float = WAINSCOT_H
+
 func build(room: Dictionary) -> void:
 	_build_room(room)
 
@@ -21,6 +23,7 @@ func _build_room(room: Dictionary) -> void:
 	var walls: Dictionary = room.get("walls", {})
 	var backing := Color(0.22, 0.15, 0.10)
 	var victorian: bool = room.get("wall_style", "") == "victorian"
+	_wainscot_h = float(room.get("wainscot_height", WAINSCOT_H))
 
 	_add_floor(w, d, room)
 	var ceiling_tint: Color = room.get("ceiling_color", Color(0.18, 0.14, 0.11))
@@ -424,7 +427,7 @@ func _add_victorian_wall(
 	var cover_w := plane_w + (WALL_OVERLAP * 2.0 if expand else 0.04)
 	var cover_h := plane_h + WALL_TRIM_Y * 2.0
 	# Leave a small vertical gap so layers don't share an edge in depth
-	var join := WAINSCOT_H
+	var join := _wainscot_h
 	var paper_overlap := 0.04  # paper tucks slightly behind rail
 	var upper_h := cover_h - join + paper_overlap
 	var upper_y := join - paper_overlap * 0.5 + upper_h * 0.5 - WALL_TRIM_Y
