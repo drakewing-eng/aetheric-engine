@@ -215,7 +215,10 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.1},
 			{"kind": "side_table", "pos": [5.0, 0.0, 2.5], "yaw": -25.0},
 			{"kind": "chair", "pos": [-3.5, 0.0, 2.0], "yaw": 40.0, "fabric": Color(0.32, 0.2, 0.14)},
-			{"kind": "wall_shelf", "pos": [0.0, 0.0, -4.7], "yaw": 0.0, "width": 3.2, "shelf_y": 1.9},
+			# Side-wall shelves only (never span doorway)
+			{"kind": "wall_shelf", "pos": [-3.5, 0.0, -4.7], "yaw": 0.0, "width": 2.0, "shelf_y": 1.9},
+			{"kind": "wall_shelf", "pos": [3.5, 0.0, -4.7], "yaw": 0.0, "width": 2.0, "shelf_y": 1.9},
+			{"kind": "wall_shelf", "pos": [6.5, 0.0, 0.0], "yaw": -90.0, "width": 2.4, "shelf_y": 1.95},
 		],
 		"doors": [
 			{
@@ -602,6 +605,20 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 1.0},
 			{"kind": "plant", "pos": [-3.5, 0.0, 2.4], "scale": 0.9,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 1.05},
+			# Corner fill — solid wall panels still read empty without dense pots
+			{"kind": "plant", "pos": [-0.8, 0.0, -3.4], "scale": 1.0,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.2},
+			{"kind": "plant", "pos": [0.8, 0.0, -3.4], "scale": 0.95,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.15},
+			{"kind": "plant", "pos": [-3.8, 0.0, -2.8], "scale": 1.05,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.25},
+			{"kind": "plant", "pos": [3.8, 0.0, -2.8], "scale": 1.05,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.25},
+			{"kind": "plant", "pos": [-3.8, 0.0, -1.5], "scale": 0.9,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.1},
+			{"kind": "plant", "pos": [3.8, 0.0, -1.5], "scale": 0.9,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.1},
+			{"kind": "copper_pot", "pos": [0.0, 0.0, -3.2], "scale": 0.85},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.5],
@@ -692,8 +709,9 @@ const ROOMS := {
 			},
 			{"kind": "bookshelf", "pos": [3.5, 0.0, -2.5], "yaw": -90.0, "width": 1.2, "height": 1.6},
 			{"kind": "stool", "pos": [1.5, 0.0, 2.2], "yaw": -30.0},
-			# Continuous plate rails break blank upper plaster
-			{"kind": "wall_shelf", "pos": [0.0, 0.0, 3.5], "yaw": 180.0, "width": 2.8, "shelf_y": 2.05},
+			# Plate rails on sides only (north has pot racks + range)
+			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.05},
+			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.05},
 			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.0},
 			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.0},
 		],
