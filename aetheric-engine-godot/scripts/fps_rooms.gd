@@ -431,6 +431,9 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [-2.8, 0.0, 2.0], "yaw": -10.0},
 			{"kind": "chair", "pos": [0.8, 0.0, 1.8], "yaw": 160.0, "fabric": Color(0.4, 0.3, 0.22)},
 			{"kind": "wall_shelf", "pos": [3.5, 0.0, 0.0], "yaw": -90.0, "width": 1.6, "shelf_y": 1.7},
+			{"kind": "bookshelf", "pos": [3.4, 0.0, -1.5], "yaw": -90.0, "width": 1.2, "height": 2.0},
+			{"kind": "copper_pot", "pos": [-3.0, 0.0, -0.5], "scale": 0.55},
+			{"kind": "crate", "pos": [2.5, 0.0, 2.5], "scale": 0.5},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
@@ -549,6 +552,16 @@ const ROOMS := {
 			{"kind": "tool_rack", "pos": [0.0, 0.0, 4.15], "yaw": 180.0},
 			{"kind": "crate", "pos": [-1.2, 0.0, -1.0], "scale": 0.6},
 			{"kind": "copper_pot", "pos": [-3.2, 0.0, -0.5], "scale": 0.8},
+			# Center runner density
+			{
+				"kind": "rug",
+				"pos": [0.5, 0.0, 0.5],
+				"size": [1.6, 4.0],
+				"texture": "res://assets/rooms/textures/hall_runner.jpg",
+			},
+			{"kind": "crate", "pos": [1.8, 0.0, -2.0], "scale": 0.65},
+			{"kind": "copper_pot", "pos": [-1.5, 0.0, -0.8], "scale": 0.7},
+			{"kind": "stool", "pos": [-0.2, 0.0, 2.5], "yaw": 15.0},
 		],
 		"doors": [
 			{
