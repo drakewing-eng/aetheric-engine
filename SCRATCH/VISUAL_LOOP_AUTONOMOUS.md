@@ -27,7 +27,8 @@
 
 ## Done so far (baseline)
 - `8211021` wall openings + portal tunnels + ground billboards + face-camera plants
-- Loop1: cross-plane plants, richer portal hall (wainscot, picture, console, lights), wider ajar doors, deeper furniture sink
+- Loop1: cross-plane plants, richer portal hall, ajar doors, furniture sink
+- Loop2: screenshot camera yaw (was looking into walls), wood doors not red velvet, kitchen range detail, workshop spawn, conservatory mesh plants + density, leaf mat fix
 
 ## Do not
 - Delete prop lists from fps_rooms
