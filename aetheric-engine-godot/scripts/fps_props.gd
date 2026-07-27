@@ -69,10 +69,16 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_armchair(prop)
 		"sofa":
 			node = _make_sofa(prop)
+		"ottoman":
+			node = _make_ottoman(prop)
 		"rug":
 			node = _make_rug(prop)
 		"bookshelf":
 			node = _make_bookshelf(prop)
+		"crock_shelf":
+			node = _make_crock_shelf(prop)
+		"tool_shelf":
+			node = _make_tool_shelf(prop)
 		"side_table":
 			node = _make_side_table(prop)
 		"fireplace":
@@ -272,6 +278,29 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	_add_contact_shadow(root, 0.72, 0.68)
 	return root
 
+static func _make_ottoman(prop: Dictionary) -> Node3D:
+	## Low tufted footstool — sits in front of sofa, never under it.
+	var root := Node3D.new()
+	root.name = "Ottoman"
+	var fabric: Color = prop.get("fabric", VELVET_GREEN.darkened(0.08))
+	var w: float = float(prop.get("width", 0.72))
+	var d: float = float(prop.get("depth", 0.5))
+	# Short mahogany base + padded top
+	_add_box(root, Vector3(0, 0.16, 0), Vector3(w, 0.1, d), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.96, 0.16, d * 0.96), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.38, 0), Vector3(w * 0.88, 0.06, d * 0.88), fabric.darkened(0.1), false, 0.92)
+	# Button tufts
+	for bx in [-0.15, 0.0, 0.15]:
+		for bz in [-0.08, 0.08]:
+			_add_cylinder(root, Vector3(bx * w / 0.72, 0.42, bz * d / 0.5), 0.016, 0.02, fabric.darkened(0.22), false, 0.95)
+	# Four short turned feet
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			_add_cylinder(root, Vector3(sx * w * 0.38, 0.06, sz * d * 0.35), 0.035, 0.12, MAHOGANY, true)
+	_add_contact_shadow(root, w * 0.55, d * 0.55)
+	return root
+
+
 static func _make_sofa(prop: Dictionary) -> Node3D:
 	## Chesterfield-style sofa: buttoned back, rolled arms, carved feet, skirt.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
@@ -339,12 +368,13 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
-	## Open shelves with visible book spines — not a black solid mass.
+	## Open shelves with leather/cloth spines — period library, not Minecraft cubes.
 	var root := Node3D.new()
 	root.name = "Bookshelf"
 	var width: float = prop.get("width", 1.7)
 	var height: float = prop.get("height", 2.5)
 	var depth: float = prop.get("depth", 0.36)
+	var seed0: int = int(prop.get("seed", 0))
 	# Back panel (lighter wood so it doesn't read as a black monolith)
 	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), MAHOGANY, true, 0.5)
 	# Sides
@@ -353,26 +383,101 @@ static func _make_bookshelf(prop: Dictionary) -> Node3D:
 	# Crown + base
 	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.06, 0.1, depth + 0.06), MAHOGANY, false, 0.42)
 	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(width + 0.04, 0.12, depth + 0.04), MAHOGANY_DARK, true, 0.42)
-	# Shelves + dense book rows
+	# Shelves + dense book rows (varied width/height/spine colour per seed)
 	for i in 5:
 		var y: float = 0.38 + i * (height - 0.55) / 4.0
 		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), MAHOGANY, false, 0.48)
 		var x := -width * 0.38
 		var bi := 0
 		while x < width * 0.38:
-			var bw: float = 0.08 + float((i + bi) % 3) * 0.03
-			var bh: float = 0.16 + float((i * 3 + bi) % 4) * 0.04
+			var bw: float = 0.055 + float((i + bi + seed0) % 5) * 0.022
+			var bh: float = 0.14 + float((i * 3 + bi + seed0) % 5) * 0.035
 			_add_box(
 				root,
 				Vector3(x + bw * 0.5, y + 0.02 + bh * 0.5, depth * 0.05),
 				Vector3(bw * 0.92, bh, depth * 0.55),
-				_book_color(i + bi),
+				_book_color(i + bi + seed0 * 7),
 				false,
-				0.75
+				0.72
 			)
-			x += bw + 0.01
+			# Occasional gilt band on spine
+			if (bi + i + seed0) % 5 == 0:
+				_add_box(
+					root,
+					Vector3(x + bw * 0.5, y + 0.02 + bh * 0.55, depth * 0.22),
+					Vector3(bw * 0.7, 0.012, 0.01),
+					BRASS,
+					false,
+					0.35
+				)
+			x += bw + 0.008
 			bi += 1
 	_add_contact_shadow(root, width * 0.55, depth * 0.7)
+	return root
+
+
+static func _make_crock_shelf(prop: Dictionary) -> Node3D:
+	## Kitchen open shelf: plates, crocks, copper — never library books.
+	var root := Node3D.new()
+	root.name = "CrockShelf"
+	var width: float = float(prop.get("width", 1.4))
+	var height: float = float(prop.get("height", 1.7))
+	var depth: float = float(prop.get("depth", 0.32))
+	var seed0: int = int(prop.get("seed", 1))
+	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), OAK, true, 0.52)
+	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.08), true, 0.5)
+	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.08), true, 0.5)
+	_add_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), OAK.darkened(0.12), true, 0.5)
+	_add_box(root, Vector3(0, height - 0.04, 0.01), Vector3(width + 0.05, 0.08, depth + 0.04), OAK, false, 0.5)
+	var shelves := 3
+	for i in shelves:
+		var y: float = 0.35 + float(i) * ((height - 0.5) / float(maxi(shelves - 1, 1)))
+		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), OAK.lightened(0.05), false, 0.55)
+		var n := 3 + (i + seed0) % 2
+		for j in n:
+			var x := -width * 0.32 + float(j) * (width * 0.64 / float(maxi(n - 1, 1)))
+			var kind := (i * 3 + j + seed0) % 4
+			if kind == 0:
+				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.09, 0.03, CREAM, false, 0.75)
+			elif kind == 1:
+				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.07, 0.16, CLAY if (j + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
+			elif kind == 2:
+				_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.08, 0.12, COPPER, false, 0.35, true)
+			else:
+				_add_cylinder(root, Vector3(x, y + 0.05, 0.04), 0.1, 0.04, CREAM.darkened(0.08), false, 0.7)
+				_add_cylinder(root, Vector3(x, y + 0.12, 0.04), 0.05, 0.1, CREAM.darkened(0.05), false, 0.75)
+	_add_contact_shadow(root, width * 0.5, depth * 0.6)
+	return root
+
+
+static func _make_tool_shelf(prop: Dictionary) -> Node3D:
+	## Workshop shelf: timber, parts, tools — not books.
+	var root := Node3D.new()
+	root.name = "ToolShelf"
+	var width: float = float(prop.get("width", 1.3))
+	var height: float = float(prop.get("height", 1.9))
+	var depth: float = float(prop.get("depth", 0.34))
+	var seed0: int = int(prop.get("seed", 2))
+	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), MAHOGANY_DARK, true, 0.55)
+	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.15), true, 0.55)
+	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.15), true, 0.55)
+	_add_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), MAHOGANY_DARK, true, 0.5)
+	for i in 4:
+		var y: float = 0.32 + float(i) * ((height - 0.45) / 3.0)
+		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), OAK, false, 0.55)
+		# Timber scrap / tool / box variety
+		var n := 2 + (i + seed0) % 2
+		for j in n:
+			var x := -width * 0.28 + float(j) * (width * 0.55 / float(maxi(n - 1, 1)))
+			var kind := (i + j + seed0) % 3
+			if kind == 0:
+				_add_box(root, Vector3(x, y + 0.06, 0.04), Vector3(0.28, 0.06, 0.12), OAK.lightened(0.1), false, 0.6)
+			elif kind == 1:
+				_add_box(root, Vector3(x, y + 0.08, 0.04), Vector3(0.18, 0.12, 0.14), MAHOGANY, false, 0.5)
+				_add_cylinder(root, Vector3(x, y + 0.12, 0.12), 0.015, 0.2, IRON, false, 0.4)
+			else:
+				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.06, 0.14, COPPER.darkened(0.1), false, 0.4, true)
+	_add_contact_shadow(root, width * 0.5, depth * 0.6)
 	return root
 
 static func _make_side_table(prop: Dictionary) -> Node3D:
@@ -1386,12 +1491,16 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 # ─── Materials / primitives ──────────────────────────────────────────────────
 
 static func _book_color(seed: int) -> Color:
+	## Leather / cloth bindings — avoid bright Minecraft green blocks.
 	var hues := [
-		Color(0.42, 0.16, 0.12),
-		Color(0.18, 0.22, 0.32),
-		Color(0.32, 0.24, 0.14),
-		Color(0.5, 0.12, 0.1),
-		Color(0.2, 0.3, 0.22),
+		Color(0.38, 0.14, 0.10),  # oxblood
+		Color(0.16, 0.20, 0.30),  # navy
+		Color(0.34, 0.22, 0.12),  # tan leather
+		Color(0.48, 0.12, 0.10),  # crimson
+		Color(0.22, 0.18, 0.14),  # dark brown
+		Color(0.28, 0.24, 0.18),  # buff
+		Color(0.14, 0.16, 0.14),  # near-black green-brown
+		Color(0.40, 0.30, 0.18),  # mustard cloth
 	]
 	return hues[seed % hues.size()]
 
