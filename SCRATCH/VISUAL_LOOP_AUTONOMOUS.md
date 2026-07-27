@@ -64,7 +64,8 @@
 - Loop35: denser dresser; plant sink; more sconces
 - Loop36: chalk diagrams; coat hat; gallery path
 - Loop37: richer sink; denser workshop/drawing/hall
-- Loop38: thicker gilt painting frames; richer prep table crocks; solid silvered mirror; denser morning
+- Loop38: thicker painting frames; richer prep; solid mirror
+- Loop39: denser tool racks two rows; richer secondary machines; crate battens; denser conservatory plants
 
 ## Do not
 - Delete prop lists from fps_rooms
