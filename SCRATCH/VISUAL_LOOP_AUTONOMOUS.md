@@ -33,7 +33,8 @@
 - Loop4: gallery machines continuous; paintings scene photos; density
 - Loop5: plant PNG black cleared; workbench tops; pot racks; crown moulding
 - Loop6: FIXED_Y plants; glass garden; morning density; oil lamps
-- Loop7: glass exterior = grounded hedge not floating balls; chandeliers drawing+gallery; conservatory all palm/fern cutouts; removed floating north window
+- Loop7: glass hedge exterior; chandeliers; conservatory palms
+- Loop8: fern black cleanup; morning uses hall wallpaper (not blank); workshop floor runner+crates; kitchen north shelf; Argand chimney polish
 
 ## Do not
 - Delete prop lists from fps_rooms
