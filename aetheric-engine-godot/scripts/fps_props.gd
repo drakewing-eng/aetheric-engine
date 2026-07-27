@@ -824,12 +824,13 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(x, 2.08, 0.06), 0.015, 0.14, IRON, false, 0.4)
 		var pr: float = 0.09 + float((i * 3 + seed0) % 5) * 0.03
 		var ph: float = 0.06 + float((i + seed0 * 2) % 4) * 0.035
-		var pcol := [
+		var pcols: Array[Color] = [
 			COPPER,
 			COPPER.darkened(0.12),
 			COPPER.lightened(0.08),
 			Color(0.55, 0.32, 0.18),
-		][(i + seed0) % 4]
+		]
+		var pcol: Color = pcols[(i + seed0) % 4]
 		var shape := (i + seed0) % 3
 		if shape == 0:
 			_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, ph, pcol, false, 0.35, true)
