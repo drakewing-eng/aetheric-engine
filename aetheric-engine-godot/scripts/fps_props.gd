@@ -769,36 +769,39 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)
 	var tall: bool = prop.get("tall", false)
-	# Leaf palette biased so auto-mat never picks iron/velvet
-	var leaf_a := Color(0.28, 0.48, 0.22)
-	var leaf_b := Color(0.2, 0.38, 0.16)
-	var leaf_c := Color(0.34, 0.52, 0.26)
-	var stem_col := Color(0.22, 0.32, 0.14)
-	# Terracotta pot with rim + soil
-	_add_cylinder(root, Vector3(0, 0.2 * scale, 0), 0.2 * scale, 0.36 * scale, CLAY, true, 0.72)
-	_add_cylinder(root, Vector3(0, 0.38 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.12), false, 0.7)
-	_add_cylinder(root, Vector3(0, 0.4 * scale, 0), 0.18 * scale, 0.04 * scale, Color(0.18, 0.12, 0.07), false)
-	# Stem
-	var stem_h := 0.55 * scale if tall else 0.28 * scale
-	_add_cylinder(root, Vector3(0, 0.42 * scale + stem_h * 0.5, 0), 0.028 * scale, stem_h, stem_col, false, 0.9)
-	# Canopy: many small spheres/disks at offsets (bushier, less “stacked can”)
-	var base_y := 0.55 * scale + stem_h * 0.55
-	var blobs: Array = [
-		[Vector3(0, base_y, 0), 0.28 * scale, 0.22 * scale, leaf_a],
-		[Vector3(0.14 * scale, base_y + 0.06 * scale, 0.08 * scale), 0.18 * scale, 0.16 * scale, leaf_b],
-		[Vector3(-0.12 * scale, base_y + 0.04 * scale, -0.1 * scale), 0.17 * scale, 0.15 * scale, leaf_c],
-		[Vector3(0.08 * scale, base_y + 0.14 * scale, -0.06 * scale), 0.15 * scale, 0.14 * scale, leaf_a],
-		[Vector3(-0.1 * scale, base_y + 0.12 * scale, 0.1 * scale), 0.14 * scale, 0.13 * scale, leaf_b],
-		[Vector3(0.02 * scale, base_y + 0.2 * scale, 0.02 * scale), 0.16 * scale, 0.14 * scale, leaf_c],
-		[Vector3(0.18 * scale, base_y - 0.02 * scale, -0.04 * scale), 0.12 * scale, 0.12 * scale, leaf_a],
-		[Vector3(-0.16 * scale, base_y - 0.04 * scale, 0.06 * scale), 0.13 * scale, 0.12 * scale, leaf_b],
-	]
+	var leaf_a := Color(0.26, 0.46, 0.2)
+	var leaf_b := Color(0.18, 0.36, 0.14)
+	var leaf_c := Color(0.32, 0.5, 0.24)
+	var stem_col := Color(0.2, 0.3, 0.12)
+	# Terracotta pot + soil (grounded silhouette)
+	_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.2 * scale, 0.34 * scale, CLAY, true, 0.88)
+	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.1), false, 0.88)
+	_add_cylinder(root, Vector3(0, 0.37 * scale, 0), 0.17 * scale, 0.04 * scale, Color(0.16, 0.1, 0.06), false, 0.9)
+	var stem_h := 0.5 * scale if tall else 0.26 * scale
+	_add_cylinder(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, stem_col, false, 0.9)
+	# Palm-like fronds: thin boxes fanned outward (not stacked topiary balls)
+	var crown_y := 0.42 * scale + stem_h
+	var frond_n := 8 if tall else 6
+	for i in frond_n:
+		var ang := float(i) * (TAU / float(frond_n)) + 0.15
+		var len_f := (0.38 if tall else 0.28) * scale
+		var tip := Vector3(cos(ang) * len_f * 0.55, crown_y + 0.08 * scale, sin(ang) * len_f * 0.55)
+		var leaf := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.06 * scale, 0.02 * scale, len_f)
+		leaf.mesh = bm
+		var lmat := StandardMaterial3D.new()
+		lmat.albedo_color = leaf_a if i % 2 == 0 else leaf_b
+		lmat.roughness = 0.9
+		lmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		leaf.material_override = lmat
+		leaf.position = tip
+		leaf.look_at(Vector3(0, crown_y - 0.05 * scale, 0), Vector3.UP)
+		root.add_child(leaf)
+	# Soft crown mass at tip
+	_add_sphere_blob(root, Vector3(0, crown_y + 0.06 * scale, 0), 0.12 * scale, leaf_c)
 	if tall:
-		blobs.append([Vector3(0.0, base_y + 0.32 * scale, 0.0), 0.18 * scale, 0.16 * scale, leaf_b])
-		blobs.append([Vector3(0.1 * scale, base_y + 0.4 * scale, 0.04 * scale), 0.12 * scale, 0.12 * scale, leaf_a])
-		blobs.append([Vector3(-0.08 * scale, base_y + 0.38 * scale, -0.05 * scale), 0.11 * scale, 0.11 * scale, leaf_c])
-	for b in blobs:
-		_add_sphere_blob(root, b[0], float(b[1]), b[3])
+		_add_sphere_blob(root, Vector3(0.05 * scale, crown_y + 0.14 * scale, 0.02 * scale), 0.09 * scale, leaf_a)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
 

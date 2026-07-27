@@ -457,6 +457,9 @@ const ROOMS := {
 			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0},
 			{"kind": "tool_rack", "pos": [4.3, 0.0, 2.0], "yaw": -90.0},
 			{"kind": "tool_rack", "pos": [4.3, 0.0, -3.0], "yaw": -90.0},
+			{"kind": "tool_rack", "pos": [0.0, 0.0, -4.15], "yaw": 0.0},
+			{"kind": "bookshelf", "pos": [4.2, 0.0, 0.5], "yaw": -90.0, "width": 1.3, "height": 2.0},
+			{"kind": "chalk_board", "pos": [-4.2, 0.0, 0.0], "yaw": 90.0},
 			# Warm hanging lights + denser floor
 			{"kind": "chandelier", "pos": [-2.0, 0.0, -1.0], "hang": 3.0},
 			{"kind": "chandelier", "pos": [2.0, 0.0, 1.0], "hang": 3.0},
@@ -587,13 +590,17 @@ const ROOMS := {
 		"floor_texture": TEX + "floor_kitchen.jpg",
 		"floor_color": Color(0.42, 0.36, 0.28),
 		"ceiling_color": Color(0.88, 0.84, 0.76),
-		"light_energy": 1.25,
-		"light_color": Color(1.0, 0.72, 0.42),
+		"light_energy": 1.05,
+		"light_color": Color(1.0, 0.68, 0.38),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [0.0, 1.15, -3.85], "yaw": 0.0, "width": 1.55, "height": 2.35},
 			{"kind": "window", "pos": [4.35, 1.7, 0.5], "yaw": -90.0, "width": 1.1, "height": 1.5},
 			{"kind": "window", "pos": [-4.35, 1.7, 0.5], "yaw": 90.0, "width": 1.0, "height": 1.4},
+			{"kind": "painting", "pos": [-2.5, 2.1, 3.55], "yaw": 180.0, "width": 0.7, "height": 0.55,
+				"texture": "res://assets/rooms/richmond_kitchen.jpg"},
+			{"kind": "painting", "pos": [2.5, 2.1, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
+				"texture": "res://assets/rooms/richmond_workshop.jpg"},
 		],
 		"props": [
 			# Signature kitchen read — NEVER lab workbench
