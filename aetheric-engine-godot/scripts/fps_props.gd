@@ -397,24 +397,27 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
 	## Open shelves with leather/cloth spines — period library, not Minecraft cubes.
+	## Case is oak (not same mahogany as chairs/tables).
 	var root := Node3D.new()
 	root.name = "Bookshelf"
 	var width: float = prop.get("width", 1.7)
 	var height: float = prop.get("height", 2.5)
 	var depth: float = prop.get("depth", 0.36)
 	var seed0: int = int(prop.get("seed", 0))
+	var case_col := Color(0.48, 0.34, 0.18)  # oak case
+	var case_dark := Color(0.36, 0.24, 0.12)
 	# Back panel (lighter wood so it doesn't read as a black monolith)
-	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), case_col, true, 0.55)
 	# Sides
-	_add_box(root, Vector3(-width * 0.5 + 0.03, height * 0.5, 0), Vector3(0.06, height, depth), MAHOGANY_DARK, true, 0.45)
-	_add_box(root, Vector3(width * 0.5 - 0.03, height * 0.5, 0), Vector3(0.06, height, depth), MAHOGANY_DARK, true, 0.45)
+	_add_box(root, Vector3(-width * 0.5 + 0.03, height * 0.5, 0), Vector3(0.06, height, depth), case_dark, true, 0.52)
+	_add_box(root, Vector3(width * 0.5 - 0.03, height * 0.5, 0), Vector3(0.06, height, depth), case_dark, true, 0.52)
 	# Crown + base
-	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.06, 0.1, depth + 0.06), MAHOGANY, false, 0.42)
-	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(width + 0.04, 0.12, depth + 0.04), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.06, 0.1, depth + 0.06), case_col, false, 0.5)
+	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(width + 0.04, 0.12, depth + 0.04), case_dark, true, 0.5)
 	# Shelves + dense book rows (varied width/height/spine colour per seed)
 	for i in 5:
 		var y: float = 0.38 + i * (height - 0.55) / 4.0
-		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), Color(0.5, 0.36, 0.2), false, 0.55)
 		var x := -width * 0.38
 		var bi := 0
 		while x < width * 0.38:
