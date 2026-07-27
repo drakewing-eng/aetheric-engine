@@ -11,7 +11,7 @@ extends Node3D
 @onready var bridge: BridgeClient = %BridgeClient
 
 const NPC_SCENE := preload("res://scenes/fps_npc.tscn")
-const DOOR_PROXIMITY := 2.4
+const DOOR_PROXIMITY := 2.6  # slightly larger so E works with closed leaf + narrow gaps
 
 var _current_room_id := "drawing_room"
 var _current_doors: Array = []

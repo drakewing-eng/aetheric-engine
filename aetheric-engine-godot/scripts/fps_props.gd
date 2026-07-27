@@ -808,18 +808,28 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 2.2, 0), Vector3(2.0, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
 	_add_box(root, Vector3(-0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
 	_add_box(root, Vector3(0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
-	for i in 5:
-		var x := -0.7 + i * 0.35
+	# Fewer identical pans: 4 hangers, strong size/shape variation
+	for i in 4:
+		var x := -0.55 + i * 0.38
 		_add_cylinder(root, Vector3(x, 2.08, 0.06), 0.015, 0.14, IRON, false, 0.4)
-		var pr: float = 0.11 + float((i + seed0) % 4) * 0.025
-		var ph: float = 0.08 + float((i * 2 + seed0) % 3) * 0.03
-		var pcol := COPPER if (i + seed0) % 3 != 2 else COPPER.darkened(0.1)
-		_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, ph, pcol, false, 0.35, true)
-		_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.035, pcol.lightened(0.08), false, 0.35, true)
-		if (i + seed0) % 2 == 0:
-			_add_box(root, Vector3(x + pr * 0.7, 1.82, 0.1), Vector3(0.04, 0.06, 0.1), pcol, false, 0.35)
+		var pr: float = 0.09 + float((i * 3 + seed0) % 5) * 0.03
+		var ph: float = 0.06 + float((i + seed0 * 2) % 4) * 0.035
+		var pcol := [
+			COPPER,
+			COPPER.darkened(0.12),
+			COPPER.lightened(0.08),
+			Color(0.55, 0.32, 0.18),
+		][(i + seed0) % 4]
+		var shape := (i + seed0) % 3
+		if shape == 0:
+			_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, ph, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.03, pcol.lightened(0.08), false, 0.35, true)
+		elif shape == 1:
+			_add_cylinder(root, Vector3(x, 1.78, 0.1), pr * 1.25, ph * 0.7, pcol, false, 0.35, true)
+			_add_box(root, Vector3(x + pr * 0.9, 1.78, 0.1), Vector3(0.1, 0.025, 0.04), pcol, false, 0.35)
 		else:
-			_add_box(root, Vector3(x, 1.95, 0.12), Vector3(pr * 1.2, 0.02, 0.02), pcol.darkened(0.05), false, 0.35)
+			_add_cylinder(root, Vector3(x, 1.85, 0.1), pr * 0.75, ph * 1.3, pcol.darkened(0.05), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.98, 0.1), 0.03, 0.04, BRASS, false, 0.3, true)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
