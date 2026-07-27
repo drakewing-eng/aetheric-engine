@@ -320,7 +320,8 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mi.material_override = mat
 	body.add_child(mi)
-	body.position = Vector3(0, 0.02, 0)
+	# Lift rug off floor to stop z-fight shimmer when walking
+	body.position = Vector3(0, 0.035, 0)
 	root.add_child(body)
 	return root
 
@@ -392,19 +393,34 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_hall_table(_prop: Dictionary) -> Node3D:
+	## Console table with oil lamp, card tray, gloves — entrance hall still-life.
 	var root := Node3D.new()
 	root.name = "HallTable"
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(1.35, 0.05, 0.48), MAHOGANY, true, 0.5)
-	_add_box(root, Vector3(0, 0.4, 0), Vector3(1.2, 0.02, 0.42), MAHOGANY_DARK, false, 0.45)
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(1.4, 0.05, 0.5), MAHOGANY, true, 0.48)
+	_add_box(root, Vector3(0, 0.78, 0), Vector3(1.35, 0.04, 0.46), MAHOGANY_DARK, false, 0.45)
+	_add_box(root, Vector3(0, 0.4, 0), Vector3(1.15, 0.03, 0.4), MAHOGANY_DARK, false, 0.45)
 	for sx in [-1, 1]:
-		_add_cylinder(root, Vector3(sx * 0.52, 0.4, 0), 0.05, 0.78, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.52, 0.02, 0), 0.07, 0.04, MAHOGANY, true)
-	# Mail tray + calling cards
-	_add_box(root, Vector3(-0.25, 0.88, 0.05), Vector3(0.35, 0.04, 0.22), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(-0.25, 0.91, 0.05), Vector3(0.28, 0.01, 0.16), PAPER, false)
-	_add_box(root, Vector3(0.3, 0.9, 0.05), Vector3(0.18, 0.22, 0.12), _book_color(1), false)
-	_add_cylinder(root, Vector3(0.05, 0.95, -0.05), 0.03, 0.18, BRASS, false, 0.3, true)
-	_add_contact_shadow(root, 0.75, 0.35)
+		_add_cylinder(root, Vector3(sx * 0.52, 0.4, 0.12), 0.045, 0.78, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.52, 0.4, -0.12), 0.045, 0.78, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.52, 0.02, 0.12), 0.06, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.52, 0.02, -0.12), 0.06, 0.04, MAHOGANY, true)
+	# Calling-card tray + letters
+	_add_box(root, Vector3(-0.3, 0.88, 0.05), Vector3(0.38, 0.035, 0.24), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(-0.3, 0.91, 0.05), Vector3(0.3, 0.01, 0.18), PAPER, false)
+	_add_box(root, Vector3(-0.28, 0.925, 0.02), Vector3(0.22, 0.008, 0.12), PAPER.darkened(0.08), false)
+	# Gloves / handkerchief
+	_add_box(root, Vector3(0.15, 0.87, 0.1), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.1), false, 0.9)
+	# Argand-style oil lamp (brass column + glass chimney)
+	_add_cylinder(root, Vector3(0.4, 0.95, -0.05), 0.05, 0.22, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.4, 1.12, -0.05), 0.035, 0.18, Color(0.7, 0.8, 0.85, 0.5), false, 0.15, true)
+	_add_cylinder(root, Vector3(0.4, 0.88, -0.05), 0.08, 0.04, BRASS, false, 0.3, true)
+	var lamp := OmniLight3D.new()
+	lamp.light_color = Color(1.0, 0.85, 0.55)
+	lamp.light_energy = 0.55
+	lamp.omni_range = 3.0
+	lamp.position = Vector3(0.4, 1.25, -0.05)
+	root.add_child(lamp)
+	_add_contact_shadow(root, 0.78, 0.38)
 	return root
 
 # ─── Kitchen identity ────────────────────────────────────────────────────────
@@ -676,26 +692,39 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_coat_stand(_prop: Dictionary) -> Node3D:
+	## Turned hall tree with brass hooks — 1850s entrance hall staple.
 	var root := Node3D.new()
 	root.name = "CoatStand"
-	_add_cylinder(root, Vector3(0, 0.9, 0), 0.04, 1.75, MAHOGANY_DARK, true)
-	_add_cylinder(root, Vector3(0, 0.04, 0), 0.22, 0.06, MAHOGANY, true)
-	# Hooks
+	_add_cylinder(root, Vector3(0, 0.95, 0), 0.045, 1.85, MAHOGANY, true, 0.45)
+	_add_cylinder(root, Vector3(0, 0.35, 0), 0.07, 0.25, MAHOGANY_DARK, true, 0.45)
+	_add_cylinder(root, Vector3(0, 0.05, 0), 0.28, 0.08, MAHOGANY, true, 0.45)
+	# Turned rings
+	for y in [0.55, 0.85, 1.25, 1.55]:
+		_add_cylinder(root, Vector3(0, y, 0), 0.06, 0.04, MAHOGANY_DARK, false, 0.4)
+	# Brass hat hooks
 	for a in [0.0, 72.0, 144.0, 216.0, 288.0]:
 		var rad := deg_to_rad(a)
-		_add_box(root, Vector3(cos(rad) * 0.18, 1.55, sin(rad) * 0.18), Vector3(0.18, 0.03, 0.03), BRASS, false, 0.3)
-	# Draped coat suggestion
-	_add_box(root, Vector3(0.12, 1.2, 0.05), Vector3(0.2, 0.7, 0.08), Color(0.25, 0.18, 0.12), false, 0.85)
+		_add_box(root, Vector3(cos(rad) * 0.16, 1.62, sin(rad) * 0.16), Vector3(0.16, 0.025, 0.025), BRASS, false, 0.3)
+		_add_cylinder(root, Vector3(cos(rad) * 0.22, 1.62, sin(rad) * 0.22), 0.02, 0.04, BRASS, false, 0.28, true)
+	# Hanging coat / cloak suggestion (draped wool)
+	_add_box(root, Vector3(0.14, 1.15, 0.06), Vector3(0.22, 0.85, 0.1), Color(0.18, 0.14, 0.12), false, 0.88)
+	_add_box(root, Vector3(-0.1, 1.05, -0.08), Vector3(0.18, 0.55, 0.08), Color(0.22, 0.12, 0.1), false, 0.88)
+	_add_contact_shadow(root, 0.3, 0.3)
 	return root
 
 static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
+	## Ceramic/mahogany stick stand with brass rim (wet-day hall piece).
 	var root := Node3D.new()
 	root.name = "UmbrellaStand"
-	_add_cylinder(root, Vector3(0, 0.35, 0), 0.16, 0.65, MAHOGANY_DARK, true)
-	_add_cylinder(root, Vector3(0, 0.68, 0), 0.18, 0.05, BRASS, false, 0.3, true)
-	# Umbrella handles sticking up
-	_add_cylinder(root, Vector3(0.05, 0.95, 0.02), 0.02, 0.55, Color(0.15, 0.12, 0.1), false)
-	_add_cylinder(root, Vector3(-0.04, 0.9, -0.03), 0.02, 0.48, Color(0.2, 0.15, 0.12), false)
+	_add_cylinder(root, Vector3(0, 0.32, 0), 0.15, 0.6, MAHOGANY_DARK, true, 0.45)
+	_add_cylinder(root, Vector3(0, 0.62, 0), 0.17, 0.04, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(0, 0.05, 0), 0.18, 0.06, MAHOGANY, true, 0.45)
+	# Walking sticks / umbrella shafts
+	_add_cylinder(root, Vector3(0.05, 0.95, 0.02), 0.018, 0.7, Color(0.2, 0.12, 0.08), false, 0.55)
+	_add_cylinder(root, Vector3(-0.04, 0.88, -0.03), 0.016, 0.58, Color(0.12, 0.1, 0.1), false, 0.5)
+	_add_cylinder(root, Vector3(0.02, 0.82, -0.05), 0.015, 0.5, Color(0.35, 0.22, 0.12), false, 0.55)
+	# Crook handle
+	_add_box(root, Vector3(0.05, 1.32, 0.02), Vector3(0.1, 0.03, 0.03), Color(0.2, 0.12, 0.08), false, 0.55)
 	return root
 
 # ─── Features ────────────────────────────────────────────────────────────────
@@ -821,18 +850,70 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_door_frame(feat: Dictionary) -> Node3D:
+	## Mid-Victorian 4-panel door + architrave + brass furniture (c.1850s).
+	## Root sits on floor at doorway center (ignores feature y so doors don't float).
 	var root := Node3D.new()
 	root.name = "DoorFrame"
 	var pos: Array = feat.get("pos", [0, 0, 0])
-	root.position = Vector3(pos[0], pos[1], pos[2])
+	root.position = Vector3(float(pos[0]), 0.0, float(pos[2]))
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 1.5)
 	var h: float = feat.get("height", 2.35)
-	_add_box(root, Vector3(-w * 0.5, h * 0.5, 0), Vector3(0.14, h, 0.22), MAHOGANY_DARK, true, 0.35)
-	_add_box(root, Vector3(w * 0.5, h * 0.5, 0), Vector3(0.14, h, 0.22), MAHOGANY_DARK, true, 0.35)
-	_add_box(root, Vector3(0, h, 0), Vector3(w + 0.14, 0.14, 0.24), MAHOGANY_DARK, true, 0.35)
-	# Threshold
-	_add_box(root, Vector3(0, 0.03, 0), Vector3(w, 0.06, 0.28), MAHOGANY, false, 0.4)
+	var jamb := 0.12
+	var depth := 0.18
+	# Outer architrave (doorcase)
+	_add_box(root, Vector3(-w * 0.5 - 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), MAHOGANY_DARK, true, 0.4)
+	_add_box(root, Vector3(w * 0.5 + 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), MAHOGANY_DARK, true, 0.4)
+	_add_box(root, Vector3(0, h + 0.05, 0), Vector3(w + 0.34, 0.14, depth + 0.08), MAHOGANY, true, 0.4)
+	# Inner stop mould
+	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
+	# Threshold / saddle
+	_add_box(root, Vector3(0, 0.03, 0.02), Vector3(w + 0.08, 0.06, depth + 0.12), MAHOGANY_DARK, false, 0.45)
+	# --- Door leaf (ajar so it reads as a door; leave walk gap) ---
+	var leaf_w := w - 0.1
+	var leaf_h := h - 0.12
+	var leaf := Node3D.new()
+	leaf.name = "DoorLeaf"
+	leaf.position = Vector3(-w * 0.5 + 0.05, 0.06, 0.04)
+	leaf.rotation_degrees.y = -28.0  # clearly ajar, Victorian house often left so
+	root.add_child(leaf)
+	# Polished mid-mahogany slab (lighter so panels read)
+	var door_wood := Color(0.38, 0.2, 0.1)
+	var door_frame_col := Color(0.28, 0.14, 0.07)
+	var panel_field := Color(0.32, 0.16, 0.08)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, false, 0.4)
+	# Stiles & rails (classic 4-panel)
+	var stile := 0.11
+	var mid_rail_y := leaf_h * 0.4
+	_add_box(leaf, Vector3(stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(leaf_w - stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h - stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(leaf_w * 0.5, stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(leaf_w * 0.5, mid_rail_y, 0.028), Vector3(leaf_w - stile * 1.8, stile * 0.9, 0.025), door_frame_col, false, 0.38)
+	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0.028), Vector3(stile * 0.8, leaf_h - stile * 2.0, 0.022), door_frame_col, false, 0.38)
+	# Four fielded panels — raised lip + recessed field (readable silhouette)
+	var pw := (leaf_w - stile * 2.4) * 0.44
+	var ph_lo := mid_rail_y - stile * 1.5
+	var ph_hi := leaf_h - mid_rail_y - stile * 1.5
+	for sx in [-1.0, 1.0]:
+		var lx := leaf_w * 0.5 + sx * (pw * 0.55 + stile * 0.2)
+		# lower panels
+		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), panel_field, false, 0.48)
+		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
+		# upper panels
+		var uy := mid_rail_y + (leaf_h - mid_rail_y) * 0.52
+		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.48)
+		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
+	# Brass mortice-lock furniture
+	var knob_x := leaf_w - 0.15
+	var knob_y := mid_rail_y + 0.08
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.055), 0.04, 0.018, BRASS, false, 0.28, true)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.09), 0.03, 0.045, BRASS, false, 0.25, true)
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.09, 0.05), Vector3(0.045, 0.08, 0.014), BRASS, false, 0.28)
+	# Three butt hinges
+	for hy in [0.32, leaf_h * 0.5, leaf_h - 0.38]:
+		_add_box(leaf, Vector3(0.03, hy, 0.04), Vector3(0.045, 0.14, 0.035), BRASS, false, 0.32)
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
@@ -920,11 +1001,11 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	mi.position = Vector3(0, y_off, 0)
 	root.add_child(mi)
 
-	# Back-facing second quad for when viewed from behind
+	# Back-facing second quad — offset enough to avoid z-fight flicker while walking
 	var mi_b := MeshInstance3D.new()
 	mi_b.mesh = mesh
 	mi_b.material_override = mat
-	mi_b.position = Vector3(0, y_off, -0.01)
+	mi_b.position = Vector3(0, y_off, -0.04)
 	mi_b.rotation_degrees.y = 180.0
 	root.add_child(mi_b)
 
@@ -1041,7 +1122,8 @@ static func _add_contact_shadow(parent: Node3D, rx: float, rz: float) -> void:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = mat
-	mi.position = Vector3(0, 0.01, 0)
+	# Above floor, below rug — avoid coplanar flicker
+	mi.position = Vector3(0, 0.02, 0)
 	mi.scale = Vector3(1.0, 1.0, rz / maxf(rx, 0.01))
 	parent.add_child(mi)
 

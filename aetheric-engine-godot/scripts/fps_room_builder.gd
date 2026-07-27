@@ -71,18 +71,18 @@ func _build_room(room: Dictionary) -> void:
 		_add_door_trigger(door, w, d)
 
 func _add_skirting(w: float, d: float) -> void:
-	## Thin dark wood baseboards inside each wall — grounds the room visually.
-	var wood := Color(0.16, 0.09, 0.05)
-	var board_h := 0.12
-	var thick := 0.04
-	var half_w := w * 0.5 - 0.08
-	var half_d := d * 0.5 - 0.08
+	## Period baseboard — thick enough to mask floor/wall join shimmer.
+	var board_h := 0.14
+	var thick := 0.055
+	var half_w := w * 0.5 - 0.06
+	var half_d := d * 0.5 - 0.06
 	var boards := [
-		[Vector3(0, board_h * 0.5, -half_d), Vector3(w - 0.2, board_h, thick)],
-		[Vector3(0, board_h * 0.5, half_d), Vector3(w - 0.2, board_h, thick)],
-		[Vector3(-half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.2)],
-		[Vector3(half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.2)],
+		[Vector3(0, board_h * 0.5, -half_d), Vector3(w - 0.15, board_h, thick)],
+		[Vector3(0, board_h * 0.5, half_d), Vector3(w - 0.15, board_h, thick)],
+		[Vector3(-half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.15)],
+		[Vector3(half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.15)],
 	]
+	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
 	for i in boards.size():
 		var mi := MeshInstance3D.new()
 		mi.name = "Skirting_%d" % i
@@ -90,25 +90,40 @@ func _add_skirting(w: float, d: float) -> void:
 		mesh.size = boards[i][1]
 		mi.mesh = mesh
 		var mat := StandardMaterial3D.new()
-		mat.albedo_color = wood
 		mat.roughness = 0.55
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		if wood_tex:
+			mat.albedo_texture = wood_tex
+			mat.albedo_color = Color(0.75, 0.62, 0.5)
+			mat.uv1_scale = Vector3(2.5, 0.6, 1.0)
+		else:
+			mat.albedo_color = Color(0.16, 0.09, 0.05)
 		mi.material_override = mat
 		mi.position = boards[i][0]
 		add_child(mi)
-	# Picture-rail / crown strip near ceiling line on long walls
+	# Picture rail on all four walls (period hang-line, also stabilizes upper wall)
 	var crown_y := 2.55
-	for z_sign in [-1.0, 1.0]:
+	var rails := [
+		[Vector3(0, crown_y, -half_d), Vector3(w - 0.25, 0.045, 0.035), 0.0],
+		[Vector3(0, crown_y, half_d), Vector3(w - 0.25, 0.045, 0.035), 0.0],
+		[Vector3(-half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25), 0.0],
+		[Vector3(half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25), 0.0],
+	]
+	for i in rails.size():
 		var cmi := MeshInstance3D.new()
-		cmi.name = "PictureRail"
+		cmi.name = "PictureRail_%d" % i
 		var cm := BoxMesh.new()
-		cm.size = Vector3(w - 0.3, 0.04, 0.03)
+		cm.size = rails[i][1]
 		cmi.mesh = cm
 		var cmat := StandardMaterial3D.new()
-		cmat.albedo_color = wood
 		cmat.roughness = 0.5
+		if wood_tex:
+			cmat.albedo_texture = wood_tex
+			cmat.albedo_color = Color(0.8, 0.68, 0.55)
+		else:
+			cmat.albedo_color = Color(0.16, 0.09, 0.05)
 		cmi.material_override = cmat
-		cmi.position = Vector3(0, crown_y, z_sign * half_d)
+		cmi.position = rails[i][0]
 		add_child(cmi)
 
 
@@ -136,14 +151,41 @@ func _add_victorian_wall(
 	wainscot_tex: String,
 	fallback: Color,
 ) -> void:
+	## Paper sits slightly in front of wainscot to kill coplanar z-fighting.
+	## Chair rail covers the join (horizon shimmer when walking).
 	var cover_w := plane_w + WALL_OVERLAP * 2.0
 	var cover_h := plane_h + WALL_TRIM_Y * 2.0
-	var upper_h := cover_h - WAINSCOT_H
-	var upper_y := WAINSCOT_H + upper_h * 0.5 - WALL_TRIM_Y
-	var lower_y := WAINSCOT_H * 0.5
+	# Leave a small vertical gap so layers don't share an edge in depth
+	var join := WAINSCOT_H
+	var paper_overlap := 0.04  # paper tucks slightly behind rail
+	var upper_h := cover_h - join + paper_overlap
+	var upper_y := join - paper_overlap * 0.5 + upper_h * 0.5 - WALL_TRIM_Y
+	var lower_y := join * 0.5
+	# Wall normal (into room): for yaw 0 plane faces +Z from wall at -d/2, so inward is +Z.
+	var yaw_rad := deg_to_rad(yaw_deg)
+	var inward := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.012
 
-	_add_wall_plane(wall_name + "Paper", pos + Vector3(0, upper_y - plane_h * 0.5, 0), yaw_deg, Vector2(cover_w, upper_h), paper_tex, fallback, true)
-	_add_wall_plane(wall_name + "Wainscot", pos + Vector3(0, lower_y - plane_h * 0.5, 0), yaw_deg, Vector2(cover_w, WAINSCOT_H + WALL_TRIM_Y * 0.5), wainscot_tex, fallback, true)
+	_add_wall_plane(
+		wall_name + "Wainscot",
+		pos + Vector3(0, lower_y - plane_h * 0.5, 0),
+		yaw_deg,
+		Vector2(cover_w, join + WALL_TRIM_Y * 0.5),
+		wainscot_tex,
+		fallback,
+		true
+	)
+	# Wallpaper offset inward (toward room) — stops flicker vs wainscot
+	_add_wall_plane(
+		wall_name + "Paper",
+		pos + Vector3(0, upper_y - plane_h * 0.5, 0) + inward,
+		yaw_deg,
+		Vector2(cover_w, upper_h),
+		paper_tex,
+		fallback,
+		true
+	)
+	# Dado / chair rail at join — physical strip so the meeting line never shimmers
+	_add_chair_rail(wall_name, pos, yaw_deg, cover_w, join, inward)
 
 func _add_stretched_wall(
 	wall_name: String,
@@ -227,6 +269,37 @@ func _add_ceiling(width: float, depth: float, height: float, tint: Color = Color
 	mi.position = Vector3(0, height, 0)
 	add_child(mi)
 
+func _add_chair_rail(
+	wall_name: String,
+	wall_pos: Vector3,
+	yaw_deg: float,
+	cover_w: float,
+	join_y: float,
+	inward: Vector3,
+) -> void:
+	## Mahogany dado rail — covers wallpaper/wainscot join (period + anti z-fight).
+	var mi := MeshInstance3D.new()
+	mi.name = wall_name + "ChairRail"
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(cover_w - 0.1, 0.08, 0.05)
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.roughness = 0.5
+	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	if wood:
+		mat.albedo_texture = wood
+		mat.albedo_color = Color(0.9, 0.82, 0.72)
+		mat.uv1_scale = Vector3(cover_w * 0.3, 0.4, 1.0)
+	else:
+		mat.albedo_color = Color(0.22, 0.12, 0.07)
+	mi.material_override = mat
+	var yaw_rad := deg_to_rad(yaw_deg)
+	var extra := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.022
+	mi.position = Vector3(wall_pos.x, join_y, wall_pos.z) + inward + extra
+	mi.rotation_degrees = Vector3(0, yaw_deg, 0)
+	add_child(mi)
+
+
 func _add_wall_plane(
 	wall_name: String,
 	pos: Vector3,
@@ -237,12 +310,11 @@ func _add_wall_plane(
 	tiled: bool,
 ) -> void:
 	# Visual only — solid collision comes from _add_bounds (with doorway gaps).
-	# Full-wall StaticBody collision used to block north/south doors entirely.
+	# Use a thin BoxMesh instead of zero-thickness PlaneMesh to reduce z-fighting.
 	var mi := MeshInstance3D.new()
 	mi.name = wall_name
-	var mesh := PlaneMesh.new()
-	mesh.orientation = PlaneMesh.FACE_Z
-	mesh.size = plane_size
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(plane_size.x, plane_size.y, 0.02)
 	mi.mesh = mesh
 	mi.material_override = _make_mat(tex_path, fallback, plane_size, tiled)
 	mi.position = pos
@@ -251,17 +323,18 @@ func _add_wall_plane(
 
 func _make_mat(tex_path: String, fallback: Color, plane_size: Vector2, tiled: bool) -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.cull_mode = BaseMaterial3D.CULL_BACK
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.roughness = 0.88
+	# Reduce shimmer on large coplanar surfaces while walking
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	if tex_path != "":
 		var tex: Texture2D = _load_texture(tex_path)
 		if tex:
 			mat.albedo_texture = tex
-			mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 			if tiled:
 				# Smaller scale = less aggressive tiling / fewer obvious vertical seams
-				mat.uv1_scale = Vector3(plane_size.x * 0.28, plane_size.y * 0.28, 1.0)
+				mat.uv1_scale = Vector3(plane_size.x * 0.22, plane_size.y * 0.22, 1.0)
 			return mat
 	mat.albedo_color = fallback
 	return mat
