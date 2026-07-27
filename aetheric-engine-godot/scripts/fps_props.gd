@@ -619,10 +619,11 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_contact_shadow(root, 1.2, 0.55)
 	return root
 
-static func _make_dresser(_prop: Dictionary) -> Node3D:
-	## Welsh dresser / plate rack — kitchen identity.
+static func _make_dresser(prop: Dictionary) -> Node3D:
+	## Welsh dresser / plate rack — kitchen identity; seed varies plate/crock mix.
 	var root := Node3D.new()
 	root.name = "Dresser"
+	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.7
 	# Base cupboard
 	_add_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), OAK, true, 0.5)
@@ -637,16 +638,25 @@ static func _make_dresser(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), OAK.darkened(0.15), false, 0.55)
-	# Plates on shelves (more density)
+	# Plates / crocks / copper mixed by seed
 	for i in 5:
 		var px := -0.6 + i * 0.3
-		_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.09, 0.03, CREAM, false)
-		_add_cylinder(root, Vector3(px + 0.05, 2.08, 0.02), 0.085, 0.03, CREAM.darkened(0.05), false)
-		_add_cylinder(root, Vector3(px, 2.48, 0.0), 0.08, 0.025, CREAM.darkened(0.1), false)
-	# Jars + copper
-	_add_cylinder(root, Vector3(0.5, 1.2, 0.05), 0.07, 0.18, CLAY, false)
+		var kind := (i + seed0) % 3
+		if kind == 0:
+			_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.09, 0.03, CREAM if i % 2 == 0 else CREAM.darkened(0.08), false)
+		elif kind == 1:
+			_add_cylinder(root, Vector3(px, 1.7, 0.02), 0.06, 0.14, CLAY, false, 0.8)
+		else:
+			_add_cylinder(root, Vector3(px, 1.68, 0.02), 0.07, 0.1, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(px + 0.05, 2.08, 0.02), 0.08 + float(i % 2) * 0.015, 0.03, CREAM.darkened(0.05 * float((i + seed0) % 3)), false)
+		if (i + seed0) % 2 == 0:
+			_add_cylinder(root, Vector3(px, 2.48, 0.0), 0.08, 0.025, CREAM.darkened(0.1), false)
+		else:
+			_add_cylinder(root, Vector3(px, 2.52, 0.0), 0.05, 0.1, CLAY.lightened(0.05), false, 0.8)
+	# Jars + copper base
+	_add_cylinder(root, Vector3(0.5, 1.2, 0.05), 0.07, 0.18, CLAY if seed0 % 2 == 0 else CLAY.darkened(0.08), false)
 	_add_cylinder(root, Vector3(0.65, 1.15, 0.0), 0.06, 0.14, CLAY.lightened(0.1), false)
-	_add_cylinder(root, Vector3(-0.5, 1.18, 0.05), 0.08, 0.16, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.5, 1.18, 0.05), 0.08, 0.16, COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
 	_add_cylinder(root, Vector3(-0.3, 1.16, 0.0), 0.06, 0.12, COPPER.darkened(0.08), false, 0.35, true)
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root

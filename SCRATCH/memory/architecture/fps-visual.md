@@ -26,13 +26,17 @@ Godot --path aetheric-engine-godot --resolution 1280x720 -s res://scripts/screen
 ./scripts/checkpoint.sh "visual: short note"
 ```
 
-## Door transition (next fix)
+## Door transition (loop 44+)
 
 - Room graph: each room’s `doors[]` has `target`, `spawn`, `spawn_yaw`, `pos`, `size`
-- Portal geometry: `fps_room_builder.gd` `_add_door_portal` (stub hallway when only one room loaded)
-- **Next design:** closed door interact → switch room + place player at target spawn; solid floors; no void fall
+- **Design:** closed door leaf (`_make_door_frame`) + solid backstop; **E** → `_go_through_door` → load target + spawn
+- Portal is shallow recess only (`_add_door_portal` depth ~0.28) — not walk-in closet
+- Bounds use narrow doorway gaps; solid leaf blocks void fall-through
 
 ## Prop identity
 
-- Prefer specialized makers over one generic `bookshelf` everywhere
+- Kitchen: `crock_shelf` / `dresser` (not library `bookshelf`)
+- Workshop: `tool_shelf` (not books)
+- Drawing/morning: `bookshelf` with `seed` + leather spine colours
+- Mass props use `seed` (copper_pot, stool, crate, pot_rack, side_table, wall_shelf, prep_table)
 - Uniqueness rule: [../visual/uniqueness-rule.md](../visual/uniqueness-rule.md)
