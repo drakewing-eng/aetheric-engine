@@ -19,3 +19,6 @@ SCRATCH/screenshots/loop_*/**/*.png
 # Optional local-only
 .env
 .env.*
+
+# Local full-tree tarballs (too large for GitHub; code is on main)
+BACKUPS/*.tar.gz
