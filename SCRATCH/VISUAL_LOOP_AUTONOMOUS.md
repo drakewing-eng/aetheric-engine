@@ -34,7 +34,8 @@
 - Loop5: plant PNG black cleared; workbench tops; pot racks; crown moulding
 - Loop6: FIXED_Y plants; glass garden; morning density; oil lamps
 - Loop7: glass hedge exterior; chandeliers; conservatory palms
-- Loop8: fern black cleanup; morning uses hall wallpaper (not blank); workshop floor runner+crates; kitchen north shelf; Argand chimney polish
+- Loop8: fern cleanup; morning hall paper; workshop runner; kitchen shelf
+- Loop9: swap fern cutouts→palm (black fern gone); larger kitchen pot racks; Argand lamp brass+flame; fern PNG cleaned
 
 ## Do not
 - Delete prop lists from fps_rooms
