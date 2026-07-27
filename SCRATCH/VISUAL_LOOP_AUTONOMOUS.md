@@ -62,7 +62,8 @@
 - Loop33: dark conservatory paper; wall sconces hall+drawing; hall path
 - Loop34: sconces more rooms; thicker skirting; plant sink
 - Loop35: denser dresser; plant sink; more sconces
-- Loop36: chalk board diagrams+sticks; coat stand top hat; gallery stone path; denser gallery props
+- Loop36: chalk diagrams; coat hat; gallery path
+- Loop37: richer kitchen sink cupboard+jug; workshop stone path; denser drawing+hall props
 
 ## Do not
 - Delete prop lists from fps_rooms
