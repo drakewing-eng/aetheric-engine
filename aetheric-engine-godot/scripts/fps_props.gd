@@ -566,6 +566,10 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
 	_add_cylinder(root, Vector3(-0.2, 0.9, -0.2), 0.04, 0.06, Color(0.55, 0.35, 0.15), false, 0.8)
 	_add_cylinder(root, Vector3(-0.12, 0.9, -0.22), 0.035, 0.05, Color(0.5, 0.32, 0.12), false, 0.8)
+	# Extra crockery density
+	_add_cylinder(root, Vector3(0.0, 0.92, 0.15), 0.07, 0.1, CREAM.darkened(0.05), false, 0.85)
+	_add_box(root, Vector3(-0.55, 0.88, -0.15), Vector3(0.18, 0.04, 0.14), Color(0.75, 0.7, 0.6), false, 0.7)
+	_add_cylinder(root, Vector3(0.2, 0.95, 0.2), 0.05, 0.12, COPPER.lightened(0.05), false, 0.35, true)
 	_add_contact_shadow(root, width * 0.5, 0.5)
 	return root
 
@@ -1205,20 +1209,10 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var pos: Array = feat.get("pos", [0, 0, 0])
 	root.position = Vector3(pos[0], pos[1], pos[2])
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
-	_add_box(root, Vector3(0, 0, 0), Vector3(1.05, 1.45, 0.08), BRASS, true, 0.45)
-	_add_box(root, Vector3(0, 0, 0.02), Vector3(0.92, 1.32, 0.04), Color(0.55, 0.4, 0.18), false, 0.4)
-	var glass := MeshInstance3D.new()
-	var gm := BoxMesh.new()
-	gm.size = Vector3(0.78, 1.12, 0.015)
-	glass.mesh = gm
-	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.55, 0.62, 0.7, 0.55)
-	gmat.metallic = 0.85
-	gmat.roughness = 0.08
-	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	glass.material_override = gmat
-	glass.position = Vector3(0, 0, 0.05)
-	root.add_child(glass)
+	_add_box(root, Vector3(0, 0, 0), Vector3(1.1, 1.5, 0.1), BRASS, true, 0.4)
+	_add_box(root, Vector3(0, 0, 0.03), Vector3(0.95, 1.35, 0.04), Color(0.5, 0.36, 0.16), false, 0.4)
+	# Solid silvered glass (alpha glass often reads black)
+	_add_box(root, Vector3(0, 0, 0.06), Vector3(0.82, 1.18, 0.02), Color(0.7, 0.78, 0.85), false, 0.15)
 	return root
 
 static func _make_painting(feat: Dictionary) -> Node3D:
@@ -1230,12 +1224,13 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 0.85)
 	var h: float = feat.get("height", 1.05)
-	# Outer gilt frame + dark inner lip
-	_add_box(root, Vector3(0, 0, 0), Vector3(w, h, 0.07), BRASS, true, 0.35)
-	_add_box(root, Vector3(0, 0, 0.02), Vector3(w - 0.06, h - 0.06, 0.03), Color(0.22, 0.14, 0.08), false, 0.55)
+	# Outer gilt frame (thicker) + dark inner lip + cord
+	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.04, h + 0.04, 0.09), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.025), Vector3(w - 0.04, h - 0.04, 0.04), Color(0.22, 0.14, 0.08), false, 0.55)
+	_add_box(root, Vector3(0, h * 0.5 + 0.08, 0.01), Vector3(0.03, 0.12, 0.03), BRASS.darkened(0.1), false, 0.35)
 	var canvas := MeshInstance3D.new()
 	var cm := BoxMesh.new()
-	cm.size = Vector3(w - 0.14, h - 0.14, 0.02)
+	cm.size = Vector3(w - 0.16, h - 0.16, 0.02)
 	canvas.mesh = cm
 	var cmat := StandardMaterial3D.new()
 	var tex_path: String = str(feat.get("texture", ""))
