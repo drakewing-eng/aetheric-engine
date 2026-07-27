@@ -896,13 +896,14 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	var pw := (leaf_w - stile * 2.4) * 0.44
 	var ph_lo := mid_rail_y - stile * 1.5
 	var ph_hi := leaf_h - mid_rail_y - stile * 1.5
-	for sx in [-1.0, 1.0]:
-		var lx := leaf_w * 0.5 + sx * (pw * 0.55 + stile * 0.2)
+	for side in [-1.0, 1.0]:
+		var sx: float = float(side)
+		var lx: float = leaf_w * 0.5 + sx * (pw * 0.55 + stile * 0.2)
 		# lower panels
 		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), panel_field, false, 0.48)
 		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
 		# upper panels
-		var uy := mid_rail_y + (leaf_h - mid_rail_y) * 0.52
+		var uy: float = mid_rail_y + (leaf_h - mid_rail_y) * 0.52
 		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.48)
 		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.08), false, 0.45)
 	# Brass mortice-lock furniture
