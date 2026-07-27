@@ -42,7 +42,8 @@
 - Loop13: mesh fronds; kitchen art; workshop walls
 - Loop14: bush plants; cream lamps; hall chandelier
 - Loop15: all-palm conservatory; dim kitchen; workshop paintings
-- Loop16: plant cards short+wide+deeper sink; gallery denser furniture/paintings; kitchen rug; morning gallery wallpaper
+- Loop16: short-wide palms; gallery denser; kitchen rug; morning pattern
+- Loop17: wall_shelf plate rails (kitchen); wider conservatory glass+paintings; plant sink 0.2; hall wall shelf
 
 ## Do not
 - Delete prop lists from fps_rooms
