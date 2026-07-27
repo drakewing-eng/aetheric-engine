@@ -721,13 +721,11 @@ static func _make_tool_rack(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0.55, 0), Vector3(1.55, 0.08, 0.1), MAHOGANY_DARK, true, 0.5)
 	_add_box(root, Vector3(-0.72, 0.95, 0), Vector3(0.08, 0.9, 0.08), MAHOGANY, true, 0.5)
 	_add_box(root, Vector3(0.72, 0.95, 0), Vector3(0.08, 0.9, 0.08), MAHOGANY, true, 0.5)
-	# Pegs + tools
-	for i in 6:
-		var x := -0.55 + i * 0.22
+	# Pegs + denser tools (two rows)
+	for i in 7:
+		var x := -0.6 + i * 0.2
 		_add_cylinder(root, Vector3(x, 1.28, 0.08), 0.015, 0.1, OAK, false, 0.55)
-		# tool shaft
 		_add_box(root, Vector3(x, 0.95, 0.1), Vector3(0.035, 0.55, 0.035), Color(0.25, 0.18, 0.1), false, 0.55)
-		# tool head (alternate hammer / wrench / tongs silhouette)
 		if i % 3 == 0:
 			_add_box(root, Vector3(x, 0.68, 0.12), Vector3(0.16, 0.08, 0.08), IRON, false, 0.4)
 		elif i % 3 == 1:
@@ -737,10 +735,17 @@ static func _make_tool_rack(_prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(x, 0.72, 0.12), Vector3(0.08, 0.04, 0.14), IRON, false, 0.4)
 			_add_box(root, Vector3(x - 0.05, 0.68, 0.18), Vector3(0.04, 0.08, 0.04), IRON, false, 0.4)
 			_add_box(root, Vector3(x + 0.05, 0.68, 0.18), Vector3(0.04, 0.08, 0.04), IRON, false, 0.4)
+	# Short tools on lower pegs
+	for i in 4:
+		var x2 := -0.4 + i * 0.28
+		_add_cylinder(root, Vector3(x2, 0.58, 0.08), 0.012, 0.08, OAK, false, 0.55)
+		_add_box(root, Vector3(x2, 0.4, 0.1), Vector3(0.03, 0.28, 0.03), Color(0.22, 0.15, 0.1), false, 0.55)
+		_add_box(root, Vector3(x2, 0.28, 0.12), Vector3(0.1, 0.05, 0.06), IRON, false, 0.4)
 	# Lower shelf with spare bolts / copper bits
 	_add_cylinder(root, Vector3(-0.35, 0.62, 0.08), 0.04, 0.08, COPPER, false, 0.35, true)
 	_add_cylinder(root, Vector3(-0.2, 0.62, 0.08), 0.035, 0.07, BRASS, false, 0.3, true)
 	_add_box(root, Vector3(0.25, 0.62, 0.08), Vector3(0.2, 0.04, 0.1), IRON, false, 0.45)
+	_add_cylinder(root, Vector3(0.45, 0.62, 0.08), 0.03, 0.06, COPPER, false, 0.35, true)
 	return root
 
 static func _make_crate(prop: Dictionary) -> Node3D:
@@ -749,6 +754,10 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 	var s: float = prop.get("scale", 1.0)
 	_add_box(root, Vector3(0, 0.22 * s, 0), Vector3(0.55 * s, 0.42 * s, 0.45 * s), OAK, true, 0.6)
 	_add_box(root, Vector3(0, 0.42 * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), OAK.darkened(0.1), false, 0.55)
+	# Batten straps
+	_add_box(root, Vector3(0, 0.22 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), OAK.darkened(0.15), false, 0.55)
+	_add_box(root, Vector3(0, 0.22 * s, -0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), OAK.darkened(0.15), false, 0.55)
+	_add_contact_shadow(root, 0.3 * s, 0.25 * s)
 	return root
 
 static func _make_stool(_prop: Dictionary) -> Node3D:
@@ -780,16 +789,19 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	var top_y: float = 0.35 + col_h
 	_add_cylinder(root, Vector3(0, top_y, 0), 0.38, 0.1, BRASS.lightened(0.05), false, 0.32, true)
 	_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.14, 0.18, Color(0.62, 0.5, 0.22), false, 0.4, true)
-	# Side instrument
+	# Side instruments
 	_add_box(root, Vector3(0.42, 0.55, 0.15), Vector3(0.28, 0.4, 0.32), MAHOGANY, true, 0.45)
 	_add_cylinder(root, Vector3(0.42, 0.82, 0.15), 0.08, 0.06, BRASS, false, 0.3, true)
-	# Pipe elbow grounded on body
+	_add_box(root, Vector3(-0.4, 0.5, 0.2), Vector3(0.25, 0.35, 0.28), MAHOGANY, true, 0.45)
+	_add_cylinder(root, Vector3(-0.4, 0.75, 0.2), 0.06, 0.05, BRASS, false, 0.3, true)
+	# Pipe elbows grounded on body
 	_add_cylinder(root, Vector3(-0.38, 0.75, 0.0), 0.05, 0.5, COPPER, false, 0.35, true)
 	_add_box(root, Vector3(-0.38, 1.02, 0.15), Vector3(0.1, 0.1, 0.35), COPPER, false, 0.35)
+	_add_cylinder(root, Vector3(0.35, 0.9, -0.2), 0.04, 0.4, COPPER.darkened(0.05), false, 0.35, true)
 	var glow := OmniLight3D.new()
 	glow.light_color = Color(0.55, 0.75, 0.85)
-	glow.light_energy = 0.45
-	glow.omni_range = 3.0
+	glow.light_energy = 0.55
+	glow.omni_range = 3.2
 	glow.position = Vector3(0, col_mid, 0.2)
 	root.add_child(glow)
 	_add_contact_shadow(root, 0.55, 0.5)

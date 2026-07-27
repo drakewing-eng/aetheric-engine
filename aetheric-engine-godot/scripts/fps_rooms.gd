@@ -727,6 +727,11 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [-2.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [2.0, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
+			{"kind": "plant", "pos": [1.5, 0.0, -2.5], "scale": 0.9,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.1},
+			{"kind": "plant", "pos": [-1.5, 0.0, -2.0], "scale": 0.85,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.9, "height": 1.05},
+			{"kind": "stool", "pos": [2.2, 0.0, 0.5], "yaw": -30.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.5],
