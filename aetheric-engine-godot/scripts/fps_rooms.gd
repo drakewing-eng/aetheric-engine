@@ -320,6 +320,11 @@ const ROOMS := {
 			{"kind": "chalk_board", "pos": [2.5, 0.0, -5.7], "yaw": 0.0},
 			{"kind": "dresser", "pos": [6.8, 0.0, -3.5], "yaw": -90.0},
 			{"kind": "copper_pot", "pos": [-2.5, 0.0, -3.0], "scale": 0.7},
+			{"kind": "machine", "pos": [0.0, 0.0, 2.0], "yaw": 10.0, "height": 1.6},
+			{"kind": "crate", "pos": [2.0, 0.0, 3.8], "scale": 0.7},
+			{"kind": "crate", "pos": [-1.5, 0.0, 3.6], "scale": 0.55},
+			{"kind": "chair", "pos": [1.5, 0.0, -2.5], "yaw": -30.0, "fabric": Color(0.28, 0.2, 0.16)},
+			{"kind": "side_table", "pos": [0.0, 0.0, -2.8], "yaw": 5.0},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, -1.0],
@@ -589,12 +594,14 @@ const ROOMS := {
 				"texture": "res://assets/rooms/richmond_gallery.jpg"},
 		],
 		"props": [
-			# Ivy on remaining solid plaster corners
-			{"kind": "wall_vine", "pos": [-1.2, 0.0, -3.7], "yaw": 0.0, "width": 1.6, "height": 2.6},
-			{"kind": "wall_vine", "pos": [1.2, 0.0, -3.7], "yaw": 0.0, "width": 1.6, "height": 2.6},
-			{"kind": "wall_vine", "pos": [-3.7, 0.0, -2.0], "yaw": 90.0, "width": 1.4, "height": 2.5},
-			{"kind": "wall_vine", "pos": [3.7, 0.0, -2.0], "yaw": -90.0, "width": 1.4, "height": 2.5},
-			# All short palm cards (mesh canopy still reads toy-like)
+			# Dense ivy mats on solid plaster only (not glass)
+			{"kind": "wall_vine", "pos": [-1.0, 0.0, -3.72], "yaw": 0.0, "width": 1.8, "height": 1.9},
+			{"kind": "wall_vine", "pos": [1.0, 0.0, -3.72], "yaw": 0.0, "width": 1.8, "height": 1.9},
+			{"kind": "wall_vine", "pos": [-3.72, 0.0, -2.2], "yaw": 90.0, "width": 1.5, "height": 1.85},
+			{"kind": "wall_vine", "pos": [3.72, 0.0, -2.2], "yaw": -90.0, "width": 1.5, "height": 1.85},
+			{"kind": "wall_vine", "pos": [-3.72, 0.0, -0.5], "yaw": 90.0, "width": 1.2, "height": 1.6},
+			{"kind": "wall_vine", "pos": [3.72, 0.0, -0.5], "yaw": -90.0, "width": 1.2, "height": 1.6},
+			# All short palm cards
 			{"kind": "plant", "pos": [2.5, 0.0, -2.2], "scale": 1.1,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.25},
 			{"kind": "plant", "pos": [-2.8, 0.0, -2.5], "scale": 1.15,
@@ -733,11 +740,11 @@ const ROOMS := {
 			},
 			{"kind": "bookshelf", "pos": [3.5, 0.0, -2.5], "yaw": -90.0, "width": 1.2, "height": 1.6},
 			{"kind": "stool", "pos": [1.5, 0.0, 2.2], "yaw": -30.0},
-			# Plate rails on sides only (north has pot racks + range)
-			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.05},
-			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.05},
-			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.0},
-			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.0},
+			# Plate rails sit just above tall wainscot
+			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.25},
+			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.4, "shelf_y": 2.25},
+			{"kind": "wall_shelf", "pos": [-3.9, 0.0, 0.0], "yaw": 90.0, "width": 2.2, "shelf_y": 2.2},
+			{"kind": "wall_shelf", "pos": [3.9, 0.0, -0.5], "yaw": -90.0, "width": 2.0, "shelf_y": 2.2},
 		],
 		"doors": [
 			{

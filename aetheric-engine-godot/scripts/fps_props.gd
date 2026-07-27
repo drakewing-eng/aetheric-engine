@@ -557,25 +557,32 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 
 static func _make_wall_vine(prop: Dictionary) -> Node3D:
-	## Climbing ivy on blank conservatory/service plaster — soft green mass.
+	## Dense climbing ivy mat on plaster — not balloon poles.
 	var root := Node3D.new()
 	root.name = "WallVine"
-	var height: float = float(prop.get("height", 2.2))
-	var width: float = float(prop.get("width", 1.2))
-	var leaf_a := Color(0.22, 0.42, 0.18)
-	var leaf_b := Color(0.16, 0.34, 0.12)
-	var leaf_c := Color(0.28, 0.48, 0.2)
-	# Vertical stems
-	for i in 4:
-		var x := -width * 0.35 + float(i) * (width * 0.23)
-		_add_cylinder(root, Vector3(x, height * 0.45, 0.02), 0.012, height * 0.85, Color(0.2, 0.28, 0.12), false, 0.9)
-	# Leaf clusters
-	for j in 14:
-		var fx := -width * 0.4 + fmod(float(j) * 0.37, width * 0.8)
-		var fy := 0.35 + fmod(float(j) * 0.51, height * 0.75)
+	var height: float = float(prop.get("height", 1.8))
+	var width: float = float(prop.get("width", 1.4))
+	var leaf_a := Color(0.2, 0.4, 0.16)
+	var leaf_b := Color(0.14, 0.32, 0.1)
+	var leaf_c := Color(0.26, 0.46, 0.18)
+	# Thin guide stems (short, many)
+	for i in 6:
+		var x := -width * 0.4 + float(i) * (width * 0.16)
+		var sh := height * (0.45 + float(i % 3) * 0.12)
+		_add_cylinder(root, Vector3(x, 0.25 + sh * 0.5, 0.01), 0.008, sh, Color(0.18, 0.26, 0.1), false, 0.92)
+	# Dense leaf mat (many small spheres packed flat to wall)
+	for j in 28:
+		var t := float(j)
+		var fx := -width * 0.42 + fmod(t * 0.29, width * 0.84)
+		var fy := 0.2 + fmod(t * 0.41, height * 0.85)
+		var fz := 0.04 + float(j % 3) * 0.02
+		var r := 0.07 + float(j % 4) * 0.015
 		var col := leaf_a if j % 3 == 0 else (leaf_b if j % 3 == 1 else leaf_c)
-		_add_sphere_blob(root, Vector3(fx, fy, 0.06), 0.1 + float(j % 3) * 0.03, col)
-		_add_sphere_blob(root, Vector3(fx + 0.08, fy + 0.05, 0.05), 0.07, leaf_c)
+		_add_sphere_blob(root, Vector3(fx, fy, fz), r, col)
+	# Soft base mound
+	_add_sphere_blob(root, Vector3(0, 0.25, 0.08), 0.18, leaf_b)
+	_add_sphere_blob(root, Vector3(-0.2, 0.2, 0.07), 0.14, leaf_a)
+	_add_sphere_blob(root, Vector3(0.22, 0.22, 0.07), 0.15, leaf_c)
 	return root
 
 
