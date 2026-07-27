@@ -59,7 +59,8 @@
 - Loop30: dark conservatory panels; stone thresholds; ajar doors
 - Loop31: palm alpha bridges; workshop runner; exterior garden
 - Loop32: conservatory stone path; richer aetheric coils; denser garden
-- Loop33: conservatory paper=dark panel; wall_sconce brass lights in hall+drawing; hall floor_path
+- Loop33: dark conservatory paper; wall sconces hall+drawing; hall path
+- Loop34: wall sconces kitchen/gallery/workshop; thicker skirting; plant sink 0.26 max-h 1.15; gallery denser crates
 
 ## Do not
 - Delete prop lists from fps_rooms
