@@ -37,7 +37,7 @@ func _build_room(room: Dictionary) -> void:
 		_add_victorian_facade("West", 90.0, d, h, paper, wainscot, backing, doors, w, d)
 		_add_victorian_facade("East", -90.0, d, h, paper, wainscot, backing, doors, w, d)
 		_add_victorian_facade("South", 180.0, w, h, paper, wainscot, backing, doors, w, d)
-		_add_skirting(w, d)
+		_add_skirting(w, d, h)
 		for door in doors:
 			_add_door_portal(door, w, d, h)
 	else:
@@ -71,7 +71,7 @@ func _build_room(room: Dictionary) -> void:
 	for door in doors:
 		_add_door_trigger(door, w, d)
 
-func _add_skirting(w: float, d: float) -> void:
+func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 	## Period baseboard — thick enough to mask floor/wall join shimmer.
 	var board_h := 0.14
 	var thick := 0.055
@@ -102,13 +102,13 @@ func _add_skirting(w: float, d: float) -> void:
 		mi.material_override = mat
 		mi.position = boards[i][0]
 		add_child(mi)
-	# Picture rail on all four walls (period hang-line, also stabilizes upper wall)
+	# Picture rail (period hang-line) + ceiling crown moulding
 	var crown_y := 2.55
 	var rails := [
-		[Vector3(0, crown_y, -half_d), Vector3(w - 0.25, 0.045, 0.035), 0.0],
-		[Vector3(0, crown_y, half_d), Vector3(w - 0.25, 0.045, 0.035), 0.0],
-		[Vector3(-half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25), 0.0],
-		[Vector3(half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25), 0.0],
+		[Vector3(0, crown_y, -half_d), Vector3(w - 0.25, 0.045, 0.035)],
+		[Vector3(0, crown_y, half_d), Vector3(w - 0.25, 0.045, 0.035)],
+		[Vector3(-half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25)],
+		[Vector3(half_w, crown_y, 0), Vector3(0.035, 0.045, d - 0.25)],
 	]
 	for i in rails.size():
 		var cmi := MeshInstance3D.new()
@@ -126,6 +126,30 @@ func _add_skirting(w: float, d: float) -> void:
 		cmi.material_override = cmat
 		cmi.position = rails[i][0]
 		add_child(cmi)
+	# Crown moulding just under ceiling (breaks blank ceiling/wall join)
+	var mould_y := room_h - 0.1
+	var moulds := [
+		[Vector3(0, mould_y, -half_d + 0.04), Vector3(w - 0.1, 0.1, 0.12)],
+		[Vector3(0, mould_y, half_d - 0.04), Vector3(w - 0.1, 0.1, 0.12)],
+		[Vector3(-half_w + 0.04, mould_y, 0), Vector3(0.12, 0.1, d - 0.1)],
+		[Vector3(half_w - 0.04, mould_y, 0), Vector3(0.12, 0.1, d - 0.1)],
+	]
+	for i in moulds.size():
+		var mmi := MeshInstance3D.new()
+		mmi.name = "CrownMould_%d" % i
+		var mm := BoxMesh.new()
+		mm.size = moulds[i][1]
+		mmi.mesh = mm
+		var mmat := StandardMaterial3D.new()
+		mmat.roughness = 0.55
+		if wood_tex:
+			mmat.albedo_texture = wood_tex
+			mmat.albedo_color = Color(0.72, 0.6, 0.48)
+		else:
+			mmat.albedo_color = Color(0.2, 0.12, 0.07)
+		mmi.material_override = mmat
+		mmi.position = moulds[i][0]
+		add_child(mmi)
 
 
 func _add_wall_lamp(

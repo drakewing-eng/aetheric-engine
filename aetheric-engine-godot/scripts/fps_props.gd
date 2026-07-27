@@ -106,6 +106,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_stool(prop)
 		"copper_pot":
 			node = _make_copper_pot(prop)
+		"pot_rack":
+			node = _make_pot_rack(prop)
 		"chalk_board":
 			node = _make_chalk_board(prop)
 		"billboard_prop":
@@ -521,20 +523,40 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	var root := Node3D.new()
 	root.name = "PrepTable"
 	var width: float = prop.get("width", 1.8)
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), OAK.lightened(0.1), true, 0.65)
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), OAK.lightened(0.15), true, 0.65)
 	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), OAK, false, 0.55)
 	for lx in [-width * 0.4, width * 0.4]:
 		for lz in [-0.32, 0.32]:
 			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), OAK.darkened(0.1), true, 0.5)
-	# Flour sack (soft cylinder, not white cube), bowl, board, copper, rolling pin
-	_add_cylinder(root, Vector3(-0.4, 0.98, 0.1), 0.12, 0.22, CREAM.darkened(0.12), false, 0.9)
-	_add_cylinder(root, Vector3(-0.4, 1.1, 0.1), 0.08, 0.06, CREAM.darkened(0.2), false, 0.9)
-	_add_cylinder(root, Vector3(0.15, 0.9, -0.1), 0.12, 0.1, CREAM, false)
-	_add_box(root, Vector3(0.45, 0.88, 0.15), Vector3(0.3, 0.02, 0.18), MAHOGANY, false)
-	_add_cylinder(root, Vector3(-0.1, 0.95, 0.25), 0.09, 0.16, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(0.35, 0.9, -0.2), 0.025, 0.28, MAHOGANY_DARK, false, 0.55)
-	_add_cylinder(root, Vector3(0.55, 0.95, 0.05), 0.07, 0.14, COPPER.darkened(0.1), false, 0.35, true)
+	# Stretchers
+	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
+	# Flour sack, crocks, board, copper, rolling pin, knife, onions
+	_add_cylinder(root, Vector3(-0.45, 0.98, 0.12), 0.13, 0.24, CREAM.darkened(0.1), false, 0.92)
+	_add_cylinder(root, Vector3(-0.45, 1.12, 0.12), 0.09, 0.05, CREAM.darkened(0.18), false, 0.9)
+	_add_cylinder(root, Vector3(0.1, 0.9, -0.15), 0.13, 0.08, CREAM, false, 0.85)
+	_add_box(root, Vector3(0.42, 0.875, 0.12), Vector3(0.32, 0.02, 0.2), MAHOGANY, false, 0.55)
+	_add_box(root, Vector3(0.5, 0.89, 0.12), Vector3(0.22, 0.015, 0.04), IRON, false, 0.4)
+	_add_cylinder(root, Vector3(-0.12, 0.95, 0.22), 0.1, 0.18, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.32, 0.9, -0.22), 0.025, 0.3, MAHOGANY_DARK, false, 0.55)
+	_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.2, 0.9, -0.2), 0.04, 0.06, Color(0.55, 0.35, 0.15), false, 0.8)
+	_add_cylinder(root, Vector3(-0.12, 0.9, -0.22), 0.035, 0.05, Color(0.5, 0.32, 0.12), false, 0.8)
 	_add_contact_shadow(root, width * 0.5, 0.5)
+	return root
+
+
+static func _make_pot_rack(_prop: Dictionary) -> Node3D:
+	## Ceiling/wall copper pan rail — kitchen silhouette above empty plaster.
+	var root := Node3D.new()
+	root.name = "PotRack"
+	_add_box(root, Vector3(0, 2.15, 0), Vector3(1.8, 0.06, 0.1), MAHOGANY_DARK, true, 0.5)
+	_add_box(root, Vector3(-0.85, 1.7, 0), Vector3(0.06, 0.9, 0.06), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0.85, 1.7, 0), Vector3(0.06, 0.9, 0.06), MAHOGANY, true, 0.5)
+	for i in 5:
+		var x := -0.6 + i * 0.3
+		_add_cylinder(root, Vector3(x, 2.05, 0.05), 0.012, 0.12, IRON, false, 0.4)
+		_add_cylinder(root, Vector3(x, 1.85, 0.08), 0.1 + (i % 2) * 0.03, 0.08, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(x, 1.78, 0.08), 0.11 + (i % 2) * 0.03, 0.03, COPPER.lightened(0.08), false, 0.35, true)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
@@ -549,19 +571,29 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 # ─── Workshop ────────────────────────────────────────────────────────────────
 
 static func _make_workbench(prop: Dictionary) -> Node3D:
+	## Scrubbed oak top (reads lighter than dark legs) + cluttered tools.
 	var root := Node3D.new()
 	root.name = "Workbench"
 	var width: float = prop.get("width", 2.8)
-	_add_box(root, Vector3(0, 0.86, 0), Vector3(width, 0.07, 0.95), MAHOGANY_DARK, true, 0.45)
+	# Light work surface — was all mahogany-dark and read as black slabs
+	_add_box(root, Vector3(0, 0.86, 0), Vector3(width, 0.08, 0.95), OAK.lightened(0.08), true, 0.55)
+	_add_box(root, Vector3(0, 0.8, 0), Vector3(width - 0.05, 0.05, 0.9), OAK, false, 0.5)
 	for lx in [-width * 0.38, width * 0.38]:
-		_add_box(root, Vector3(lx, 0.42, 0), Vector3(0.1, 0.84, 0.85), MAHOGANY, true, 0.5)
-	_add_box(root, Vector3(0, 0.42, 0), Vector3(width * 0.7, 0.08, 0.8), MAHOGANY, false, 0.5)
-	# Tools / gauges / paper
-	_add_box(root, Vector3(-0.4, 0.92, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
-	_add_box(root, Vector3(0.3, 0.91, -0.1), Vector3(0.4, 0.03, 0.3), PAPER, false)
-	_add_cylinder(root, Vector3(0.6, 0.95, 0.1), 0.06, 0.18, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(-0.7, 0.95, -0.15), 0.05, 0.14, COPPER, false, 0.35, true)
-	_add_box(root, Vector3(0.0, 0.93, 0.25), Vector3(0.5, 0.02, 0.08), IRON, false, 0.4)
+		_add_box(root, Vector3(lx, 0.4, 0), Vector3(0.1, 0.8, 0.85), MAHOGANY, true, 0.5)
+	_add_box(root, Vector3(0, 0.38, 0), Vector3(width * 0.72, 0.08, 0.78), MAHOGANY_DARK, false, 0.5)
+	# Lower shelf with drawers suggestion
+	_add_box(root, Vector3(-width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
+	_add_cylinder(root, Vector3(-width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
+	# Tools / gauges / paper / wrench
+	_add_box(root, Vector3(-0.4, 0.93, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
+	_add_box(root, Vector3(0.3, 0.92, -0.1), Vector3(0.4, 0.03, 0.3), PAPER, false)
+	_add_box(root, Vector3(0.35, 0.94, -0.08), Vector3(0.28, 0.01, 0.2), PAPER.darkened(0.08), false)
+	_add_cylinder(root, Vector3(0.6, 0.97, 0.1), 0.06, 0.18, BRASS, false, 0.3, true)
+	_add_cylinder(root, Vector3(-0.7, 0.97, -0.15), 0.05, 0.14, COPPER, false, 0.35, true)
+	_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), IRON, false, 0.4)
+	_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), IRON.lightened(0.1), false, 0.4)
 	_add_contact_shadow(root, width * 0.5, 0.55)
 	return root
 
@@ -1086,7 +1118,8 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	else:
 		mat.albedo_color = MAHOGANY
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mat.alpha_scissor_threshold = 0.45
+	# Higher threshold kills dark rembg fringe on plant cutouts
+	mat.alpha_scissor_threshold = 0.55 if (face_camera or cross_planes) else 0.45
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS

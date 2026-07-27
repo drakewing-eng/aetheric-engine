@@ -589,6 +589,9 @@ const ROOMS := {
 			{"kind": "crate", "pos": [3.4, 0.0, -0.5], "scale": 0.65},
 			{"kind": "stool", "pos": [-2.5, 0.0, 2.0], "yaw": 40.0},
 			{"kind": "side_table", "pos": [1.5, 0.0, -2.5], "yaw": 0.0},
+			# Hanging copper rail over empty north plaster
+			{"kind": "pot_rack", "pos": [-1.8, 0.0, 3.35], "yaw": 0.0},
+			{"kind": "pot_rack", "pos": [1.8, 0.0, 3.35], "yaw": 0.0},
 		],
 		"doors": [
 			{
