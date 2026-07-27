@@ -68,7 +68,8 @@
 - Loop39: denser tool racks; richer machines; crate battens
 - Loop40: denser workbench/hall table; denser drawing
 - Loop41: plant side volume; richer stools; solid windows
-- Loop42: plant side volume as flat leaf cards not orbs; copper pot bail handles; denser drawing props
+- Loop42: flat plant leaves; copper bail; denser drawing
+- Loop43: softer plant side leaves; kitchen range mantel kettle+pans; denser workshop+morning
 
 ## Do not
 - Delete prop lists from fps_rooms
