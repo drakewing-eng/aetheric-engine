@@ -30,7 +30,8 @@
 - Loop1: cross-plane plants, richer portal hall, ajar doors, furniture sink
 - Loop2: screenshot camera yaw, wood doors, kitchen range, workshop spawn, conservatory density
 - Loop3: mesh plants sphere canopy; tool rack tools; morning+kitchen density
-- Loop4: gallery machines continuous (no float); paintings use scene photos not empty wallpaper frames; hall/workshop/conservatory density
+- Loop4: gallery machines continuous; paintings scene photos; density
+- Loop5: plant PNG black rembg cleared; workbench light oak tops; kitchen pot racks; crown moulding; richer prep table
 
 ## Do not
 - Delete prop lists from fps_rooms
