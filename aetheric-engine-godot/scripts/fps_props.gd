@@ -1069,43 +1069,62 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
-	## Hero gallery machine: base plinth + brass column + coils + glass chamber + cyan glow.
+	## Novel-true Aetheric Engine (gallery long room):
+	## square OAK base, copper bands, THREE concentric coils (counter-wound read),
+	## brass fittings, south bracket, ~7ft+ frame. Instruments not salon furniture.
 	var root := Node3D.new()
 	root.name = "AethericMachine"
-	var height: float = prop.get("height", 3.2)
-	# Stone/mahogany plinth
-	_add_box(root, Vector3(0, 0.2, 0), Vector3(1.4, 0.4, 1.2), MAHOGANY_DARK, true, 0.4)
-	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.15, 0.12, 0.95), MARBLE, true, 0.3)
-	# Main column
-	_add_cylinder(root, Vector3(0, height * 0.4, 0), 0.28, height * 0.55, BRASS, true, 0.3, true)
-	# Coil rings (tighter stack)
-	for i in 5:
-		var y := 0.65 + i * 0.28
-		_add_cylinder(root, Vector3(0, y, 0), 0.5 - float(i) * 0.02, 0.07, COPPER, false, 0.35, true)
-	# Glass aether chamber — solid cyan glass (alpha read black)
-	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.36, height * 0.28, Color(0.55, 0.8, 0.9), false, 0.25, true)
-	# Cap
-	_add_cylinder(root, Vector3(0, height * 0.88, 0), 0.42, 0.12, BRASS, true, 0.3, true)
-	_add_cylinder(root, Vector3(0, height * 0.96, 0), 0.14, 0.22, BRASS.lightened(0.1), true, 0.25, true)
-	# Side instrument boxes + gauges
-	_add_box(root, Vector3(0.65, 0.85, 0.1), Vector3(0.35, 0.55, 0.4), MAHOGANY, true, 0.45)
-	_add_box(root, Vector3(-0.65, 0.75, -0.1), Vector3(0.3, 0.4, 0.35), MAHOGANY, true, 0.45)
-	_add_cylinder(root, Vector3(0.65, 1.2, 0.1), 0.08, 0.12, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(-0.65, 1.05, -0.1), 0.07, 0.1, BRASS, false, 0.3, true)
-	# Cool aetheric glow
-	var glow := OmniLight3D.new()
-	glow.light_color = Color(0.45, 0.85, 0.95)
-	glow.light_energy = 1.4
-	glow.omni_range = 6.5
-	glow.position = Vector3(0, height * 0.65, 0)
-	root.add_child(glow)
+	var height: float = float(prop.get("height", 2.95))  # ~7ft visual
+	var oak := Color(0.48, 0.34, 0.18)
+	var oak_d := Color(0.32, 0.22, 0.12)
+	# Square oak base (novel: square base of oak and copper)
+	_add_box(root, Vector3(0, 0.12, 0), Vector3(1.55, 0.24, 1.55), oak_d, true, 0.5)
+	_add_box(root, Vector3(0, 0.28, 0), Vector3(1.4, 0.1, 1.4), oak, true, 0.52)
+	_add_box(root, Vector3(0, 0.34, 0), Vector3(1.28, 0.05, 1.28), COPPER.darkened(0.15), false, 0.4)
+	# Upright oak posts of the frame
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			_add_box(root, Vector3(sx * 0.48, height * 0.45, sz * 0.48), Vector3(0.1, height * 0.75, 0.1), oak, true, 0.5)
+	# Top oak beam ring suggestion
+	_add_box(root, Vector3(0, height * 0.88, 0), Vector3(1.15, 0.08, 1.15), oak, false, 0.48)
+	# THREE concentric copper coils — radii step so counter-wind is readable
+	var coil_ys := [0.55, 1.15, 1.75]
+	var coil_rs := [0.62, 0.48, 0.34]
+	for i in 3:
+		var y: float = coil_ys[i]
+		var r: float = coil_rs[i]
+		# Thick copper band (wound body)
+		_add_cylinder(root, Vector3(0, y, 0), r, 0.14, COPPER if i % 2 == 0 else COPPER.darkened(0.08), false, 0.35, true)
+		_add_cylinder(root, Vector3(0, y + 0.08, 0), r * 0.92, 0.04, COPPER.lightened(0.06), false, 0.32, true)
+		# Counter-wind cue: diagonal brass clamp on alternating sides
+		var side := 1.0 if i % 2 == 0 else -1.0
+		_add_box(root, Vector3(side * r * 0.85, y, 0), Vector3(0.08, 0.18, 0.12), BRASS, false, 0.3)
+	# Central brass spine / horn throat
+	_add_cylinder(root, Vector3(0, height * 0.5, 0), 0.12, height * 0.7, BRASS, true, 0.32, true)
+	_add_cylinder(root, Vector3(0, height * 0.82, 0), 0.18, 0.12, BRASS.lightened(0.05), false, 0.3, true)
+	# Glass chamber on top (solid cool glass — alpha reads black)
+	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.22, height * 0.22, Color(0.55, 0.78, 0.88), false, 0.2, true)
+	# SOUTH BRACKET (novel: Rooke adjusts by hand) — visible on +Z side of frame
+	_add_box(root, Vector3(0.0, 1.05, 0.72), Vector3(0.35, 0.12, 0.18), BRASS, true, 0.32)
+	_add_box(root, Vector3(0.0, 0.85, 0.78), Vector3(0.08, 0.45, 0.08), BRASS.darkened(0.1), true, 0.32)
+	_add_cylinder(root, Vector3(0.0, 1.2, 0.85), 0.06, 0.1, COPPER, false, 0.35, true)
+	# Side instrument / ledger shelf (small — not salon dresser)
+	_add_box(root, Vector3(0.85, 0.7, 0.0), Vector3(0.35, 0.08, 0.45), oak, true, 0.5)
+	_add_cylinder(root, Vector3(0.85, 0.85, 0.1), 0.05, 0.18, BRASS, false, 0.3, true)
+	# Warm brass heat + cool coil glow (novel: brass holds heat; not nightclub cyan)
 	var warm := OmniLight3D.new()
-	warm.light_color = Color(0.9, 0.7, 0.4)
-	warm.light_energy = 0.35
-	warm.omni_range = 3.0
-	warm.position = Vector3(0.5, 0.9, 0.3)
+	warm.light_color = Color(1.0, 0.78, 0.45)
+	warm.light_energy = 0.65
+	warm.omni_range = 4.5
+	warm.position = Vector3(0.3, 1.0, 0.2)
 	root.add_child(warm)
-	_add_contact_shadow(root, 0.85, 0.7)
+	var cool := OmniLight3D.new()
+	cool.light_color = Color(0.65, 0.85, 0.95)
+	cool.light_energy = 0.45
+	cool.omni_range = 3.5
+	cool.position = Vector3(0, height * 0.7, 0)
+	root.add_child(cool)
+	_add_contact_shadow(root, 0.9, 0.9)
 	return root
 
 static func _make_chalk_board(_prop: Dictionary) -> Node3D:

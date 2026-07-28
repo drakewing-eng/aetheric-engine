@@ -1,33 +1,23 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-27 (2h wall+wood goal run in progress)  
-**Project:** `/Users/babble/aetheric-engine`  
-**Primary goal:** `goal:aetheric_wall_wood_2h`  
-**Unattended 10m scheduler:** OFF  
+**Updated:** 2026-07-28 (8h implement in progress)  
+**Primary goal:** `goal:aetheric_deveraux_interior_plan`  
+**Plan:** `visual-deveraux-house-plan-interior-design.md`  
+**Loop protocol:** `IMPLEMENT_8H_LOOP_PROTOCOL.md`  
+**Scheduler 10m:** OFF  
 
-## This run (loops 54+)
+## Implement progress
 
-| Loop | Note |
+| Loop | Work |
 |------|------|
-| 54 | Landscapes/still-lifes/views/wood species assets + wall hanging rewrites |
-| 55 | Oak bookshelves, scrubbed prep tops |
-| 56 | Brighter unshaded art/views |
-| 57 | QuadMesh paintings (fix UV), pine crates, oak dresser |
+| 61 | Gallery: novel machine (oak base, 3 coils, south bracket), clear floor; workshop lean; hall restrained; conservatory edge plants; morning light desk set; drawing without workshop clutter |
 
-## Open
+## Next loops
 
-1. Verify paintings show readable landscapes after QuadMesh fix  
-2. Windows exterior views readable through glass  
-3. Mirrors reflective (metallic) not room photos  
-4. Continue wood uniqueness + density polish  
-5. Mid-run Engram handoff every ~4 loops  
+- 62+: QA screenshots fix any broken reads; thin kitchen copper if still dense; oil-lamp heroes if needed  
+- Compress: Engram handoff after every 2 rooms  
 
-## Prior complete (44–53)
+## Novel + plan paths
 
-Closed doors E-teleport; ottoman front of sofa; crock/tool shelves; uniqueness seeds.
-
-## Engram
-
-- `goal:aetheric_wall_wood_2h` + subgoals  
-- `helper:session_handoff_latest`  
-- `aetheric__visual_loop_run_44_53`  
+- `LORE/novel/New_Draft_Aetheric_Engine_March_2026.txt`  
+- `SCRATCH/memory/visual-deveraux-house-plan-interior-design.md`  
