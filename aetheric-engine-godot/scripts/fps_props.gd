@@ -1384,18 +1384,18 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	view_mi.material_override = vmat
 	view_mi.position = Vector3(0, h * 0.5, -0.07)
 	root.add_child(view_mi)
-	# Cool glass panes over view (slight alpha so exterior reads through)
+	# Thin cool glass over view (low alpha — exterior must dominate)
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.7, 0.82, 0.9, 0.22)
-	gmat.metallic = 0.15
-	gmat.roughness = 0.08
+	gmat.albedo_color = Color(0.75, 0.88, 0.95, 0.12)
+	gmat.metallic = 0.08
+	gmat.roughness = 0.06
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	for ox in [-1.0, 1.0]:
 		for oy in [0.72, 0.28]:
 			var pane := MeshInstance3D.new()
 			var pm := BoxMesh.new()
-			pm.size = Vector3(w * 0.38, h * 0.36, 0.015)
+			pm.size = Vector3(w * 0.38, h * 0.36, 0.012)
 			pane.mesh = pm
 			pane.material_override = gmat
 			pane.position = Vector3(ox * w * 0.22, h * oy, 0.04)
