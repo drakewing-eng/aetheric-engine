@@ -99,6 +99,10 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_sofa(prop)
 		"ottoman":
 			node = _make_ottoman(prop)
+		"letter_stack":
+			node = _make_letter_stack(prop)
+		"tea_tray":
+			node = _make_tea_tray(prop)
 		"rug":
 			node = _make_rug(prop)
 		"bookshelf":
@@ -310,24 +314,94 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
 	## Low tufted footstool — sits in front of sofa, never under it.
+	## seed: 0 square tufted · 1 round drum · 2 long bench with fringe (uniqueness).
 	var root := Node3D.new()
 	root.name = "Ottoman"
 	var fabric: Color = prop.get("fabric", VELVET_GREEN.darkened(0.08))
-	var w: float = float(prop.get("width", 0.72))
-	var d: float = float(prop.get("depth", 0.5))
-	# Short mahogany base + padded top
-	_add_box(root, Vector3(0, 0.16, 0), Vector3(w, 0.1, d), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.96, 0.16, d * 0.96), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.38, 0), Vector3(w * 0.88, 0.06, d * 0.88), fabric.darkened(0.1), false, 0.92)
-	# Button tufts
-	for bx in [-0.15, 0.0, 0.15]:
-		for bz in [-0.08, 0.08]:
-			_add_cylinder(root, Vector3(bx * w / 0.72, 0.42, bz * d / 0.5), 0.016, 0.02, fabric.darkened(0.22), false, 0.95)
-	# Four short turned feet
-	for sx in [-1.0, 1.0]:
-		for sz in [-1.0, 1.0]:
-			_add_cylinder(root, Vector3(sx * w * 0.38, 0.06, sz * d * 0.35), 0.035, 0.12, MAHOGANY, true)
+	var seed0: int = int(prop.get("seed", 0))
+	var style := seed0 % 3
+	var w: float = float(prop.get("width", 0.72 if style != 2 else 1.05))
+	var d: float = float(prop.get("depth", 0.5 if style != 1 else 0.72))
+	if style == 1:
+		# Round drum ottoman
+		_add_cylinder(root, Vector3(0, 0.12, 0), w * 0.42, 0.1, MAHOGANY_DARK, true, 0.42)
+		_add_cylinder(root, Vector3(0, 0.28, 0), w * 0.4, 0.22, fabric, true, 0.9)
+		_add_cylinder(root, Vector3(0, 0.42, 0), w * 0.36, 0.06, fabric.darkened(0.1), false, 0.92)
+		for i in 6:
+			var ang := float(i) * TAU / 6.0
+			_add_cylinder(root, Vector3(cos(ang) * w * 0.18, 0.44, sin(ang) * w * 0.18), 0.014, 0.02, fabric.darkened(0.22), false, 0.95)
+		for i in 4:
+			var ang2 := float(i) * TAU / 4.0 + 0.4
+			_add_cylinder(root, Vector3(cos(ang2) * w * 0.28, 0.05, sin(ang2) * w * 0.28), 0.03, 0.1, MAHOGANY, true)
+	else:
+		# Square / long bench: mahogany base + padded top + fringe
+		_add_box(root, Vector3(0, 0.14, 0), Vector3(w, 0.1, d), MAHOGANY_DARK, true, 0.42)
+		_add_box(root, Vector3(0, 0.26, 0), Vector3(w * 0.96, 0.16, d * 0.96), fabric, true, 0.9)
+		_add_box(root, Vector3(0, 0.36, 0), Vector3(w * 0.88, 0.06, d * 0.88), fabric.darkened(0.1), false, 0.92)
+		# Tufts denser on long style
+		var cols := 3 if style == 0 else 5
+		for i in cols:
+			for j in 2:
+				var bx := (float(i) / float(maxi(cols - 1, 1)) - 0.5) * w * 0.7
+				var bz := (float(j) - 0.5) * d * 0.35
+				_add_cylinder(root, Vector3(bx, 0.4, bz), 0.015, 0.02, fabric.darkened(0.22), false, 0.95)
+		# Nailhead edge
+		for i in 8:
+			var t := float(i) / 7.0
+			_add_cylinder(root, Vector3(-w * 0.42 + t * w * 0.84, 0.2, d * 0.42), 0.01, 0.012, BRASS, false, 0.3, true)
+		# Fringe / skirt
+		_add_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.94, 0.06, d * 0.94), fabric.darkened(0.18), false, 0.88)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_cylinder(root, Vector3(sx * w * 0.38, 0.05, sz * d * 0.35), 0.032, 0.1, MAHOGANY, true)
+				_add_cylinder(root, Vector3(sx * w * 0.38, 0.01, sz * d * 0.35), 0.04, 0.03, MAHOGANY_DARK, true)
 	_add_contact_shadow(root, w * 0.55, d * 0.55)
+	return root
+
+
+static func _make_letter_stack(prop: Dictionary) -> Node3D:
+	## Sealed letters / vellum packet — Selina drawing-room hero prop (novel MUST).
+	var root := Node3D.new()
+	root.name = "LetterStack"
+	var seed0: int = int(prop.get("seed", 0))
+	# Stack of folded letters with wax seals
+	for i in 3 + seed0 % 2:
+		var y := 0.02 + float(i) * 0.012
+		var ox := float((i + seed0) % 3) * 0.01
+		_add_box(root, Vector3(ox, y, 0), Vector3(0.18 - float(i) * 0.01, 0.008, 0.12), PAPER.darkened(0.04 * float(i)), false)
+	# Top open letter with ink lines
+	_add_box(root, Vector3(0.02, 0.055, 0.02), Vector3(0.16, 0.004, 0.11), PAPER.lightened(0.05), false)
+	_add_box(root, Vector3(0.0, 0.06, 0.0), Vector3(0.1, 0.002, 0.008), INK, false, 0.95)
+	_add_box(root, Vector3(0.02, 0.06, 0.02), Vector3(0.08, 0.002, 0.006), INK.lightened(0.2), false, 0.95)
+	# Wax seal
+	_add_cylinder(root, Vector3(0.05, 0.07, 0.03), 0.018, 0.008, Color(0.55, 0.12, 0.1), false, 0.6)
+	# Ribbon / string
+	_add_box(root, Vector3(-0.02, 0.04, 0), Vector3(0.02, 0.01, 0.14), Color(0.45, 0.18, 0.14), false, 0.7)
+	return root
+
+
+static func _make_tea_tray(prop: Dictionary) -> Node3D:
+	## Tea tray at four — silver tray + pot + cups (drawing-room SHOULD).
+	var root := Node3D.new()
+	root.name = "TeaTray"
+	var seed0: int = int(prop.get("seed", 0))
+	# Oval tray
+	_add_box(root, Vector3(0, 0.02, 0), Vector3(0.42, 0.02, 0.28), BRASS.darkened(0.2), false, 0.35)
+	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.38, 0.01, 0.24), BRASS.lightened(0.05), false, 0.3)
+	# Handles
+	_add_box(root, Vector3(-0.2, 0.04, 0), Vector3(0.04, 0.03, 0.08), BRASS, false, 0.28)
+	_add_box(root, Vector3(0.2, 0.04, 0), Vector3(0.04, 0.03, 0.08), BRASS, false, 0.28)
+	# Teapot
+	_add_cylinder(root, Vector3(-0.06, 0.1, 0), 0.055, 0.1, CREAM if seed0 % 2 == 0 else BRASS.lightened(0.15), false, 0.55)
+	_add_cylinder(root, Vector3(-0.06, 0.16, 0), 0.03, 0.04, CREAM.darkened(0.05), false, 0.55)
+	_add_box(root, Vector3(0.02, 0.1, 0), Vector3(0.08, 0.02, 0.02), CREAM.darkened(0.1), false, 0.55)
+	# Cups
+	for i in 2:
+		var cx := 0.08 + float(i) * 0.1
+		_add_cylinder(root, Vector3(cx, 0.07, 0.04 - float(i) * 0.06), 0.028, 0.04, CREAM.lightened(0.05), false, 0.6)
+		_add_cylinder(root, Vector3(cx, 0.05, 0.04 - float(i) * 0.06), 0.032, 0.01, CREAM.darkened(0.08), false, 0.6)
+	# Sugar bowl
+	_add_cylinder(root, Vector3(0.0, 0.08, -0.06), 0.03, 0.05, CREAM, false, 0.55)
 	return root
 
 
@@ -399,52 +473,105 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
 	## Open shelves with leather/cloth spines — period library, not Minecraft cubes.
-	## Case is oak (not same mahogany as chairs/tables).
+	## seed forks case wood, crown style, and book mix (uniqueness rule).
 	var root := Node3D.new()
 	root.name = "Bookshelf"
 	var width: float = prop.get("width", 1.7)
 	var height: float = prop.get("height", 2.5)
 	var depth: float = prop.get("depth", 0.36)
 	var seed0: int = int(prop.get("seed", 0))
-	var case_col := Color(0.48, 0.34, 0.18)  # oak case
-	var case_dark := Color(0.36, 0.24, 0.12)
-	# Back panel (lighter wood so it doesn't read as a black monolith)
+	# Case wood: 0 oak · 1 mahogany · 2 darker oak (never all-identical)
+	var case_col: Color
+	var case_dark: Color
+	match seed0 % 3:
+		0:
+			case_col = Color(0.48, 0.34, 0.18)
+			case_dark = Color(0.36, 0.24, 0.12)
+		1:
+			case_col = Color(0.32, 0.16, 0.09)
+			case_dark = Color(0.2, 0.1, 0.06)
+		_:
+			case_col = Color(0.4, 0.28, 0.14)
+			case_dark = Color(0.28, 0.18, 0.1)
+	# Back panel (lighter so it doesn't read as a black monolith)
 	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), case_col, true, 0.55)
-	# Sides
+	# Sides with subtle pilaster
 	_add_box(root, Vector3(-width * 0.5 + 0.03, height * 0.5, 0), Vector3(0.06, height, depth), case_dark, true, 0.52)
 	_add_box(root, Vector3(width * 0.5 - 0.03, height * 0.5, 0), Vector3(0.06, height, depth), case_dark, true, 0.52)
-	# Crown + base
-	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.06, 0.1, depth + 0.06), case_col, false, 0.5)
+	_add_box(root, Vector3(-width * 0.5 + 0.05, height * 0.55, depth * 0.35), Vector3(0.03, height * 0.7, 0.04), case_col.lightened(0.05), false, 0.5)
+	_add_box(root, Vector3(width * 0.5 - 0.05, height * 0.55, depth * 0.35), Vector3(0.03, height * 0.7, 0.04), case_col.lightened(0.05), false, 0.5)
+	# Crown (seed: plain vs stepped cornice)
+	_add_box(root, Vector3(0, height - 0.05, 0.02), Vector3(width + 0.08, 0.1, depth + 0.08), case_col, false, 0.5)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(0, height - 0.12, 0.04), Vector3(width + 0.02, 0.05, depth + 0.02), case_dark, false, 0.48)
 	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(width + 0.04, 0.12, depth + 0.04), case_dark, true, 0.5)
-	# Shelves + dense book rows (varied width/height/spine colour per seed)
-	for i in 5:
-		var y: float = 0.38 + i * (height - 0.55) / 4.0
-		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), Color(0.5, 0.36, 0.2), false, 0.55)
+	# Plinth moulding
+	_add_box(root, Vector3(0, 0.14, 0.04), Vector3(width + 0.02, 0.04, depth + 0.02), case_col.darkened(0.05), false, 0.5)
+	# Shelves + dense book rows
+	var shelf_n := 5
+	for i in shelf_n:
+		var y: float = 0.38 + i * (height - 0.55) / float(shelf_n - 1)
+		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.92, 0.04, depth * 0.9), case_col.lightened(0.04), false, 0.55)
 		var x := -width * 0.38
 		var bi := 0
 		while x < width * 0.38:
-			var bw: float = 0.055 + float((i + bi + seed0) % 5) * 0.022
-			var bh: float = 0.14 + float((i * 3 + bi + seed0) % 5) * 0.035
+			# Occasional horizontal stack of folios for variety
+			if (bi + i + seed0) % 11 == 0:
+				for k in 3:
+					_add_box(
+						root,
+						Vector3(x + 0.08, y + 0.03 + float(k) * 0.025, depth * 0.05),
+						Vector3(0.14, 0.02, depth * 0.5),
+						_book_color(i + bi + k + seed0 * 3),
+						false,
+						0.7
+					)
+				x += 0.18
+				bi += 1
+				continue
+			var bw: float = 0.045 + float((i + bi + seed0) % 6) * 0.018
+			var bh: float = 0.12 + float((i * 3 + bi + seed0 * 2) % 6) * 0.032
+			var bcol := _book_color(i + bi + seed0 * 7)
 			_add_box(
 				root,
 				Vector3(x + bw * 0.5, y + 0.02 + bh * 0.5, depth * 0.05),
 				Vector3(bw * 0.92, bh, depth * 0.55),
-				_book_color(i + bi + seed0 * 7),
+				bcol,
 				false,
 				0.72
 			)
-			# Occasional gilt band on spine
-			if (bi + i + seed0) % 5 == 0:
+			# Gilt band / title plate
+			if (bi + i + seed0) % 4 == 0:
 				_add_box(
 					root,
 					Vector3(x + bw * 0.5, y + 0.02 + bh * 0.55, depth * 0.22),
-					Vector3(bw * 0.7, 0.012, 0.01),
+					Vector3(bw * 0.7, 0.01, 0.01),
 					BRASS,
 					false,
 					0.35
 				)
-			x += bw + 0.008
+			# Occasional raised band near headcap
+			if (bi + seed0) % 7 == 0:
+				_add_box(
+					root,
+					Vector3(x + bw * 0.5, y + 0.02 + bh * 0.85, depth * 0.2),
+					Vector3(bw * 0.85, 0.015, 0.012),
+					bcol.lightened(0.15),
+					false,
+					0.65
+				)
+			x += bw + 0.006
 			bi += 1
+		# Gap filler: small bust / globe / box on one shelf per case
+		if i == (1 + seed0 % 3):
+			_add_cylinder(root, Vector3(width * 0.28, y + 0.1, 0.04), 0.04, 0.12, MARBLE, false, 0.55)
+			_add_sphere_blob(root, Vector3(width * 0.28, y + 0.2, 0.04), 0.045, MARBLE.darkened(0.05))
+	# Top board dressing (seed-unique)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(-0.15, height + 0.02, 0.05), Vector3(0.2, 0.04, 0.14), _book_color(seed0), false)
+		_add_box(root, Vector3(-0.12, height + 0.06, 0.04), Vector3(0.16, 0.03, 0.12), _book_color(seed0 + 2), false)
+	else:
+		_add_cylinder(root, Vector3(0.1, height + 0.08, 0.04), 0.05, 0.12, CREAM.darkened(0.1), false, 0.7)
 	_add_contact_shadow(root, width * 0.55, depth * 0.7)
 	return root
 
@@ -484,81 +611,115 @@ static func _make_crock_shelf(prop: Dictionary) -> Node3D:
 
 
 static func _make_tool_shelf(prop: Dictionary) -> Node3D:
-	## Workshop shelf: timber, parts, tools — not books.
+	## Workshop shelf: timber, parts, tools — not books. seed forks mix.
 	var root := Node3D.new()
 	root.name = "ToolShelf"
 	var width: float = float(prop.get("width", 1.3))
 	var height: float = float(prop.get("height", 1.9))
 	var depth: float = float(prop.get("depth", 0.34))
 	var seed0: int = int(prop.get("seed", 2))
-	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), MAHOGANY_DARK, true, 0.55)
-	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.15), true, 0.55)
-	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.15), true, 0.55)
+	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), OAK.darkened(0.12), true, 0.55)
+	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.18), true, 0.55)
+	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.18), true, 0.55)
 	_add_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), MAHOGANY_DARK, true, 0.5)
+	# Peg rail under top shelf (distinct from library case)
+	_add_box(root, Vector3(0, height - 0.2, 0.12), Vector3(width * 0.85, 0.03, 0.04), OAK, false, 0.55)
 	for i in 4:
 		var y: float = 0.32 + float(i) * ((height - 0.45) / 3.0)
 		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), OAK, false, 0.55)
-		# Timber scrap / tool / box variety
 		var n := 2 + (i + seed0) % 2
 		for j in n:
 			var x := -width * 0.28 + float(j) * (width * 0.55 / float(maxi(n - 1, 1)))
-			var kind := (i + j + seed0) % 3
+			var kind := (i + j + seed0) % 4
 			if kind == 0:
 				_add_box(root, Vector3(x, y + 0.06, 0.04), Vector3(0.28, 0.06, 0.12), OAK.lightened(0.1), false, 0.6)
 			elif kind == 1:
-				_add_box(root, Vector3(x, y + 0.08, 0.04), Vector3(0.18, 0.12, 0.14), MAHOGANY, false, 0.5)
-				_add_cylinder(root, Vector3(x, y + 0.12, 0.12), 0.015, 0.2, IRON, false, 0.4)
+				# Rooke wrench language
+				_add_box(root, Vector3(x, y + 0.1, 0.04), Vector3(0.22, 0.04, 0.04), IRON, false, 0.4)
+				_add_box(root, Vector3(x + 0.1, y + 0.1, 0.04), Vector3(0.06, 0.08, 0.05), IRON.lightened(0.1), false, 0.4)
+			elif kind == 2:
+				_add_box(root, Vector3(x, y + 0.08, 0.04), Vector3(0.16, 0.1, 0.12), MAHOGANY, false, 0.5)
+				_add_cylinder(root, Vector3(x, y + 0.14, 0.1), 0.02, 0.16, IRON, false, 0.4)
 			else:
 				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.06, 0.14, COPPER.darkened(0.1), false, 0.4, true)
+	# Hanging tools on peg rail
+	for i in 3 + seed0 % 2:
+		var px := -width * 0.3 + float(i) * 0.2
+		_add_cylinder(root, Vector3(px, height - 0.35, 0.14), 0.012, 0.28, IRON.darkened(0.05), false, 0.45)
+		_add_box(root, Vector3(px, height - 0.5, 0.14), Vector3(0.06, 0.04, 0.03), IRON, false, 0.4)
 	_add_contact_shadow(root, width * 0.5, depth * 0.6)
 	return root
 
 static func _make_side_table(prop: Dictionary) -> Node3D:
-	## Tripod pedestal table with gallery rim; seed varies top dressing.
+	## Occasional tables — base silhouette + top dressing fork by seed (uniqueness).
+	## base style: 0 tripod · 1 square 4-leg · 2 demi-lune console.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "SideTable"
 	var seed0: int = int(prop.get("seed", 0))
-	# Top with rim
-	_add_cylinder(root, Vector3(0, 0.62, 0), 0.3, 0.04, MAHOGANY, true)
-	_add_cylinder(root, Vector3(0, 0.65, 0), 0.31, 0.02, MAHOGANY_DARK, false)
-	# Turned pedestal
-	_add_cylinder(root, Vector3(0, 0.48, 0), 0.08, 0.12, MAHOGANY, true)
-	_add_cylinder(root, Vector3(0, 0.32, 0), 0.045, 0.28, MAHOGANY_DARK, true)
-	_add_cylinder(root, Vector3(0, 0.14, 0), 0.1, 0.08, MAHOGANY, true)
-	# Tripartite feet
-	for a in [0.0, 120.0, 240.0]:
-		var rad := deg_to_rad(a)
-		_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Top dressing varies by seed (lamp / books / vase) — no identical still-lifes
-	var style := seed0 % 3
-	if style == 0:
-		_add_cylinder(root, Vector3(0, 0.69, 0), 0.09, 0.06, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(0, 0.8, 0), 0.028, 0.18, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(0, 0.92, 0), 0.05, 0.04, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(0, 1.08, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
-		_add_cylinder(root, Vector3(0, 1.25, 0), 0.03, 0.035, BRASS, false, 0.28, true)
-		_add_sphere_blob(root, Vector3(0, 0.98, 0), 0.03, Color(1.0, 0.8, 0.4))
-		_add_box(root, Vector3(0.12, 0.68, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2 + seed0), false)
-	elif style == 1:
-		_add_box(root, Vector3(-0.05, 0.7, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
-		_add_box(root, Vector3(0.02, 0.75, 0.0), Vector3(0.12, 0.04, 0.16), _book_color(seed0 + 3), false)
-		_add_box(root, Vector3(0.08, 0.8, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
-		_add_cylinder(root, Vector3(0.12, 0.72, 0.1), 0.04, 0.12, CREAM.darkened(0.1), false, 0.75)
+	var base := seed0 % 3
+	var dress := (seed0 / 3) % 4
+	if base == 0:
+		# Tripod pedestal
+		_add_cylinder(root, Vector3(0, 0.62, 0), 0.3, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.65, 0), 0.31, 0.02, MAHOGANY_DARK, false)
+		_add_cylinder(root, Vector3(0, 0.48, 0), 0.08, 0.12, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.32, 0), 0.045, 0.28, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0, 0.14, 0), 0.1, 0.08, MAHOGANY, true)
+		for a in [0.0, 120.0, 240.0]:
+			var rad := deg_to_rad(a)
+			_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
+	elif base == 1:
+		# Square top + four turned legs
+		_add_box(root, Vector3(0, 0.64, 0), Vector3(0.55, 0.04, 0.55), MAHOGANY, true, 0.45)
+		_add_box(root, Vector3(0, 0.67, 0), Vector3(0.58, 0.02, 0.58), MAHOGANY_DARK, false, 0.42)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_cylinder(root, Vector3(sx * 0.2, 0.32, sz * 0.2), 0.03, 0.6, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.2, 0.02, sz * 0.2), 0.04, 0.04, MAHOGANY, true)
+		_add_box(root, Vector3(0, 0.28, 0), Vector3(0.38, 0.03, 0.38), MAHOGANY, false, 0.5)
 	else:
-		_add_cylinder(root, Vector3(0, 0.72, 0), 0.07, 0.12, CLAY, false, 0.75)
-		_add_cylinder(root, Vector3(0, 0.85, 0), 0.05, 0.14, CLAY.lightened(0.08), false, 0.75)
-		_add_sphere_blob(root, Vector3(0.02, 0.98, 0.02), 0.05, Color(0.55, 0.2, 0.2))
-		_add_sphere_blob(root, Vector3(-0.03, 0.95, -0.02), 0.04, Color(0.7, 0.65, 0.3))
-	_add_contact_shadow(root, 0.34, 0.34)
-	if style == 0:
+		# Demi-lune (half-round) console
+		_add_box(root, Vector3(0, 0.64, 0.05), Vector3(0.7, 0.04, 0.35), MAHOGANY, true, 0.45)
+		_add_cylinder(root, Vector3(0, 0.64, 0.05), 0.32, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(-0.22, 0.32, 0.08), 0.028, 0.6, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.22, 0.32, 0.08), 0.028, 0.6, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.0, 0.32, -0.05), 0.03, 0.6, MAHOGANY_DARK, true)
+		_add_box(root, Vector3(0, 0.3, 0.05), Vector3(0.4, 0.025, 0.12), MAHOGANY, false, 0.48)
+	# Top dressing — never clone the same still-life
+	var top_y := 0.69
+	if dress == 0:
+		_add_cylinder(root, Vector3(0, top_y, 0), 0.09, 0.06, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.11, 0), 0.028, 0.18, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.23, 0), 0.05, 0.04, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.39, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
+		_add_sphere_blob(root, Vector3(0, top_y + 0.29, 0), 0.03, Color(1.0, 0.8, 0.4))
+		_add_box(root, Vector3(0.12, top_y - 0.01, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2 + seed0), false)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 0.55
 		lamp.omni_range = 2.6
-		lamp.position = Vector3(0, 1.0, 0)
+		lamp.position = Vector3(0, top_y + 0.3, 0)
 		root.add_child(lamp)
+	elif dress == 1:
+		_add_box(root, Vector3(-0.05, top_y + 0.01, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
+		_add_box(root, Vector3(0.02, top_y + 0.06, 0.0), Vector3(0.12, 0.04, 0.16), _book_color(seed0 + 3), false)
+		_add_box(root, Vector3(0.08, top_y + 0.11, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.03, 0.1), 0.04, 0.12, CREAM.darkened(0.1), false, 0.75)
+	elif dress == 2:
+		_add_cylinder(root, Vector3(0, top_y + 0.03, 0), 0.07, 0.12, CLAY, false, 0.75)
+		_add_cylinder(root, Vector3(0, top_y + 0.16, 0), 0.05, 0.14, CLAY.lightened(0.08), false, 0.75)
+		_add_sphere_blob(root, Vector3(0.02, top_y + 0.29, 0.02), 0.05, Color(0.55, 0.2, 0.2))
+		_add_sphere_blob(root, Vector3(-0.03, top_y + 0.26, -0.02), 0.04, Color(0.7, 0.65, 0.3))
+	else:
+		# Letters + pen tray (drawing-room identity)
+		_add_box(root, Vector3(-0.04, top_y, 0.02), Vector3(0.16, 0.01, 0.11), PAPER, false)
+		_add_box(root, Vector3(0.0, top_y + 0.012, 0.0), Vector3(0.14, 0.008, 0.1), PAPER.darkened(0.06), false)
+		_add_cylinder(root, Vector3(0.06, top_y + 0.02, 0.04), 0.015, 0.006, Color(0.55, 0.12, 0.1), false, 0.6)
+		_add_box(root, Vector3(0.12, top_y + 0.01, -0.05), Vector3(0.1, 0.02, 0.04), MAHOGANY_DARK, false, 0.45)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.03, -0.05), 0.006, 0.1, INK, false, 0.5)
+	_add_contact_shadow(root, 0.34, 0.34)
 	return root
 
 static func _make_hall_table(_prop: Dictionary) -> Node3D:
@@ -1521,6 +1682,7 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 
 static func _make_door_frame(feat: Dictionary) -> Node3D:
 	## Mid-Victorian 4-panel door + architrave + brass furniture (c.1850s).
+	## seed forks wood tone (reception mahogany vs service oak) for uniqueness.
 	## Root sits on floor at doorway center (ignores feature y so doors don't float).
 	var root := Node3D.new()
 	root.name = "DoorFrame"
@@ -1529,18 +1691,39 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = feat.get("width", 1.5)
 	var h: float = feat.get("height", 2.35)
-	var jamb := 0.12
+	var seed0: int = int(feat.get("seed", int(absf(float(pos[0]) * 7.0 + float(pos[2]) * 3.0))))
 	var depth := 0.18
+	# Wood tone by seed — not every door the same brown slab
+	var door_wood: Color
+	var door_frame_col: Color
+	var panel_field: Color
+	var case_col: Color
+	match seed0 % 3:
+		0:  # polished mahogany (drawing / gallery)
+			door_wood = Color(0.42, 0.28, 0.16)
+			door_frame_col = Color(0.34, 0.22, 0.12)
+			panel_field = Color(0.36, 0.24, 0.14)
+			case_col = MAHOGANY
+		1:  # darker ebony-mahogany (hall)
+			door_wood = Color(0.28, 0.16, 0.1)
+			door_frame_col = Color(0.2, 0.12, 0.07)
+			panel_field = Color(0.24, 0.14, 0.09)
+			case_col = MAHOGANY_DARK
+		_:  # oak service (kitchen / workshop)
+			door_wood = Color(0.5, 0.36, 0.2)
+			door_frame_col = Color(0.4, 0.28, 0.15)
+			panel_field = Color(0.45, 0.32, 0.18)
+			case_col = OAK
 	# Outer architrave (doorcase)
-	_add_box(root, Vector3(-w * 0.5 - 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), MAHOGANY_DARK, true, 0.4)
-	_add_box(root, Vector3(w * 0.5 + 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), MAHOGANY_DARK, true, 0.4)
-	_add_box(root, Vector3(0, h + 0.05, 0), Vector3(w + 0.34, 0.14, depth + 0.08), MAHOGANY, true, 0.4)
+	_add_box(root, Vector3(-w * 0.5 - 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), door_frame_col, true, 0.4)
+	_add_box(root, Vector3(w * 0.5 + 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), door_frame_col, true, 0.4)
+	_add_box(root, Vector3(0, h + 0.05, 0), Vector3(w + 0.34, 0.14, depth + 0.08), case_col, true, 0.4)
 	# Inner stop mould
-	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
-	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
+	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
 	# Threshold / saddle (stone + wood — grounds the doorway)
 	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.14, 0.05, depth + 0.18), STONE, false, 0.65)
-	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.08, 0.04, depth + 0.1), MAHOGANY_DARK, false, 0.45)
+	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.08, 0.04, depth + 0.1), door_frame_col, false, 0.45)
 	# --- Door leaf CLOSED (E teleports; do not leave walk-into-void gap) ---
 	var leaf_w := w - 0.1
 	var leaf_h := h - 0.12
@@ -1549,10 +1732,6 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	leaf.position = Vector3(-w * 0.5 + 0.05, 0.07, 0.04)
 	leaf.rotation_degrees.y = 0.0  # closed — room change is interact/teleport only
 	root.add_child(leaf)
-	# Polished mid-mahogany slab — colors biased so auto-mat picks WOOD not red velvet
-	var door_wood := Color(0.42, 0.28, 0.16)
-	var door_frame_col := Color(0.34, 0.22, 0.12)
-	var panel_field := Color(0.36, 0.24, 0.14)
 	# solid=true so player cannot walk through the closed leaf into void
 	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, true, 0.42)
 	# Stiles & rails (classic 4-panel)

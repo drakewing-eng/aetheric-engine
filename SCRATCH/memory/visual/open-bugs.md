@@ -41,3 +41,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - Palm FIXED_Y crown float (asset)
 - Paper-thin plants from extreme sides
 - Wallpaper contrast between secondary rooms
+
+
+## Status update 2026-07-28 (loop 66)
+
+- §2 Ottoman: still in front of sofa; multi-style mesh (tuft/round/long).  
+- §3 Shelves: bookshelf/tool/crock seed forks stronger; drawing no longer clones identical side_table billboards.  
+- Doors: wood tone uniqueness by seed.  
+- Drawing letters + tea tray added.  
+- §1 Door transition: still closed leaf + E teleport (structural OK); human playtest residual.  
