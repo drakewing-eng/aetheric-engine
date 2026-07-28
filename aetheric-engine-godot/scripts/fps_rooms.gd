@@ -278,10 +278,10 @@ const ROOMS := {
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [-7.85, 1.35, 0.0], "yaw": 90.0, "width": 1.6, "height": 2.5},
-			# South-facing high windows (novel: pale winter light; gallery light)
-			{"kind": "window", "pos": [0.0, 2.15, -5.85], "yaw": 0.0, "width": 1.5, "height": 2.0, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
-			{"kind": "window", "pos": [3.5, 2.15, -5.85], "yaw": 0.0, "width": 1.35, "height": 1.9, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
-			{"kind": "window", "pos": [-3.5, 2.15, -5.85], "yaw": 0.0, "width": 1.35, "height": 1.9, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+			# South wall windows (novel: south light into long room) — yaw 180 faces outward
+			{"kind": "window", "pos": [0.0, 2.15, 5.85], "yaw": 180.0, "width": 1.5, "height": 2.0, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
+			{"kind": "window", "pos": [3.5, 2.15, 5.85], "yaw": 180.0, "width": 1.35, "height": 1.9, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
+			{"kind": "window", "pos": [-3.5, 2.15, 5.85], "yaw": 180.0, "width": 1.35, "height": 1.9, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 		],
 		"props": [
 			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0},
@@ -368,14 +368,6 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [0.0, 1.15, 3.85], "yaw": 180.0, "width": 1.45, "height": 2.3},
 			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0},
 			{"kind": "painting", "pos": [-3.7, 1.8, -1.8], "yaw": 90.0, "width": 0.75, "height": 0.95,
-				"art": "still_life"},
-			{"kind": "painting", "pos": [0.0, 2.0, -3.7], "yaw": 0.0, "width": 0.85, "height": 1.0,
-				"art": "still_life"},
-			{"kind": "painting", "pos": [3.55, 1.9, 2.0], "yaw": -90.0, "width": 0.7, "height": 0.9,
-				"art": "still_life"},
-			{"kind": "painting", "pos": [-2.0, 2.05, -3.7], "yaw": 0.0, "width": 0.65, "height": 0.8,
-				"art": "portrait"},
-			{"kind": "painting", "pos": [2.2, 2.05, -3.7], "yaw": 0.0, "width": 0.6, "height": 0.75,
 				"art": "still_life"},
 		],
 		"props": [
@@ -601,9 +593,6 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [2.4, 0.0, -1.4], "scale": 0.7, "seed": 28},
 			# North wall: crockery (never library bookshelves in kitchen)
 			{"kind": "crock_shelf", "pos": [-3.2, 0.0, 3.3], "yaw": 180.0, "width": 1.3, "height": 1.8, "seed": 1},
-			{"kind": "copper_pot", "pos": [2.0, 0.0, 3.2], "scale": 0.75, "seed": 29},
-			{"kind": "copper_pot", "pos": [-2.0, 0.0, 3.15], "scale": 0.6, "seed": 30},
-			{"kind": "crate", "pos": [3.4, 0.0, -0.5], "scale": 0.65, "seed": 31},
 			{"kind": "stool", "pos": [-2.5, 0.0, 2.0], "yaw": 40.0, "seed": 25},
 			{"kind": "side_table", "pos": [1.5, 0.0, -2.5], "yaw": 0.0, "seed": 17},
 			# Hanging copper rail over empty north plaster
@@ -611,13 +600,8 @@ const ROOMS := {
 			{"kind": "pot_rack", "pos": [1.8, 0.0, 3.35], "yaw": 0.0, "seed": 1},
 			# High crock shelf on north wall
 			{"kind": "crock_shelf", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "width": 1.6, "height": 1.15, "seed": 4},
-			{"kind": "copper_pot", "pos": [-2.8, 0.0, 2.5], "scale": 0.65, "seed": 31},
-			{"kind": "crate", "pos": [2.6, 0.0, 2.0], "scale": 0.55, "seed": 32},
 			# Side wall density (pale plaster expanse)
 			{"kind": "dresser", "pos": [-3.6, 0.0, -1.5], "yaw": 90.0, "seed": 2},
-			{"kind": "copper_pot", "pos": [3.5, 0.0, 0.5], "scale": 1.0, "seed": 32},
-			{"kind": "copper_pot", "pos": [3.5, 0.0, -0.2], "scale": 0.75, "seed": 33},
-			{"kind": "crate", "pos": [-3.0, 0.0, 0.8], "scale": 0.6, "seed": 33},
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.2],
