@@ -208,6 +208,8 @@ const ROOMS := {
 			{"kind": "chair", "pos": [-3.2, 0.0, 2.2], "yaw": 40.0, "fabric": Color(0.3, 0.18, 0.12)},
 			{"kind": "plant", "pos": [5.2, 0.0, 3.0], "scale": 0.9,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.95, "height": 1.1},
+			# Freestanding oil lamp (novel hall lamps) — hall_table also carries one
+			{"kind": "oil_lamp", "pos": [3.8, 0.0, -1.5], "yaw": -20.0, "height": 1.2},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
@@ -278,10 +280,10 @@ const ROOMS := {
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [-7.85, 1.35, 0.0], "yaw": 90.0, "width": 1.6, "height": 2.5},
-			# South wall windows (novel: south light into long room) — yaw 180 faces outward
-			{"kind": "window", "pos": [0.0, 2.15, 5.85], "yaw": 180.0, "width": 1.5, "height": 2.0, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
-			{"kind": "window", "pos": [3.5, 2.15, 5.85], "yaw": 180.0, "width": 1.35, "height": 1.9, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
-			{"kind": "window", "pos": [-3.5, 2.15, 5.85], "yaw": 180.0, "width": 1.35, "height": 1.9, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+			# South wall windows (novel: south light) — inset from wall so hollow sash + view plate read
+			{"kind": "window", "pos": [0.0, 1.55, 5.72], "yaw": 180.0, "width": 1.55, "height": 2.05, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
+			{"kind": "window", "pos": [3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
+			{"kind": "window", "pos": [-3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 		],
 		"props": [
 			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0},
@@ -298,7 +300,9 @@ const ROOMS := {
 			{"kind": "stool", "pos": [-2.0, 0.0, -1.2], "yaw": 15.0, "seed": 0},
 			{"kind": "stool", "pos": [2.2, 0.0, -1.0], "yaw": -10.0, "seed": 1},
 			{"kind": "stool", "pos": [1.5, 0.0, 1.5], "yaw": 40.0, "seed": 3},
-			# Oil-lamp language via sconces + one chandelier (lamps, not nightclub)
+			# Oil lamps (novel: primary light language) — freestanding heroes + sconces
+			{"kind": "oil_lamp", "pos": [-5.5, 0.0, 0.4], "yaw": 20.0, "height": 1.15},
+			{"kind": "oil_lamp", "pos": [2.8, 0.0, -2.0], "yaw": -15.0, "height": 0.95},
 			{"kind": "wall_sconce", "pos": [-7.5, 0.0, 1.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [7.5, 0.0, 1.0], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -5.6], "yaw": 0.0, "height": 2.4},

@@ -4,7 +4,7 @@
 **Primary goal:** `goal:aetheric_deveraux_interior_plan`  
 **Plan:** `visual-deveraux-house-plan-interior-design.md`  
 **Loop protocol:** `IMPLEMENT_8H_LOOP_PROTOCOL.md`  
-**HEAD:** `602b814` (visual implement 63)  
+**HEAD:** (post loop 65)  
 **10m unattended scheduler:** OFF  
 
 ## Implement progress (novel-true revision)
@@ -15,10 +15,9 @@
 | 62 | Gallery south windows; thin kitchen copper/crates; thin morning wall art |
 | 63 | Clearer window glass alpha so exterior views read |
 | 64 | Full-room screenshot QA (`auto_loop_64`) |
+| 65 | **Windows fix:** hollow sash frame (solid box was void-black); gallery south windows lowered/inset; green/sky/yard reads in `gallery_from_north`. Machine counter-wound spiral bars + larger south bracket. Freestanding `oil_lamp` prop in gallery+hall. E-door structural verify (all targets valid, closed frames, `_go_through_door`). Art pass PASS. Shots `auto_loop_65`. |
 
-## Loop protocol for remaining ~8h / multi-session
-
-**Do not** use 10m density scheduler. Use:
+## Loop protocol for remaining / multi-session
 
 ```
 goal-driven continuous loops
@@ -31,15 +30,17 @@ goal-driven continuous loops
 
 **On wake:** Engram `session_start` → read CURRENT + plan → continue next open item.
 
-## Open polish (if continuing)
+## Open polish
 
-1. Gallery window exterior still needs visual QA (was black until south yaw fix)  
-2. Oil-lamp mesh heroes vs sconces only  
-3. Machine silhouette polish (counter-wind readability)  
-4. Playtest doors E-teleport after prop moves  
+1. ~~Gallery window exteriors green/sky~~ **DONE loop 65**  
+2. ~~Oil-lamp mesh heroes~~ **DONE** freestanding `oil_lamp` + sconces  
+3. ~~Machine silhouette~~ **DONE** spiral bars + bracket  
+4. ~~E-door structural~~ **DONE** (interactive play still best-effort / env limit)  
+
+Optional residual: dedicated window close-up camera angle; in-game E playtest when human available.
 
 ## Paths
 
 - Novel: `LORE/novel/New_Draft_Aetheric_Engine_March_2026.txt`  
 - Plan: `SCRATCH/memory/visual-deveraux-house-plan-interior-design.md`  
-- Shots: `SCRATCH/screenshots/auto_loop_61`…`64`  
+- Shots: `SCRATCH/screenshots/auto_loop_61`…`65`  

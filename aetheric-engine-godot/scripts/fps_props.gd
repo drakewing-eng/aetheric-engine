@@ -151,6 +151,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_floor_path(prop)
 		"wall_sconce":
 			node = _make_wall_sconce(prop)
+		"oil_lamp":
+			node = _make_oil_lamp(prop)
 		"chandelier":
 			node = _make_chandelier(prop)
 		"chalk_board":
@@ -788,6 +790,34 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 	return root
 
 
+static func _make_oil_lamp(prop: Dictionary) -> Node3D:
+	## Freestanding Argand / table oil lamp — novel light hero (not wall sconce only).
+	## Solid frosted chimney: alpha glass reads black under metal materials.
+	var root := Node3D.new()
+	root.name = "OilLamp"
+	var h: float = float(prop.get("height", 1.05))
+	# Pedestal base
+	_add_cylinder(root, Vector3(0, 0.04, 0), 0.12, 0.08, MAHOGANY_DARK, true, 0.5)
+	_add_cylinder(root, Vector3(0, 0.12, 0), 0.08, 0.1, MAHOGANY, true, 0.48)
+	# Brass column + oil font
+	_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.035, h * 0.4, BRASS, true, 0.3, true)
+	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.09, 0.1, BRASS.darkened(0.05), false, 0.28, true)
+	_add_cylinder(root, Vector3(0, h * 0.62, 0), 0.07, 0.06, BRASS.lightened(0.05), false, 0.28, true)
+	# Frosted glass chimney (solid cream, not transparent void)
+	_add_cylinder(root, Vector3(0, h * 0.78, 0), 0.045, h * 0.28, Color(0.9, 0.92, 0.86), false, 0.35)
+	_add_cylinder(root, Vector3(0, h * 0.95, 0), 0.03, 0.04, BRASS, false, 0.3, true)
+	# Warm flame core
+	_add_sphere_blob(root, Vector3(0, h * 0.7, 0), 0.03, Color(1.0, 0.82, 0.4))
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.82, 0.5)
+	light.light_energy = 0.75
+	light.omni_range = 4.0
+	light.position = Vector3(0, h * 0.72, 0)
+	root.add_child(light)
+	_add_contact_shadow(root, 0.14, 0.14)
+	return root
+
+
 static func _make_wall_vine(prop: Dictionary) -> Node3D:
 	## Dense climbing ivy mat on plaster — not balloon poles.
 	var root := Node3D.new()
@@ -1070,7 +1100,7 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 
 static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	## Novel-true Aetheric Engine (gallery long room):
-	## square OAK base, copper bands, THREE concentric coils (counter-wound read),
+	## square OAK base, THREE concentric counter-wound copper coils (spiral read),
 	## brass fittings, south bracket, ~7ft+ frame. Instruments not salon furniture.
 	var root := Node3D.new()
 	root.name = "AethericMachine"
@@ -1085,43 +1115,60 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
 			_add_box(root, Vector3(sx * 0.48, height * 0.45, sz * 0.48), Vector3(0.1, height * 0.75, 0.1), oak, true, 0.5)
-	# Top oak beam ring suggestion
+	# Top oak beam ring
 	_add_box(root, Vector3(0, height * 0.88, 0), Vector3(1.15, 0.08, 1.15), oak, false, 0.48)
-	# THREE concentric copper coils — radii step so counter-wind is readable
-	var coil_ys := [0.55, 1.15, 1.75]
-	var coil_rs := [0.62, 0.48, 0.34]
+	_add_box(root, Vector3(0, height * 0.88, 0.5), Vector3(0.12, 0.08, 0.2), oak_d, false, 0.48)
+	# THREE concentric copper coils — distinct radii + counter-wound spiral bars
+	var coil_ys := [0.52, 1.12, 1.72]
+	var coil_rs := [0.68, 0.5, 0.34]
+	var coil_hs := [0.16, 0.14, 0.12]
 	for i in 3:
 		var y: float = coil_ys[i]
 		var r: float = coil_rs[i]
-		# Thick copper band (wound body)
-		_add_cylinder(root, Vector3(0, y, 0), r, 0.14, COPPER if i % 2 == 0 else COPPER.darkened(0.08), false, 0.35, true)
-		_add_cylinder(root, Vector3(0, y + 0.08, 0), r * 0.92, 0.04, COPPER.lightened(0.06), false, 0.32, true)
-		# Counter-wind cue: diagonal brass clamp on alternating sides
+		var ch: float = coil_hs[i]
+		var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.12)
+		# Thick copper ring body
+		_add_cylinder(root, Vector3(0, y, 0), r, ch, copper_col, false, 0.32, true)
+		_add_cylinder(root, Vector3(0, y + ch * 0.45, 0), r * 0.9, ch * 0.22, copper_col.lightened(0.08), false, 0.3, true)
+		# Counter-wound spiral: alternating tangential bars climb around the ring
+		var wind := 1.0 if i % 2 == 0 else -1.0
+		for s in 8:
+			var ang: float = float(s) * (TAU / 8.0) * wind
+			var bx: float = cos(ang) * r * 0.92
+			var bz: float = sin(ang) * r * 0.92
+			var by: float = y + (float(s) / 8.0 - 0.5) * ch * 0.9 * wind
+			var bar_col: Color = copper_col.lightened(0.06) if s % 2 == 0 else copper_col.darkened(0.06)
+			_add_box(root, Vector3(bx, by, bz), Vector3(0.07, 0.05, 0.11), bar_col, false, 0.28)
+		# Brass clamp on alternating sides (counter-wind cue at silhouette)
 		var side := 1.0 if i % 2 == 0 else -1.0
-		_add_box(root, Vector3(side * r * 0.85, y, 0), Vector3(0.08, 0.18, 0.12), BRASS, false, 0.3)
-	# Central brass spine / horn throat
-	_add_cylinder(root, Vector3(0, height * 0.5, 0), 0.12, height * 0.7, BRASS, true, 0.32, true)
-	_add_cylinder(root, Vector3(0, height * 0.82, 0), 0.18, 0.12, BRASS.lightened(0.05), false, 0.3, true)
-	# Glass chamber on top (solid cool glass — alpha reads black)
-	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.22, height * 0.22, Color(0.55, 0.78, 0.88), false, 0.2, true)
-	# SOUTH BRACKET (novel: Rooke adjusts by hand) — visible on +Z side of frame
-	_add_box(root, Vector3(0.0, 1.05, 0.72), Vector3(0.35, 0.12, 0.18), BRASS, true, 0.32)
-	_add_box(root, Vector3(0.0, 0.85, 0.78), Vector3(0.08, 0.45, 0.08), BRASS.darkened(0.1), true, 0.32)
-	_add_cylinder(root, Vector3(0.0, 1.2, 0.85), 0.06, 0.1, COPPER, false, 0.35, true)
-	# Side instrument / ledger shelf (small — not salon dresser)
-	_add_box(root, Vector3(0.85, 0.7, 0.0), Vector3(0.35, 0.08, 0.45), oak, true, 0.5)
-	_add_cylinder(root, Vector3(0.85, 0.85, 0.1), 0.05, 0.18, BRASS, false, 0.3, true)
-	# Warm brass heat + cool coil glow (novel: brass holds heat; not nightclub cyan)
+		_add_box(root, Vector3(side * r * 0.95, y, 0), Vector3(0.1, ch + 0.06, 0.14), BRASS, false, 0.28)
+		_add_box(root, Vector3(0, y, side * r * 0.95), Vector3(0.14, ch + 0.04, 0.08), BRASS.darkened(0.08), false, 0.28)
+	# Central brass spine / horn throat (narrower so coils read)
+	_add_cylinder(root, Vector3(0, height * 0.48, 0), 0.1, height * 0.62, BRASS, true, 0.3, true)
+	_add_cylinder(root, Vector3(0, height * 0.8, 0), 0.16, 0.1, BRASS.lightened(0.05), false, 0.28, true)
+	# Solid cool glass chamber (alpha glass reads black under metal mats)
+	_add_cylinder(root, Vector3(0, height * 0.72, 0), 0.2, height * 0.2, Color(0.55, 0.78, 0.88), false, 0.18, true)
+	# SOUTH BRACKET (novel: Rooke adjusts by hand) — larger silhouette on +Z
+	_add_box(root, Vector3(0.0, 1.05, 0.78), Vector3(0.42, 0.14, 0.22), BRASS, true, 0.3)
+	_add_box(root, Vector3(0.0, 0.82, 0.88), Vector3(0.1, 0.55, 0.1), BRASS.darkened(0.12), true, 0.3)
+	_add_box(root, Vector3(0.0, 1.22, 0.92), Vector3(0.28, 0.08, 0.16), COPPER, false, 0.32)
+	_add_cylinder(root, Vector3(0.0, 1.35, 0.95), 0.07, 0.12, COPPER.lightened(0.05), false, 0.32, true)
+	# Hand-wheel suggestion on bracket
+	_add_cylinder(root, Vector3(0.18, 1.05, 0.95), 0.09, 0.04, BRASS.lightened(0.1), false, 0.28, true)
+	# Side instrument shelf (small — not salon dresser)
+	_add_box(root, Vector3(0.9, 0.7, 0.0), Vector3(0.32, 0.08, 0.4), oak, true, 0.5)
+	_add_cylinder(root, Vector3(0.9, 0.85, 0.08), 0.05, 0.16, BRASS, false, 0.3, true)
+	# Warm brass heat + cool coil glow
 	var warm := OmniLight3D.new()
 	warm.light_color = Color(1.0, 0.78, 0.45)
-	warm.light_energy = 0.65
+	warm.light_energy = 0.7
 	warm.omni_range = 4.5
-	warm.position = Vector3(0.3, 1.0, 0.2)
+	warm.position = Vector3(0.25, 1.0, 0.25)
 	root.add_child(warm)
 	var cool := OmniLight3D.new()
 	cool.light_color = Color(0.65, 0.85, 0.95)
-	cool.light_energy = 0.45
-	cool.omni_range = 3.5
+	cool.light_energy = 0.4
+	cool.omni_range = 3.2
 	cool.position = Vector3(0, height * 0.7, 0)
 	root.add_child(cool)
 	_add_contact_shadow(root, 0.9, 0.9)
@@ -1346,8 +1393,9 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_window(feat: Dictionary) -> Node3D:
-	## Sash-style window with OUTSIDE view plate behind glass (garden/street/yard).
-	## Never a room photo — that reads as a painting/mirror mistake.
+	## Sash-style window with OUTSIDE view through a hollow aperture.
+	## CRITICAL: never fill the aperture with a solid box — that reads as black/void.
+	## View plate sits in the opening (unshaded garden/yard/sky). Never room photos.
 	var root := Node3D.new()
 	root.name = "Window"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -1356,56 +1404,64 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	var w: float = feat.get("width", 1.1)
 	var h: float = feat.get("height", 1.85)
 	var seed0: int = int(feat.get("seed", int(absf(pos[0] * 10.0 + pos[2] * 3.0))))
-	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(w + 0.08, h + 0.08, 0.14), MAHOGANY, true, 0.35)
-	# Architrave + sill (period sash)
+	var frame_d := 0.12
+	var stile := 0.07
+	# Hollow frame: four stiles/rails only (open aperture for exterior plate)
+	_add_box(root, Vector3(-w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), MAHOGANY, true, 0.38)
+	_add_box(root, Vector3(w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), MAHOGANY, true, 0.38)
+	_add_box(root, Vector3(0, h - stile * 0.5, 0), Vector3(w, stile, frame_d), MAHOGANY, true, 0.38)
+	_add_box(root, Vector3(0, stile * 0.5, 0), Vector3(w, stile, frame_d), MAHOGANY, true, 0.38)
+	# Architrave + deep sill (period sash)
 	_add_box(root, Vector3(0, h + 0.04, 0.02), Vector3(w + 0.18, 0.08, 0.16), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(0, 0.04, 0.08), Vector3(w + 0.2, 0.08, 0.22), MAHOGANY, false, 0.42)
-	# Mullion cross
-	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(0.05, h - 0.15, 0.04), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(0, h * 0.5, 0.05), Vector3(w - 0.15, 0.05, 0.04), MAHOGANY_DARK, false, 0.4)
-	# Exterior view plate (behind glass)
+	_add_box(root, Vector3(0, 0.02, 0.1), Vector3(w + 0.22, 0.07, 0.24), MAHOGANY, false, 0.42)
+	# Mullion cross (thin — must not hide exterior)
+	_add_box(root, Vector3(0, h * 0.5, 0.03), Vector3(0.045, h - stile * 2.0, 0.04), MAHOGANY_DARK, false, 0.4)
+	_add_box(root, Vector3(0, h * 0.5, 0.03), Vector3(w - stile * 2.0, 0.045, 0.04), MAHOGANY_DARK, false, 0.4)
+	# Exterior view plate in the open aperture (both faces, unshaded so never void-black)
 	var view_path: String = str(feat.get("view", ""))
 	if view_path == "" or view_path.find("richmond_") >= 0 or view_path.find("wallpaper_") >= 0:
 		view_path = VIEW_EXTERIORS[seed0 % VIEW_EXTERIORS.size()]
 	var view_mi := MeshInstance3D.new()
 	var vm := QuadMesh.new()
-	vm.size = Vector2(w * 0.92, h * 0.92)
+	vm.size = Vector2(w - stile * 1.6, h - stile * 1.6)
 	view_mi.mesh = vm
 	var vmat := StandardMaterial3D.new()
 	var vtex := _load_tex(view_path)
 	if vtex:
 		vmat.albedo_texture = vtex
-		vmat.albedo_color = Color(1.0, 1.0, 0.98)
+		vmat.albedo_color = Color(1.05, 1.05, 1.0)  # slight lift so green/sky read
 	else:
-		vmat.albedo_color = Color(0.45, 0.62, 0.78)
+		# Procedural sky+lawn fallback if texture missing
+		vmat.albedo_color = Color(0.42, 0.62, 0.38)
 	vmat.roughness = 1.0
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	view_mi.material_override = vmat
-	view_mi.position = Vector3(0, h * 0.5, -0.07)
+	# Slightly toward exterior so wall coplanar z-fight loses; both faces still visible
+	view_mi.position = Vector3(0, h * 0.5, -0.04)
 	root.add_child(view_mi)
-	# Thin cool glass over view (low alpha — exterior must dominate)
+	# Very thin cool glass (alpha low) — never solid black
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.75, 0.88, 0.95, 0.12)
-	gmat.metallic = 0.08
-	gmat.roughness = 0.06
+	gmat.albedo_color = Color(0.82, 0.92, 0.98, 0.08)
+	gmat.metallic = 0.05
+	gmat.roughness = 0.05
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	for ox in [-1.0, 1.0]:
 		for oy in [0.72, 0.28]:
 			var pane := MeshInstance3D.new()
 			var pm := BoxMesh.new()
-			pm.size = Vector3(w * 0.38, h * 0.36, 0.012)
+			pm.size = Vector3((w - stile * 2.2) * 0.42, (h - stile * 2.2) * 0.42, 0.008)
 			pane.mesh = pm
 			pane.material_override = gmat
-			pane.position = Vector3(ox * w * 0.22, h * oy, 0.04)
+			pane.position = Vector3(ox * w * 0.2, h * oy, 0.05)
 			root.add_child(pane)
-	# One fill light only (perf: not every pane)
+	# Soft outdoor fill (daylight through sash)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color(0.78, 0.88, 0.98)
-	fill.light_energy = 0.4
-	fill.omni_range = 3.5
-	fill.position = Vector3(0, h * 0.55, 0.35)
+	fill.light_color = Color(0.82, 0.9, 1.0)
+	fill.light_energy = 0.55
+	fill.omni_range = 4.0
+	fill.position = Vector3(0, h * 0.55, 0.4)
 	root.add_child(fill)
 	return root
 
