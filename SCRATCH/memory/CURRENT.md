@@ -4,7 +4,7 @@
 **Primary goal:** `goal:aetheric_deveraux_interior_plan`  
 **Plan:** `visual-deveraux-house-plan-interior-design.md`  
 **Loop protocol:** `IMPLEMENT_8H_LOOP_PROTOCOL.md`  
-**HEAD:** `60d0e8e` (visual implement 65)  
+**HEAD:** `d385295` (docs CURRENT; implement `60d0e8e`)  
 **10m unattended scheduler:** OFF  
 
 ## Implement progress (novel-true revision)
