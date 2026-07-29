@@ -154,10 +154,12 @@ const ROOMS := {
 		"wall_style": "victorian",
 		"wallpaper": TEX + "wallpaper_hall.jpg",
 		"wainscot": TEX + "wainscot_hall.jpg",
+		"wainscot_height": 1.15,
 		"floor_texture": TEX + "floor_hall.jpg",
 		"floor_color": Color(0.20, 0.14, 0.10),
-		"light_energy": 1.2,
-		"light_color": Color(0.95, 0.9, 0.78),
+		"light_energy": 1.25,
+		"light_color": Color(0.96, 0.91, 0.8),
+		"ceiling_color": Color(0.88, 0.85, 0.78),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [0.0, 1.2, -4.85], "yaw": 0.0, "width": 1.65, "height": 2.45, "seed": 1},
@@ -342,16 +344,16 @@ const ROOMS := {
 		"spawn": [0.0, 0.0, 2.5],
 		"spawn_yaw": 0.0,
 		"wall_style": "victorian",
-		# Soft gallery paper for period pattern (morning white was too blank)
-		"wallpaper": TEX + "wallpaper_gallery.jpg",
+		# Loop 72: powder-blue stripe paper + oak dado (was wrongly sharing gallery damask)
+		"wallpaper": TEX + "wallpaper_morning.jpg",
 		"wainscot": TEX + "wainscot_morning.jpg",
 		"wainscot_height": 1.35,
 		"floor_texture": TEX + "floor_morning.jpg",
 		"floor_color": Color(0.38, 0.28, 0.18),
-		# Loop 70: morning light — brighter, cooler-east sun wash (not evening gold)
-		"light_energy": 1.38,
-		"light_color": Color(1.0, 0.95, 0.86),
-		"ceiling_color": Color(0.92, 0.9, 0.84),
+		# Loop 70–72: morning light — brighter, cooler-east sun wash
+		"light_energy": 1.42,
+		"light_color": Color(1.0, 0.96, 0.88),
+		"ceiling_color": Color(0.94, 0.92, 0.86),
 		"walls": {},
 		"features": [
 			# Daytime garden views only (was night plate — wrong for morning room)
@@ -423,8 +425,10 @@ const ROOMS := {
 		"wainscot_height": 2.15,
 		"floor_texture": TEX + "floor_workshop.jpg",
 		"floor_color": Color(0.18, 0.13, 0.09),
-		"light_energy": 1.05,
-		"light_color": Color(1.0, 0.78, 0.5),
+		# Loop 72: slightly cooler work light on limewash + board dado
+		"light_energy": 1.12,
+		"light_color": Color(1.0, 0.82, 0.55),
+		"ceiling_color": Color(0.72, 0.66, 0.56),
 		"walls": {},
 		"features": [
 			{"kind": "door_frame", "pos": [4.85, 1.2, 0.0], "yaw": -90.0, "width": 1.55, "height": 2.4},

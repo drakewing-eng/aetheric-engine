@@ -55,3 +55,8 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - §1 Door: teleport forces y=0 + velocity clear; spawn nudged toward room centre; portal recess gets painted closed-leaf + panels + knob (less “closet void”). Still wants human E playtest.  
 - §3 Uniqueness: copper pots 5 styles; crates open/stencil/rope; wall sconces 3 arm styles by pos seed; oil lamps 3 bases.  
+
+## Status update 2026-07-28 (loop 72)
+
+- §4 Wallpaper contrast: morning no longer reuses gallery damask — powder-blue stripe + oak panel dado. Workshop limewash over brick + board wainscot. Hall sage stripe. Kitchen cream check. Secondary papers now 4 distinct (test asserts).  
+- Geometry: chair rail is triple (body + under-mould + bead); skirting has cap moulding + corner plinth blocks.  

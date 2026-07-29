@@ -75,9 +75,9 @@ func _build_room(room: Dictionary) -> void:
 		_add_door_trigger(door, w, d)
 
 func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
-	## Period baseboard — thick enough to mask floor/wall join shimmer.
-	var board_h := 0.18
-	var thick := 0.07
+	## Period baseboard — double-step (plinth + cap) + corner blocks (loop 72).
+	var board_h := 0.2
+	var thick := 0.08
 	var half_w := w * 0.5 - 0.05
 	var half_d := d * 0.5 - 0.05
 	var boards := [
@@ -105,6 +105,46 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		mi.material_override = mat
 		mi.position = boards[i][0]
 		add_child(mi)
+		# Cap moulding step on each skirting run
+		var cap := MeshInstance3D.new()
+		cap.name = "SkirtingCap_%d" % i
+		var cm := BoxMesh.new()
+		var bs: Vector3 = boards[i][1]
+		if bs.x > bs.z:
+			cm.size = Vector3(bs.x * 0.98, 0.04, bs.z + 0.03)
+		else:
+			cm.size = Vector3(bs.x + 0.03, 0.04, bs.z * 0.98)
+		cap.mesh = cm
+		var cmat := StandardMaterial3D.new()
+		cmat.roughness = 0.5
+		if wood_tex:
+			cmat.albedo_texture = wood_tex
+			cmat.albedo_color = Color(0.82, 0.7, 0.55)
+		else:
+			cmat.albedo_color = Color(0.2, 0.12, 0.07)
+		cap.material_override = cmat
+		cap.position = boards[i][0] + Vector3(0, board_h * 0.45, 0)
+		add_child(cap)
+	# Corner plinth blocks
+	for corner in [
+		Vector3(-half_w, 0.1, -half_d), Vector3(half_w, 0.1, -half_d),
+		Vector3(-half_w, 0.1, half_d), Vector3(half_w, 0.1, half_d),
+	]:
+		var blk := MeshInstance3D.new()
+		blk.name = "SkirtingCorner"
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.14, 0.2, 0.14)
+		blk.mesh = bm
+		var bmat := StandardMaterial3D.new()
+		bmat.roughness = 0.55
+		if wood_tex:
+			bmat.albedo_texture = wood_tex
+			bmat.albedo_color = Color(0.7, 0.58, 0.45)
+		else:
+			bmat.albedo_color = Color(0.16, 0.09, 0.05)
+		blk.material_override = bmat
+		blk.position = corner
+		add_child(blk)
 	# Picture rail (period hang-line) + ceiling crown moulding
 	var crown_y := 2.55
 	var rails := [
@@ -580,25 +620,56 @@ func _add_chair_rail(
 	join_y: float,
 	inward: Vector3,
 ) -> void:
-	## Mahogany dado rail — covers wallpaper/wainscot join (period + anti z-fight).
+	## Period dado rail: main cap + thinner under-moulding + top bead (loop 72 geometry).
+	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	var yaw_rad := deg_to_rad(yaw_deg)
+	var extra := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.022
+	var base := Vector3(wall_pos.x, join_y, wall_pos.z) + inward + extra
+	# Main rail body
+	_add_trim_strip(wall_name + "ChairRail", base, yaw_deg, Vector3(cover_w - 0.1, 0.09, 0.055), wood, Color(0.9, 0.82, 0.72))
+	# Lower under-mould (step)
+	_add_trim_strip(
+		wall_name + "ChairRailUnder",
+		base + Vector3(0, -0.06, 0) + Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.01,
+		yaw_deg,
+		Vector3(cover_w - 0.14, 0.035, 0.04),
+		wood,
+		Color(0.78, 0.66, 0.52)
+	)
+	# Upper bead
+	_add_trim_strip(
+		wall_name + "ChairRailBead",
+		base + Vector3(0, 0.055, 0) + Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.008,
+		yaw_deg,
+		Vector3(cover_w - 0.12, 0.02, 0.035),
+		wood,
+		Color(0.95, 0.88, 0.76)
+	)
+
+
+func _add_trim_strip(
+	name: String,
+	pos: Vector3,
+	yaw_deg: float,
+	size: Vector3,
+	wood: Texture2D,
+	tint: Color,
+) -> void:
 	var mi := MeshInstance3D.new()
-	mi.name = wall_name + "ChairRail"
+	mi.name = name
 	var mesh := BoxMesh.new()
-	mesh.size = Vector3(cover_w - 0.1, 0.08, 0.05)
+	mesh.size = size
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	mat.roughness = 0.5
-	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
 	if wood:
 		mat.albedo_texture = wood
-		mat.albedo_color = Color(0.9, 0.82, 0.72)
-		mat.uv1_scale = Vector3(cover_w * 0.3, 0.4, 1.0)
+		mat.albedo_color = tint
+		mat.uv1_scale = Vector3(size.x * 0.3, 0.4, 1.0)
 	else:
 		mat.albedo_color = Color(0.22, 0.12, 0.07)
 	mi.material_override = mat
-	var yaw_rad := deg_to_rad(yaw_deg)
-	var extra := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.022
-	mi.position = Vector3(wall_pos.x, join_y, wall_pos.z) + inward + extra
+	mi.position = pos
 	mi.rotation_degrees = Vector3(0, yaw_deg, 0)
 	add_child(mi)
 
