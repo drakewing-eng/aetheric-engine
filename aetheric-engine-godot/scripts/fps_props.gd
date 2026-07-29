@@ -1670,37 +1670,39 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(w * 0.85, 0.035, 0.04), iron_paint, false, 0.45)
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(0.04, 0.035, 0.3), iron_paint, false, 0.45)
 	else:
-		# Teak garden settle (loop 118): open back rails (not solid fridge slab from front)
+		# Teak garden settle (loop 135): open ladder-back + seat slats (not fridge slab)
 		var teak := Color(0.42, 0.28, 0.14)
 		var teak_d := Color(0.3, 0.18, 0.08)
 		var teak_l := Color(0.52, 0.36, 0.18)
-		# Solid seat plank + cushion strip
-		_add_box(root, Vector3(0, seat_y - 0.02, 0.02), Vector3(w * 0.96, 0.08, seat_d), teak, true, 0.55)
-		_add_box(root, Vector3(0, seat_y + 0.025, 0.02), Vector3(w * 0.93, 0.03, seat_d * 0.9), teak_l, false, 0.58)
-		_add_box(root, Vector3(0, seat_y + 0.01, 0.24), Vector3(w * 0.95, 0.04, 0.035), teak_d, false, 0.55)
-		# Open back: frame + wide vertical boards with gaps (settle language)
-		_add_box(root, Vector3(0, 0.58, -0.2), Vector3(w * 0.9, 0.06, 0.06), teak_d, true, 0.5)
-		_add_box(root, Vector3(0, 1.12, -0.2), Vector3(w * 0.92, 0.08, 0.07), teak_l, true, 0.5)
-		_add_box(root, Vector3(0, 1.18, -0.18), Vector3(w * 0.5, 0.05, 0.05), teak, false, 0.5)
-		var n_board := 6
-		for i in n_board:
-			var t := float(i) / float(n_board - 1)
+		var cushion := Color(0.55, 0.42, 0.28)
+		# Seat: horizontal slats with gaps
+		_add_box(root, Vector3(0, seat_y - 0.05, 0.0), Vector3(w * 0.94, 0.05, seat_d * 0.95), teak_d, true, 0.52)
+		for i in 5:
+			var t := float(i) / 4.0
+			var z := -0.18 + t * 0.36
+			_add_box(root, Vector3(0, seat_y, z), Vector3(w * 0.9, 0.04, 0.05), teak_l if i % 2 == 0 else teak, true, 0.58)
+		_add_box(root, Vector3(0, seat_y + 0.04, 0.02), Vector3(w * 0.88, 0.035, seat_d * 0.75), cushion, false, 0.85)
+		# Open ladder-back: rails only + thin spindles (air shows through)
+		_add_box(root, Vector3(0, 0.58, -0.22), Vector3(w * 0.9, 0.05, 0.05), teak_d, true, 0.5)
+		_add_box(root, Vector3(0, 0.85, -0.22), Vector3(w * 0.88, 0.04, 0.04), teak, false, 0.5)
+		_add_box(root, Vector3(0, 1.1, -0.22), Vector3(w * 0.9, 0.06, 0.05), teak_l, true, 0.5)
+		_add_box(root, Vector3(0, 1.16, -0.2), Vector3(w * 0.4, 0.04, 0.04), teak, false, 0.5)
+		for i in 7:
+			var t := float(i) / 6.0
 			var bx: float = -w * 0.38 + t * w * 0.76
-			_add_box(root, Vector3(bx, 0.85, -0.18), Vector3(0.08, 0.48, 0.04), teak if i % 2 == 0 else teak_d, false, 0.55)
-		# Side uprights + arms
+			_add_box(root, Vector3(bx, 0.85, -0.2), Vector3(0.035, 0.48, 0.03), teak_d if i % 2 == 0 else teak, false, 0.55)
+		# Arms + open ends
 		for sx in [-1.0, 1.0]:
-			var ex: float = sx * w * 0.44
-			_add_box(root, Vector3(ex, 0.8, -0.18), Vector3(0.1, 0.72, 0.1), teak_d, true, 0.5)
-			_add_box(root, Vector3(ex, 0.58, 0.02), Vector3(0.1, 0.14, 0.46), teak, true, 0.52)
-			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.11, 0.05, 0.48), teak_l, false, 0.5)
-			# Open under-arm (no full side slab)
-			_add_box(root, Vector3(ex, 0.55, -0.12), Vector3(0.06, 0.2, 0.16), teak_d, false, 0.55)
-			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
-			_add_box(root, Vector3(ex, 0.22, -0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
-			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.1, 0.04, 0.12), teak, true, 0.52)
-			_add_box(root, Vector3(ex, 0.03, -0.16), Vector3(0.1, 0.04, 0.12), teak, true, 0.52)
-		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(w * 0.82, 0.04, 0.05), teak_d, false, 0.55)
-		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(0.05, 0.04, 0.32), teak_d, false, 0.55)
+			var ex: float = sx * w * 0.45
+			_add_box(root, Vector3(ex, 0.85, -0.2), Vector3(0.08, 0.65, 0.08), teak_d, true, 0.5)
+			_add_box(root, Vector3(ex, 0.62, 0.05), Vector3(0.09, 0.06, 0.42), teak_l, false, 0.5)
+			_add_cylinder(root, Vector3(ex, 0.62, 0.24), 0.04, 0.05, teak, false, 0.5)
+			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
+			_add_box(root, Vector3(ex, 0.03, -0.18), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
+		_add_box(root, Vector3(0, 0.15, 0.0), Vector3(w * 0.8, 0.035, 0.04), teak_d, false, 0.55)
+		_add_box(root, Vector3(0, 0.15, 0.0), Vector3(0.04, 0.035, 0.3), teak_d, false, 0.55)
 	_add_contact_shadow(root, w * 0.5, 0.38)
 	return root
 
@@ -3936,13 +3938,18 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.1), 0.035, 0.16, MAHOGANY, false)
 				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.38), 0.032, 0.16, MAHOGANY, false)
 		"chair":
-			var cw: float = clampf(width * 0.7, 0.45, 0.65)
-			_add_box(root, Vector3(0, 0.46, -0.12), Vector3(cw, 0.08, 0.28), MAHOGANY, false, 0.48)
-			_add_box(root, Vector3(0, 0.52, -0.12), Vector3(cw * 0.9, 0.06, 0.24), VELVET_GREEN, false, 0.9)
-			_add_box(root, Vector3(0, 0.95, -0.28), Vector3(cw * 0.95, 0.75, 0.06), MAHOGANY, false, 0.45)
+			# Loop 135: deeper bulk for edge-on walk-by (card faces +Z; bulk in -Z)
+			var cw: float = clampf(width * 0.72, 0.45, 0.7)
+			_add_box(root, Vector3(0, 0.44, -0.2), Vector3(cw, 0.08, 0.42), MAHOGANY, false, 0.48)
+			_add_box(root, Vector3(0, 0.52, -0.18), Vector3(cw * 0.9, 0.1, 0.36), VELVET_GREEN, false, 0.9)
+			_add_box(root, Vector3(0, 0.58, -0.16), Vector3(cw * 0.8, 0.04, 0.3), VELVET_GREEN.darkened(0.1), false, 0.9)
+			# Back shell volume + open uprights
+			_add_box(root, Vector3(0, 0.95, -0.38), Vector3(cw * 0.85, 0.85, 0.1), MAHOGANY, false, 0.48)
 			for sx in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * cw * 0.35, 0.22, -0.02), 0.028, 0.4, MAHOGANY_DARK, false)
-				_add_cylinder(root, Vector3(sx * cw * 0.35, 0.22, -0.24), 0.025, 0.4, MAHOGANY_DARK, false)
+				_add_box(root, Vector3(sx * cw * 0.34, 0.95, -0.28), Vector3(0.05, 0.85, 0.22), MAHOGANY_DARK, false, 0.48)
+				_add_cylinder(root, Vector3(sx * cw * 0.32, 0.2, -0.02), 0.026, 0.38, MAHOGANY_DARK, false)
+				_add_cylinder(root, Vector3(sx * cw * 0.32, 0.2, -0.36), 0.024, 0.38, MAHOGANY_DARK, false)
+			_add_box(root, Vector3(0, 1.32, -0.32), Vector3(cw * 0.75, 0.07, 0.12), MAHOGANY, false, 0.45)
 		_:
 			_add_box(root, Vector3(0, height * 0.35, -0.22),
 				Vector3(width * 0.7, height * 0.55, 0.28), MAHOGANY_DARK, false, 0.5)

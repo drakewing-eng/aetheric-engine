@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~14:20 (overnight goal active)  
+**Updated:** 2026-07-29 ~14:40 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -14,30 +14,31 @@
 | 5 | Geometric / surface detail | **ADVANCED 72–116** paths |
 | 6 | Victorian wall art | **ADVANCED 69+96+97+133** kitchen |
 | 7 | Plant diversity / side volume | **ADVANCED 74–128** fronds |
-| 8 | Side-view mesh furniture | **ADVANCED 70–134** wing hero |
+| 8 | Side-view mesh furniture | **ADVANCED 70–135** chair heroes |
 | 9 | Door transition safety | **ADVANCED 76+98+125** portal leaf |
 | 10 | Wallpaper contrast | **ADVANCED 72–115** service |
 | 11 | Hall / prep still-life | **ADVANCED 73–126** tables |
 | 12–23 | Conservatory / gallery / workshop densify | **ADVANCED 116–132** |
 | 24–52 | Materials…stools | **DONE 89–127** |
 | 53–62 | Copper…stools/sconces | **DONE 118–127** |
-| 63–68 | Plants…looking-glass | **DONE 128–133** |
-| 69 | Wing chair hero billboards + side chair polish | **DONE 134** |
+| 63–69 | Plants…wing heroes | **DONE 128–134** |
+| 70 | Side-chair heroes + settle open-back | **DONE 135** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 128–133 | Plants, exteriors, range, satellites, sparks, looking-glass, kitchen oils |
-| 134 | **Wing chairs:** painted cutout heroes + mesh bulk (burgundy drawing, green morning). **Side chairs:** slim open-back splat, turned legs (less wood-block stack). |
+| 128–134 | Plants, exteriors, range, satellites, sparks, looking-glass, wing heroes |
+| 135 | **Side chairs:** `hero_side_chair` billboards + deeper mesh bulk (drawing desk, hall flanks, morning desk). **Teak settle:** open ladder-back + seat slats (not fridge slab). |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional: side-chair billboard heroes at extreme angles  
+- Optional: remaining mesh chairs in secondary corners  
 - Optional: room dust motes  
+- Optional: edge-on billboard depth still imperfect (bulk fills)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_134/`  
+- Shots: `auto_loop_67/` … `auto_loop_135/`  
