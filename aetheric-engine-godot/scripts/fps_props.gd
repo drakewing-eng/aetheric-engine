@@ -278,25 +278,35 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	for i in 6:
 		var nx := -0.2 + i * 0.08
 		_add_cylinder(root, Vector3(nx, 0.47, 0.26), 0.01, 0.015, BRASS, false, 0.3, true)
-	# Back frame (solid)
-	_add_box(root, Vector3(0, 0.95, -0.2), Vector3(0.5, 0.85, 0.06), MAHOGANY, true, 0.45)
-	_add_box(root, Vector3(0, 1.28, -0.18), Vector3(0.46, 0.14, 0.07), MAHOGANY_DARK, false, 0.42)
-	# Splat style by seed
+	# Back frame OPEN (loop 98: no solid mahogany slab from behind)
+	# Side uprights + top crest + lower rail only; splat fills the void
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.23, 0.9, -0.2), Vector3(0.055, 0.78, 0.06), MAHOGANY, true, 0.48)
+	# Top crest rail
+	_add_box(root, Vector3(0, 1.28, -0.19), Vector3(0.48, 0.1, 0.07), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 1.34, -0.18), Vector3(0.36, 0.05, 0.05), MAHOGANY.lightened(0.05), false, 0.45)
+	# Lower back rail at seat
+	_add_box(root, Vector3(0, 0.58, -0.2), Vector3(0.42, 0.06, 0.05), MAHOGANY_DARK, false, 0.48)
+	# Mid cross rail
+	_add_box(root, Vector3(0, 0.95, -0.2), Vector3(0.4, 0.04, 0.04), MAHOGANY, false, 0.5)
+	# Splat style by seed (fills open back — readable from both sides)
 	if seed0 % 3 == 0:
-		_add_box(root, Vector3(0, 0.95, -0.17), Vector3(0.18, 0.55, 0.03), MAHOGANY_DARK, false, 0.5)
-		_add_box(root, Vector3(-0.12, 0.95, -0.17), Vector3(0.04, 0.5, 0.03), MAHOGANY, false, 0.5)
-		_add_box(root, Vector3(0.12, 0.95, -0.17), Vector3(0.04, 0.5, 0.03), MAHOGANY, false, 0.5)
+		# Triple vertical splat
+		_add_box(root, Vector3(0, 0.95, -0.18), Vector3(0.1, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
+		_add_box(root, Vector3(-0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
+		_add_box(root, Vector3(0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
 	elif seed0 % 3 == 1:
-		# Balloon back padded
-		_add_box(root, Vector3(0, 1.0, -0.16), Vector3(0.42, 0.55, 0.05), fabric, false, 0.88)
-		_add_cylinder(root, Vector3(0, 1.15, -0.14), 0.02, 0.02, fabric.darkened(0.2), false, 0.9)
+		# Balloon back padded (open frame around fabric oval)
+		_add_box(root, Vector3(0, 1.0, -0.17), Vector3(0.38, 0.5, 0.05), fabric, false, 0.88)
+		_add_box(root, Vector3(0, 1.18, -0.16), Vector3(0.32, 0.12, 0.04), fabric.darkened(0.1), false, 0.9)
+		for bi in 3:
+			_add_cylinder(root, Vector3((float(bi) - 1.0) * 0.1, 1.05, -0.14), 0.015, 0.02, fabric.darkened(0.2), false, 0.9)
 	else:
 		# Lyre-ish central splat
-		_add_box(root, Vector3(0, 0.95, -0.17), Vector3(0.1, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
-		_add_box(root, Vector3(0, 1.1, -0.16), Vector3(0.28, 0.08, 0.03), MAHOGANY, false, 0.5)
-	# Side uprights
-	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.23, 0.85, -0.12), Vector3(0.05, 0.7, 0.08), MAHOGANY, true, 0.48)
+		_add_box(root, Vector3(0, 0.95, -0.18), Vector3(0.08, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
+		_add_box(root, Vector3(0, 1.12, -0.17), Vector3(0.28, 0.07, 0.035), MAHOGANY, false, 0.5)
+		_add_box(root, Vector3(-0.1, 0.85, -0.18), Vector3(0.04, 0.35, 0.03), MAHOGANY, false, 0.5)
+		_add_box(root, Vector3(0.1, 0.85, -0.18), Vector3(0.04, 0.35, 0.03), MAHOGANY, false, 0.5)
 	# Cabriole-ish front legs (tapered stacked cylinders) + rear legs
 	for offset in [Vector3(-0.2, 0.22, 0.18), Vector3(0.2, 0.22, 0.18)]:
 		_add_cylinder(root, offset, 0.032, 0.42, MAHOGANY_DARK, true)
@@ -2756,19 +2766,27 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	# Inner stop mould
 	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
 	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
-	# Threshold / saddle (stone + wood — grounds the doorway)
-	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.14, 0.05, depth + 0.18), STONE, false, 0.65)
-	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.08, 0.04, depth + 0.1), door_frame_col, false, 0.45)
+	# Threshold / saddle (loop 98: dark kick so oak doors don't "float" on bright stone)
+	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.18, 0.05, depth + 0.24), STONE.darkened(0.1), true, 0.7)
+	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.12, 0.04, depth + 0.14), door_frame_col, false, 0.45)
+	# Continuous dark kick under leaf (closes light gap under pale oak doors)
+	_add_box(root, Vector3(0, 0.04, 0.05), Vector3(w - 0.06, 0.08, 0.1), door_wood.darkened(0.12), true, 0.45)
+	# Jamb feet — ground the case into the threshold
+	_add_box(root, Vector3(-w * 0.5 - 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)
+	_add_box(root, Vector3(w * 0.5 + 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)
 	# --- Door leaf CLOSED (E teleports; do not leave walk-into-void gap) ---
+	# Leaf bottom at y≈0.04 so it meets the dark kick / saddle
 	var leaf_w := w - 0.1
-	var leaf_h := h - 0.12
+	var leaf_h := h - 0.05
 	var leaf := Node3D.new()
 	leaf.name = "DoorLeaf"
-	leaf.position = Vector3(-w * 0.5 + 0.05, 0.07, 0.04)
+	leaf.position = Vector3(-w * 0.5 + 0.05, 0.04, 0.04)
 	leaf.rotation_degrees.y = 0.0  # closed — room change is interact/teleport only
 	root.add_child(leaf)
 	# solid=true so player cannot walk through the closed leaf into void
 	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, true, 0.42)
+	# Bottom kick rail on leaf itself
+	_add_box(leaf, Vector3(leaf_w * 0.5, 0.04, 0.02), Vector3(leaf_w * 0.98, 0.08, 0.04), door_frame_col, false, 0.42)
 	# Stiles & rails (classic 4-panel)
 	var stile := 0.11
 	var mid_rail_y := leaf_h * 0.4

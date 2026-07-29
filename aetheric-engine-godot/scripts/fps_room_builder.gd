@@ -408,21 +408,24 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 		root.rotation_degrees.y = 0.0
 	add_child(root)
 	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
-	# Threshold board (visual floor in recess)
-	_add_portal_box(root, Vector3(0, 0.02, -depth * 0.5), Vector3(door_w + 0.12, 0.04, depth), floor_col, wood_tex, Vector3(1.2, 1.0, 1.0))
-	# Jamb returns
+	# Threshold board (loop 98: thicker saddle so portal leaf never floats)
+	_add_portal_box(root, Vector3(0, 0.03, -depth * 0.5), Vector3(door_w + 0.14, 0.06, depth), floor_col, wood_tex, Vector3(1.2, 1.0, 1.0))
+	_add_portal_box(root, Vector3(0, 0.05, 0.02), Vector3(door_w * 0.92, 0.08, 0.1), Color(0.24, 0.15, 0.09), wood_tex, Vector3(1.0, 0.5, 1.0))
+	# Jamb returns (full height from floor)
 	var side_x := door_w * 0.5 + 0.04
 	for sx in [-side_x, side_x]:
-		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
+		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.1, door_h + 0.05, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
 	# Solid backstop — blocks void; closed leaf also collides
 	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), Color(0.28, 0.18, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0), true)
-	# Loop 71: painted closed leaf face on backstop so recess never reads as empty closet
-	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth + 0.07), Vector3(door_w * 0.88, door_h * 0.9, 0.04), Color(0.34, 0.22, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0))
+	# Closed leaf seated on saddle (bottom ≈ y 0.04 — no light gap)
+	var leaf_h := door_h - 0.06
+	var leaf_cy := 0.04 + leaf_h * 0.5
+	_add_portal_box(root, Vector3(0, leaf_cy, -depth + 0.07), Vector3(door_w * 0.9, leaf_h, 0.05), Color(0.34, 0.22, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0))
 	# Fielded panel lines
-	_add_portal_box(root, Vector3(0, door_h * 0.68, -depth + 0.09), Vector3(door_w * 0.55, door_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
-	_add_portal_box(root, Vector3(0, door_h * 0.32, -depth + 0.09), Vector3(door_w * 0.55, door_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
+	_add_portal_box(root, Vector3(0, leaf_cy + leaf_h * 0.18, -depth + 0.1), Vector3(door_w * 0.55, leaf_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
+	_add_portal_box(root, Vector3(0, leaf_cy - leaf_h * 0.18, -depth + 0.1), Vector3(door_w * 0.55, leaf_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
 	# Brass knob suggestion
-	_add_portal_box(root, Vector3(door_w * 0.28, door_h * 0.48, -depth + 0.1), Vector3(0.04, 0.04, 0.04), Color(0.74, 0.58, 0.28), null, Vector3.ONE)
+	_add_portal_box(root, Vector3(door_w * 0.28, leaf_cy, -depth + 0.11), Vector3(0.04, 0.04, 0.04), Color(0.74, 0.58, 0.28), null, Vector3.ONE)
 	# Lintel
 	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.18, 0.08, depth + 0.05), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
 

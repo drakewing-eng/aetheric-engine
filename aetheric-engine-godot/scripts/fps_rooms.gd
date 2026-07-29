@@ -227,6 +227,12 @@ const ROOMS := {
 			# Loop 92: lamp near looking-glass (west hall corner read)
 			{"kind": "oil_lamp", "pos": [-5.6, 0.0, -1.4], "yaw": 15.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-6.7, 0.0, -1.0], "yaw": 90.0, "height": 2.25},
+			# Loop 98: NW corner densify (entrance_hall_center empty floor by mirror)
+			{"kind": "hall_table", "pos": [-5.0, 0.0, -3.4], "yaw": 5.0, "seed": 2},
+			{"kind": "chair", "pos": [-4.0, 0.0, -2.8], "yaw": 120.0, "seed": 1,
+				"fabric": Color(0.3, 0.18, 0.12)},
+			{"kind": "plant", "pos": [-6.0, 0.0, -3.5], "scale": 0.7, "seed": 4,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
 			# Second stand near kitchen/south — visitors leave coats by service door
 			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
 			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
