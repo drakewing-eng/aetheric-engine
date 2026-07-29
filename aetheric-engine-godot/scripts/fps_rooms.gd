@@ -578,6 +578,16 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
 			{"kind": "chair", "pos": [1.5, 0.0, 2.6], "yaw": -170.0, "seed": 3,
 				"fabric": Color(0.38, 0.34, 0.28)},
+			# Loop 116: morning_room_center NE/mid densify (bare floor between armchair & desk)
+			{"kind": "side_table", "pos": [-0.5, 0.0, 0.5], "yaw": -35.0, "seed": 11, "bare": true},
+			{"kind": "letter_stack", "pos": [-0.45, 0.68, 0.45], "yaw": 20.0, "seed": 8},
+			{"kind": "oil_lamp", "pos": [-0.4, 0.0, 0.55], "yaw": 15.0, "height": 0.95},
+			{"kind": "plant", "pos": [0.3, 0.0, 0.9], "scale": 0.48, "seed": 6,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.45, "height": 0.52},
+			{"kind": "ottoman", "pos": [0.2, 0.0, 1.9], "yaw": -30.0, "seed": 2,
+				"fabric": Color(0.36, 0.28, 0.22)},
+			{"kind": "chair", "pos": [-1.4, 0.0, 1.1], "yaw": 100.0, "seed": 0,
+				"fabric": Color(0.4, 0.32, 0.26)},
 		],
 		"doors": [
 			{
