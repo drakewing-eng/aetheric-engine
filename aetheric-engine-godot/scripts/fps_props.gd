@@ -851,32 +851,52 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	var base := seed0 % 3
 	var dress := (seed0 / 3) % 4
 	if base == 0:
-		# Tripod pedestal
-		_add_cylinder(root, Vector3(0, 0.62, 0), 0.3, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.65, 0), 0.31, 0.02, MAHOGANY_DARK, false)
-		_add_cylinder(root, Vector3(0, 0.48, 0), 0.08, 0.12, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.32, 0), 0.045, 0.28, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0, 0.14, 0), 0.1, 0.08, MAHOGANY, true)
+		# Tripod pedestal (loop 117: turned column + carved feet)
+		_add_cylinder(root, Vector3(0, 0.64, 0), 0.3, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.67, 0), 0.32, 0.025, MAHOGANY_DARK, false)
+		_add_cylinder(root, Vector3(0, 0.61, 0), 0.28, 0.02, MAHOGANY.lightened(0.05), false)
+		# Turned column (stacked diameters)
+		_add_cylinder(root, Vector3(0, 0.52, 0), 0.09, 0.1, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.4, 0), 0.055, 0.16, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0, 0.28, 0), 0.07, 0.1, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.16, 0), 0.1, 0.08, MAHOGANY_DARK, true)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_box(root, Vector3(cos(rad) * 0.16, 0.04, sin(rad) * 0.16), Vector3(0.22, 0.04, 0.06), MAHOGANY_DARK, true, 0.45)
+			var fx := cos(rad) * 0.18
+			var fz := sin(rad) * 0.18
+			_add_box(root, Vector3(fx, 0.05, fz), Vector3(0.24, 0.04, 0.07), MAHOGANY_DARK, true, 0.45)
+			_add_cylinder(root, Vector3(fx * 1.15, 0.03, fz * 1.15), 0.03, 0.04, MAHOGANY, true)
 	elif base == 1:
-		# Square top + four turned legs
+		# Square top + apron drawer + four turned legs (loop 117)
 		_add_box(root, Vector3(0, 0.64, 0), Vector3(0.55, 0.04, 0.55), MAHOGANY, true, 0.45)
 		_add_box(root, Vector3(0, 0.67, 0), Vector3(0.58, 0.02, 0.58), MAHOGANY_DARK, false, 0.42)
+		# Apron + false drawer
+		_add_box(root, Vector3(0, 0.56, 0.24), Vector3(0.5, 0.1, 0.04), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0, 0.56, -0.24), Vector3(0.5, 0.1, 0.04), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(-0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0, 0.56, 0.26), Vector3(0.28, 0.06, 0.02), MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0, 0.56, 0.28), 0.012, 0.02, BRASS, false, 0.3, true)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * 0.2, 0.32, sz * 0.2), 0.03, 0.6, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.2, 0.4, sz * 0.2), 0.032, 0.24, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.2, 0.22, sz * 0.2), 0.024, 0.18, MAHOGANY, true)
+				_add_cylinder(root, Vector3(sx * 0.2, 0.08, sz * 0.2), 0.03, 0.12, MAHOGANY_DARK, true)
 				_add_cylinder(root, Vector3(sx * 0.2, 0.02, sz * 0.2), 0.04, 0.04, MAHOGANY, true)
-		_add_box(root, Vector3(0, 0.28, 0), Vector3(0.38, 0.03, 0.38), MAHOGANY, false, 0.5)
+		_add_box(root, Vector3(0, 0.2, 0), Vector3(0.36, 0.025, 0.36), MAHOGANY, false, 0.5)
 	else:
-		# Demi-lune (half-round) console
-		_add_box(root, Vector3(0, 0.64, 0.05), Vector3(0.7, 0.04, 0.35), MAHOGANY, true, 0.45)
-		_add_cylinder(root, Vector3(0, 0.64, 0.05), 0.32, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(-0.22, 0.32, 0.08), 0.028, 0.6, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.22, 0.32, 0.08), 0.028, 0.6, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.0, 0.32, -0.05), 0.03, 0.6, MAHOGANY_DARK, true)
-		_add_box(root, Vector3(0, 0.3, 0.05), Vector3(0.4, 0.025, 0.12), MAHOGANY, false, 0.48)
+		# Demi-lune console (loop 117: thicker top edge + curved apron)
+		_add_box(root, Vector3(0, 0.64, 0.05), Vector3(0.72, 0.045, 0.36), MAHOGANY, true, 0.45)
+		_add_cylinder(root, Vector3(0, 0.64, 0.05), 0.34, 0.045, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.67, 0.05), 0.32, 0.02, MAHOGANY_DARK, false)
+		_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.55, 0.08, 0.04), MAHOGANY, false, 0.48)
+		_add_cylinder(root, Vector3(-0.22, 0.36, 0.1), 0.03, 0.5, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.22, 0.36, 0.1), 0.03, 0.5, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.0, 0.36, -0.06), 0.032, 0.5, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(-0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0.0, 0.02, -0.06), 0.04, 0.04, MAHOGANY, true)
+		_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.42, 0.03, 0.14), MAHOGANY, false, 0.48)
 	# Top dressing — skip when bare (tea tray / hero still-life placed separately)
 	var top_y := 0.69
 	if prop.get("bare", false):
@@ -2096,6 +2116,11 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 	var h: float = 0.38 + float(seed0 % 3) * 0.04
 	var open_lid := seed0 % 4 == 1
 	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.7)
+	# Loop 117: plank lines so crate reads as boarded (not solid cube)
+	for pi in 3:
+		var py := (0.15 + float(pi) * 0.12) * h * s
+		_add_box(root, Vector3(0, py, 0.225 * s), Vector3(0.52 * s, 0.012 * s, 0.012 * s), wood.darkened(0.12), false, 0.6)
+		_add_box(root, Vector3(0, py, -0.225 * s), Vector3(0.52 * s, 0.012 * s, 0.012 * s), wood.darkened(0.12), false, 0.6)
 	if open_lid:
 		# Lid hinged ajar — shows packing straw
 		_add_box(root, Vector3(0.0, h * s + 0.04 * s, -0.18 * s), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.08), false, 0.65)
@@ -2127,33 +2152,67 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_stool(prop: Dictionary) -> Node3D:
+	## Loop 117: turned legs + stretchers + rimmed seat (not disc-on-sticks Minecraft).
 	## seed: 0 tripod oak · 1 four-leg square · 2 padded seat
 	var root := Node3D.new()
 	root.name = "Stool"
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
 	if style == 0:
-		_add_cylinder(root, Vector3(0, 0.48, 0), 0.2, 0.06, OAK, true, 0.55)
-		_add_cylinder(root, Vector3(0, 0.45, 0), 0.16, 0.03, OAK.darkened(0.1), false, 0.55)
+		# Round seat with rim + under-disc
+		_add_cylinder(root, Vector3(0, 0.5, 0), 0.2, 0.05, OAK, true, 0.52)
+		_add_cylinder(root, Vector3(0, 0.53, 0), 0.18, 0.025, OAK.lightened(0.06), false, 0.55)
+		_add_cylinder(root, Vector3(0, 0.47, 0), 0.21, 0.02, OAK.darkened(0.12), false, 0.5)
+		# Turned tripod legs (tapered stack) + ring stretcher
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.24, sin(rad) * 0.13), 0.028, 0.48, MAHOGANY_DARK, true)
-			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.03, sin(rad) * 0.13), 0.035, 0.04, MAHOGANY, true)
-		_add_box(root, Vector3(0, 0.15, 0), Vector3(0.22, 0.025, 0.22), MAHOGANY_DARK, false, 0.5)
+			var lx := cos(rad) * 0.14
+			var lz := sin(rad) * 0.14
+			_add_cylinder(root, Vector3(lx, 0.36, lz), 0.032, 0.22, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(lx, 0.22, lz), 0.024, 0.16, MAHOGANY, true)
+			_add_cylinder(root, Vector3(lx, 0.08, lz), 0.03, 0.12, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.04, 0.04, MAHOGANY, true)
+		# Circular stretcher ring suggestion
+		_add_cylinder(root, Vector3(0, 0.16, 0), 0.16, 0.025, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0, 0.16, 0), 0.12, 0.02, MAHOGANY, false, 0.52)
 	elif style == 1:
-		_add_box(root, Vector3(0, 0.5, 0), Vector3(0.36, 0.05, 0.36), Color(0.42, 0.3, 0.16), true, 0.55)
+		# Square boarded seat + apron + four turned legs + H-stretcher
+		_add_box(root, Vector3(0, 0.5, 0), Vector3(0.38, 0.045, 0.38), Color(0.42, 0.3, 0.16), true, 0.52)
+		_add_box(root, Vector3(0, 0.53, 0), Vector3(0.36, 0.02, 0.36), OAK.lightened(0.05), false, 0.55)
+		# Apron under seat
+		_add_box(root, Vector3(0, 0.46, 0.17), Vector3(0.34, 0.04, 0.03), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0, 0.46, -0.17), Vector3(0.34, 0.04, 0.03), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0.17, 0.46, 0), Vector3(0.03, 0.04, 0.32), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(-0.17, 0.46, 0), Vector3(0.03, 0.04, 0.32), MAHOGANY, false, 0.48)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * 0.13, 0.24, sz * 0.13), Vector3(0.04, 0.48, 0.04), MAHOGANY_DARK, true, 0.5)
-		_add_box(root, Vector3(0, 0.14, 0), Vector3(0.28, 0.03, 0.28), MAHOGANY, false, 0.5)
+				_add_cylinder(root, Vector3(sx * 0.14, 0.34, sz * 0.14), 0.03, 0.2, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.14, 0.18, sz * 0.14), 0.022, 0.16, MAHOGANY, true)
+				_add_cylinder(root, Vector3(sx * 0.14, 0.06, sz * 0.14), 0.028, 0.1, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.14, 0.02, sz * 0.14), 0.038, 0.035, MAHOGANY, true)
+		# H-stretcher
+		_add_box(root, Vector3(0, 0.14, 0), Vector3(0.26, 0.025, 0.025), MAHOGANY_DARK, false, 0.5)
+		_add_box(root, Vector3(-0.13, 0.14, 0), Vector3(0.025, 0.025, 0.24), MAHOGANY_DARK, false, 0.5)
+		_add_box(root, Vector3(0.13, 0.14, 0), Vector3(0.025, 0.025, 0.24), MAHOGANY_DARK, false, 0.5)
 	else:
-		# Upholstered stool — velvet seat, dark legs (not pale mesh wood)
-		_add_cylinder(root, Vector3(0, 0.5, 0), 0.18, 0.08, VELVET_GREEN.darkened(0.05), true, 0.9)
-		_add_cylinder(root, Vector3(0, 0.44, 0), 0.16, 0.04, MAHOGANY_DARK, false, 0.45)
+		# Upholstered drum stool — tufted velvet + turned legs + ring
+		var fab := VELVET_GREEN.darkened(0.05) if seed0 % 2 == 0 else VELVET_RED.darkened(0.1)
+		_add_cylinder(root, Vector3(0, 0.48, 0), 0.19, 0.1, fab, true, 0.9)
+		_add_cylinder(root, Vector3(0, 0.54, 0), 0.17, 0.04, fab.darkened(0.1), false, 0.92)
+		_add_cylinder(root, Vector3(0, 0.42, 0), 0.2, 0.03, MAHOGANY_DARK, false, 0.45)
+		# Button tufts
+		for ti in 4:
+			var ta := float(ti) * TAU / 4.0 + 0.4
+			_add_cylinder(root, Vector3(cos(ta) * 0.07, 0.56, sin(ta) * 0.07), 0.012, 0.015, fab.darkened(0.2), false, 0.95)
 		for a in [0.0, 90.0, 180.0, 270.0]:
 			var rad := deg_to_rad(a)
-			_add_cylinder(root, Vector3(cos(rad) * 0.11, 0.22, sin(rad) * 0.11), 0.025, 0.44, MAHOGANY_DARK, true)
-	_add_contact_shadow(root, 0.22, 0.22)
+			var lx := cos(rad) * 0.12
+			var lz := sin(rad) * 0.12
+			_add_cylinder(root, Vector3(lx, 0.3, lz), 0.028, 0.2, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(lx, 0.14, lz), 0.022, 0.14, MAHOGANY, true)
+			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.032, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(0, 0.15, 0), 0.13, 0.02, MAHOGANY_DARK, false, 0.5)
+	_add_contact_shadow(root, 0.24, 0.24)
 	return root
 
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
