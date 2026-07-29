@@ -692,6 +692,11 @@ const ROOMS := {
 			{"kind": "oil_lamp", "pos": [0.0, 0.0, 3.2], "yaw": 0.0, "height": 1.0},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
 				"surface": "iron", "seed": 3},
+			# Loop 110: practical work runner flanking iron path (bench approach, not salon Persian)
+			{"kind": "rug", "pos": [-1.85, 0.0, -0.4], "size": [1.15, 5.4], "yaw": 0.0,
+				"texture": "res://assets/rooms/textures/work_runner.jpg"},
+			{"kind": "rug", "pos": [1.9, 0.0, 0.3], "size": [1.1, 4.8], "yaw": 0.0,
+				"texture": "res://assets/rooms/textures/work_runner.jpg"},
 			# Loop 93: mid-floor densify (from_north empty path flanks)
 			{"kind": "crate", "pos": [-1.6, 0.0, 1.2], "scale": 0.7, "seed": 6},
 			{"kind": "crate", "pos": [1.7, 0.0, 1.4], "scale": 0.65, "seed": 7},
@@ -749,6 +754,8 @@ const ROOMS := {
 		"wainscot": TEX + "wainscot_drawing.jpg",
 		"floor_texture": TEX + "floor_conservatory.jpg",
 		"floor_color": Color(0.36, 0.42, 0.32),
+		# Loop 110: denser flagstones so grit/mortar survive bright glass light
+		"floor_uv_scale": 0.38,
 		"ceiling_color": Color(0.68, 0.78, 0.72),
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
@@ -847,6 +854,8 @@ const ROOMS := {
 		"wainscot_height": 2.45,
 		"floor_texture": TEX + "floor_kitchen.jpg",
 		"floor_color": Color(0.32, 0.24, 0.16),
+		# Loop 110: denser quarry tiles (grout + wear read at standing height)
+		"floor_uv_scale": 0.42,
 		"ceiling_color": Color(0.72, 0.66, 0.56),
 		# Loop 84: warm fill (range fire still carries orange) — less flat orange wash
 		"light_energy": 1.0,

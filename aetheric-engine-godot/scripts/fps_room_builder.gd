@@ -578,7 +578,9 @@ func _add_floor(width: float, depth: float, room: Dictionary) -> void:
 		var tex: Texture2D = _load_texture(floor_tex)
 		if tex:
 			mat.albedo_texture = tex
-			mat.uv1_scale = Vector3(width * 0.22, depth * 0.22, 1.0)
+			# Loop 110: optional denser tile repeat (kitchen/conservatory flag/quarry plates)
+			var uv_mul: float = float(room.get("floor_uv_scale", 0.22))
+			mat.uv1_scale = Vector3(width * uv_mul, depth * uv_mul, 1.0)
 			mat.roughness = 0.65
 		else:
 			mat.albedo_color = room.get("floor_color", Color(0.32, 0.22, 0.14))
