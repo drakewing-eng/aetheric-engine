@@ -103,12 +103,13 @@ const ROOMS := {
 				"mesh_bulk": "chair",
 			},
 			{"kind": "letter_stack", "pos": [3.2, 0.78, 0.55], "yaw": -15.0, "seed": 1},
-			# SW conversation: painted wing hero + mesh bulk (loop 134)
+			# SW conversation: painted wing hero + cross_planes (loop 142 — no green slab)
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.9, 0.0, 2.0],
 				"yaw": 40.0,
 				"texture": PROP_DIR + "cutout/hero_armchair.png",
+				"cross_planes": true,
 				"width": 1.15,
 				"height": 1.45,
 				"sink": 0.12,
@@ -656,12 +657,13 @@ const ROOMS := {
 				"mesh_bulk": "chair",
 			},
 			{"kind": "letter_stack", "pos": [2.1, 0.78, -1.75], "yaw": -20.0, "seed": 2},
-			# Armchair reading nook — painted green wing + bulk (loop 134)
+			# Armchair reading nook — cross_planes wing (loop 142: kill green slab tower)
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.0, 0.0, -0.6],
 				"yaw": 55.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_wing_green.png",
+				"cross_planes": true,
 				"width": 1.2,
 				"height": 1.5,
 				"sink": 0.12,

@@ -4026,33 +4026,27 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			# Loop 139: lower/narrower bulk — morning still showed green slab above crest
-			var ww: float = clampf(width * 0.5, 0.5, 0.7)
-			var fab: Color = Color(0.42, 0.48, 0.38) if bulk == "wing_green" else Color(0.42, 0.14, 0.14)
-			var fab_d: Color = fab.darkened(0.12)
-			# Seat mass deep behind card only
-			_add_box(root, Vector3(0, 0.4, -0.34), Vector3(ww, 0.14, 0.26), MAHOGANY_DARK, false, 0.45)
-			_add_box(root, Vector3(0, 0.5, -0.32), Vector3(ww * 0.85, 0.12, 0.22), fab, false, 0.9)
-			# Back mass capped below painted crest (y top ≈ 1.15, not 1.45)
-			_add_box(root, Vector3(0, 0.88, -0.42), Vector3(ww * 0.72, 0.58, 0.12), fab_d, false, 0.9)
-			_add_box(root, Vector3(0, 0.9, -0.36), Vector3(ww * 0.55, 0.48, 0.07), fab, false, 0.9)
-			# Slim side fill fully behind silhouette (no high wing boxes)
+			# Loop 142: SEAT-ONLY bulk — cross_planes carry silhouette (no green slab tower)
+			var ww: float = clampf(width * 0.48, 0.48, 0.68)
+			var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
+			# Deep seat cushion + frame only (fully behind card z≤-0.28)
+			_add_box(root, Vector3(0, 0.38, -0.36), Vector3(ww, 0.12, 0.24), MAHOGANY_DARK, false, 0.45)
+			_add_box(root, Vector3(0, 0.48, -0.34), Vector3(ww * 0.82, 0.1, 0.2), fab, false, 0.9)
+			# Tiny rear spine only (not a full back slab)
+			_add_box(root, Vector3(0, 0.72, -0.44), Vector3(ww * 0.35, 0.28, 0.08), fab.darkened(0.15), false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * ww * 0.28, 0.82, -0.38),
-					Vector3(0.08, 0.48, 0.14), fab_d, false, 0.88)
-				_add_box(root, Vector3(sx * ww * 0.24, 0.56, -0.3),
-					Vector3(0.08, 0.1, 0.18), fab, false, 0.88)
-				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.24), 0.028, 0.14, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.4), 0.026, 0.14, MAHOGANY, false)
+				_add_box(root, Vector3(sx * ww * 0.28, 0.52, -0.32),
+					Vector3(0.08, 0.1, 0.16), fab, false, 0.88)
+				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.26), 0.026, 0.14, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.4), 0.024, 0.14, MAHOGANY, false)
 		"chair":
-			# Loop 137: seat-only bulk when cross-planes carry the silhouette —
-			# no tall dark back slabs that stick out beside painted cards.
+			# Loop 137/142: seat-only bulk — warmer legs (not black L-junk on rugs)
 			var cw: float = clampf(width * 0.5, 0.38, 0.55)
 			_add_box(root, Vector3(0, 0.44, -0.3), Vector3(cw, 0.06, 0.26), MAHOGANY, false, 0.48)
 			_add_box(root, Vector3(0, 0.52, -0.28), Vector3(cw * 0.9, 0.1, 0.22), VELVET_GREEN, false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.2), 0.022, 0.36, MAHOGANY_DARK, false)
-				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.38), 0.02, 0.36, MAHOGANY_DARK, false)
+				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.22), 0.02, 0.34, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.38), 0.018, 0.34, MAHOGANY.darkened(0.08), false)
 			_add_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.7, 0.03, 0.03), MAHOGANY, false, 0.5)
 		_:
 			_add_box(root, Vector3(0, height * 0.35, -0.22),
