@@ -375,6 +375,13 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.08, door_h, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
 	# Solid backstop — blocks void; closed leaf also collides
 	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), Color(0.28, 0.18, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0), true)
+	# Loop 71: painted closed leaf face on backstop so recess never reads as empty closet
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth + 0.07), Vector3(door_w * 0.88, door_h * 0.9, 0.04), Color(0.34, 0.22, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0))
+	# Fielded panel lines
+	_add_portal_box(root, Vector3(0, door_h * 0.68, -depth + 0.09), Vector3(door_w * 0.55, door_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
+	_add_portal_box(root, Vector3(0, door_h * 0.32, -depth + 0.09), Vector3(door_w * 0.55, door_h * 0.28, 0.02), Color(0.3, 0.18, 0.1), wood_tex, Vector3(0.8, 1.0, 1.0))
+	# Brass knob suggestion
+	_add_portal_box(root, Vector3(door_w * 0.28, door_h * 0.48, -depth + 0.1), Vector3(0.04, 0.04, 0.04), Color(0.74, 0.58, 0.28), null, Vector3.ONE)
 	# Lintel
 	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.18, 0.08, depth + 0.05), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
 

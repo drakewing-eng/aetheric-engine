@@ -150,11 +150,28 @@ func _talk_to_npc(npc: Node3D) -> void:
 	dialogue.open(str(data.get("id", "")), str(data.get("name", "")), tex, str(data.get("intro", "")))
 
 func _go_through_door(door: Dictionary) -> void:
-	var spawn = door.get("spawn", [0, 0, 0])
-	# Always face *into* the room (toward origin from spawn), not back at the doorway.
-	# Godot yaw: 0 = look -Z, 90 = look -X, 180 = look +Z, -90 = look +X.
-	var yaw := _facing_into_room_yaw(spawn)
-	await _load_room(str(door["target"]), spawn, yaw)
+	## Closed leaf + E → direct room load + teleport. Never walk into portal void.
+	var spawn: Array = door.get("spawn", [0, 0, 0])
+	var sx := float(spawn[0]) if spawn.size() > 0 else 0.0
+	var sz := float(spawn[2]) if spawn.size() > 2 else 0.0
+	# Nudge spawn toward room centre so feet never land on threshold/void.
+	var nudged := _nudge_spawn_inward(sx, sz, 0.55)
+	# Prefer explicit spawn_yaw when present; else face into room from spawn.
+	var yaw: float
+	if door.has("spawn_yaw"):
+		yaw = float(door["spawn_yaw"])
+	else:
+		yaw = _facing_into_room_yaw([nudged.x, 0.0, nudged.z])
+	await _load_room(str(door["target"]), [nudged.x, 0.0, nudged.z], yaw)
+
+
+func _nudge_spawn_inward(sx: float, sz: float, amount: float) -> Vector2:
+	## Pull spawn slightly toward origin on XZ (room centre).
+	var v := Vector2(sx, sz)
+	if v.length() < 0.2:
+		return Vector2(0.0, 0.0)
+	var inward := -v.normalized() * amount
+	return v + inward
 
 
 func _facing_into_room_yaw(spawn: Array) -> float:

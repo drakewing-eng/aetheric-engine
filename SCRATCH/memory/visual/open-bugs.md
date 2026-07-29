@@ -50,3 +50,8 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - Doors: wood tone uniqueness by seed.  
 - Drawing letters + tea tray added.  
 - §1 Door transition: still closed leaf + E teleport (structural OK); human playtest residual.  
+
+## Status update 2026-07-28 (loop 71)
+
+- §1 Door: teleport forces y=0 + velocity clear; spawn nudged toward room centre; portal recess gets painted closed-leaf + panels + knob (less “closet void”). Still wants human E playtest.  
+- §3 Uniqueness: copper pots 5 styles; crates open/stencil/rope; wall sconces 3 arm styles by pos seed; oil lamps 3 bases.  

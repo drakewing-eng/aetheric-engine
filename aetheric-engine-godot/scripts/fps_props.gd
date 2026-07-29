@@ -953,44 +953,77 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 
 
 static func _make_wall_sconce(prop: Dictionary) -> Node3D:
-	## Brass wall light — period sconce with warm omni.
+	## Brass wall light — seed forks arm / gas-jet / candle plate (uniqueness).
 	var root := Node3D.new()
 	root.name = "WallSconce"
 	var y: float = float(prop.get("height", 2.1))
-	_add_box(root, Vector3(0, y, 0), Vector3(0.08, 0.12, 0.06), BRASS, false, 0.3)
-	_add_box(root, Vector3(0, y, 0.08), Vector3(0.04, 0.04, 0.12), BRASS.darkened(0.05), false, 0.3)
-	_add_cylinder(root, Vector3(0, y - 0.05, 0.16), 0.05, 0.1, Color(0.9, 0.85, 0.7), false, 0.45)
+	var ppos: Array = prop.get("pos", [0, 0, 0])
+	var seed0: int = int(prop.get("seed", int(absf(
+		y * 10.0 + float(prop.get("yaw", 0.0)) + float(ppos[0]) * 3.0 + float(ppos[2]) * 5.0
+	))))
+	var style := seed0 % 3
+	_add_box(root, Vector3(0, y, 0), Vector3(0.08, 0.14, 0.05), BRASS.darkened(0.05 * float(style)), false, 0.3)
+	if style == 0:
+		# Straight arm + frosted cup
+		_add_box(root, Vector3(0, y, 0.1), Vector3(0.035, 0.035, 0.14), BRASS, false, 0.3)
+		_add_cylinder(root, Vector3(0, y - 0.04, 0.18), 0.055, 0.1, Color(0.9, 0.86, 0.7), false, 0.45)
+	elif style == 1:
+		# Curved double-scroll arm + glass globe
+		_add_box(root, Vector3(0.04, y - 0.02, 0.08), Vector3(0.1, 0.03, 0.03), BRASS, false, 0.3)
+		_add_box(root, Vector3(0.08, y - 0.06, 0.12), Vector3(0.03, 0.1, 0.03), BRASS.darkened(0.05), false, 0.3)
+		_add_sphere_blob(root, Vector3(0.08, y - 0.14, 0.16), 0.06, Color(0.92, 0.9, 0.78))
+	else:
+		# Candle plate sconce
+		_add_box(root, Vector3(0, y - 0.02, 0.1), Vector3(0.03, 0.03, 0.12), BRASS, false, 0.3)
+		_add_cylinder(root, Vector3(0, y - 0.06, 0.16), 0.07, 0.02, BRASS.lightened(0.05), false, 0.28, true)
+		_add_cylinder(root, Vector3(0, y + 0.02, 0.16), 0.018, 0.14, CANDLE, false, 0.55)
+		_add_sphere_blob(root, Vector3(0, y + 0.1, 0.16), 0.025, Color(1.0, 0.78, 0.35))
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.55
-	lamp.omni_range = 3.5
-	lamp.position = Vector3(0, y - 0.05, 0.2)
+	lamp.light_energy = 0.5 + float(style) * 0.06
+	lamp.omni_range = 3.2 + float(style) * 0.3
+	lamp.position = Vector3(0.0 if style != 1 else 0.08, y - 0.06, 0.18)
 	root.add_child(lamp)
 	return root
 
 
 static func _make_oil_lamp(prop: Dictionary) -> Node3D:
-	## Freestanding Argand / table oil lamp — novel light hero (not wall sconce only).
+	## Freestanding Argand / table oil lamp — seed forks base + chimney.
 	## Solid frosted chimney: alpha glass reads black under metal materials.
 	var root := Node3D.new()
 	root.name = "OilLamp"
 	var h: float = float(prop.get("height", 1.05))
-	# Pedestal base
-	_add_cylinder(root, Vector3(0, 0.04, 0), 0.12, 0.08, MAHOGANY_DARK, true, 0.5)
-	_add_cylinder(root, Vector3(0, 0.12, 0), 0.08, 0.1, MAHOGANY, true, 0.48)
-	# Brass column + oil font
-	_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.035, h * 0.4, BRASS, true, 0.3, true)
-	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.09, 0.1, BRASS.darkened(0.05), false, 0.28, true)
-	_add_cylinder(root, Vector3(0, h * 0.62, 0), 0.07, 0.06, BRASS.lightened(0.05), false, 0.28, true)
-	# Frosted glass chimney (solid cream, not transparent void)
+	var ppos: Array = prop.get("pos", [0, 0, 0])
+	var seed0: int = int(prop.get("seed", int(absf(h * 17.0 + float(ppos[0]) * 7.0 + float(ppos[2]) * 11.0))))
+	var style := seed0 % 3
+	if style == 0:
+		# Mahogany pedestal Argand
+		_add_cylinder(root, Vector3(0, 0.04, 0), 0.12, 0.08, MAHOGANY_DARK, true, 0.5)
+		_add_cylinder(root, Vector3(0, 0.12, 0), 0.08, 0.1, MAHOGANY, true, 0.48)
+		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.035, h * 0.4, BRASS, true, 0.3, true)
+	elif style == 1:
+		# Brass tripod floor lamp
+		_add_cylinder(root, Vector3(0, 0.05, 0), 0.1, 0.06, BRASS.darkened(0.1), true, 0.32, true)
+		for a in [0.0, 120.0, 240.0]:
+			var rad := deg_to_rad(a)
+			_add_box(root, Vector3(cos(rad) * 0.1, 0.03, sin(rad) * 0.1), Vector3(0.14, 0.03, 0.04), BRASS, true, 0.32)
+		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.03, h * 0.45, BRASS.lightened(0.05), true, 0.28, true)
+	else:
+		# Ebony square base + copper font
+		_add_box(root, Vector3(0, 0.04, 0), Vector3(0.18, 0.08, 0.18), Color(0.1, 0.08, 0.07), true, 0.55)
+		_add_box(root, Vector3(0, 0.12, 0), Vector3(0.12, 0.06, 0.12), Color(0.14, 0.1, 0.08), true, 0.5)
+		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.032, h * 0.4, COPPER, true, 0.35, true)
+	# Oil font + chimney (shared)
+	var font_c := BRASS.darkened(0.05) if style != 2 else COPPER.darkened(0.05)
+	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.09, 0.1, font_c, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, h * 0.62, 0), 0.07, 0.06, font_c.lightened(0.08), false, 0.28, true)
 	_add_cylinder(root, Vector3(0, h * 0.78, 0), 0.045, h * 0.28, Color(0.9, 0.92, 0.86), false, 0.35)
 	_add_cylinder(root, Vector3(0, h * 0.95, 0), 0.03, 0.04, BRASS, false, 0.3, true)
-	# Warm flame core
 	_add_sphere_blob(root, Vector3(0, h * 0.7, 0), 0.03, Color(1.0, 0.82, 0.4))
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.82, 0.5)
-	light.light_energy = 0.75
-	light.omni_range = 4.0
+	light.light_energy = 0.7 + float(style) * 0.08
+	light.omni_range = 3.8 + float(style) * 0.25
 	light.position = Vector3(0, h * 0.72, 0)
 	root.add_child(light)
 	_add_contact_shadow(root, 0.14, 0.14)
@@ -1088,15 +1121,15 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
-	## seed picks kettle / wide pan / tall stockpot so still-lifes aren't clones.
+	## seed: kettle / pan / stockpot / jug / coal scuttle — no clone still-lifes.
 	var root := Node3D.new()
 	root.name = "CopperPot"
 	var scale: float = prop.get("scale", 1.0)
 	var seed0: int = int(prop.get("seed", 0))
-	var style := seed0 % 3
-	var col := COPPER if style != 2 else COPPER.darkened(0.08)
+	var style := seed0 % 5
+	var col := COPPER if style % 2 == 0 else COPPER.darkened(0.08)
 	if style == 0:
-		# Classic kettle
+		# Classic kettle + bail handle
 		_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, col, true, 0.35, true)
 		_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, col.lightened(0.1), false, 0.3, true)
 		_add_cylinder(root, Vector3(0, 0.25 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.18, 0.1, 0.06), false)
@@ -1104,18 +1137,30 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(-0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), col, false, 0.35)
 		_add_box(root, Vector3(0, 0.3 * scale, 0), Vector3(0.34 * scale, 0.02 * scale, 0.02 * scale), col.darkened(0.05), false, 0.35)
 	elif style == 1:
-		# Wide shallow pan
+		# Wide shallow pan + long handle
 		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.18 * scale, 0.12 * scale, col.lightened(0.05), true, 0.35, true)
 		_add_cylinder(root, Vector3(0, 0.15 * scale, 0), 0.19 * scale, 0.025 * scale, col, false, 0.3, true)
-		_add_box(root, Vector3(0.2 * scale, 0.1 * scale, 0), Vector3(0.12 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.2 * scale, 0.1 * scale, 0), Vector3(0.12 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
-	else:
+		_add_box(root, Vector3(0.22 * scale, 0.1 * scale, 0), Vector3(0.16 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.16 * scale, 0.1 * scale, 0), Vector3(0.08 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
+	elif style == 2:
 		# Tall stockpot with lid knob
 		_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.3 * scale, col.darkened(0.05), true, 0.35, true)
 		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.125 * scale, 0.03 * scale, col, false, 0.3, true)
 		_add_cylinder(root, Vector3(0, 0.36 * scale, 0), 0.04 * scale, 0.05 * scale, BRASS, false, 0.3, true)
 		_add_box(root, Vector3(0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
 		_add_box(root, Vector3(-0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
+	elif style == 3:
+		# Water jug / ewer with spout
+		_add_cylinder(root, Vector3(0, 0.14 * scale, 0), 0.1 * scale, 0.26 * scale, col.lightened(0.04), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.28 * scale, 0), 0.06 * scale, 0.06 * scale, col, false, 0.32, true)
+		_add_box(root, Vector3(0.12 * scale, 0.2 * scale, 0), Vector3(0.1 * scale, 0.04 * scale, 0.05 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.1 * scale, 0.18 * scale, 0), Vector3(0.04 * scale, 0.12 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
+	else:
+		# Coal scuttle / bucket with hoop
+		_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.15 * scale, 0.22 * scale, col.darkened(0.1), true, 0.4, true)
+		_add_cylinder(root, Vector3(0, 0.22 * scale, 0), 0.16 * scale, 0.03 * scale, IRON.lightened(0.1), false, 0.45)
+		_add_box(root, Vector3(0, 0.28 * scale, 0), Vector3(0.02 * scale, 0.12 * scale, 0.28 * scale), IRON, false, 0.4)
+		_add_box(root, Vector3(0.1 * scale, 0.14 * scale, 0.1 * scale), Vector3(0.06 * scale, 0.04 * scale, 0.06 * scale), Color(0.12, 0.1, 0.1), false, 0.8)
 	_add_contact_shadow(root, 0.18 * scale, 0.18 * scale)
 	return root
 
@@ -1225,24 +1270,44 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_crate(prop: Dictionary) -> Node3D:
+	## Packing crates: closed / open-lid / stenciled / rope-handled by seed.
 	var root := Node3D.new()
 	root.name = "Crate"
 	var s: float = prop.get("scale", 1.0)
 	var seed0: int = int(prop.get("seed", 0))
-	# Pine packing crates (not furniture mahogany)
 	var wood := Color(0.62, 0.48, 0.28) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.24)
+	if seed0 % 5 == 4:
+		wood = Color(0.48, 0.36, 0.22)  # darker shipping pine
 	var h: float = 0.38 + float(seed0 % 3) * 0.04
+	var open_lid := seed0 % 4 == 1
 	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.7)
-	_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.65)
-	# Batten straps (orientation varies by seed)
+	if open_lid:
+		# Lid hinged ajar — shows packing straw
+		_add_box(root, Vector3(0.0, h * s + 0.04 * s, -0.18 * s), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.08), false, 0.65)
+		_add_box(root, Vector3(0.0, h * s - 0.02 * s, 0.0), Vector3(0.4 * s, 0.04 * s, 0.3 * s), Color(0.7, 0.62, 0.35), false, 0.85)
+	else:
+		_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.65)
+	# Batten straps
 	if seed0 % 2 == 0:
 		_add_box(root, Vector3(0, h * 0.5 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
 		_add_box(root, Vector3(0, h * 0.5 * s, -0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
 	else:
 		_add_box(root, Vector3(0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
 		_add_box(root, Vector3(-0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
-	if seed0 % 3 == 0:
-		_add_box(root, Vector3(0, h * 0.55 * s, 0.24 * s), Vector3(0.08 * s, 0.04 * s, 0.02 * s), IRON, false, 0.4)
+	# Iron hasp / rope handles / stencil plate by seed
+	match seed0 % 4:
+		0:
+			_add_box(root, Vector3(0, h * 0.55 * s, 0.24 * s), Vector3(0.08 * s, 0.04 * s, 0.02 * s), IRON, false, 0.4)
+		1:
+			_add_cylinder(root, Vector3(0.28 * s, h * 0.55 * s, 0), 0.02 * s, 0.12 * s, Color(0.45, 0.35, 0.2), false, 0.7)
+			_add_cylinder(root, Vector3(-0.28 * s, h * 0.55 * s, 0), 0.02 * s, 0.12 * s, Color(0.45, 0.35, 0.2), false, 0.7)
+		2:
+			# Stencil plate "SULPHUR / PARTS"
+			_add_box(root, Vector3(0, h * 0.55 * s, 0.23 * s), Vector3(0.22 * s, 0.1 * s, 0.015 * s), PAPER.darkened(0.15), false, 0.75)
+			_add_box(root, Vector3(0, h * 0.58 * s, 0.24 * s), Vector3(0.16 * s, 0.02 * s, 0.01 * s), INK.lightened(0.3), false, 0.9)
+		_:
+			_add_box(root, Vector3(0, h * 0.35 * s, 0.23 * s), Vector3(0.5 * s, 0.03 * s, 0.02 * s), IRON.darkened(0.1), false, 0.4)
+			_add_box(root, Vector3(0, h * 0.65 * s, 0.23 * s), Vector3(0.5 * s, 0.03 * s, 0.02 * s), IRON.darkened(0.1), false, 0.4)
 	_add_contact_shadow(root, 0.3 * s, 0.25 * s)
 	return root
 

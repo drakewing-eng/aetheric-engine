@@ -39,10 +39,17 @@ func set_movement_enabled(enabled: bool) -> void:
 		velocity = Vector3.ZERO
 
 func teleport_to(pos: Vector3, yaw_deg: float) -> void:
-	global_position = pos
+	## Always land on the floor plane (y=0). Never inherit portal/void Y.
+	## Clear velocity so post-teleport never carries fall speed.
+	global_position = Vector3(pos.x, 0.0, pos.z)
 	head.rotation.y = deg_to_rad(yaw_deg)
 	camera.rotation.x = FIXED_PITCH if not ALLOW_PITCH else 0.0
 	velocity = Vector3.ZERO
+	# Snap once so CharacterBody settles on floor collision after room rebuild
+	if is_inside_tree():
+		move_and_slide()
+		global_position.y = 0.0
+		velocity = Vector3.ZERO
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and _mouse_captured and _movement_enabled:
