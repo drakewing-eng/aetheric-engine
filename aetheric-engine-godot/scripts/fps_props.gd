@@ -335,58 +335,84 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair (loop 113/124): solid upholstered mass + wing rolls; not pipe cylinders.
+	## Wing chair (loop 129): continuous upholstered mass — no stacked cube blocks,
+	## no bright white shoulder orbs. Soft cylinder/sphere volumes for side walk-around.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	var fabric_d := fabric.darkened(0.1)
-	var fabric_dd := fabric.darkened(0.18)
-	# Wood seat rail
-	_add_box(root, Vector3(0, 0.3, 0.06), Vector3(0.92, 0.1, 0.86), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.36, 0.06), Vector3(0.94, 0.04, 0.88), MAHOGANY, false, 0.45)
-	# Plush seat cushions
-	_add_box(root, Vector3(0, 0.46, 0.1), Vector3(0.82, 0.14, 0.72), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.72, 0.07, 0.62), fabric_d, false, 0.92)
-	_add_cylinder(root, Vector3(0, 0.52, 0.1), 0.34, 0.1, fabric_d, false, 0.9)
-	for bx in [-0.18, 0.0, 0.18]:
-		for bz in [-0.08, 0.1]:
-			_add_cylinder(root, Vector3(bx, 0.59, bz), 0.016, 0.018, fabric_dd, false, 0.95)
-	# Multi-layer high back (depth for side read)
-	_add_box(root, Vector3(0, 0.95, -0.28), Vector3(0.78, 0.9, 0.22), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.98, -0.18), Vector3(0.7, 0.82, 0.1), fabric_d, false, 0.9)
-	_add_box(root, Vector3(0, 1.35, -0.26), Vector3(0.7, 0.14, 0.18), fabric_d, false, 0.9)
-	_add_cylinder(root, Vector3(0, 1.15, -0.16), 0.28, 0.55, fabric, false, 0.9)
-	_add_box(root, Vector3(0, 1.46, -0.24), Vector3(0.62, 0.04, 0.1), MAHOGANY, false, 0.45)
-	for by in [0.85, 1.05, 1.22]:
-		for bx in [-0.16, 0.0, 0.16]:
-			_add_cylinder(root, Vector3(bx, by, -0.12), 0.014, 0.016, fabric_dd, false, 0.95)
+	var fabric_d := fabric.darkened(0.08)
+	var fabric_dd := fabric.darkened(0.16)
+	var fabric_l := Color(
+		clampf(fabric.r + 0.04, 0.0, 1.0),
+		clampf(fabric.g + 0.04, 0.0, 1.0),
+		clampf(fabric.b + 0.03, 0.0, 1.0)
+	)
+	# Wood seat rail + skirt (grounds the mass)
+	_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.9, 0.1, 0.84), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.34, 0.06), Vector3(0.92, 0.04, 0.86), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 0.22, 0.06), Vector3(0.86, 0.08, 0.78), MAHOGANY_DARK, false, 0.48)
+	# Single deep seat cushion (not stacked thin slabs)
+	_add_box(root, Vector3(0, 0.48, 0.1), Vector3(0.78, 0.2, 0.7), fabric, true, 0.9)
+	_add_cylinder(root, Vector3(0, 0.56, 0.12), 0.32, 0.12, fabric_d, false, 0.9)
+	_add_sphere_blob(root, Vector3(0, 0.58, 0.08), 0.22, fabric_d)
+	# Subtle button tufts (dark fabric only — never bright white)
+	for bx in [-0.16, 0.0, 0.16]:
+		for bz in [-0.06, 0.12]:
+			_add_cylinder(root, Vector3(bx, 0.6, bz), 0.014, 0.012, fabric_dd, false, 0.95)
+	# Continuous high back: thick core + rounded face (one mass, not shelf stack)
+	_add_box(root, Vector3(0, 1.0, -0.26), Vector3(0.76, 1.0, 0.26), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.02, -0.14), Vector3(0.68, 0.92, 0.12), fabric_d, false, 0.9)
+	_add_cylinder(root, Vector3(0, 1.05, -0.12), 0.3, 0.72, fabric, false, 0.9)
+	# Soft crown roll (rounded box + spheres — not flat plank cap)
+	_add_box(root, Vector3(0, 1.48, -0.18), Vector3(0.68, 0.14, 0.2), fabric_d, false, 0.88)
+	_add_sphere_blob(root, Vector3(0, 1.5, -0.16), 0.14, fabric_d)
+	_add_sphere_blob(root, Vector3(-0.22, 1.5, -0.16), 0.1, fabric_d)
+	_add_sphere_blob(root, Vector3(0.22, 1.5, -0.16), 0.1, fabric_d)
+	_add_box(root, Vector3(0, 1.54, -0.24), Vector3(0.52, 0.03, 0.08), MAHOGANY, false, 0.45)
+	# Back tufts
+	for by in [0.9, 1.1, 1.28]:
+		for bx in [-0.14, 0.0, 0.14]:
+			_add_cylinder(root, Vector3(bx, by, -0.08), 0.012, 0.014, fabric_dd, false, 0.95)
+	# Side uprights (wood show through at back edge only)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 0.85, -0.28), Vector3(0.07, 0.9, 0.12), MAHOGANY_DARK, true, 0.45)
-	# Wings — thick rolls + soft sphere shoulders (not free-standing pipes)
+		_add_box(root, Vector3(sx * 0.38, 0.9, -0.3), Vector3(0.06, 0.95, 0.1), MAHOGANY_DARK, true, 0.45)
+	# Wings — continuous rolled mass from crown to arm (no pipe gaps)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.42, 1.12, -0.12), Vector3(0.16, 0.55, 0.38), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.46, 1.18, 0.0), 0.1, 0.48, fabric_d, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.44, 1.32, -0.08), 0.09, 0.28, fabric, false, 0.9)
-		_add_sphere_blob(root, Vector3(sx * 0.46, 1.38, 0.02), 0.1, fabric.lightened(0.04))
-		_add_box(root, Vector3(sx * 0.52, 1.15, -0.05), Vector3(0.025, 0.45, 0.28), fabric_dd, false, 0.9)
-	# Arms — open under-arm void
+		# Main wing plate forward of back
+		_add_box(root, Vector3(sx * 0.4, 1.1, -0.05), Vector3(0.18, 0.62, 0.42), fabric, true, 0.88)
+		# Vertical roll (outer edge)
+		_add_cylinder(root, Vector3(sx * 0.48, 1.15, 0.02), 0.11, 0.55, fabric_d, false, 0.88)
+		# Forward wing curve
+		_add_cylinder(root, Vector3(sx * 0.42, 1.2, 0.12), 0.1, 0.4, fabric, false, 0.88)
+		# Soft shoulder — same fabric family (never lightened to white)
+		_add_sphere_blob(root, Vector3(sx * 0.46, 1.4, 0.04), 0.12, fabric_d)
+		_add_sphere_blob(root, Vector3(sx * 0.44, 1.32, 0.14), 0.09, fabric)
+		# Inner wing fill so side view is solid
+		_add_box(root, Vector3(sx * 0.34, 1.15, -0.02), Vector3(0.1, 0.5, 0.32), fabric_l, false, 0.9)
+	# Arms — thick padded scrolls with open under-arm
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.42, 0.68, 0.1), Vector3(0.16, 0.12, 0.58), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.42, 0.74, 0.14), 0.09, 0.5, fabric_d, false, 0.88)
-		_add_sphere_blob(root, Vector3(sx * 0.42, 0.76, 0.38), 0.08, fabric.lightened(0.05))
-		_add_cylinder(root, Vector3(sx * 0.4, 0.54, 0.34), 0.06, 0.16, MAHOGANY, false, 0.45)
-		_add_box(root, Vector3(sx * 0.42, 0.48, 0.3), Vector3(0.055, 0.3, 0.055), MAHOGANY_DARK, true, 0.45)
-		_add_box(root, Vector3(sx * 0.42, 0.72, -0.12), Vector3(0.12, 0.14, 0.22), fabric_d, false, 0.88)
+		_add_box(root, Vector3(sx * 0.4, 0.66, 0.12), Vector3(0.18, 0.14, 0.56), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.72, 0.16), 0.1, 0.48, fabric_d, false, 0.88)
+		# Arm front scroll — fabric, not white ball
+		_add_sphere_blob(root, Vector3(sx * 0.4, 0.74, 0.4), 0.09, fabric_d)
+		_add_sphere_blob(root, Vector3(sx * 0.4, 0.7, 0.32), 0.07, fabric)
+		# Arm support + rear join to wing
+		_add_cylinder(root, Vector3(sx * 0.4, 0.52, 0.32), 0.055, 0.18, MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
+		_add_box(root, Vector3(sx * 0.4, 0.78, -0.1), Vector3(0.14, 0.2, 0.24), fabric_d, false, 0.88)
+	# Cabriole-ish legs + stretchers
 	for sx in [-1.0, 1.0]:
 		_add_cylinder(root, Vector3(sx * 0.34, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(sx * 0.34, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
 		_add_cylinder(root, Vector3(sx * 0.32, 0.14, -0.28), 0.038, 0.26, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(sx * 0.32, 0.02, -0.28), 0.05, 0.04, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.22, 0.35), Vector3(0.75, 0.06, 0.06), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(0, 0.22, -0.28), Vector3(0.7, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
-	_add_contact_shadow(root, 0.7, 0.64)
+	_add_box(root, Vector3(0, 0.2, 0.34), Vector3(0.72, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(0, 0.2, -0.28), Vector3(0.68, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(0.34, 0.2, 0.02), Vector3(0.04, 0.04, 0.55), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(-0.34, 0.2, 0.02), Vector3(0.04, 0.04, 0.55), MAHOGANY_DARK, false, 0.42)
+	_add_contact_shadow(root, 0.72, 0.66)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
