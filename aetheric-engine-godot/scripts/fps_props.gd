@@ -1562,8 +1562,8 @@ static func _make_chalk_board(_prop: Dictionary) -> Node3D:
 # ─── Conservatory / hall ─────────────────────────────────────────────────────
 
 static func _make_plant(prop: Dictionary) -> Node3D:
-	## Prefer painted plant card when texture actually loads; else mesh canopy.
-	## Never ship a solid brown quad (billboard fallback without texture).
+	## Painted plant card (loop 74 assets) + mesh frond bulk for side volume.
+	## Card includes pot → no mesh_pot (avoids double terracotta).
 	var tex_path: String = prop.get("texture", "")
 	if tex_path != "":
 		var tex := _load_tex(tex_path)
@@ -1574,10 +1574,9 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["width"] = prop.get("width", 0.9 * float(prop.get("scale", 1.0)))
 			bp["height"] = prop.get("height", 1.4 * float(prop.get("scale", 1.0)))
 			bp["solid"] = true
-			# FIXED_Y only — cross_planes doubled the pot silhouette.
+			# FIXED_Y billboard faces camera; mesh fronds give side mass (no cross card pot)
 			bp["face_camera"] = true
 			bp["cross_planes"] = false
-			# Honour kind/size variety (do not clamp every plant to same 1.1m box)
 			var sc: float = float(prop.get("scale", 1.0))
 			var ph: float = float(bp.get("height", 1.1 * sc))
 			var pw: float = float(bp.get("width", 0.9 * sc))
@@ -1585,20 +1584,16 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			pw = clampf(pw, 0.4, 1.2)
 			bp["height"] = ph
 			bp["width"] = pw
-			bp["sink"] = clampf(0.18 + (1.1 - ph) * 0.05, 0.12, 0.32)
-			bp["mesh_pot"] = true  # terracotta grounds feet; stops float
-			bp["col_size"] = [pw * 0.55, ph * 0.7, pw * 0.55]
+			# Light sink — new assets are pot-to-crown, less empty padding
+			bp["sink"] = clampf(0.06 + (1.2 - ph) * 0.04, 0.04, 0.18)
+			bp["mesh_pot"] = false
+			bp["col_size"] = [pw * 0.5, ph * 0.75, pw * 0.5]
 			var root_plant := _make_billboard_prop(bp)
-			_add_contact_shadow(root_plant, pw * 0.45, pw * 0.35)
-			# Subtle flat leaves for side volume (small, dark — not obvious cards)
-			var leaf_h := ph * 0.55
-			var leaf_a := Color(0.16, 0.34, 0.1)
-			for i in 3:
-				var ang := float(i) * 2.1
-				var lx := cos(ang) * 0.1 * pw
-				var lz := sin(ang) * 0.1 * pw
-				_add_box(root_plant, Vector3(lx, leaf_h + float(i) * 0.06, lz), Vector3(0.1 * pw, 0.015, 0.12 * pw), leaf_a, false, 0.92)
+			_add_contact_shadow(root_plant, pw * 0.42, pw * 0.35)
+			# Loop 74: denser mesh frond bulk ABOVE pot (~0.35*h) for walk-around sides
+			_add_plant_mesh_fronds(root_plant, pw, ph, tex_path.find("fern") >= 0, int(prop.get("seed", 0)))
 			return root_plant
+	# Fallback full mesh plant
 	var root := Node3D.new()
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)
@@ -1607,13 +1602,11 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	var leaf_b := Color(0.18, 0.36, 0.14)
 	var leaf_c := Color(0.32, 0.5, 0.24)
 	var stem_col := Color(0.2, 0.3, 0.12)
-	# Terracotta pot + soil
 	_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.2 * scale, 0.34 * scale, CLAY, true, 0.88)
 	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.1), false, 0.88)
 	_add_cylinder(root, Vector3(0, 0.37 * scale, 0), 0.17 * scale, 0.04 * scale, Color(0.16, 0.1, 0.06), false, 0.9)
 	var stem_h := 0.42 * scale if tall else 0.22 * scale
 	_add_cylinder(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, stem_col, false, 0.9)
-	# Bush canopy: layered horizontal discs + small spheres (no look_at pinwheels)
 	var crown_y := 0.42 * scale + stem_h
 	var layers := 4 if tall else 3
 	for li in layers:
@@ -1626,6 +1619,56 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	_add_sphere_blob(root, Vector3(0, crown_y + float(layers) * 0.09 * scale, 0), 0.1 * scale, leaf_c)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
+
+
+static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
+	## Side-volume foliage mass that does not duplicate the pot card.
+	## Stems + fronds sit mid/upper so edge-on views aren't paper-thin.
+	var pot_top := ph * 0.32
+	var crown := ph * 0.78
+	var leaf_a := Color(0.18, 0.38, 0.12)
+	var leaf_b := Color(0.14, 0.32, 0.1)
+	var leaf_c := Color(0.22, 0.42, 0.14)
+	var stem_c := Color(0.28, 0.22, 0.1)
+	var n_stems := 5 if is_fern else 4
+	for i in n_stems:
+		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.35
+		var r := pw * (0.08 + float(i % 3) * 0.03)
+		var sx := cos(ang) * r
+		var sz := sin(ang) * r
+		var sh := (crown - pot_top) * (0.55 + float((i + seed0) % 3) * 0.12)
+		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.012 * pw + 0.008, sh, stem_c, false, 0.85)
+		# Frond planes / lobes at tip — radial so any yaw has green mass
+		var tip_y := pot_top + sh
+		if is_fern:
+			for j in 3:
+				var fang := ang + float(j - 1) * 0.45
+				var fl := pw * (0.18 + float(j) * 0.04)
+				_add_box(
+					root,
+					Vector3(sx + cos(fang) * fl * 0.35, tip_y - float(j) * 0.04 * ph, sz + sin(fang) * fl * 0.35),
+					Vector3(0.04 * pw, 0.02, fl),
+					leaf_a if j % 2 == 0 else leaf_b,
+					false,
+					0.9
+				)
+		else:
+			# Palm: fan blades
+			for j in 4:
+				var pang := ang + float(j) * 0.35 - 0.5
+				var bl := pw * (0.2 + float(j % 2) * 0.06)
+				_add_box(
+					root,
+					Vector3(sx + cos(pang) * bl * 0.4, tip_y + 0.02 * ph, sz + sin(pang) * bl * 0.4),
+					Vector3(0.035 * pw, bl * 0.55, 0.03 * pw),
+					leaf_c if j % 2 == 0 else leaf_a,
+					false,
+					0.88
+				)
+	# Soft crown spheres (read as mass from distance)
+	_add_sphere_blob(root, Vector3(0, crown, 0), pw * 0.12, leaf_b)
+	_add_sphere_blob(root, Vector3(pw * 0.08, crown - 0.05 * ph, pw * 0.05), pw * 0.09, leaf_a)
+	_add_sphere_blob(root, Vector3(-pw * 0.07, crown - 0.04 * ph, -pw * 0.06), pw * 0.08, leaf_c)
 
 
 static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color: Color) -> void:

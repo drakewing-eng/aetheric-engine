@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cacb24up10x4r"
-path="res://.godot/imported/plant_fern.png-e4f6b54717f3d9b1a3c82dda2d57e959.ctex"
+uid="uid://gaw1dgcmjyuk"
+path="res://.godot/imported/plant_fern.png-8050fa9796526a5c43a45f55cab4121f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/props/plants/plant_fern.png"
-dest_files=["res://.godot/imported/plant_fern.png-e4f6b54717f3d9b1a3c82dda2d57e959.ctex"]
+source_file="res://assets/props/plants/_old/plant_fern.png"
+dest_files=["res://.godot/imported/plant_fern.png-8050fa9796526a5c43a45f55cab4121f.ctex"]
 
 [params]
 
