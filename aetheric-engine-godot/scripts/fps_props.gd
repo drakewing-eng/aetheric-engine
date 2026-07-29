@@ -2093,57 +2093,58 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 
 
 static func _make_copper_scrap(prop: Dictionary) -> Node3D:
-	## Rooke scrap heap — loop 120: wire spool / plate stack / tube bundle
-	## (never nested gold coin stacks).
+	## Rooke scrap heap — loop 120/140: wire spool / plate stack / tube bundle.
+	## Bright copper read at distance (not black Minecraft floor junk).
 	var root := Node3D.new()
 	root.name = "CopperScrap"
 	var s: float = float(prop.get("scale", 1.0))
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
+	var cu := COPPER.lightened(0.08)
+	var cu_d := COPPER.darkened(0.04)
+	var cu_hi := COPPER.lightened(0.16)
+	var iron_mid := Color(0.38, 0.38, 0.4)  # mid grey iron, not near-black
 	# Low wood tray / board under scrap
-	_add_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.58 * s, 0.05 * s, 0.42 * s), OAK.darkened(0.12), true, 0.65)
-	_add_box(root, Vector3(0, 0.055 * s, 0), Vector3(0.52 * s, 0.015 * s, 0.36 * s), OAK.lightened(0.05), false, 0.6)
+	_add_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.58 * s, 0.05 * s, 0.42 * s), OAK.darkened(0.08), true, 0.65)
+	_add_box(root, Vector3(0, 0.055 * s, 0), Vector3(0.52 * s, 0.015 * s, 0.36 * s), OAK.lightened(0.08), false, 0.6)
 	if style == 0:
-		# Wire spool on wood arbor: flange discs + wound barrel + loose end (not coin tower)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.14 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.08), false, 0.55)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.28 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.08), false, 0.55)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.09 * s, 0.12 * s, COPPER.darkened(0.05), false, 0.35, true)
-		# Winding ticks on barrel
+		# Wire spool on wood arbor: flange discs + wound barrel + loose end
+		_add_cylinder(root, Vector3(-0.06 * s, 0.14 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.05), false, 0.55)
+		_add_cylinder(root, Vector3(-0.06 * s, 0.28 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.05), false, 0.55)
+		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.09 * s, 0.12 * s, cu_d, false, 0.32, true)
 		for wi in 6:
 			var wa := float(wi) * TAU / 6.0
 			_add_box(root, Vector3(-0.06 * s + cos(wa) * 0.09 * s, 0.21 * s, sin(wa) * 0.09 * s),
-				Vector3(0.02 * s, 0.1 * s, 0.03 * s), COPPER.lightened(0.06), false, 0.32)
-		# Arbor axle + crank
-		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.02 * s, 0.2 * s, IRON.lightened(0.1), false, 0.4)
-		_add_box(root, Vector3(0.1 * s, 0.21 * s, 0.0), Vector3(0.08 * s, 0.025 * s, 0.025 * s), IRON, false, 0.4)
-		_add_box(root, Vector3(0.14 * s, 0.28 * s, 0.0), Vector3(0.025 * s, 0.12 * s, 0.025 * s), IRON, false, 0.4)
-		# Loose copper turnings + plate offcut beside spool
-		_add_box(root, Vector3(0.16 * s, 0.09 * s, -0.08 * s), Vector3(0.16 * s, 0.02 * s, 0.12 * s), COPPER.lightened(0.04), false, 0.35)
-		_add_cylinder(root, Vector3(0.18 * s, 0.1 * s, 0.1 * s), 0.015 * s, 0.22 * s, COPPER, false, 0.35, true)
-		_add_sphere_blob(root, Vector3(0.05 * s, 0.08 * s, 0.14 * s), 0.03 * s, COPPER.darkened(0.06))
+				Vector3(0.02 * s, 0.1 * s, 0.03 * s), cu_hi, false, 0.3)
+		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.02 * s, 0.2 * s, iron_mid, false, 0.45)
+		_add_box(root, Vector3(0.1 * s, 0.21 * s, 0.0), Vector3(0.08 * s, 0.025 * s, 0.025 * s), iron_mid, false, 0.45)
+		_add_box(root, Vector3(0.14 * s, 0.28 * s, 0.0), Vector3(0.025 * s, 0.12 * s, 0.025 * s), iron_mid.lightened(0.08), false, 0.45)
+		# Loose copper plate + tube (not dark blob)
+		_add_box(root, Vector3(0.16 * s, 0.09 * s, -0.08 * s), Vector3(0.16 * s, 0.02 * s, 0.12 * s), cu_hi, false, 0.3)
+		_add_cylinder(root, Vector3(0.18 * s, 0.1 * s, 0.1 * s), 0.015 * s, 0.22 * s, cu, false, 0.32, true)
+		_add_box(root, Vector3(0.05 * s, 0.08 * s, 0.14 * s), Vector3(0.06 * s, 0.04 * s, 0.05 * s), cu_d, false, 0.32)
 	elif style == 1:
 		# Flattened plate stack with edge lip + bent tube + iron clamp
 		for i in 4:
 			var py := (0.07 + float(i) * 0.028) * s
 			var pw := (0.3 - float(i) * 0.02) * s
-			_add_box(root, Vector3(-0.06 * s, py, 0.0), Vector3(pw, 0.018 * s, 0.24 * s), COPPER.darkened(float(i) * 0.04), false, 0.35)
-			_add_box(root, Vector3(-0.06 * s + pw * 0.45, py, 0.0), Vector3(0.015 * s, 0.03 * s, 0.22 * s), COPPER.lightened(0.05), false, 0.32)
-		_add_cylinder(root, Vector3(0.18 * s, 0.14 * s, 0.06 * s), 0.022 * s, 0.32 * s, COPPER.lightened(0.04), false, 0.35, true)
-		_add_box(root, Vector3(0.18 * s, 0.14 * s, 0.18 * s), Vector3(0.04 * s, 0.04 * s, 0.08 * s), COPPER.darkened(0.08), false, 0.35)
-		_add_cylinder(root, Vector3(0.1 * s, 0.12 * s, -0.12 * s), 0.018 * s, 0.2 * s, BRASS.darkened(0.08), false, 0.3, true)
-		_add_box(root, Vector3(0.0, 0.16 * s, 0.12 * s), Vector3(0.14 * s, 0.04 * s, 0.08 * s), IRON.lightened(0.1), false, 0.4)
+			_add_box(root, Vector3(-0.06 * s, py, 0.0), Vector3(pw, 0.018 * s, 0.24 * s), cu.darkened(float(i) * 0.03), false, 0.3)
+			_add_box(root, Vector3(-0.06 * s + pw * 0.45, py, 0.0), Vector3(0.015 * s, 0.03 * s, 0.22 * s), cu_hi, false, 0.28)
+		_add_cylinder(root, Vector3(0.18 * s, 0.14 * s, 0.06 * s), 0.022 * s, 0.32 * s, cu_hi, false, 0.3, true)
+		_add_box(root, Vector3(0.18 * s, 0.14 * s, 0.18 * s), Vector3(0.04 * s, 0.04 * s, 0.08 * s), cu_d, false, 0.3)
+		_add_cylinder(root, Vector3(0.1 * s, 0.12 * s, -0.12 * s), 0.018 * s, 0.2 * s, BRASS.lightened(0.05), false, 0.28, true)
+		_add_box(root, Vector3(0.0, 0.16 * s, 0.12 * s), Vector3(0.14 * s, 0.04 * s, 0.08 * s), iron_mid.lightened(0.05), false, 0.42)
 	else:
-		# Angled tube bundle + iron strap + scrap nugget (not upright coin stack)
+		# Angled tube bundle + strap + offcut (no dark sphere nugget)
 		for i in 5:
 			var ox := (-0.14 + float(i) * 0.07) * s
 			var oz := (-0.06 + float(i % 3) * 0.04) * s
-			_add_cylinder(root, Vector3(ox, 0.1 * s, oz), 0.018 * s, 0.36 * s, COPPER.darkened(float(i % 3) * 0.04), false, 0.35, true)
-		# Tilted tube across the pile
-		_add_cylinder(root, Vector3(0.05 * s, 0.16 * s, 0.02 * s), 0.02 * s, 0.28 * s, COPPER.lightened(0.05), false, 0.35, true)
-		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.38 * s, 0.03 * s, 0.06 * s), IRON, false, 0.4)
-		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.06 * s, 0.03 * s, 0.28 * s), IRON.darkened(0.05), false, 0.4)
-		_add_sphere_blob(root, Vector3(0.16 * s, 0.1 * s, 0.12 * s), 0.05 * s, COPPER.darkened(0.06))
-		_add_box(root, Vector3(-0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), BRASS.darkened(0.12), false, 0.3)
+			_add_cylinder(root, Vector3(ox, 0.1 * s, oz), 0.018 * s, 0.36 * s, cu.darkened(float(i % 3) * 0.03), false, 0.3, true)
+		_add_cylinder(root, Vector3(0.05 * s, 0.16 * s, 0.02 * s), 0.02 * s, 0.28 * s, cu_hi, false, 0.3, true)
+		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.38 * s, 0.03 * s, 0.06 * s), iron_mid, false, 0.42)
+		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.06 * s, 0.03 * s, 0.28 * s), iron_mid.lightened(0.06), false, 0.42)
+		_add_box(root, Vector3(0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.035 * s, 0.08 * s), cu_d, false, 0.3)
+		_add_box(root, Vector3(-0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), BRASS.lightened(0.04), false, 0.28)
 	_add_contact_shadow(root, 0.32 * s, 0.24 * s)
 	return root
 
@@ -2885,7 +2886,7 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			# Loop 74: denser mesh frond bulk ABOVE pot (~0.35*h) for walk-around sides
 			_add_plant_mesh_fronds(root_plant, pw, ph, tex_path.find("fern") >= 0, int(prop.get("seed", 0)))
 			return root_plant
-	# Fallback full mesh plant
+	# Fallback full mesh plant — loop 140: fronds only, no sphere crown (cactus)
 	var root := Node3D.new()
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)
@@ -2900,78 +2901,117 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 	var stem_h := 0.42 * scale if tall else 0.22 * scale
 	_add_cylinder(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, stem_col, false, 0.9)
 	var crown_y := 0.42 * scale + stem_h
-	var layers := 4 if tall else 3
-	for li in layers:
-		var ly := crown_y + float(li) * 0.09 * scale
-		var lr := (0.22 - float(li) * 0.03) * scale
-		_add_cylinder(root, Vector3(0, ly, 0), lr, 0.05 * scale, leaf_a if li % 2 == 0 else leaf_b, false, 0.92)
-		_add_sphere_blob(root, Vector3(lr * 0.4, ly + 0.02 * scale, 0), lr * 0.45, leaf_c)
-		_add_sphere_blob(root, Vector3(-lr * 0.35, ly, lr * 0.3), lr * 0.4, leaf_a)
-		_add_sphere_blob(root, Vector3(0.05 * scale, ly + 0.03 * scale, -lr * 0.35), lr * 0.38, leaf_b)
-	_add_sphere_blob(root, Vector3(0, crown_y + float(layers) * 0.09 * scale, 0), 0.1 * scale, leaf_c)
+	var n_f := 8 if tall else 6
+	for i in n_f:
+		var ang := float(i) * TAU / float(n_f)
+		var bl := (0.28 if tall else 0.2) * scale
+		var tip := Vector3(cos(ang) * bl * 0.55, crown_y + 0.08 * scale, sin(ang) * bl * 0.55)
+		_add_box(root, tip, Vector3(bl, 0.02 * scale, 0.04 * scale), leaf_a if i % 2 == 0 else leaf_b, false, 0.92)
+		_add_box(
+			root,
+			Vector3(cos(ang) * bl * 0.3, crown_y + 0.02 * scale, sin(ang) * bl * 0.3),
+			Vector3(0.03 * scale, bl * 0.7, 0.025 * scale),
+			leaf_c if i % 2 == 0 else leaf_a,
+			false,
+			0.9
+		)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
 
 
 static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
-	## Loop 128: denser radial fronds + soft canopy so extreme side views aren't paper-thin.
-	var pot_top := ph * 0.32
-	var crown := ph * 0.82
+	## Loop 140: frond-only side volume — NO sphere crowns (cactus/mushroom read).
+	## Flat ribbon leaves + thin stems for walk-around mass without ball tops.
+	var pot_top := ph * 0.30
+	var crown := ph * 0.78
 	var leaf_a := Color(0.22, 0.42, 0.16)
-	var leaf_b := Color(0.18, 0.38, 0.14)
+	var leaf_b := Color(0.16, 0.36, 0.12)
 	var leaf_c := Color(0.28, 0.48, 0.2)
-	var stem_c := Color(0.32, 0.28, 0.14)
-	var n_stems := 7 if is_fern else 6
+	var stem_c := Color(0.28, 0.24, 0.12)
+	var n_stems := 8 if is_fern else 7
 	for i in n_stems:
-		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.37
-		var r := pw * (0.08 + float(i % 3) * 0.025)
+		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.41
+		var r := pw * (0.06 + float(i % 3) * 0.02)
 		var sx: float = cos(ang) * r
 		var sz: float = sin(ang) * r
-		var sh: float = (crown - pot_top) * (0.5 + float((i + seed0) % 3) * 0.12)
-		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.01 * pw + 0.006, sh, stem_c, false, 0.88)
+		var sh: float = (crown - pot_top) * (0.48 + float((i + seed0) % 4) * 0.1)
+		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.008 * pw + 0.005, sh, stem_c, false, 0.88)
 		var tip_y: float = pot_top + sh
 		if is_fern:
-			for j in 4:
-				var fang := ang + float(j - 1.5) * 0.4
-				var fl := pw * (0.14 + float(j) * 0.035)
+			# Arching pinnae: long thin horizontal leaflets stepped down the rachis
+			for j in 5:
+				var t := float(j) / 4.0
+				var fang := ang + (float(j % 2) * 2.0 - 1.0) * (0.55 + t * 0.25)
+				var fl := pw * (0.16 + (1.0 - t) * 0.08)
+				var fy := tip_y - t * sh * 0.55
 				_add_box(
 					root,
-					Vector3(sx + cos(fang) * fl * 0.4, tip_y - float(j) * 0.03 * ph, sz + sin(fang) * fl * 0.4),
-					Vector3(0.035 * pw, 0.016, fl),
+					Vector3(sx + cos(fang) * fl * 0.42, fy, sz + sin(fang) * fl * 0.42),
+					Vector3(fl, 0.012 * ph, 0.028 * pw),
 					leaf_a if j % 2 == 0 else leaf_b,
 					false,
 					0.92
 				)
-		else:
-			for j in 5:
-				var pang := ang + float(j) * 0.5 - 1.0
-				var bl := pw * (0.15 + float(j % 3) * 0.04)
+				# Second leaflet opposite side of rachis
+				var fang2 := fang + PI * 0.92
 				_add_box(
 					root,
-					Vector3(sx + cos(pang) * bl * 0.45, tip_y + 0.015 * ph, sz + sin(pang) * bl * 0.45),
-					Vector3(0.03 * pw, bl * 0.6, 0.025 * pw),
+					Vector3(sx + cos(fang2) * fl * 0.35, fy - 0.008 * ph, sz + sin(fang2) * fl * 0.35),
+					Vector3(fl * 0.85, 0.01 * ph, 0.022 * pw),
+					leaf_c if j % 2 == 0 else leaf_a,
+					false,
+					0.92
+				)
+		else:
+			# Palm: drooping ribbon fronds (long vertical blades splay outward)
+			for j in 4:
+				var pang := ang + float(j - 1.5) * 0.35
+				var bl := pw * (0.2 + float(j % 2) * 0.06)
+				var drop := 0.04 * ph + float(j) * 0.02 * ph
+				_add_box(
+					root,
+					Vector3(sx + cos(pang) * bl * 0.5, tip_y - drop * 0.3, sz + sin(pang) * bl * 0.5),
+					Vector3(0.022 * pw, bl * 0.85, 0.018 * pw),
 					leaf_c if j % 2 == 0 else leaf_a,
 					false,
 					0.9
 				)
-	# Mid-height ring of side blades (walk-around volume)
-	for k in 8:
-		var kang := float(k) * TAU / 8.0 + 0.2
-		var kr: float = pw * (0.18 + float(k % 2) * 0.04)
-		var ky: float = pot_top + (crown - pot_top) * (0.35 + float(k % 3) * 0.12)
+				# Slightly tilted mid-rib plate for width without a sphere
+				_add_box(
+					root,
+					Vector3(sx + cos(pang) * bl * 0.25, tip_y - drop * 0.5, sz + sin(pang) * bl * 0.25),
+					Vector3(bl * 0.55, 0.014 * ph, 0.02 * pw),
+					leaf_b,
+					false,
+					0.92
+				)
+	# Mid ring of thin blades (side volume, still leaf-shaped)
+	for k in 10:
+		var kang := float(k) * TAU / 10.0 + 0.15 + float(seed0 % 5) * 0.05
+		var kr: float = pw * (0.16 + float(k % 3) * 0.035)
+		var ky: float = pot_top + (crown - pot_top) * (0.3 + float(k % 4) * 0.12)
+		var blade_len: float = pw * (0.12 + float(k % 2) * 0.04)
 		_add_box(
 			root,
 			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
-			Vector3(0.022 * pw, 0.12 * ph, 0.08 * pw),
+			Vector3(blade_len, 0.014 * ph, 0.028 * pw),
 			leaf_b if k % 2 == 0 else leaf_a,
 			false,
 			0.92
 		)
-	# Soft canopy mass (multiple blobs — masks billboard edge from sides)
-	_add_sphere_blob(root, Vector3(0.0, crown * 0.92, 0.0), pw * 0.1, leaf_a)
-	_add_sphere_blob(root, Vector3(pw * 0.08, crown * 0.88, pw * 0.05), pw * 0.08, leaf_c)
-	_add_sphere_blob(root, Vector3(-pw * 0.07, crown * 0.9, -pw * 0.04), pw * 0.075, leaf_b)
-	_add_sphere_blob(root, Vector3(pw * 0.04, crown * 0.78, -pw * 0.08), pw * 0.07, leaf_a)
+	# Upper fan of flat leaflets (replaces sphere canopy — no cactus balls)
+	for k in 6:
+		var kang := float(k) * TAU / 6.0 + 0.4
+		var kr: float = pw * 0.1
+		var ky: float = crown * 0.88
+		_add_box(
+			root,
+			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
+			Vector3(pw * 0.14, 0.012 * ph, 0.03 * pw),
+			leaf_c if k % 2 == 0 else leaf_a,
+			false,
+			0.9
+		)
 
 
 static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color: Color) -> void:
@@ -3460,8 +3500,8 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_glass_wall(feat: Dictionary) -> Node3D:
-	## Conservatory iron-framed glass. Loop 91: painted garden plate is the exterior
-	## (no green sphere-blob overlay). Mullion grid + light glass tint only.
+	## Conservatory iron-framed glass. Loop 91/140: painted garden plate is the exterior
+	## (never black void). View plate is unshaded+emission; glass does NOT depth-write.
 	var root := Node3D.new()
 	root.name = "GlassWall"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -3470,7 +3510,7 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	var w: float = feat.get("width", 2.5)
 	var h: float = feat.get("height", 3.2)
 	var seed0: int = int(feat.get("seed", int(absf(float(pos[0]) * 5.0 + float(pos[2]) * 3.0))))
-	# --- Garden exterior plate (unshaded) just inside wall, never behind opaque panel ---
+	# --- Garden exterior plate (unshaded + emission) — must never read as void black ---
 	var view_path: String = str(feat.get("view", VIEW_EXTERIORS[seed0 % VIEW_EXTERIORS.size()]))
 	if view_path == "" or view_path.find("night") >= 0:
 		view_path = "res://assets/rooms/textures/views/view_garden.jpg"
@@ -3482,54 +3522,63 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	var vtex := _load_tex(view_path)
 	if vtex:
 		vmat.albedo_texture = vtex
-		vmat.albedo_color = Color(1.08, 1.1, 1.05)  # slight lift for filmic
+		vmat.albedo_color = Color(1.12, 1.14, 1.08)
+		vmat.emission_enabled = true
+		vmat.emission_texture = vtex
+		vmat.emission = Color(0.55, 0.58, 0.5)
+		vmat.emission_energy_multiplier = 0.35
 	else:
-		vmat.albedo_color = Color(0.45, 0.62, 0.4)
+		vmat.albedo_color = Color(0.48, 0.65, 0.42)
+		vmat.emission_enabled = true
+		vmat.emission = Color(0.35, 0.48, 0.3)
+		vmat.emission_energy_multiplier = 0.4
 	vmat.roughness = 1.0
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	vmat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
+	vmat.render_priority = 1
 	view_mi.material_override = vmat
-	# +Z into room so facade wall at exterior cannot hide the plate
+	# Plate on room side of wall (+Z) so facade never occludes to black
 	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
-	# Subtle sill ledge only (do NOT paint opaque sky/lawn bands or hedge orbs over plate)
+	# Subtle sill ledge only
 	_add_box(root, Vector3(0, 0.06, 0.08), Vector3(w - 0.1, 0.08, 0.12), STONE.darkened(0.05), false, 0.7)
-	# Brass/copper glazing bar caps at corners (period conservatory detail)
+	# Brass glazing bar caps
 	for sx in [-1.0, 1.0]:
 		for sy in [0.08, h - 0.08]:
 			_add_box(root, Vector3(sx * (w * 0.5 - 0.05), sy, 0.14), Vector3(0.08, 0.06, 0.06), BRASS.darkened(0.1), false, 0.35)
-	# Perimeter iron (in front of view) — mid-grey so not pure black frame
+	# Perimeter iron (mid-grey)
 	var bar := 0.07
 	var frame_iron := Color(0.34, 0.34, 0.36)
 	_add_box(root, Vector3(0, bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
 	_add_box(root, Vector3(0, h - bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
 	_add_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
 	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
-	# Mullion grid — thinner, slightly brass-tinged for period conservatory
+	# Mullion grid
 	for i in 4:
 		var fx2 := -w * 0.35 + float(i) * (w * 0.23)
 		_add_box(root, Vector3(fx2, h * 0.5, 0.11), Vector3(0.035, h - 0.14, 0.04), frame_iron.lightened(0.08), false, 0.45)
 	for j in 3:
 		var fy := h * 0.22 * float(j + 1)
 		_add_box(root, Vector3(0, fy, 0.11), Vector3(w - 0.14, 0.035, 0.04), frame_iron.lightened(0.08), false, 0.45)
-	# Very light glass tint — garden plate must dominate
+	# Very light glass tint — NO depth write (loop 140: DEPTH_DRAW_ALWAYS could black out plates)
 	var glass := MeshInstance3D.new()
 	var gm := BoxMesh.new()
 	gm.size = Vector3(w - 0.14, h - 0.14, 0.01)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.78, 0.88, 0.92, 0.1)
-	gmat.metallic = 0.08
+	gmat.albedo_color = Color(0.78, 0.88, 0.92, 0.08)
+	gmat.metallic = 0.05
 	gmat.roughness = 0.06
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	gmat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
+	gmat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	glass.material_override = gmat
-	glass.position = Vector3(0, h * 0.5, 0.13)
+	glass.position = Vector3(0, h * 0.5, 0.12)
 	root.add_child(glass)
 	var fill := OmniLight3D.new()
 	fill.light_color = Color(0.82, 0.94, 0.98)
-	fill.light_energy = 0.7
+	fill.light_energy = 0.75
 	fill.omni_range = 5.5
 	fill.position = Vector3(0, h * 0.55, 0.6)
 	root.add_child(fill)
