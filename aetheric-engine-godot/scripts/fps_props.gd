@@ -2372,92 +2372,43 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chalk_board(prop: Dictionary) -> Node3D:
-	## Workshop / gallery slate — loop 89: denser marks that read from room centre.
+	## Workshop / gallery slate — loop 112: baked chalk plates (read at room length; not thin mesh sticks).
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
 	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.35 + float(seed0 % 3) * 0.08
 	var h := 0.95 + float(seed0 % 2) * 0.08
 	_add_box(root, Vector3(0, 1.2, 0), Vector3(w, h, 0.06), MAHOGANY_DARK, true, 0.45)
-	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(w - 0.12, h - 0.12, 0.02), CHALK, false, 0.85)
-	# Frame lip
+	# Frame lip (top/bottom + sides)
 	_add_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
 	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
-	# Bright chalk so marks survive distance / filmic tonemap (loop 102: thicker strokes)
-	var chalk := Color(0.98, 0.98, 0.95)
-	var chalk_dim := Color(0.88, 0.9, 0.85)
-	match seed0 % 4:
-		0:
-			# Loop 109: denser equation plate — double column + coil callout + ticks
-			for li in 11:
-				var ly := 1.55 - float(li) * 0.065
-				var lw := 0.45 + float((li + seed0) % 5) * 0.08
-				var lx := -0.28 + float(li % 2) * 0.12
-				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.02, 0.014), chalk if li % 3 else chalk_dim, false, 0.95)
-			# Right-hand short annotations
-			for li in 6:
-				_add_box(root, Vector3(0.38, 1.48 - float(li) * 0.09, 0.05), Vector3(0.32, 0.016, 0.012), chalk_dim, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.16, 0.016, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.1, 0.014, chalk_dim, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.05, 0.012, chalk, false, 0.95)
-			_add_box(root, Vector3(-0.35, 0.95, 0.05), Vector3(0.4, 0.022, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.42, 1.4, 0.05), Vector3(0.12, 0.12, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.25, 1.55, 0.05), Vector3(0.55, 0.024, 0.014), chalk, false, 0.95)
-		1:
-			# Loop 108: denser engine diagram — multi-ring + formula bars (reads at hallway length)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.32, 0.018, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.24, 0.016, chalk_dim, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.16, 0.015, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.08, 0.014, chalk_dim, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.65, 0.022, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.022, 0.65, 0.014), chalk, false, 0.95)
-			for di in 8:
-				var ang := float(di) * 0.7
-				_add_box(root, Vector3(cos(ang) * 0.24, 1.22 + sin(ang) * 0.24, 0.05), Vector3(0.22, 0.018, 0.014), chalk_dim, false, 0.95)
-			# Title + annotation lines
-			_add_box(root, Vector3(-0.3, 1.52, 0.05), Vector3(0.55, 0.025, 0.015), chalk, false, 0.95)
-			_add_box(root, Vector3(0.25, 0.95, 0.05), Vector3(0.5, 0.022, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.3, 0.95, 0.05), Vector3(0.4, 0.02, 0.014), chalk, false, 0.95)
-			for li in 4:
-				_add_box(root, Vector3(0.35, 1.4 - float(li) * 0.08, 0.05), Vector3(0.28, 0.016, 0.012), chalk_dim, false, 0.95)
-		2:
-			# Loop 109: denser ledger grid + filled cells + margin ticks
-			for i in 10:
-				var yy := 0.88 + float(i) * 0.07
-				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(1.05, 0.012, 0.012), chalk_dim, false, 0.95)
-			for j in 8:
-				var xx := -0.5 + float(j) * 0.14
-				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.012, 0.72, 0.012), chalk_dim, false, 0.95)
-			# Bold fill cells + diagonal hatch marks
-			_add_box(root, Vector3(-0.28, 1.4, 0.05), Vector3(0.16, 0.08, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(0.14, 1.25, 0.05), Vector3(0.16, 0.08, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.1, 1.05, 0.05), Vector3(0.2, 0.07, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(0.28, 1.48, 0.05), Vector3(0.18, 0.06, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(0.0, 0.95, 0.05), Vector3(0.35, 0.02, 0.012), chalk, false, 0.95)
-			# Title bar + side ticks
-			_add_box(root, Vector3(-0.15, 1.55, 0.05), Vector3(0.7, 0.022, 0.014), chalk, false, 0.95)
-			for t in 6:
-				_add_box(root, Vector3(-0.52, 0.95 + float(t) * 0.1, 0.05), Vector3(0.05, 0.014, 0.01), chalk, false, 0.95)
-		_:
-			# Loop 109: denser aether wave + dual traces + scale labels
-			for i in 12:
-				var wx := -0.5 + float(i) * 0.09
-				var wy := 1.2 + sin(float(i) * 0.75 + float(seed0)) * 0.18
-				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.12, 0.018, 0.013), chalk, false, 0.95)
-				# Second phase-shifted trace
-				var wy2 := 1.15 + cos(float(i) * 0.75 + 0.4) * 0.12
-				_add_box(root, Vector3(wx, wy2, 0.05), Vector3(0.1, 0.014, 0.012), chalk_dim, false, 0.95)
-			# Baseline + vertical axis
-			_add_box(root, Vector3(0.0, 0.95, 0.05), Vector3(1.05, 0.016, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.5, 1.22, 0.05), Vector3(0.016, 0.6, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.2, 1.52, 0.05), Vector3(0.55, 0.02, 0.014), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.38, 1.0, 0.05), 0.12, 0.014, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.38, 1.0, 0.05), 0.06, 0.012, chalk_dim, false, 0.95)
-			# Tick marks + value bars
-			for t in 7:
-				_add_box(root, Vector3(-0.35 + float(t) * 0.12, 0.92, 0.05), Vector3(0.012, 0.045, 0.01), chalk, false, 0.95)
-			for li in 3:
-				_add_box(root, Vector3(0.35, 1.4 - float(li) * 0.1, 0.05), Vector3(0.3, 0.016, 0.012), chalk_dim, false, 0.95)
+	_add_box(root, Vector3(-w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
+	# Loop 112: full-face chalk plate texture (equations / engine / ledger / wave)
+	var plate_paths := [
+		"res://assets/rooms/textures/chalk/chalk_equations.jpg",
+		"res://assets/rooms/textures/chalk/chalk_engine.jpg",
+		"res://assets/rooms/textures/chalk/chalk_ledger.jpg",
+		"res://assets/rooms/textures/chalk/chalk_wave.jpg",
+	]
+	var plate_path: String = plate_paths[seed0 % 4]
+	var slate := MeshInstance3D.new()
+	var slate_mesh := BoxMesh.new()
+	slate_mesh.size = Vector3(w - 0.12, h - 0.12, 0.02)
+	slate.mesh = slate_mesh
+	var slate_mat := StandardMaterial3D.new()
+	var plate_tex: Texture2D = _load_tex(plate_path)
+	if plate_tex:
+		slate_mat.albedo_texture = plate_tex
+		slate_mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
+		slate_mat.albedo_color = Color(1.05, 1.05, 1.0)  # slight lift so white chalk pops under filmic
+	else:
+		slate_mat.albedo_color = CHALK
+	slate_mat.roughness = 0.92
+	slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	slate.material_override = slate_mat
+	slate.position = Vector3(0, 1.2, 0.035)
+	root.add_child(slate)
 	# Chalk rail + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)

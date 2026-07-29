@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~08:35 (overnight goal active)  
+**Updated:** 2026-07-29 ~08:50 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -25,6 +25,7 @@
 | 44 | Woven carpet plates + chalk densify 0/2/3 | **DONE 109** |
 | 45 | Conservatory/kitchen floors + workshop runners | **DONE 110** |
 | 46 | Painterly exterior window/glass views | **DONE 111** |
+| 47 | Baked chalk plates (room-length read) | **DONE 112** |
 
 ## Loops
 
@@ -36,14 +37,15 @@
 | 108 | Wood floors grain plates; chalk seed 1 multi-ring |
 | 109 | Persian + hall runner woven plates; chalk 0/2/3 denser |
 | 110 | Conservatory flags + kitchen quarry + workshop work runners |
-| 111 | **Exterior views:** regenerated garden/garden2/yard/street/night — soft canopy trees + trunks, hedge blooms, sky clouds, grit path; street = Victorian terrace + cobble (not modern blocks); night = moon/stars/lit windows. Forced reimport. |
+| 111 | Painterly exterior garden/street/night view plates |
+| 112 | **Chalk:** baked full-face plates (equations/engine/ledger/wave) replace thin mesh sticks — diagrams readable from room centre/spawn. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish (chalk distance; exteriors still stylized not oil-paint)  
+- Optional micro-polish (morning paper-thin side chairs; exteriors still stylized)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_111/`  
+- Shots: `auto_loop_67/` … `auto_loop_112/`  
