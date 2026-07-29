@@ -1724,25 +1724,38 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
 	_add_cylinder(root, Vector3(-width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
-	# Seed-unique top dressing
+	# Seed-unique top dressing (loop 96: denser still-life on each bench)
+	var iron_mid := Color(0.36, 0.36, 0.38)
 	var dress := seed0 % 3
 	if dress == 0:
+		# Measuring plate + ruler + calipers + oil can
 		_add_box(root, Vector3(-0.4, 0.93, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
-		_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), IRON, false, 0.4)
-		_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), IRON.lightened(0.1), false, 0.4)
+		_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), iron_mid, false, 0.45)
+		_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), iron_mid.lightened(0.1), false, 0.45)
 		_add_cylinder(root, Vector3(0.6, 0.97, 0.1), 0.06, 0.18, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.35, 0.93, -0.15), Vector3(0.28, 0.02, 0.18), PAPER, false)
+		_add_cylinder(root, Vector3(-0.7, 0.98, -0.2), 0.045, 0.12, COPPER, false, 0.35, true)
+		_add_box(root, Vector3(0.15, 0.94, 0.05), Vector3(0.12, 0.03, 0.04), iron_mid, false, 0.4)  # bit
 	elif dress == 1:
+		# Plans + wrench + copper stock + chalk
 		_add_box(root, Vector3(0.3, 0.92, -0.1), Vector3(0.45, 0.03, 0.32), PAPER, false)
 		_add_box(root, Vector3(0.35, 0.94, -0.08), Vector3(0.3, 0.01, 0.22), PAPER.darkened(0.08), false)
-		_add_box(root, Vector3(-0.5, 0.94, 0.1), Vector3(0.5, 0.03, 0.08), IRON, false, 0.4)  # wrench body
-		_add_box(root, Vector3(-0.2, 0.95, 0.15), Vector3(0.08, 0.05, 0.14), IRON.lightened(0.08), false, 0.4)
+		_add_box(root, Vector3(0.32, 0.95, -0.05), Vector3(0.18, 0.008, 0.12), PAPER.darkened(0.12), false)
+		_add_box(root, Vector3(-0.5, 0.94, 0.1), Vector3(0.5, 0.03, 0.08), iron_mid, false, 0.45)  # wrench
+		_add_box(root, Vector3(-0.2, 0.95, 0.15), Vector3(0.08, 0.05, 0.14), iron_mid.lightened(0.08), false, 0.45)
 		_add_cylinder(root, Vector3(0.7, 0.98, 0.15), 0.05, 0.16, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.75, 0.97, -0.15), 0.04, 0.1, CREAM, false)  # chalk
+		_add_box(root, Vector3(0.05, 0.93, 0.25), Vector3(0.2, 0.025, 0.12), OAK, false, 0.55)
 	else:
-		_add_box(root, Vector3(0.75, 0.98, -0.15), Vector3(0.22, 0.14, 0.16), IRON, false, 0.4)  # vice
-		_add_cylinder(root, Vector3(0.75, 1.1, -0.15), 0.035, 0.12, IRON.lightened(0.1), false, 0.4)
+		# Vice + wood block + copper + rule + scrap
+		_add_box(root, Vector3(0.75, 0.98, -0.15), Vector3(0.22, 0.14, 0.16), iron_mid, false, 0.45)  # vice
+		_add_cylinder(root, Vector3(0.75, 1.1, -0.15), 0.035, 0.12, iron_mid.lightened(0.1), false, 0.45)
+		_add_cylinder(root, Vector3(0.75, 1.12, -0.05), 0.02, 0.08, BRASS, false, 0.3, true)
 		_add_box(root, Vector3(-0.55, 0.95, 0.0), Vector3(0.28, 0.03, 0.2), Color(0.22, 0.14, 0.1), false, 0.6)
 		_add_cylinder(root, Vector3(-0.2, 0.98, 0.2), 0.05, 0.12, COPPER, false, 0.35, true)
 		_add_box(root, Vector3(0.2, 0.93, 0.2), Vector3(0.35, 0.04, 0.2), BRASS.darkened(0.1), false, 0.3)
+		_add_box(root, Vector3(0.0, 0.93, -0.25), Vector3(0.4, 0.02, 0.06), iron_mid, false, 0.45)  # rule
+		_add_box(root, Vector3(-0.75, 0.94, 0.2), Vector3(0.12, 0.05, 0.1), COPPER.darkened(0.1), false, 0.35)
 	_add_contact_shadow(root, width * 0.5, 0.55)
 	return root
 
@@ -1881,36 +1894,95 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
 
 static func _make_machine(prop: Dictionary) -> Node3D:
-	## Secondary apparatus — brass column + denser copper coils + gauges (loop 78).
+	## Secondary gallery apparatus — loop 96: denser counter-wound coils, glass dome,
+	## gauges, mid-grey base (not plain copper cylinder stack).
 	var root := Node3D.new()
 	root.name = "Machine"
-	var height: float = prop.get("height", 2.6)
-	var col_h: float = maxf(height * 0.72, 1.4)
-	var col_mid: float = 0.35 + col_h * 0.5
-	_add_box(root, Vector3(0, 0.14, 0), Vector3(1.0, 0.28, 0.9), IRON, true, 0.42)
-	_add_box(root, Vector3(0, 0.3, 0), Vector3(0.9, 0.08, 0.8), MAHOGANY_DARK, true, 0.45)
-	# Continuous brass body
-	_add_cylinder(root, Vector3(0, col_mid, 0), 0.34, col_h, BRASS, true, 0.32, true)
-	for i in 4:
-		var y: float = 0.5 + i * (col_h * 0.22)
-		_add_cylinder(root, Vector3(0, y, 0), 0.42, 0.06, COPPER if i % 2 == 0 else COPPER.darkened(0.1), false, 0.32, true)
-	var top_y: float = 0.35 + col_h
-	_add_cylinder(root, Vector3(0, top_y, 0), 0.38, 0.1, BRASS.lightened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.12, 0.2, Color(0.55, 0.78, 0.88), false, 0.25, true)
-	# Side instruments + pipes
-	_add_box(root, Vector3(0.45, 0.55, 0.15), Vector3(0.28, 0.4, 0.32), MAHOGANY, true, 0.45)
-	_add_cylinder(root, Vector3(0.45, 0.85, 0.15), 0.09, 0.05, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0.45, 0.86, 0.18), 0.06, 0.01, Color(0.85, 0.88, 0.8), false, 0.5)
-	_add_box(root, Vector3(-0.42, 0.5, 0.2), Vector3(0.25, 0.35, 0.28), MAHOGANY, true, 0.45)
-	_add_cylinder(root, Vector3(-0.42, 0.78, 0.2), 0.07, 0.04, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(-0.4, 0.8, 0.0), 0.05, 0.55, COPPER, false, 0.32, true)
-	_add_box(root, Vector3(-0.4, 1.1, 0.18), Vector3(0.1, 0.1, 0.4), COPPER, false, 0.32)
-	_add_cylinder(root, Vector3(0.38, 0.95, -0.22), 0.04, 0.45, COPPER.darkened(0.05), false, 0.32, true)
+	var height: float = float(prop.get("height", 2.6))
+	var seed0: int = int(prop.get("seed", int(height * 10.0)))
+	var col_h: float = maxf(height * 0.68, 1.35)
+	var iron_mid := Color(0.34, 0.34, 0.36)
+	var oak_d := Color(0.26, 0.16, 0.09)
+	# Plinth + oak deck
+	_add_box(root, Vector3(0, 0.1, 0), Vector3(1.05, 0.2, 0.95), iron_mid, true, 0.45)
+	_add_box(root, Vector3(0, 0.24, 0), Vector3(0.92, 0.1, 0.82), oak_d, true, 0.5)
+	_add_box(root, Vector3(0, 0.3, 0), Vector3(0.78, 0.04, 0.7), COPPER.darkened(0.15), false, 0.35)
+	# Brass core column
+	var col_mid: float = 0.4 + col_h * 0.45
+	_add_cylinder(root, Vector3(0, col_mid, 0), 0.28, col_h * 0.85, BRASS, true, 0.32, true)
+	# 5 copper coil bands with winding ticks
+	for i in 5:
+		var y: float = 0.48 + float(i) * (col_h * 0.16)
+		var r: float = 0.4 - float(i) * 0.025
+		var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.08)
+		_add_cylinder(root, Vector3(0, y, 0), r, 0.07, copper_col, false, 0.32, true)
+		_add_cylinder(root, Vector3(0, y + 0.025, 0), r * 0.9, 0.025, copper_col.lightened(0.08), false, 0.3, true)
+		var wind := 1.0 if i % 2 == 0 else -1.0
+		for s in 8:
+			var ang: float = float(s) * (TAU / 8.0) * wind
+			_add_box(
+				root,
+				Vector3(cos(ang) * r * 0.95, y + (float(s) / 8.0 - 0.5) * 0.05 * wind, sin(ang) * r * 0.95),
+				Vector3(0.04, 0.03, 0.07),
+				copper_col.lightened(0.05), false, 0.28
+			)
+	var top_y: float = 0.4 + col_h * 0.9
+	_add_cylinder(root, Vector3(0, top_y, 0), 0.32, 0.08, BRASS.lightened(0.05), false, 0.3, true)
+	# Frosted glass chimney + emissive core
+	var glass := MeshInstance3D.new()
+	var gm := CylinderMesh.new()
+	gm.top_radius = 0.1
+	gm.bottom_radius = 0.14
+	gm.height = 0.28
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.7, 0.88, 0.95, 0.5)
+	gmat.emission_enabled = true
+	gmat.emission = Color(0.4, 0.7, 0.9)
+	gmat.emission_energy_multiplier = 0.8
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	glass.material_override = gmat
+	glass.position = Vector3(0, top_y + 0.2, 0)
+	root.add_child(glass)
+	var core := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.05
+	cm.bottom_radius = 0.05
+	cm.height = 0.2
+	core.mesh = cm
+	var cmat := StandardMaterial3D.new()
+	cmat.albedo_color = Color(0.5, 0.85, 1.0)
+	cmat.emission_enabled = true
+	cmat.emission = Color(0.4, 0.8, 1.0)
+	cmat.emission_energy_multiplier = 2.6
+	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	core.material_override = cmat
+	core.position = Vector3(0, top_y + 0.18, 0)
+	root.add_child(core)
+	# Side instruments + pipes (seed forks layout)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(0.48, 0.55, 0.12), Vector3(0.26, 0.42, 0.3), oak_d, true, 0.48)
+		for gi in 2:
+			_add_cylinder(root, Vector3(0.48, 0.7 + float(gi) * 0.16, 0.22), 0.07, 0.035, BRASS, false, 0.28, true)
+			_add_cylinder(root, Vector3(0.48, 0.71 + float(gi) * 0.16, 0.24), 0.05, 0.01, Color(0.85, 0.88, 0.8), false, 0.5)
+		_add_cylinder(root, Vector3(-0.45, 0.85, 0.05), 0.045, 0.7, COPPER, false, 0.32, true)
+		_add_box(root, Vector3(-0.45, 1.15, 0.2), Vector3(0.1, 0.1, 0.35), COPPER.darkened(0.05), false, 0.32)
+	else:
+		_add_box(root, Vector3(-0.48, 0.55, 0.1), Vector3(0.26, 0.4, 0.3), oak_d, true, 0.48)
+		_add_cylinder(root, Vector3(-0.48, 0.82, 0.2), 0.08, 0.04, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0.42, 0.9, -0.15), 0.04, 0.55, COPPER, false, 0.32, true)
+		_add_box(root, Vector3(0.42, 0.55, -0.15), Vector3(0.22, 0.2, 0.22), iron_mid, true, 0.45)
+		_add_cylinder(root, Vector3(0.42, 0.7, -0.15), 0.06, 0.04, BRASS, false, 0.3, true)
+	# Valve wheel
+	_add_cylinder(root, Vector3(0.0, 0.55, 0.42), 0.1, 0.03, BRASS, false, 0.28, true)
+	_add_box(root, Vector3(0.0, 0.55, 0.42), Vector3(0.18, 0.02, 0.02), BRASS.lightened(0.05), false, 0.28)
+	_add_box(root, Vector3(0.0, 0.55, 0.42), Vector3(0.02, 0.02, 0.18), BRASS.lightened(0.05), false, 0.28)
 	var glow := OmniLight3D.new()
-	glow.light_color = Color(0.55, 0.8, 0.9)
-	glow.light_energy = 0.7
-	glow.omni_range = 3.5
-	glow.position = Vector3(0, col_mid + 0.2, 0.15)
+	glow.light_color = Color(0.55, 0.82, 0.95)
+	glow.light_energy = 0.9
+	glow.omni_range = 4.0
+	glow.position = Vector3(0, top_y + 0.1, 0.1)
 	root.add_child(glow)
 	_add_contact_shadow(root, 0.55, 0.5)
 	return root

@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~05:00 (overnight goal active)  
+**Updated:** 2026-07-29 ~05:20 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -10,19 +10,19 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–77+94** tea china |
+| 4 | Unique Victorian objects | **ADVANCED 71–77+94+96** |
 | 5 | Geometric / surface detail | **ADVANCED 72+75+89+95** paths |
-| 6 | Victorian wall art | **ADVANCED 69** |
+| 6 | Victorian wall art | **ADVANCED 69+96** hall door |
 | 7 | Plant diversity / side volume | **ADVANCED 74–75** |
 | 8 | Side-view mesh furniture | **ADVANCED 70+89** wood not iron |
 | 9 | Door transition safety | **ADVANCED 76** suite PASS |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
-| 11 | Hall / prep still-life | **ADVANCED 73+79+84+87+92** |
+| 11 | Hall / prep still-life | **ADVANCED 73+79+84+87+92+96** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85+91+95** stone |
-| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92–94** |
-| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89+93** mid |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92–96** machines |
+| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89+93+96** bench |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90+94+95** NE |
-| 16 | Gallery centre experiment density | **ADVANCED 81+89+92–94** S end |
+| 16 | Gallery centre experiment density | **ADVANCED 81+89+92–96** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82+91+94** door |
 | 18 | Tea still-life + window room-side views | **ADVANCED 83+91+94** china |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
@@ -37,20 +37,15 @@
 | 28 | Drawing S door + workshop mid + engine hero | **DONE 93** |
 | 29 | Morning/kitchen door + gallery S + tea china | **DONE 94** |
 | 30 | Kitchen NE + stone path + fireplace flames | **DONE 95** |
+| 31 | Secondary machines + hall door oil + bench tops | **DONE 96** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
 | 67–87 | Core queue through rugs/hall/dresser |
-| 88 | Workshop south wall densify + open desk pigeonholes |
-| 89 | Mahogany≠iron material fix; riveted iron floor plates; denser chalk |
-| 90 | Kitchen range brass/fire hero; kitchen S wall; morning NW fill |
-| 91 | Exterior garden/yard plates; glass wall no orb overlay |
-| 92 | Looking-glass plate rewrite; gallery side-aisle densify |
-| 93 | Drawing south door wall; workshop mid path; aetheric engine hero |
-| 94 | Morning/kitchen door densify; gallery south; period tea china |
-| 95 | **Kitchen NE densify** (sink–range empty plaster). **Stone floor_path:** irregular flags, moss, curb (conservatory). **Fireplace:** multi-layer orange→yellow flames + embers + brighter light; mid-grey grate. |
+| 88–95 | Density, materials, paths, fire, tea china, engines |
+| 96 | **Secondary gallery machines:** denser counter-wound coils, glass dome + emissive core, gauges, valve wheel, seed-forked layout. **Hall storm oil** moved above door architrave (not on leaf). **Workbench tops:** denser unique still-life kits. |
 
 ## Still high-value if continuing
 
@@ -60,4 +55,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_95/`  
+- Shots: `auto_loop_67/` … `auto_loop_96/`  

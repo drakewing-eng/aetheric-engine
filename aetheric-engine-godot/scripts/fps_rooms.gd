@@ -186,8 +186,8 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [-6.85, 1.2, 0.0], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 2},
 			# Loop 92: larger hall looking-glass (was reading as broken blue plate)
 			{"kind": "mirror", "pos": [-6.5, 1.7, -2.2], "yaw": 90.0, "width": 1.15, "height": 1.55},
-			# Hall: one grand storm over north door + side oils (identity, not gallery clutter)
-			{"kind": "painting", "pos": [0.0, 2.05, -4.7], "yaw": 0.0, "width": 0.95, "height": 1.05,
+			# Loop 96: storm oil ABOVE north door architrave (was reading as glued to door leaf)
+			{"kind": "painting", "pos": [0.0, 2.85, -4.78], "yaw": 0.0, "width": 0.95, "height": 0.75,
 				"art": "landscape", "seed": 3, "frame": 0},
 			{"kind": "painting", "pos": [5.2, 2.0, -3.0], "yaw": -90.0, "width": 0.7, "height": 0.85,
 				"art": "landscape", "seed": 5, "frame": 2},
@@ -332,8 +332,8 @@ const ROOMS := {
 			# Engine where the great table once stood — centre-north, clear approach
 			{"kind": "aetheric_machine", "pos": [0.0, 0.0, -3.2], "yaw": 0.0, "height": 2.95},
 			# Secondary apparatus only (not a forest of machines)
-			{"kind": "machine", "pos": [4.5, 0.0, -4.2], "yaw": -20.0, "height": 1.9},
-			{"kind": "machine", "pos": [-4.8, 0.0, -4.5], "yaw": 25.0, "height": 1.65},
+			{"kind": "machine", "pos": [4.5, 0.0, -4.2], "yaw": -20.0, "height": 1.9, "seed": 0},
+			{"kind": "machine", "pos": [-4.8, 0.0, -4.5], "yaw": 25.0, "height": 1.65, "seed": 1},
 			# Ledger desk for Amara/Bell notes (novel: desk, ledger)
 			{"kind": "desk", "pos": [-5.2, 0.0, -1.5], "yaw": 90.0},
 			{"kind": "chair", "pos": [-4.3, 0.0, -1.5], "yaw": -90.0, "fabric": Color(0.28, 0.2, 0.14)},
