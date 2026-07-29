@@ -30,14 +30,15 @@ const ROOMS := {
 			{"kind": "window", "pos": [4.42, 1.85, 1.8], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 1, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 			{"kind": "mirror", "pos": [4.38, 1.75, 0.0], "yaw": -90.0},
 			# West wall free of bookshelves (shelves at z≈-1.6 / 1.5) — paintings clear
+			# Loop 69: mixed subjects + frame styles (not four identical pastoral clones)
 			{"kind": "painting", "pos": [-4.3, 1.95, -3.5], "yaw": 90.0, "width": 0.9, "height": 1.1,
-				"art": "landscape", "seed": 0},
+				"art": "landscape", "seed": 0, "frame": 0},
 			{"kind": "painting", "pos": [-4.3, 1.9, 3.2], "yaw": 90.0, "width": 0.75, "height": 0.95,
-				"art": "landscape", "seed": 2},
+				"art": "landscape", "seed": 3, "frame": 1},
 			{"kind": "painting", "pos": [0.0, 2.15, -4.7], "yaw": 0.0, "width": 1.15, "height": 0.95,
-				"art": "landscape", "seed": 1},
+				"art": "landscape", "seed": 4, "frame": 0},
 			{"kind": "painting", "pos": [3.2, 2.1, -4.7], "yaw": 0.0, "width": 0.85, "height": 0.8,
-				"art": "landscape", "seed": 3},
+				"art": "still_life", "seed": 1, "frame": 0},
 			{"kind": "door_frame", "pos": [0.0, 1.2, 4.42], "yaw": 180.0, "width": 1.55, "height": 2.4, "seed": 0},
 		],
 		"props": [
@@ -190,8 +191,13 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [-4.5, 1.2, 4.85], "yaw": 180.0, "width": 1.4, "height": 2.3, "seed": 1},
 			{"kind": "door_frame", "pos": [-6.85, 1.2, 0.0], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 2},
 			{"kind": "mirror", "pos": [-6.5, 1.7, -2.2], "yaw": 90.0},
+			# Hall: one grand storm over north door + side oils (identity, not gallery clutter)
 			{"kind": "painting", "pos": [0.0, 2.05, -4.7], "yaw": 0.0, "width": 0.95, "height": 1.05,
-				"art": "landscape"},
+				"art": "landscape", "seed": 3, "frame": 0},
+			{"kind": "painting", "pos": [5.2, 2.0, -3.0], "yaw": -90.0, "width": 0.7, "height": 0.85,
+				"art": "landscape", "seed": 5, "frame": 2},
+			{"kind": "painting", "pos": [-5.2, 2.0, 2.5], "yaw": 90.0, "width": 0.65, "height": 0.8,
+				"art": "still_life", "seed": 0, "frame": 1},
 		],
 		"props": [
 			{
@@ -283,6 +289,11 @@ const ROOMS := {
 			{"kind": "window", "pos": [0.0, 1.55, 5.72], "yaw": 180.0, "width": 1.55, "height": 2.05, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
 			{"kind": "window", "pos": [3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
 			{"kind": "window", "pos": [-3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+			# Gallery: two austere oils only (use-not-display — not a museum hang)
+			{"kind": "painting", "pos": [7.6, 2.2, 2.5], "yaw": -90.0, "width": 0.8, "height": 0.95,
+				"art": "landscape", "seed": 5, "frame": 2},
+			{"kind": "painting", "pos": [-7.6, 2.15, 3.0], "yaw": 90.0, "width": 0.7, "height": 0.85,
+				"art": "landscape", "seed": 3, "frame": 2},
 		],
 		"props": [
 			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0},
@@ -372,7 +383,11 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [0.0, 1.15, 3.85], "yaw": 180.0, "width": 1.45, "height": 2.3},
 			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0},
 			{"kind": "painting", "pos": [-3.7, 1.8, -1.8], "yaw": 90.0, "width": 0.75, "height": 0.95,
-				"art": "still_life"},
+				"art": "still_life", "seed": 0, "frame": 1},
+			{"kind": "painting", "pos": [-2.0, 1.95, -3.7], "yaw": 0.0, "width": 0.7, "height": 0.7,
+				"art": "botanical", "seed": 0, "frame": 1},
+			{"kind": "painting", "pos": [2.2, 1.95, -3.7], "yaw": 0.0, "width": 0.65, "height": 0.75,
+				"art": "landscape", "seed": 1, "frame": 0},
 		],
 		"props": [
 			{"kind": "desk", "pos": [2.2, 0.0, -2.0], "yaw": -90.0},
@@ -435,6 +450,9 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [4.85, 1.2, 0.0], "yaw": -90.0, "width": 1.55, "height": 2.4},
 			{"kind": "window", "pos": [-4.85, 1.9, 0.0], "yaw": 90.0, "width": 1.3, "height": 1.8, "seed": 6, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.2, -4.3], "yaw": 0.0, "width": 1.5, "height": 2.3},
+			# Rooke's desk wall: dark still-life (ink/tools mood), not salon landscape
+			{"kind": "painting", "pos": [3.2, 2.15, -4.15], "yaw": 0.0, "width": 0.6, "height": 0.55,
+				"art": "still_life", "seed": 1, "frame": 3},
 		],
 		"props": [
 			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0},
@@ -574,9 +592,9 @@ const ROOMS := {
 			{"kind": "window", "pos": [4.35, 1.7, 0.5], "yaw": -90.0, "width": 1.1, "height": 1.5, "seed": 7, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
 			{"kind": "window", "pos": [-4.35, 1.7, 0.5], "yaw": 90.0, "width": 1.0, "height": 1.4, "seed": 8, "view": "res://assets/rooms/textures/views/view_street.jpg"},
 			{"kind": "painting", "pos": [-2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.7, "height": 0.55,
-				"art": "still_life"},
+				"art": "still_life", "seed": 0, "frame": 3},
 			{"kind": "painting", "pos": [2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
-				"art": "still_life"},
+				"art": "still_life", "seed": 1, "frame": 3},
 		],
 		"props": [
 			# Signature kitchen read — NEVER lab workbench

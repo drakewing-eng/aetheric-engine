@@ -45,16 +45,21 @@ const TEX_PLASTER := "res://assets/rooms/textures/victorian/plaster_cream.jpg"
 const TEX_MARBLE := "res://assets/rooms/textures/victorian/marble.jpg"
 
 # Victorian wall art — NEVER use room photos as paintings (reads as wrong window).
+# Loop 69: full oil plates (not flat clip-art) — pastoral, storm, park, ruin, still-life, botanical.
 const ART_LANDSCAPES := [
 	"res://assets/rooms/textures/art/landscape_pastoral.jpg",
 	"res://assets/rooms/textures/art/landscape_pastoral2.jpg",
 	"res://assets/rooms/textures/art/landscape_seascape.jpg",
 	"res://assets/rooms/textures/art/landscape_storm.jpg",
 	"res://assets/rooms/textures/art/landscape_park.jpg",
+	"res://assets/rooms/textures/art/landscape_ruin.jpg",
 ]
 const ART_STILL_LIFES := [
 	"res://assets/rooms/textures/art/still_life_fruit.jpg",
 	"res://assets/rooms/textures/art/still_life_dark.jpg",
+]
+const ART_BOTANICALS := [
+	"res://assets/rooms/textures/art/botanical_palm.jpg",
 ]
 const VIEW_EXTERIORS := [
 	"res://assets/rooms/textures/views/view_garden.jpg",
@@ -1856,8 +1861,9 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_painting(feat: Dictionary) -> Node3D:
-	## Gilt-frame oil: landscape / still life / portrait — NEVER a room photo
-	## (room photos read as windows or nonsense mirrors).
+	## Gilt/wood-frame oil: landscape / still life / botanical / portrait —
+	## NEVER a room photo (reads as windows or nonsense mirrors).
+	## Frame style forks by seed: ornate gilt · mahogany · ebony · dark gilt.
 	var root := Node3D.new()
 	root.name = "Painting"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -1867,21 +1873,67 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	var h: float = feat.get("height", 1.05)
 	var seed0: int = int(feat.get("seed", int(absf(pos[0] * 7.0 + pos[2] * 5.0 + w * 11.0))))
 	var kind: String = str(feat.get("art", "auto"))
-	# Victorian gilt frame: outer moulding + stepped liner + corner blocks + crest
-	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.1, h + 0.1, 0.1), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.02), Vector3(w + 0.04, h + 0.04, 0.06), BRASS.lightened(0.08), false, 0.3)
-	_add_box(root, Vector3(0, 0, 0.035), Vector3(w - 0.04, h - 0.04, 0.04), BRASS.darkened(0.15), false, 0.35)
-	_add_box(root, Vector3(0, 0, 0.045), Vector3(w - 0.14, h - 0.14, 0.03), Color(0.18, 0.1, 0.06), false, 0.55)
-	# Corner ornaments
+	var frame_style: int = int(feat.get("frame", seed0 % 4))
+	var outer: Color
+	var mid: Color
+	var liner: Color
+	var corner_c: Color
+	var rough_o: float = 0.32
+	match frame_style:
+		0:  # Ornate gilt salon
+			outer = BRASS
+			mid = BRASS.lightened(0.1)
+			liner = BRASS.darkened(0.18)
+			corner_c = BRASS.lightened(0.14)
+			rough_o = 0.28
+		1:  # Mahogany with gilt liner (library / morning)
+			outer = MAHOGANY
+			mid = MAHOGANY.lightened(0.08)
+			liner = BRASS.darkened(0.1)
+			corner_c = BRASS
+			rough_o = 0.55
+		2:  # Ebony austere (gallery / hall)
+			outer = Color(0.08, 0.07, 0.07)
+			mid = Color(0.12, 0.1, 0.09)
+			liner = Color(0.22, 0.16, 0.1)
+			corner_c = BRASS.darkened(0.2)
+			rough_o = 0.45
+		_:  # Dark gilt with deep liner (kitchen / workshop)
+			outer = BRASS.darkened(0.22)
+			mid = BRASS.darkened(0.1)
+			liner = Color(0.14, 0.08, 0.05)
+			corner_c = BRASS.lightened(0.05)
+			rough_o = 0.35
+	# Outer moulding + stepped liner (NO solid plate over canvas — was blacking out oils)
+	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.12, h + 0.12, 0.08), outer, true, rough_o)
+	_add_box(root, Vector3(0, 0, 0.018), Vector3(w + 0.05, h + 0.05, 0.05), mid, false, rough_o * 0.95)
+	# Hollow liner: four thin rails around the canvas aperture (not a full dark plate)
+	var rail: float = 0.06
+	var aper_w: float = w - 0.16
+	var aper_h: float = h - 0.16
+	_add_box(root, Vector3(0, aper_h * 0.5 + rail * 0.35, 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), liner, false, 0.4)
+	_add_box(root, Vector3(0, -(aper_h * 0.5 + rail * 0.35), 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), liner, false, 0.4)
+	_add_box(root, Vector3(aper_w * 0.5 + rail * 0.35, 0, 0.03), Vector3(rail, aper_h, 0.035), liner, false, 0.4)
+	_add_box(root, Vector3(-(aper_w * 0.5 + rail * 0.35), 0, 0.03), Vector3(rail, aper_h, 0.035), liner, false, 0.4)
+	# Backing board behind canvas (slightly larger, pushed back so canvas wins depth)
+	_add_box(root, Vector3(0, 0, -0.01), Vector3(aper_w + 0.02, aper_h + 0.02, 0.02), Color(0.12, 0.08, 0.05), false, 0.7)
+	# Corner ornaments (gilt styles only get full blocks; ebony gets slim pips)
+	var csz: float = 0.08 if frame_style != 2 else 0.045
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * (w * 0.5 + 0.02), sy * (h * 0.5 + 0.02), 0.03), Vector3(0.08, 0.08, 0.05), BRASS.lightened(0.1), false, 0.28)
-	# Picture rail hook / crest
-	_add_box(root, Vector3(0, h * 0.5 + 0.1, 0.02), Vector3(0.12, 0.08, 0.04), BRASS.darkened(0.08), false, 0.32)
-	_add_cylinder(root, Vector3(0, h * 0.5 + 0.16, 0.03), 0.025, 0.03, BRASS, false, 0.3, true)
+			_add_box(root, Vector3(sx * (w * 0.5 + 0.02), sy * (h * 0.5 + 0.02), 0.03),
+				Vector3(csz, csz, 0.05), corner_c, false, 0.28)
+	# Picture-rail hook / crest (skip on austere ebony)
+	if frame_style != 2:
+		_add_box(root, Vector3(0, h * 0.5 + 0.1, 0.02), Vector3(0.12, 0.08, 0.04), liner, false, 0.32)
+		_add_cylinder(root, Vector3(0, h * 0.5 + 0.16, 0.03), 0.025, 0.03, corner_c, false, 0.3, true)
+	# Ornate gilt: mid-side rosettes
+	if frame_style == 0:
+		_add_cylinder(root, Vector3(-(w * 0.5 + 0.01), 0, 0.04), 0.03, 0.025, corner_c, false, 0.28, true)
+		_add_cylinder(root, Vector3(w * 0.5 + 0.01, 0, 0.04), 0.03, 0.025, corner_c, false, 0.28, true)
 	var canvas := MeshInstance3D.new()
 	var cm := QuadMesh.new()
-	cm.size = Vector2(w - 0.18, h - 0.18)
+	cm.size = Vector2(aper_w, aper_h)
 	canvas.mesh = cm
 	var cmat := StandardMaterial3D.new()
 	var tex_path: String = str(feat.get("texture", ""))
@@ -1896,6 +1948,8 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	if bad:
 		if kind == "still_life":
 			tex_path = ART_STILL_LIFES[seed0 % ART_STILL_LIFES.size()]
+		elif kind == "botanical":
+			tex_path = ART_BOTANICALS[seed0 % ART_BOTANICALS.size()]
 		elif kind == "portrait":
 			var portraits := [
 				"res://assets/portraits/portrait_bell.jpg",
@@ -1907,22 +1961,31 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 			]
 			tex_path = portraits[seed0 % portraits.size()]
 		else:
-			# default / landscape / auto → outdoor oil
+			# default / landscape / auto / ruin / seascape → outdoor oil pool
 			tex_path = ART_LANDSCAPES[seed0 % ART_LANDSCAPES.size()]
 	var tex := _load_tex(tex_path)
 	if tex == null:
 		tex = _load_tex(ART_LANDSCAPES[0])
 	if tex:
 		cmat.albedo_texture = tex
-		cmat.albedo_color = Color(1.0, 0.98, 0.92)
+		# Warm varnish wash so oils read aged, not pure photo
+		cmat.albedo_color = Color(1.0, 0.97, 0.9)
 	else:
 		cmat.albedo_color = Color(0.4, 0.55, 0.65)
-	cmat.roughness = 0.85
+	cmat.roughness = 0.78
 	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	cmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	canvas.material_override = cmat
+	# Sit clearly in front of frame rails / backing
 	canvas.position = Vector3(0, 0, 0.055)
 	root.add_child(canvas)
+	# Subtle picture light so canvas never dies in shadow
+	var pic_l := OmniLight3D.new()
+	pic_l.light_color = Color(1.0, 0.92, 0.75)
+	pic_l.light_energy = 0.22
+	pic_l.omni_range = 1.5
+	pic_l.position = Vector3(0.0, h * 0.12, 0.5)
+	root.add_child(pic_l)
 	return root
 
 # ─── Billboard hero furniture (painted cards) ────────────────────────────────
@@ -2039,16 +2102,22 @@ static func _book_color(seed: int) -> Color:
 static func _load_tex(path: String) -> Texture2D:
 	if path == "":
 		return null
+	if _tex_cache.has(path):
+		return _tex_cache[path]
+	var tex: Texture2D = null
 	if ResourceLoader.exists(path):
 		var r = load(path)
 		if r is Texture2D:
-			return r
-	var abs_path := ProjectSettings.globalize_path(path)
-	if FileAccess.file_exists(abs_path):
-		var img := Image.new()
-		if img.load(abs_path) == OK:
-			return ImageTexture.create_from_image(img)
-	return null
+			tex = r
+	if tex == null:
+		var abs_path := ProjectSettings.globalize_path(path)
+		if FileAccess.file_exists(abs_path):
+			var img := Image.new()
+			if img.load(abs_path) == OK:
+				tex = ImageTexture.create_from_image(img)
+	if tex:
+		_tex_cache[path] = tex
+	return tex
 
 static func _wood_path_for_color(color: Color, size: Vector3) -> String:
 	## Species by colour + size: cutting boards/light oak ≠ polished mahogany tables.
