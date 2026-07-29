@@ -981,66 +981,79 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.0, 0.4, -0.05), 0.045, 0.78, MAHOGANY_DARK, true)
 		_add_box(root, Vector3(0, 0.35, 0.08), Vector3(0.7, 0.03, 0.15), MAHOGANY, false, 0.48)
 	var ty := top_y + 0.05
-	# Dressing kits — never clone the same still-life
+	# Loop 122 dressing — period candlesticks / miniature Argand (never gold coin stacks)
 	if dress == 0:
-		# Calling cards + Argand lamp + clock
+		# Card tray + dual candlesticks + carriage clock
 		_add_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.36, 0.03, 0.22), MAHOGANY_DARK, false, 0.4)
 		_add_box(root, Vector3(-0.35, ty + 0.03, 0.05), Vector3(0.28, 0.01, 0.16), PAPER, false)
 		_add_box(root, Vector3(-0.32, ty + 0.045, 0.02), Vector3(0.2, 0.008, 0.11), PAPER.darkened(0.08), false)
 		_add_box(root, Vector3(0.05, ty, 0.08), Vector3(0.14, 0.02, 0.09), CREAM.darkened(0.12), false, 0.9)
-		_add_cylinder(root, Vector3(0.4, ty + 0.02, -0.05), 0.07, 0.05, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.12, -0.05), 0.028, 0.16, BRASS.darkened(0.05), false, 0.3, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.28, -0.05), 0.04, 0.2, Color(0.88, 0.9, 0.85), false, 0.4)
-		_add_sphere_blob(root, Vector3(0.4, ty + 0.2, -0.05), 0.025, Color(1.0, 0.8, 0.4))
-		_add_cylinder(root, Vector3(-0.05, ty + 0.1, -0.1), 0.05, 0.14, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(-0.05, ty + 0.2, -0.1), Vector3(0.08, 0.08, 0.04), Color(0.85, 0.82, 0.75), false, 0.5)
+		# Pair of candlesticks: dark iron/mahogany base + cream taper + flame
+		for sx in [-0.15, 0.42]:
+			_add_cylinder(root, Vector3(sx, ty + 0.02, -0.05), 0.055, 0.04, MAHOGANY_DARK, false, 0.5)
+			_add_cylinder(root, Vector3(sx, ty + 0.08, -0.05), 0.035, 0.08, MAHOGANY, false, 0.48)
+			_add_cylinder(root, Vector3(sx, ty + 0.14, -0.05), 0.04, 0.03, BRASS.darkened(0.2), false, 0.35, true)
+			_add_cylinder(root, Vector3(sx, ty + 0.26, -0.05), 0.018, 0.22, CANDLE, false, 0.6)
+			_add_sphere_blob(root, Vector3(sx, ty + 0.4, -0.05), 0.025, Color(1.0, 0.78, 0.35))
+		# Carriage clock (square face — not brass cylinder stack)
+		_add_box(root, Vector3(0.12, ty + 0.08, -0.12), Vector3(0.1, 0.14, 0.06), BRASS.darkened(0.15), false, 0.35)
+		_add_box(root, Vector3(0.12, ty + 0.08, -0.09), Vector3(0.07, 0.1, 0.02), Color(0.88, 0.86, 0.78), false, 0.5)
+		_add_box(root, Vector3(0.12, ty + 0.16, -0.12), Vector3(0.08, 0.02, 0.05), BRASS.darkened(0.1), false, 0.35)
 		var lamp0 := OmniLight3D.new()
 		lamp0.light_color = Color(1.0, 0.85, 0.55)
-		lamp0.light_energy = 0.6
-		lamp0.omni_range = 3.2
-		lamp0.position = Vector3(0.4, ty + 0.32, -0.05)
+		lamp0.light_energy = 0.55
+		lamp0.omni_range = 3.0
+		lamp0.position = Vector3(0.42, ty + 0.38, -0.05)
 		root.add_child(lamp0)
 	elif dress == 1:
-		# Hat box + gloves + candlestick (no freestanding lamp clone)
+		# Hat box + gloves + single brass candlestick with drip pan
 		_add_cylinder(root, Vector3(-0.35, ty + 0.1, 0), 0.14, 0.18, Color(0.55, 0.28, 0.18), false, 0.75)
 		_add_cylinder(root, Vector3(-0.35, ty + 0.2, 0), 0.15, 0.03, Color(0.48, 0.24, 0.14), false, 0.7)
-		_add_box(root, Vector3(0.1, ty, 0.08), Vector3(0.18, 0.025, 0.12), CREAM.darkened(0.15), false, 0.9)
-		_add_box(root, Vector3(0.12, ty + 0.02, 0.05), Vector3(0.12, 0.015, 0.08), CREAM.darkened(0.2), false, 0.9)
-		_add_cylinder(root, Vector3(0.4, ty + 0.02, 0), 0.06, 0.04, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.14, 0), 0.02, 0.2, CANDLE, false, 0.55)
-		_add_sphere_blob(root, Vector3(0.4, ty + 0.28, 0), 0.03, Color(1.0, 0.78, 0.4))
+		_add_box(root, Vector3(0.05, ty, 0.08), Vector3(0.18, 0.025, 0.12), CREAM.darkened(0.15), false, 0.9)
+		_add_box(root, Vector3(0.07, ty + 0.02, 0.05), Vector3(0.12, 0.015, 0.08), CREAM.darkened(0.2), false, 0.9)
+		# Candlestick: wide drip pan + short stem + cream taper
+		_add_cylinder(root, Vector3(0.4, ty + 0.02, 0), 0.07, 0.03, BRASS.darkened(0.15), false, 0.35, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.08, 0), 0.025, 0.1, BRASS.darkened(0.2), false, 0.35, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.14, 0), 0.05, 0.025, BRASS.darkened(0.1), false, 0.32, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.28, 0), 0.02, 0.24, CANDLE, false, 0.6)
+		_add_sphere_blob(root, Vector3(0.4, ty + 0.42, 0), 0.028, Color(1.0, 0.78, 0.4))
 		_add_box(root, Vector3(0.0, ty, -0.1), Vector3(0.22, 0.04, 0.14), MAHOGANY_DARK, false, 0.5)
 		var lamp1 := OmniLight3D.new()
 		lamp1.light_color = Color(1.0, 0.82, 0.5)
 		lamp1.light_energy = 0.4
 		lamp1.omni_range = 2.4
-		lamp1.position = Vector3(0.4, ty + 0.32, 0)
+		lamp1.position = Vector3(0.4, ty + 0.4, 0)
 		root.add_child(lamp1)
 	elif dress == 2:
 		# Flower vase + calling cards + ink tray
-		_add_cylinder(root, Vector3(0.35, ty + 0.1, 0), 0.06, 0.18, CREAM.darkened(0.05), false, 0.7)
-		_add_sphere_blob(root, Vector3(0.35, ty + 0.28, 0.02), 0.05, Color(0.65, 0.25, 0.28))
-		_add_sphere_blob(root, Vector3(0.32, ty + 0.26, -0.03), 0.04, Color(0.75, 0.7, 0.35))
-		_add_sphere_blob(root, Vector3(0.4, ty + 0.25, 0.0), 0.035, Color(0.5, 0.55, 0.3))
+		_add_cylinder(root, Vector3(0.35, ty + 0.04, 0), 0.05, 0.04, CREAM.darkened(0.15), false, 0.7)
+		_add_cylinder(root, Vector3(0.35, ty + 0.12, 0), 0.07, 0.14, CREAM.darkened(0.05), false, 0.7)
+		_add_cylinder(root, Vector3(0.35, ty + 0.2, 0), 0.05, 0.04, CREAM, false, 0.7)
+		_add_sphere_blob(root, Vector3(0.35, ty + 0.3, 0.02), 0.05, Color(0.65, 0.25, 0.28))
+		_add_sphere_blob(root, Vector3(0.32, ty + 0.28, -0.03), 0.04, Color(0.75, 0.7, 0.35))
+		_add_sphere_blob(root, Vector3(0.4, ty + 0.27, 0.0), 0.035, Color(0.5, 0.55, 0.3))
 		_add_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.3, 0.02, 0.18), PAPER, false)
 		_add_box(root, Vector3(-0.32, ty + 0.015, 0.02), Vector3(0.22, 0.008, 0.12), PAPER.darkened(0.06), false)
 		_add_box(root, Vector3(0.0, ty, -0.08), Vector3(0.16, 0.03, 0.1), MAHOGANY_DARK, false, 0.45)
 		_add_cylinder(root, Vector3(0.02, ty + 0.05, -0.08), 0.015, 0.08, INK, false, 0.5)
 	else:
-		# Silver tray + correspondence + small oil font
-		_add_box(root, Vector3(0.0, ty, 0.0), Vector3(0.55, 0.02, 0.32), BRASS.darkened(0.15), false, 0.3)
-		_add_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), BRASS.lightened(0.05), false, 0.28)
+		# Silver tray + correspondence + miniature Argand (wood base + amber glass)
+		_add_box(root, Vector3(0.0, ty, 0.0), Vector3(0.55, 0.02, 0.32), Color(0.65, 0.65, 0.68), false, 0.35)
+		_add_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), Color(0.75, 0.75, 0.78), false, 0.32)
 		_add_box(root, Vector3(-0.1, ty + 0.03, 0.02), Vector3(0.2, 0.01, 0.14), PAPER, false)
 		_add_box(root, Vector3(-0.08, ty + 0.04, 0.0), Vector3(0.16, 0.008, 0.1), PAPER.darkened(0.05), false)
-		_add_cylinder(root, Vector3(0.15, ty + 0.06, -0.05), 0.04, 0.08, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(0.15, ty + 0.16, -0.05), 0.025, 0.12, Color(0.9, 0.92, 0.86), false, 0.4)
-		_add_sphere_blob(root, Vector3(0.15, ty + 0.12, -0.05), 0.02, Color(1.0, 0.8, 0.4))
+		# Mini Argand: dark base + fat font + short amber glass (loop 121 language)
+		_add_cylinder(root, Vector3(0.18, ty + 0.03, -0.05), 0.055, 0.04, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0.18, ty + 0.09, -0.05), 0.07, 0.08, Color(0.5, 0.36, 0.18), false, 0.4, true)
+		_add_cylinder(root, Vector3(0.18, ty + 0.15, -0.05), 0.045, 0.03, BRASS.darkened(0.2), false, 0.35, true)
+		_add_cylinder(root, Vector3(0.18, ty + 0.24, -0.05), 0.035, 0.12, Color(0.85, 0.62, 0.28), false, 0.35)
+		_add_sphere_blob(root, Vector3(0.18, ty + 0.24, -0.05), 0.022, Color(1.0, 0.78, 0.35))
 		_add_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
 		var lamp3 := OmniLight3D.new()
 		lamp3.light_color = Color(1.0, 0.85, 0.55)
 		lamp3.light_energy = 0.45
 		lamp3.omni_range = 2.6
-		lamp3.position = Vector3(0.15, ty + 0.2, -0.05)
+		lamp3.position = Vector3(0.18, ty + 0.28, -0.05)
 		root.add_child(lamp3)
 	_add_contact_shadow(root, 0.78, 0.38)
 	return root
@@ -2656,7 +2669,7 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chalk_board(prop: Dictionary) -> Node3D:
-	## Workshop / gallery slate — loop 112: baked chalk plates (read at room length; not thin mesh sticks).
+	## Workshop / gallery slate — loop 122: bold high-contrast chalk plates (room-length read).
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
 	var seed0: int = int(prop.get("seed", 0))
@@ -2668,7 +2681,9 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
 	_add_box(root, Vector3(-w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
 	_add_box(root, Vector3(w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
-	# Loop 112: full-face chalk plate texture (equations / engine / ledger / wave)
+	# Dark slate recess behind plate
+	_add_box(root, Vector3(0, 1.2, 0.02), Vector3(w - 0.1, h - 0.1, 0.015), Color(0.08, 0.09, 0.08), false, 0.95)
+	# Full-face chalk plate (equations / engine / ledger / wave)
 	var plate_paths := [
 		"res://assets/rooms/textures/chalk/chalk_equations.jpg",
 		"res://assets/rooms/textures/chalk/chalk_engine.jpg",
@@ -2678,30 +2693,36 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	var plate_path: String = plate_paths[seed0 % 4]
 	var slate := MeshInstance3D.new()
 	var slate_mesh := BoxMesh.new()
-	slate_mesh.size = Vector3(w - 0.12, h - 0.12, 0.02)
+	slate_mesh.size = Vector3(w - 0.14, h - 0.14, 0.02)
 	slate.mesh = slate_mesh
 	var slate_mat := StandardMaterial3D.new()
 	var plate_tex: Texture2D = _load_tex(plate_path)
 	if plate_tex:
 		slate_mat.albedo_texture = plate_tex
 		slate_mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
-		slate_mat.albedo_color = Color(1.05, 1.05, 1.0)  # slight lift so white chalk pops under filmic
+		# Unshaded + slight emission so white chalk survives filmic tonemap at distance
+		slate_mat.albedo_color = Color(1.1, 1.1, 1.05)
+		slate_mat.emission_enabled = true
+		slate_mat.emission_texture = plate_tex
+		slate_mat.emission = Color(0.55, 0.55, 0.5)
+		slate_mat.emission_energy_multiplier = 0.35
+		slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	else:
 		slate_mat.albedo_color = CHALK
-	slate_mat.roughness = 0.92
-	slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	slate_mat.roughness = 0.95
 	slate.material_override = slate_mat
-	slate.position = Vector3(0, 1.2, 0.035)
+	slate.position = Vector3(0, 1.2, 0.04)
 	root.add_child(slate)
 	# Chalk rail + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
 	_add_cylinder(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, CREAM.darkened(0.1), false)
 	if seed0 % 2 == 0:
-		_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.4, 0.55, 0.7), false)
+		_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.85, 0.85, 0.8), false)
 		_add_box(root, Vector3(0.4, 0.76, 0.05), Vector3(0.08, 0.02, 0.04), Color(0.55, 0.12, 0.1), false, 0.7)
 	else:
-		_add_cylinder(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, Color(0.55, 0.35, 0.25), false)
+		_add_cylinder(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, Color(0.9, 0.88, 0.8), false)
 		_add_cylinder(root, Vector3(0.3, 0.76, 0.05), 0.01, 0.06, CREAM, false)
 	return root
 
