@@ -2395,33 +2395,30 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(-0.14, 0.14, 0), Vector3(0.028, 0.028, 0.26), MAHOGANY_DARK, false, 0.5)
 		_add_box(root, Vector3(0.14, 0.14, 0), Vector3(0.028, 0.028, 0.26), MAHOGANY_DARK, false, 0.5)
 	else:
-		# Upholstered drum — thick velvet cylinder + piping + wood plinth (gallery read)
-		var fab := VELVET_GREEN.darkened(0.05) if seed0 % 2 == 0 else VELVET_RED.darkened(0.1)
-		var fab_d := fab.darkened(0.12)
-		# Wood plinth ring under cushion
-		_add_cylinder(root, Vector3(0, 0.38, 0), 0.21, 0.06, MAHOGANY_DARK, true, 0.45)
-		_add_cylinder(root, Vector3(0, 0.42, 0), 0.2, 0.03, MAHOGANY, false, 0.48)
-		# Thick padded drum body (not flat disc)
-		_add_cylinder(root, Vector3(0, 0.5, 0), 0.2, 0.14, fab, true, 0.9)
-		_add_cylinder(root, Vector3(0, 0.58, 0), 0.185, 0.05, fab_d, false, 0.92)
-		# Top crown pad
-		_add_cylinder(root, Vector3(0, 0.62, 0), 0.16, 0.035, fab.lightened(0.04), false, 0.9)
-		# Side piping rings
-		_add_cylinder(root, Vector3(0, 0.46, 0), 0.205, 0.02, fab_d, false, 0.88)
-		_add_cylinder(root, Vector3(0, 0.56, 0), 0.205, 0.015, fab_d, false, 0.88)
-		# Button tufts
-		for ti in 5:
-			var ta := float(ti) * TAU / 5.0 + 0.3
-			_add_cylinder(root, Vector3(cos(ta) * 0.07, 0.64, sin(ta) * 0.07), 0.014, 0.016, fab.darkened(0.22), false, 0.95)
+		# Upholstered drum (loop 138): clear wood seat rim so it doesn't read as a cactus
+		var fab := VELVET_GREEN.darkened(0.08) if seed0 % 2 == 0 else VELVET_RED.darkened(0.12)
+		var fab_d := fab.darkened(0.14)
+		# Wood plinth + visible oak seat rail (furniture language)
+		_add_cylinder(root, Vector3(0, 0.36, 0), 0.22, 0.08, MAHOGANY_DARK, true, 0.45)
+		_add_cylinder(root, Vector3(0, 0.42, 0), 0.215, 0.04, MAHOGANY, false, 0.48)
+		_add_cylinder(root, Vector3(0, 0.46, 0), 0.2, 0.03, OAK.darkened(0.05), false, 0.52)
+		# Padded top — flatter, wider, not tall green cylinder
+		_add_cylinder(root, Vector3(0, 0.52, 0), 0.195, 0.1, fab, true, 0.9)
+		_add_cylinder(root, Vector3(0, 0.58, 0), 0.18, 0.04, fab_d, false, 0.92)
+		# Wood nailhead ring at top edge
+		_add_cylinder(root, Vector3(0, 0.55, 0), 0.2, 0.015, MAHOGANY_DARK, false, 0.4)
+		for ti in 6:
+			var ta := float(ti) * TAU / 6.0
+			_add_cylinder(root, Vector3(cos(ta) * 0.08, 0.6, sin(ta) * 0.08), 0.012, 0.012, fab.darkened(0.25), false, 0.95)
 		# Turned legs
 		for a in [0.0, 90.0, 180.0, 270.0]:
 			var rad := deg_to_rad(a)
 			var lx := cos(rad) * 0.13
 			var lz := sin(rad) * 0.13
-			_add_cylinder(root, Vector3(lx, 0.28, lz), 0.03, 0.18, MAHOGANY_DARK, true)
-			_add_cylinder(root, Vector3(lx, 0.14, lz), 0.024, 0.14, MAHOGANY, true)
+			_add_cylinder(root, Vector3(lx, 0.26, lz), 0.03, 0.16, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(lx, 0.12, lz), 0.024, 0.14, MAHOGANY, true)
 			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.034, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.14, 0), 0.14, 0.022, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0, 0.12, 0), 0.14, 0.022, MAHOGANY_DARK, false, 0.5)
 	_add_contact_shadow(root, 0.26, 0.26)
 	return root
 
@@ -2828,12 +2825,12 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	if plate_tex:
 		slate_mat.albedo_texture = plate_tex
 		slate_mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
-		# Unshaded + slight emission so white chalk survives filmic tonemap at distance
-		slate_mat.albedo_color = Color(1.1, 1.1, 1.05)
+		# Loop 138: stronger unshaded lift so chalk reads across the room
+		slate_mat.albedo_color = Color(1.2, 1.2, 1.15)
 		slate_mat.emission_enabled = true
 		slate_mat.emission_texture = plate_tex
-		slate_mat.emission = Color(0.55, 0.55, 0.5)
-		slate_mat.emission_energy_multiplier = 0.35
+		slate_mat.emission = Color(0.75, 0.75, 0.7)
+		slate_mat.emission_energy_multiplier = 0.55
 		slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	else:
 		slate_mat.albedo_color = CHALK
@@ -3950,23 +3947,25 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 	## Keep all bulk z-max ≤ -0.04 so front hero art is never covered.
 	match bulk:
 		"sofa":
-			# Chesterfield depth behind card: seat/back/arms/legs only in -Z half
-			var sw: float = clampf(width * 0.88, 1.6, 2.4)
-			_add_box(root, Vector3(0, 0.2, -0.28), Vector3(sw, 0.16, 0.42), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.4, -0.26), Vector3(sw * 0.9, 0.2, 0.38), VELVET_GREEN_DEEP, false, 0.88)
-			_add_box(root, Vector3(0, 0.78, -0.42), Vector3(sw * 0.94, 0.58, 0.16), VELVET_GREEN, false, 0.9)
+			# Loop 138: tight bulk fully behind chesterfield card (no green slab above back)
+			var sw: float = clampf(width * 0.72, 1.4, 2.0)
+			_add_box(root, Vector3(0, 0.22, -0.32), Vector3(sw, 0.14, 0.32), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.4, -0.3), Vector3(sw * 0.88, 0.18, 0.28), Color(0.28, 0.36, 0.22), false, 0.88)
+			# Low back only — do not tower above painted crest
+			_add_box(root, Vector3(0, 0.7, -0.42), Vector3(sw * 0.9, 0.38, 0.14), Color(0.26, 0.34, 0.2), false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * (sw * 0.42), 0.55, -0.28),
-					Vector3(0.16, 0.38, 0.38), VELVET_GREEN_DEEP, false, 0.88)
-				_add_cylinder(root, Vector3(sx * (sw * 0.4), 0.08, -0.12), 0.035, 0.14, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * (sw * 0.4), 0.08, -0.4), 0.035, 0.14, MAHOGANY, false)
+				_add_box(root, Vector3(sx * (sw * 0.38), 0.52, -0.32),
+					Vector3(0.14, 0.28, 0.28), Color(0.24, 0.32, 0.18), false, 0.88)
+				_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.18), 0.032, 0.12, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.4), 0.03, 0.12, MAHOGANY, false)
 		"desk":
-			var dw: float = clampf(width * 0.85, 1.1, 1.6)
-			_add_box(root, Vector3(0, 0.78, -0.22), Vector3(dw, 0.05, 0.42), MAHOGANY, false, 0.45)
-			_add_box(root, Vector3(0, 0.81, -0.22), Vector3(dw * 0.9, 0.012, 0.36), Color(0.1, 0.16, 0.1), false, 0.72)
-			_add_box(root, Vector3(-0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.9, 0.28, 0.06), MAHOGANY, false, 0.45)
+			# Loop 138: pedestals tucked behind card
+			var dw: float = clampf(width * 0.75, 1.0, 1.45)
+			_add_box(root, Vector3(0, 0.78, -0.28), Vector3(dw, 0.05, 0.32), MAHOGANY, false, 0.45)
+			_add_box(root, Vector3(0, 0.81, -0.28), Vector3(dw * 0.88, 0.012, 0.28), Color(0.1, 0.16, 0.1), false, 0.72)
+			_add_box(root, Vector3(-0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
 			# Loop 137: tight bulk ONLY behind card (z≤-0.22) — no side slabs past silhouette
 			var ww: float = clampf(width * 0.55, 0.55, 0.78)
