@@ -1191,7 +1191,8 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 
 static func _make_floor_path(prop: Dictionary) -> Node3D:
-	## Walk path — surface: stone (conservatory), iron (workshop), wood (service).
+	## Walk path — surface: stone (conservatory), iron (workshop/gallery), wood (service).
+	## Loop 89: iron plates are riveted diamond-tread with curbs — not flat black slabs.
 	## Never stamp pale stone on a finished hall runner (hall uses rug alone).
 	var root := Node3D.new()
 	root.name = "FloorPath"
@@ -1199,19 +1200,69 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	var width: float = float(prop.get("width", 0.9))
 	var seed0: int = int(prop.get("seed", 0))
 	var surface: String = str(prop.get("surface", "stone"))
-	var n := int(clampf(length / 0.55, 3.0, 12.0))
+	var n := int(clampf(length / 0.55, 3.0, 14.0))
+	# Mid-grey iron that reads under filmic tonemap (pure dark metal → black void)
+	var iron_mid := Color(0.34, 0.34, 0.36)
+	var iron_light := Color(0.42, 0.42, 0.44)
+	var iron_dark := Color(0.26, 0.26, 0.28)
+	var iron_edge := Color(0.48, 0.46, 0.42)  # slight brass-worn lip
+	if surface == "iron":
+		# Continuous bed so gaps aren't void
+		_add_box(root, Vector3(0, 0.01, 0), Vector3(width * 0.98, 0.014, length * 0.98), iron_dark, false, 0.55)
+		# Side curbs (coach-house / experiment floor language)
+		_add_box(root, Vector3(-width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), iron_mid, false, 0.5)
+		_add_box(root, Vector3(width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), iron_mid, false, 0.5)
+		# Brass corner finials at path ends
+		for ez in [-1.0, 1.0]:
+			for ex in [-1.0, 1.0]:
+				_add_cylinder(
+					root,
+					Vector3(ex * width * 0.48, 0.06, ez * length * 0.46),
+					0.03, 0.05, BRASS.darkened(0.15), false, 0.35, true
+				)
 	for i in n:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
-		var ox := 0.04 * float(((i + seed0) % 3) - 1)
+		var ox := 0.03 * float(((i + seed0) % 3) - 1)
 		if surface == "iron":
-			# Dark iron floor plates — coach-house / workshop walkway
-			var icol := IRON.lightened(0.04) if (i + seed0) % 2 == 0 else IRON.darkened(0.06)
-			_add_box(root, Vector3(ox, 0.018, z), Vector3(width * (0.88 + float(i % 2) * 0.06), 0.03, 0.5), icol, false, 0.4)
-			# Bolt corners
-			_add_cylinder(root, Vector3(ox - width * 0.32, 0.035, z - 0.15), 0.015, 0.02, IRON.lightened(0.12), false, 0.35)
-			_add_cylinder(root, Vector3(ox + width * 0.32, 0.035, z + 0.15), 0.015, 0.02, IRON.lightened(0.12), false, 0.35)
-			# Seam line
-			_add_box(root, Vector3(ox, 0.02, z + 0.24), Vector3(width * 0.82, 0.008, 0.015), IRON.darkened(0.12), false, 0.45)
+			var pw := width * (0.82 + float(i % 2) * 0.05)
+			var pd := 0.48
+			var icol := iron_light if (i + seed0) % 2 == 0 else iron_mid
+			# Raised plate body
+			_add_box(root, Vector3(ox, 0.028, z), Vector3(pw, 0.028, pd), icol, false, 0.48)
+			# Raised perimeter lip (reads as plate edge, not Minecraft block)
+			_add_box(root, Vector3(ox, 0.044, z - pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), iron_edge, false, 0.45)
+			_add_box(root, Vector3(ox, 0.044, z + pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), iron_edge, false, 0.45)
+			_add_box(root, Vector3(ox - pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), iron_edge, false, 0.45)
+			_add_box(root, Vector3(ox + pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), iron_edge, false, 0.45)
+			# Diamond-tread ridges (seed forks orientation)
+			if (i + seed0) % 2 == 0:
+				for r in 3:
+					var rx := ox - pw * 0.25 + float(r) * (pw * 0.25)
+					_add_box(root, Vector3(rx, 0.042, z), Vector3(0.04, 0.01, pd * 0.7), iron_light.lightened(0.06), false, 0.5)
+			else:
+				for r2 in 2:
+					var rz := z - pd * 0.18 + float(r2) * (pd * 0.36)
+					_add_box(root, Vector3(ox, 0.042, rz), Vector3(pw * 0.7, 0.01, 0.035), iron_light.lightened(0.05), false, 0.5)
+			# Four corner rivets + mid-edge bolts
+			var riv := IRON.lightened(0.22)
+			for cx in [-1.0, 1.0]:
+				for cz in [-1.0, 1.0]:
+					_add_cylinder(
+						root,
+						Vector3(ox + cx * pw * 0.38, 0.05, z + cz * pd * 0.35),
+						0.018, 0.016, riv, false, 0.4
+					)
+			_add_cylinder(root, Vector3(ox, 0.05, z), 0.016, 0.014, BRASS.darkened(0.25), false, 0.35, true)
+			# Dark seam gap between plates
+			_add_box(root, Vector3(ox, 0.02, z + pd * 0.5), Vector3(pw * 0.9, 0.01, 0.04), iron_dark.darkened(0.1), false, 0.55)
+			# Occasional copper wear scuff (experiment floor history)
+			if (i + seed0) % 4 == 0:
+				_add_box(
+					root,
+					Vector3(ox + pw * 0.15, 0.046, z - 0.05),
+					Vector3(0.12, 0.008, 0.08),
+					COPPER.darkened(0.2), false, 0.45
+				)
 		elif surface == "wood":
 			var wcol := OAK.darkened(0.05) if (i + seed0) % 2 == 0 else OAK.darkened(0.12)
 			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
@@ -1874,7 +1925,7 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chalk_board(prop: Dictionary) -> Node3D:
-	## Workshop / gallery slate — seed forks denser diagram marks (loop 81).
+	## Workshop / gallery slate — loop 89: denser marks that read from room centre.
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
 	var seed0: int = int(prop.get("seed", 0))
@@ -1885,42 +1936,60 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	# Frame lip
 	_add_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
 	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
-	var chalk := Color(0.92, 0.92, 0.9)
+	# Bright chalk so marks survive distance / filmic tonemap
+	var chalk := Color(0.96, 0.96, 0.93)
+	var chalk_dim := Color(0.82, 0.84, 0.8)
 	match seed0 % 4:
 		0:
-			# Equations / coil notes
-			_add_box(root, Vector3(-0.2, 1.4, 0.05), Vector3(0.6, 0.015, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.15, 1.28, 0.05), Vector3(0.45, 0.012, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.1, 1.15, 0.05), Vector3(0.75, 0.01, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.05, 1.05, 0.05), Vector3(0.5, 0.01, 0.01), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.3, 1.0, 0.05), 0.1, 0.01, chalk, false, 0.95)
-			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.25, 0.01, 0.01), chalk, false, 0.95)
+			# Equations / coil notes — multi-line dense
+			for li in 7:
+				var ly := 1.48 - float(li) * 0.09
+				var lw := 0.55 + float((li + seed0) % 4) * 0.1
+				var lx := -0.15 + float(li % 3) * 0.08
+				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.018, 0.012), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.12, 0.012, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.06, 0.01, chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.3, 0.015, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.4, 1.35, 0.05), Vector3(0.08, 0.08, 0.01), chalk, false, 0.95)  # sigma-ish
 		1:
-			# Circle + radii (engine notes)
-			_add_cylinder(root, Vector3(0.05, 1.22, 0.05), 0.24, 0.01, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.05, 1.22, 0.05), 0.12, 0.01, chalk.darkened(0.05), false, 0.95)
-			_add_box(root, Vector3(0.05, 1.22, 0.05), Vector3(0.45, 0.01, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.05, 1.22, 0.05), Vector3(0.01, 0.45, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.4, 1.42, 0.05), Vector3(0.28, 0.012, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.35, 1.05, 0.05), Vector3(0.3, 0.01, 0.01), chalk, false, 0.95)
+			# Concentric coils + radii (engine notes)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.28, 0.012, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.18, 0.011, chalk_dim, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.09, 0.01, chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.55, 0.014, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.014, 0.55, 0.01), chalk, false, 0.95)
+			# Diagonal ray ticks
+			for di in 4:
+				var ang := float(di) * 0.7
+				_add_box(root, Vector3(cos(ang) * 0.2, 1.22 + sin(ang) * 0.2, 0.05), Vector3(0.18, 0.012, 0.01), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.4, 1.48, 0.05), Vector3(0.35, 0.016, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(0.35, 0.98, 0.05), Vector3(0.35, 0.014, 0.012), chalk, false, 0.95)
 		2:
-			# Grid / ledger lines
-			for i in 5:
-				var yy := 0.95 + float(i) * 0.11
-				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(0.95, 0.008, 0.01), chalk.darkened(0.05), false, 0.95)
-			for j in 4:
-				var xx := -0.4 + float(j) * 0.25
-				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.01, 0.55, 0.01), chalk.darkened(0.08), false, 0.95)
-			_add_box(root, Vector3(0.15, 1.35, 0.05), Vector3(0.35, 0.012, 0.01), chalk, false, 0.95)
+			# Dense grid / ledger + bold annotations
+			for i in 7:
+				var yy := 0.9 + float(i) * 0.09
+				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(1.0, 0.012, 0.012), chalk_dim, false, 0.95)
+			for j in 6:
+				var xx := -0.48 + float(j) * 0.18
+				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.012, 0.65, 0.012), chalk_dim, false, 0.95)
+			# Bold fill cells
+			_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.14, 0.07, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.2, 1.15, 0.05), Vector3(0.14, 0.07, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.0, 0.05), Vector3(0.22, 0.018, 0.012), chalk, false, 0.95)
 		_:
-			# Wave / aether trace + ticks
-			for i in 6:
-				var wx := -0.4 + float(i) * 0.14
-				var wy := 1.15 + sin(float(i) * 0.9) * 0.12
-				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.12, 0.01, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.3, 1.4, 0.05), Vector3(0.4, 0.012, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.25, 1.0, 0.05), Vector3(0.35, 0.01, 0.01), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(-0.15, 1.0, 0.05), 0.08, 0.01, chalk, false, 0.95)
+			# Wave / aether trace + axis + labels
+			for i in 9:
+				var wx := -0.48 + float(i) * 0.11
+				var wy := 1.18 + sin(float(i) * 0.85 + float(seed0)) * 0.16
+				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.14, 0.016, 0.012), chalk, false, 0.95)
+			# Baseline + vertical axis
+			_add_box(root, Vector3(0.0, 0.98, 0.05), Vector3(1.0, 0.014, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.48, 1.2, 0.05), Vector3(0.014, 0.55, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.25, 1.48, 0.05), Vector3(0.45, 0.018, 0.012), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.1, 0.012, chalk, false, 0.95)
+			# Tick marks on axis
+			for t in 5:
+				_add_box(root, Vector3(-0.3 + float(t) * 0.15, 0.95, 0.05), Vector3(0.012, 0.04, 0.01), chalk, false, 0.95)
 	# Chalk rail + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
@@ -2887,14 +2956,20 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		tex_path = TEX_BRASS
 		metallic = 0.7
 		mat.roughness = minf(roughness, 0.4)
-	# Iron / dark metal (exclude plant greens — LEAF_DARK was matching iron)
+	# Iron / dark metal — TRUE greys only (r≈g≈b). Warm dark mahogany must not
+	# match: MAHOGANY / MAHOGANY_DARK were classified as iron → black metal desks.
+	# Exclude plant greens (LEAF_DARK) via low green-dominance.
 	elif (
-		color.r < 0.32 and color.g < 0.32 and color.b < 0.35 and color.v < 0.35
-		and color.g <= color.r + 0.04
+		color.r < 0.40 and color.g < 0.40 and color.b < 0.42 and color.v < 0.42
+		and absf(color.r - color.g) < 0.05
+		and absf(color.g - color.b) < 0.06
+		and absf(color.r - color.b) < 0.08
+		and color.g <= color.r + 0.03
 	):
 		tex_path = TEX_IRON
-		metallic = 0.65
-		mat.roughness = minf(roughness, 0.55)
+		# Lower metallic: without env probes high metal reads as pure black
+		metallic = 0.42
+		mat.roughness = minf(roughness, 0.58)
 	# Mahogany / wood browns / oak FIRST — dark red-browns are wood, not velvet.
 	# Exclude terracotta/clay (g around 0.45–0.55 with high r).
 	elif (
