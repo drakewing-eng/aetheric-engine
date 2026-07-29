@@ -289,33 +289,55 @@ const ROOMS := {
 				"art": "landscape", "seed": 3, "frame": 2},
 		],
 		"props": [
+			# Loop 81: experiment-room density — diagrams, instrument shelves, scrap,
+			# note tables; keep centre aisle clear to the engine.
 			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0, "seed": 0},
 			{"kind": "chalk_board", "pos": [7.6, 0.0, -1.5], "yaw": -90.0, "seed": 1},
+			# North wall diagrams (visible from spawn looking at engine)
+			{"kind": "chalk_board", "pos": [-2.4, 0.0, -5.75], "yaw": 0.0, "seed": 2},
+			{"kind": "chalk_board", "pos": [2.6, 0.0, -5.75], "yaw": 0.0, "seed": 3},
 			# Engine where the great table once stood — centre-north, clear approach
 			{"kind": "aetheric_machine", "pos": [0.0, 0.0, -3.2], "yaw": 0.0, "height": 2.95},
-			# One secondary apparatus only (not a forest of machines)
+			# Secondary apparatus only (not a forest of machines)
 			{"kind": "machine", "pos": [4.5, 0.0, -4.2], "yaw": -20.0, "height": 1.9},
+			{"kind": "machine", "pos": [-4.8, 0.0, -4.5], "yaw": 25.0, "height": 1.65},
 			# Ledger desk for Amara/Bell notes (novel: desk, ledger)
 			{"kind": "desk", "pos": [-5.2, 0.0, -1.5], "yaw": 90.0},
 			{"kind": "chair", "pos": [-4.3, 0.0, -1.5], "yaw": -90.0, "fabric": Color(0.28, 0.2, 0.14)},
+			{"kind": "letter_stack", "pos": [-5.0, 0.78, -1.25], "yaw": 15.0, "seed": 1},
 			{"kind": "side_table", "pos": [-5.5, 0.0, -0.3], "yaw": 10.0, "seed": 2},
-			# Observation stools — not salon suite
+			# Observation table by engine (notes + lamp — not salon clutter)
+			{"kind": "side_table", "pos": [1.9, 0.0, -1.8], "yaw": -25.0, "seed": 5},
+			{"kind": "letter_stack", "pos": [1.85, 0.68, -1.75], "yaw": -10.0, "seed": 3},
+			{"kind": "side_table", "pos": [-1.7, 0.0, -4.6], "yaw": 20.0, "seed": 8},
+			# Instrument shelves (parts / glass / brass — not library books)
+			{"kind": "tool_shelf", "pos": [7.5, 0.0, 2.0], "yaw": -90.0, "width": 1.5, "height": 2.0, "seed": 3},
+			{"kind": "tool_shelf", "pos": [-7.5, 0.0, 1.2], "yaw": 90.0, "width": 1.35, "height": 1.85, "seed": 6},
 			# Observation stools — spread so path to machine stays clear
 			{"kind": "stool", "pos": [-2.4, 0.0, -0.6], "yaw": 15.0, "seed": 0},
 			{"kind": "stool", "pos": [2.6, 0.0, -0.4], "yaw": -10.0, "seed": 1},
 			{"kind": "stool", "pos": [3.2, 0.0, 2.0], "yaw": 40.0, "seed": 3},
-			# Oil lamps (novel: primary light language)
+			{"kind": "stool", "pos": [-3.0, 0.0, -3.5], "yaw": -30.0, "seed": 2},
+			# Oil lamps (novel: primary light language) along the long room
 			{"kind": "oil_lamp", "pos": [-5.5, 0.0, 0.4], "yaw": 20.0, "height": 1.15},
 			{"kind": "oil_lamp", "pos": [3.5, 0.0, -2.2], "yaw": -15.0, "height": 0.95},
+			{"kind": "oil_lamp", "pos": [-2.0, 0.0, -4.5], "yaw": 10.0, "height": 1.05},
+			{"kind": "oil_lamp", "pos": [5.2, 0.0, 1.5], "yaw": -40.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-7.5, 0.0, 1.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [7.5, 0.0, 1.0], "yaw": -90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [-7.5, 0.0, -3.5], "yaw": 90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [7.5, 0.0, -3.5], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -5.6], "yaw": 0.0, "height": 2.4},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -5.6], "yaw": 0.0, "height": 2.4},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.5], "hang": 3.9},
-			# Instrument crates (sulfur lore — packing) not kitchen pots
+			# Instrument crates + copper scrap (experiment stock, not kitchen pots)
 			{"kind": "crate", "pos": [5.5, 0.0, 3.5], "scale": 0.9, "seed": 5},
 			{"kind": "crate", "pos": [6.0, 0.0, 2.9], "scale": 0.65, "seed": 6},
 			{"kind": "crate", "pos": [-6.2, 0.0, 3.2], "scale": 0.8, "seed": 7},
+			{"kind": "crate", "pos": [-5.8, 0.0, -3.8], "scale": 0.7, "seed": 2},
+			{"kind": "copper_scrap", "pos": [3.6, 0.0, -3.0], "scale": 0.95, "seed": 0},
+			{"kind": "copper_scrap", "pos": [-3.8, 0.0, -3.2], "scale": 0.8, "seed": 1},
+			{"kind": "copper_scrap", "pos": [5.8, 0.0, -2.5], "scale": 0.7, "seed": 4},
 			{"kind": "copper_pot", "pos": [4.8, 0.0, -3.0], "scale": 0.55, "seed": 2},
 			# Soft runner toward door — hall connection, not Persian ballroom
 			{
@@ -324,7 +346,9 @@ const ROOMS := {
 				"size": [2.2, 5.0],
 				"texture": "res://assets/rooms/textures/hall_runner.jpg",
 			},
-			{"kind": "floor_path", "pos": [0.0, 0.0, -1.0], "yaw": 0.0, "length": 5.5, "width": 1.4},
+			# Iron plate walk to engine (experiment floor language, not garden stone)
+			{"kind": "floor_path", "pos": [0.0, 0.0, -1.0], "yaw": 0.0, "length": 5.5, "width": 1.35,
+				"surface": "iron", "seed": 2},
 		],
 		"doors": [
 			{

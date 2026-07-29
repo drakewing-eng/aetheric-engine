@@ -639,16 +639,29 @@ static func _make_crock_shelf(prop: Dictionary) -> Node3D:
 		var n := 3 + (i + seed0) % 2
 		for j in n:
 			var x := -width * 0.32 + float(j) * (width * 0.64 / float(maxi(n - 1, 1)))
-			var kind := (i * 3 + j + seed0) % 4
+			var kind := (i * 3 + j + seed0) % 5
 			if kind == 0:
-				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.09, 0.03, CREAM, false, 0.75)
+				# Plate stack with rim
+				_add_cylinder(root, Vector3(x, y + 0.035, 0.04), 0.09, 0.025, CREAM, false, 0.75)
+				_add_cylinder(root, Vector3(x, y + 0.055, 0.04), 0.08, 0.02, CREAM.darkened(0.06), false, 0.75)
+				_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.015, CREAM.lightened(0.04), false, 0.75)
 			elif kind == 1:
+				# Crock with lid
 				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.07, 0.16, CLAY if (j + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
+				_add_cylinder(root, Vector3(x, y + 0.19, 0.04), 0.06, 0.03, CLAY.darkened(0.1), false, 0.8)
 			elif kind == 2:
-				_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.08, 0.12, COPPER, false, 0.35, true)
+				# Copper bowl
+				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.085, 0.1, COPPER, false, 0.35, true)
+				_add_cylinder(root, Vector3(x, y + 0.14, 0.04), 0.09, 0.02, COPPER.lightened(0.08), false, 0.35, true)
+			elif kind == 3:
+				# Jug
+				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.055, 0.14, CREAM.darkened(0.08), false, 0.7)
+				_add_cylinder(root, Vector3(x, y + 0.16, 0.04), 0.04, 0.04, CREAM.darkened(0.05), false, 0.75)
+				_add_box(root, Vector3(x + 0.06, y + 0.1, 0.04), Vector3(0.04, 0.08, 0.03), CREAM.darkened(0.12), false, 0.7)
 			else:
-				_add_cylinder(root, Vector3(x, y + 0.05, 0.04), 0.1, 0.04, CREAM.darkened(0.08), false, 0.7)
-				_add_cylinder(root, Vector3(x, y + 0.12, 0.04), 0.05, 0.1, CREAM.darkened(0.05), false, 0.75)
+				# Nested bowls
+				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.1, 0.035, CREAM.darkened(0.1), false, 0.7)
+				_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.03, CREAM, false, 0.75)
 	_add_contact_shadow(root, width * 0.5, depth * 0.6)
 	return root
 
@@ -1756,40 +1769,60 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chalk_board(prop: Dictionary) -> Node3D:
-	## Workshop / gallery slate — seed forks diagram marks (not identical boards).
+	## Workshop / gallery slate — seed forks denser diagram marks (loop 81).
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
 	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.35 + float(seed0 % 3) * 0.08
 	var h := 0.95 + float(seed0 % 2) * 0.08
 	_add_box(root, Vector3(0, 1.2, 0), Vector3(w, h, 0.06), MAHOGANY_DARK, true, 0.45)
-	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(w - 0.15, h - 0.15, 0.02), CHALK, false, 0.85)
-	# Diagram style by seed: equations / circle plot / grid
+	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(w - 0.12, h - 0.12, 0.02), CHALK, false, 0.85)
+	# Frame lip
+	_add_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
 	var chalk := Color(0.92, 0.92, 0.9)
-	match seed0 % 3:
+	match seed0 % 4:
 		0:
-			_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.55, 0.015, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.15, 1.25, 0.05), Vector3(0.4, 0.012, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.1, 1.1, 0.05), Vector3(0.7, 0.01, 0.01), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.25, 1.05, 0.05), 0.12, 0.01, chalk, false, 0.95)
+			# Equations / coil notes
+			_add_box(root, Vector3(-0.2, 1.4, 0.05), Vector3(0.6, 0.015, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.15, 1.28, 0.05), Vector3(0.45, 0.012, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.1, 1.15, 0.05), Vector3(0.75, 0.01, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.05, 1.05, 0.05), Vector3(0.5, 0.01, 0.01), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.3, 1.0, 0.05), 0.1, 0.01, chalk, false, 0.95)
+			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.25, 0.01, 0.01), chalk, false, 0.95)
 		1:
 			# Circle + radii (engine notes)
-			_add_cylinder(root, Vector3(0.0, 1.2, 0.05), 0.22, 0.01, chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.2, 0.05), Vector3(0.4, 0.01, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.2, 0.05), Vector3(0.01, 0.4, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.35, 1.4, 0.05), Vector3(0.3, 0.012, 0.01), chalk, false, 0.95)
-		_:
+			_add_cylinder(root, Vector3(0.05, 1.22, 0.05), 0.24, 0.01, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.05, 1.22, 0.05), 0.12, 0.01, chalk.darkened(0.05), false, 0.95)
+			_add_box(root, Vector3(0.05, 1.22, 0.05), Vector3(0.45, 0.01, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.05, 1.22, 0.05), Vector3(0.01, 0.45, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.4, 1.42, 0.05), Vector3(0.28, 0.012, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.35, 1.05, 0.05), Vector3(0.3, 0.01, 0.01), chalk, false, 0.95)
+		2:
 			# Grid / ledger lines
-			for i in 4:
-				var yy := 1.0 + float(i) * 0.12
-				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(0.9, 0.008, 0.01), chalk.darkened(0.05), false, 0.95)
-			_add_box(root, Vector3(-0.25, 1.35, 0.05), Vector3(0.01, 0.45, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.2, 1.15, 0.05), Vector3(0.35, 0.012, 0.01), chalk, false, 0.95)
+			for i in 5:
+				var yy := 0.95 + float(i) * 0.11
+				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(0.95, 0.008, 0.01), chalk.darkened(0.05), false, 0.95)
+			for j in 4:
+				var xx := -0.4 + float(j) * 0.25
+				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.01, 0.55, 0.01), chalk.darkened(0.08), false, 0.95)
+			_add_box(root, Vector3(0.15, 1.35, 0.05), Vector3(0.35, 0.012, 0.01), chalk, false, 0.95)
+		_:
+			# Wave / aether trace + ticks
+			for i in 6:
+				var wx := -0.4 + float(i) * 0.14
+				var wy := 1.15 + sin(float(i) * 0.9) * 0.12
+				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.12, 0.01, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.3, 1.4, 0.05), Vector3(0.4, 0.012, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.25, 1.0, 0.05), Vector3(0.35, 0.01, 0.01), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(-0.15, 1.0, 0.05), 0.08, 0.01, chalk, false, 0.95)
+	# Chalk rail + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
 	_add_cylinder(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, CREAM.darkened(0.1), false)
 	if seed0 % 2 == 0:
 		_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.4, 0.55, 0.7), false)
+		_add_box(root, Vector3(0.4, 0.76, 0.05), Vector3(0.08, 0.02, 0.04), Color(0.55, 0.12, 0.1), false, 0.7)
 	else:
 		_add_cylinder(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, Color(0.55, 0.35, 0.25), false)
 		_add_cylinder(root, Vector3(0.3, 0.76, 0.05), 0.01, 0.06, CREAM, false)
