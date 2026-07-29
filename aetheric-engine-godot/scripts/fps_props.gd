@@ -335,84 +335,60 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair (loop 129): continuous upholstered mass — no stacked cube blocks,
-	## no bright white shoulder orbs. Soft cylinder/sphere volumes for side walk-around.
+	## Wing chair (loop 130): one continuous upholstered shell — side view must not
+	## read as stacked green columns. Fewer vertical cylinders; more fused boxes/blobs.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	var fabric_d := fabric.darkened(0.08)
-	var fabric_dd := fabric.darkened(0.16)
-	var fabric_l := Color(
-		clampf(fabric.r + 0.04, 0.0, 1.0),
-		clampf(fabric.g + 0.04, 0.0, 1.0),
-		clampf(fabric.b + 0.03, 0.0, 1.0)
-	)
-	# Wood seat rail + skirt (grounds the mass)
-	_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.9, 0.1, 0.84), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.34, 0.06), Vector3(0.92, 0.04, 0.86), MAHOGANY, false, 0.45)
-	_add_box(root, Vector3(0, 0.22, 0.06), Vector3(0.86, 0.08, 0.78), MAHOGANY_DARK, false, 0.48)
-	# Single deep seat cushion (not stacked thin slabs)
-	_add_box(root, Vector3(0, 0.48, 0.1), Vector3(0.78, 0.2, 0.7), fabric, true, 0.9)
-	_add_cylinder(root, Vector3(0, 0.56, 0.12), 0.32, 0.12, fabric_d, false, 0.9)
-	_add_sphere_blob(root, Vector3(0, 0.58, 0.08), 0.22, fabric_d)
-	# Subtle button tufts (dark fabric only — never bright white)
-	for bx in [-0.16, 0.0, 0.16]:
-		for bz in [-0.06, 0.12]:
-			_add_cylinder(root, Vector3(bx, 0.6, bz), 0.014, 0.012, fabric_dd, false, 0.95)
-	# Continuous high back: thick core + rounded face (one mass, not shelf stack)
-	_add_box(root, Vector3(0, 1.0, -0.26), Vector3(0.76, 1.0, 0.26), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.02, -0.14), Vector3(0.68, 0.92, 0.12), fabric_d, false, 0.9)
-	_add_cylinder(root, Vector3(0, 1.05, -0.12), 0.3, 0.72, fabric, false, 0.9)
-	# Soft crown roll (rounded box + spheres — not flat plank cap)
-	_add_box(root, Vector3(0, 1.48, -0.18), Vector3(0.68, 0.14, 0.2), fabric_d, false, 0.88)
-	_add_sphere_blob(root, Vector3(0, 1.5, -0.16), 0.14, fabric_d)
-	_add_sphere_blob(root, Vector3(-0.22, 1.5, -0.16), 0.1, fabric_d)
-	_add_sphere_blob(root, Vector3(0.22, 1.5, -0.16), 0.1, fabric_d)
-	_add_box(root, Vector3(0, 1.54, -0.24), Vector3(0.52, 0.03, 0.08), MAHOGANY, false, 0.45)
-	# Back tufts
-	for by in [0.9, 1.1, 1.28]:
-		for bx in [-0.14, 0.0, 0.14]:
-			_add_cylinder(root, Vector3(bx, by, -0.08), 0.012, 0.014, fabric_dd, false, 0.95)
-	# Side uprights (wood show through at back edge only)
+	var fabric_d := fabric.darkened(0.1)
+	var fabric_dd := fabric.darkened(0.18)
+	# Wood seat rail + skirt
+	_add_box(root, Vector3(0, 0.26, 0.06), Vector3(0.88, 0.1, 0.82), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.32, 0.06), Vector3(0.9, 0.04, 0.84), MAHOGANY, false, 0.45)
+	# Deep seat — single mass
+	_add_box(root, Vector3(0, 0.46, 0.12), Vector3(0.76, 0.22, 0.68), fabric, true, 0.9)
+	_add_sphere_blob(root, Vector3(0, 0.56, 0.1), 0.28, fabric_d)
+	for bx in [-0.14, 0.14]:
+		_add_cylinder(root, Vector3(bx, 0.58, 0.05), 0.012, 0.01, fabric_dd, false, 0.95)
+	# Back shell — ONE tall box (core) + ONE face pad (not multi-layer shelves)
+	_add_box(root, Vector3(0, 1.0, -0.24), Vector3(0.74, 1.05, 0.28), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.02, -0.1), Vector3(0.62, 0.95, 0.14), fabric_d, false, 0.9)
+	# Crown — single soft roll
+	_add_box(root, Vector3(0, 1.5, -0.16), Vector3(0.7, 0.16, 0.22), fabric_d, false, 0.88)
+	_add_sphere_blob(root, Vector3(0, 1.52, -0.12), 0.16, fabric_d)
+	_add_box(root, Vector3(0, 1.58, -0.22), Vector3(0.5, 0.03, 0.08), MAHOGANY, false, 0.45)
+	# Sparse tufts only
+	for by in [0.95, 1.2]:
+		for bx in [-0.12, 0.12]:
+			_add_cylinder(root, Vector3(bx, by, -0.06), 0.011, 0.012, fabric_dd, false, 0.95)
+	# Wings fused into back: L-shaped solid mass (side = continuous rectangle, not pipes)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.38, 0.9, -0.3), Vector3(0.06, 0.95, 0.1), MAHOGANY_DARK, true, 0.45)
-	# Wings — continuous rolled mass from crown to arm (no pipe gaps)
+		# Outer wing wall (tall, deep)
+		_add_box(root, Vector3(sx * 0.42, 1.05, -0.02), Vector3(0.2, 0.85, 0.48), fabric, true, 0.88)
+		# Fill join to back
+		_add_box(root, Vector3(sx * 0.32, 1.05, -0.18), Vector3(0.14, 0.9, 0.2), fabric_d, false, 0.9)
+		# Soft outer edge (one cylinder only, not stacked)
+		_add_cylinder(root, Vector3(sx * 0.5, 1.1, 0.05), 0.1, 0.7, fabric_d, false, 0.88)
+		# Shoulder only at top
+		_add_sphere_blob(root, Vector3(sx * 0.46, 1.45, 0.08), 0.11, fabric_d)
+	# Arms — bar + front scroll, joined to wing underside
 	for sx in [-1.0, 1.0]:
-		# Main wing plate forward of back
-		_add_box(root, Vector3(sx * 0.4, 1.1, -0.05), Vector3(0.18, 0.62, 0.42), fabric, true, 0.88)
-		# Vertical roll (outer edge)
-		_add_cylinder(root, Vector3(sx * 0.48, 1.15, 0.02), 0.11, 0.55, fabric_d, false, 0.88)
-		# Forward wing curve
-		_add_cylinder(root, Vector3(sx * 0.42, 1.2, 0.12), 0.1, 0.4, fabric, false, 0.88)
-		# Soft shoulder — same fabric family (never lightened to white)
-		_add_sphere_blob(root, Vector3(sx * 0.46, 1.4, 0.04), 0.12, fabric_d)
-		_add_sphere_blob(root, Vector3(sx * 0.44, 1.32, 0.14), 0.09, fabric)
-		# Inner wing fill so side view is solid
-		_add_box(root, Vector3(sx * 0.34, 1.15, -0.02), Vector3(0.1, 0.5, 0.32), fabric_l, false, 0.9)
-	# Arms — thick padded scrolls with open under-arm
+		_add_box(root, Vector3(sx * 0.4, 0.64, 0.14), Vector3(0.18, 0.16, 0.55), fabric, true, 0.88)
+		_add_sphere_blob(root, Vector3(sx * 0.4, 0.7, 0.38), 0.1, fabric_d)
+		_add_box(root, Vector3(sx * 0.4, 0.72, -0.08), Vector3(0.16, 0.22, 0.2), fabric_d, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.48, 0.3), 0.05, 0.2, MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(sx * 0.4, 0.45, 0.26), Vector3(0.045, 0.26, 0.045), MAHOGANY_DARK, true, 0.45)
+	# Legs + stretchers
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 0.66, 0.12), Vector3(0.18, 0.14, 0.56), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.4, 0.72, 0.16), 0.1, 0.48, fabric_d, false, 0.88)
-		# Arm front scroll — fabric, not white ball
-		_add_sphere_blob(root, Vector3(sx * 0.4, 0.74, 0.4), 0.09, fabric_d)
-		_add_sphere_blob(root, Vector3(sx * 0.4, 0.7, 0.32), 0.07, fabric)
-		# Arm support + rear join to wing
-		_add_cylinder(root, Vector3(sx * 0.4, 0.52, 0.32), 0.055, 0.18, MAHOGANY, false, 0.45)
-		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
-		_add_box(root, Vector3(sx * 0.4, 0.78, -0.1), Vector3(0.14, 0.2, 0.24), fabric_d, false, 0.88)
-	# Cabriole-ish legs + stretchers
-	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.34, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.34, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.32, 0.14, -0.28), 0.038, 0.26, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.32, 0.02, -0.28), 0.05, 0.04, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.2, 0.34), Vector3(0.72, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(0, 0.2, -0.28), Vector3(0.68, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(0.34, 0.2, 0.02), Vector3(0.04, 0.04, 0.55), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(-0.34, 0.2, 0.02), Vector3(0.04, 0.04, 0.55), MAHOGANY_DARK, false, 0.42)
-	_add_contact_shadow(root, 0.72, 0.66)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.12, 0.28), 0.038, 0.24, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.01, 0.28), 0.05, 0.035, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.12, -0.26), 0.036, 0.24, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.01, -0.26), 0.048, 0.035, MAHOGANY, true)
+	_add_box(root, Vector3(0, 0.18, 0.32), Vector3(0.68, 0.045, 0.045), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(0, 0.18, -0.26), Vector3(0.64, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
+	_add_contact_shadow(root, 0.7, 0.64)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
@@ -1096,154 +1072,161 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 # ─── Kitchen identity ────────────────────────────────────────────────────────
 
 static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
-	## Cast-iron Victorian kitchen range — loop 90: mid-grey iron + brass trim + emissive fire
-	## so it reads as a working range, not a black monolith from the doorway.
+	## Cast-iron Victorian kitchen range (loop 130): readable from doorway —
+	## fielded oven doors, fender, firebox, bulbous hotplate vessels (no copper tower),
+	## stepped flue crown, side boiler, brass furniture.
 	var root := Node3D.new()
 	root.name = "KitchenRange"
-	# Mid-grey iron that survives filmic tonemap (pure IRON → black mass)
-	var iron_mid := Color(0.36, 0.36, 0.38)
-	var iron_body := Color(0.30, 0.30, 0.32)
-	var iron_dark := Color(0.24, 0.24, 0.26)
-	var iron_light := Color(0.44, 0.44, 0.46)
-	# Plinth / hearth base (stone + ash lip)
-	_add_box(root, Vector3(0, 0.08, 0.05), Vector3(2.35, 0.16, 1.0), STONE, true, 0.7)
-	_add_box(root, Vector3(0, 0.14, 0.42), Vector3(1.1, 0.04, 0.28), STONE.darkened(0.12), false, 0.75)
-	# Main iron body
-	_add_box(root, Vector3(0, 0.65, 0), Vector3(2.15, 1.1, 0.85), iron_body, true, 0.55)
-	# Side panels + rivet strips
-	_add_box(root, Vector3(-1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), iron_dark, false, 0.5)
-	_add_box(root, Vector3(1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), iron_dark, false, 0.5)
-	for side in [-1.0, 1.0]:
-		for ri in 5:
-			var ry := 0.28 + float(ri) * 0.18
-			_add_cylinder(root, Vector3(side * 1.08, ry, 0.38), 0.016, 0.02, iron_light, false, 0.4)
-	# Brass corner beading / trim rails (period range identity)
-	_add_box(root, Vector3(0, 1.18, 0.44), Vector3(2.18, 0.03, 0.04), BRASS, false, 0.35)
-	_add_box(root, Vector3(0, 0.18, 0.44), Vector3(2.18, 0.03, 0.04), BRASS.darkened(0.1), false, 0.35)
-	_add_box(root, Vector3(-1.05, 0.65, 0.44), Vector3(0.04, 1.0, 0.03), BRASS.darkened(0.08), false, 0.35)
-	_add_box(root, Vector3(1.05, 0.65, 0.44), Vector3(0.04, 1.0, 0.03), BRASS.darkened(0.08), false, 0.35)
-	# Twin oven doors — fielded panels + hinges + brass bar handles
-	for door_x in [-0.52, 0.52]:
-		_add_box(root, Vector3(door_x, 0.52, 0.42), Vector3(0.72, 0.58, 0.07), iron_mid, false, 0.5)
-		# Fielded recess
-		_add_box(root, Vector3(door_x, 0.52, 0.47), Vector3(0.52, 0.4, 0.02), iron_dark, false, 0.55)
-		# Inner raised panel
-		_add_box(root, Vector3(door_x, 0.52, 0.485), Vector3(0.38, 0.28, 0.015), iron_light, false, 0.52)
-		# Hinges
-		_add_box(root, Vector3(door_x - 0.3, 0.72, 0.46), Vector3(0.06, 0.08, 0.04), BRASS, false, 0.32)
-		_add_box(root, Vector3(door_x - 0.3, 0.32, 0.46), Vector3(0.06, 0.08, 0.04), BRASS, false, 0.32)
-		# Horizontal brass handle bar
-		_add_cylinder(root, Vector3(door_x + 0.12, 0.52, 0.52), 0.018, 0.28, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(door_x + 0.12, 0.62, 0.52), 0.012, 0.04, BRASS.darkened(0.1), false, 0.3, true)
-		_add_cylinder(root, Vector3(door_x + 0.12, 0.42, 0.52), 0.012, 0.04, BRASS.darkened(0.1), false, 0.3, true)
-	# Centre firebox opening — grate + layered emissive flame (like fireplace loop 86)
-	_add_box(root, Vector3(0, 0.38, 0.4), Vector3(0.62, 0.42, 0.08), iron_dark, false, 0.5)
-	# Ash bed
-	_add_box(root, Vector3(0, 0.2, 0.38), Vector3(0.55, 0.05, 0.22), Color(0.22, 0.18, 0.14), false, 0.85)
-	# Grate bars
-	for gi in 4:
-		var gx := -0.2 + float(gi) * 0.13
-		_add_box(root, Vector3(gx, 0.32, 0.42), Vector3(0.03, 0.22, 0.04), iron_dark.darkened(0.05), false, 0.45)
+	var iron_mid := Color(0.38, 0.38, 0.4)
+	var iron_body := Color(0.32, 0.32, 0.34)
+	var iron_dark := Color(0.22, 0.22, 0.24)
+	var iron_light := Color(0.48, 0.48, 0.5)
+	var soot := Color(0.16, 0.15, 0.14)
+	# Hearth plinth + ash lip + fender rail
+	_add_box(root, Vector3(0, 0.07, 0.08), Vector3(2.4, 0.14, 1.05), STONE, true, 0.72)
+	_add_box(root, Vector3(0, 0.12, 0.48), Vector3(1.2, 0.05, 0.32), STONE.darkened(0.15), false, 0.78)
+	# Low iron fender (keeps fire reading as a hearth, not a hole)
+	_add_box(root, Vector3(0, 0.18, 0.55), Vector3(0.9, 0.08, 0.06), iron_dark, false, 0.45)
+	_add_box(root, Vector3(-0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), iron_mid, false, 0.45)
+	_add_box(root, Vector3(0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), iron_mid, false, 0.45)
+	_add_cylinder(root, Vector3(0, 0.28, 0.55), 0.02, 0.7, BRASS.darkened(0.15), false, 0.35)
+	# Main body + slightly proud top band
+	_add_box(root, Vector3(0, 0.68, 0), Vector3(2.2, 1.15, 0.9), iron_body, true, 0.55)
+	_add_box(root, Vector3(0, 1.2, 0.02), Vector3(2.22, 0.08, 0.92), iron_mid, false, 0.5)
+	# Side cheeks + rivets
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 1.08, 0.68, 0.08), Vector3(0.1, 1.05, 0.72), iron_dark, false, 0.5)
+		for ri in 6:
+			var ry := 0.28 + float(ri) * 0.16
+			_add_cylinder(root, Vector3(sx * 1.12, ry, 0.4), 0.015, 0.018, iron_light, false, 0.4)
+	# Brass trim rails (period range identity)
+	_add_box(root, Vector3(0, 1.22, 0.46), Vector3(2.22, 0.035, 0.04), BRASS, false, 0.32)
+	_add_box(root, Vector3(0, 0.2, 0.46), Vector3(2.22, 0.03, 0.04), BRASS.darkened(0.12), false, 0.35)
+	_add_box(root, Vector3(-1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), BRASS.darkened(0.1), false, 0.35)
+	_add_box(root, Vector3(1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), BRASS.darkened(0.1), false, 0.35)
+	# Twin oven doors — deeper fielded panels + hinges + D-handles
+	for door_x in [-0.55, 0.55]:
+		_add_box(root, Vector3(door_x, 0.58, 0.44), Vector3(0.78, 0.72, 0.08), iron_mid, false, 0.5)
+		_add_box(root, Vector3(door_x, 0.58, 0.49), Vector3(0.58, 0.52, 0.025), iron_dark, false, 0.55)
+		_add_box(root, Vector3(door_x, 0.58, 0.505), Vector3(0.42, 0.36, 0.02), iron_light, false, 0.5)
+		# Cross stile in panel
+		_add_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.42, 0.03, 0.015), iron_mid, false, 0.5)
+		_add_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.03, 0.36, 0.015), iron_mid, false, 0.5)
+		for hy in [0.85, 0.32]:
+			_add_box(root, Vector3(door_x - 0.34, hy, 0.48), Vector3(0.07, 0.09, 0.045), BRASS, false, 0.3)
+		# D-handle (posts + bar)
+		_add_cylinder(root, Vector3(door_x + 0.18, 0.68, 0.54), 0.014, 0.05, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(door_x + 0.18, 0.48, 0.54), 0.014, 0.05, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(door_x + 0.18, 0.58, 0.56), 0.016, 0.22, BRASS.lightened(0.05), false, 0.28, true)
+	# Upper warming-oven doors (smaller pair above fire)
+	for wx in [-0.32, 0.32]:
+		_add_box(root, Vector3(wx, 1.0, 0.44), Vector3(0.42, 0.22, 0.06), iron_mid, false, 0.5)
+		_add_box(root, Vector3(wx, 1.0, 0.48), Vector3(0.3, 0.14, 0.02), iron_dark, false, 0.55)
+		_add_cylinder(root, Vector3(wx, 1.0, 0.52), 0.012, 0.1, BRASS, false, 0.3, true)
+	# Centre firebox
+	_add_box(root, Vector3(0, 0.42, 0.4), Vector3(0.58, 0.48, 0.1), soot, false, 0.55)
+	_add_box(root, Vector3(0, 0.22, 0.4), Vector3(0.52, 0.06, 0.2), Color(0.2, 0.16, 0.12), false, 0.85)
+	# Grate + fire dogs
+	for gi in 5:
+		var gx := -0.18 + float(gi) * 0.09
+		_add_box(root, Vector3(gx, 0.34, 0.44), Vector3(0.025, 0.26, 0.035), iron_dark, false, 0.45)
+	_add_box(root, Vector3(-0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), iron_mid, false, 0.45)
+	_add_box(root, Vector3(0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), iron_mid, false, 0.45)
 	# Logs
-	_add_box(root, Vector3(-0.08, 0.28, 0.35), Vector3(0.4, 0.08, 0.12), MAHOGANY_DARK, false, 0.7)
-	_add_box(root, Vector3(0.1, 0.34, 0.36), Vector3(0.32, 0.07, 0.1), MAHOGANY, false, 0.7)
-	# Loop 107: organic range fire (not flat pink/yellow slabs)
-	var rbase := MeshInstance3D.new()
-	var rbm := SphereMesh.new()
-	rbm.radius = 0.16
-	rbm.height = 0.14
-	rbase.mesh = rbm
-	var rbmat := StandardMaterial3D.new()
-	rbmat.albedo_color = Color(1.0, 0.3, 0.05)
-	rbmat.emission_enabled = true
-	rbmat.emission = Color(1.0, 0.25, 0.02)
-	rbmat.emission_energy_multiplier = 3.0
-	rbmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	rbase.material_override = rbmat
-	rbase.position = Vector3(0, 0.32, 0.44)
-	root.add_child(rbase)
-	for fi in 4:
+	_add_box(root, Vector3(-0.06, 0.3, 0.36), Vector3(0.38, 0.07, 0.11), MAHOGANY_DARK, false, 0.7)
+	_add_box(root, Vector3(0.08, 0.36, 0.37), Vector3(0.28, 0.06, 0.09), MAHOGANY, false, 0.7)
+	# Multi-lobe fire (smaller spheres, less one big orange blob)
+	for fi in 6:
+		var t := float(fi) / 5.0
 		var em := MeshInstance3D.new()
-		var em_mesh := CylinderMesh.new()
-		var t := float(fi) / 3.0
-		em_mesh.bottom_radius = 0.07 - t * 0.03
-		em_mesh.top_radius = 0.015
-		em_mesh.height = 0.16 + t * 0.12
+		var em_mesh := SphereMesh.new()
+		em_mesh.radius = 0.07 - t * 0.025
+		em_mesh.height = 0.1 + t * 0.06
 		em.mesh = em_mesh
 		var emat := StandardMaterial3D.new()
-		var warm := Color(1.0, 0.45 + t * 0.4, 0.1 + t * 0.15)
+		var warm := Color(1.0, 0.35 + t * 0.45, 0.05 + t * 0.2)
 		emat.albedo_color = warm
 		emat.emission_enabled = true
 		emat.emission = warm
-		emat.emission_energy_multiplier = 2.8 - t * 0.4
+		emat.emission_energy_multiplier = 2.6 - t * 0.35
 		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		em.material_override = emat
-		em.position = Vector3(float(fi - 1.5) * 0.06, 0.38 + t * 0.08, 0.46)
+		em.position = Vector3(sin(t * 4.0) * 0.08, 0.34 + t * 0.1, 0.46 + cos(t * 3.0) * 0.02)
 		root.add_child(em)
-	# Hotplate top with rings + brass ring rims
-	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), iron_dark, true, 0.45)
-	for ring_x in [-0.55, 0.55]:
-		_add_cylinder(root, Vector3(ring_x, 1.3, 0.05), 0.24, 0.04, iron_mid, false, 0.4)
-		_add_cylinder(root, Vector3(ring_x, 1.33, 0.05), 0.22, 0.02, BRASS.darkened(0.2), false, 0.35, true)
-		_add_cylinder(root, Vector3(ring_x, 1.34, 0.05), 0.12, 0.03, iron_dark, false, 0.45)
-	# Mantel shelf + still-life (loop 119: vessels, not coil cylinders)
-	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), iron_mid, false, 0.45)
-	_add_box(root, Vector3(0, 1.48, 0.15), Vector3(2.28, 0.02, 0.52), BRASS.darkened(0.15), false, 0.35)
-	# Bulbous copper kettle on mantel
-	_add_cylinder(root, Vector3(-0.7, 1.54, 0.15), 0.07, 0.06, COPPER.darkened(0.08), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.7, 1.6, 0.15), 0.1, 0.1, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.7, 1.67, 0.15), 0.08, 0.05, COPPER.lightened(0.06), false, 0.32, true)
-	_add_cylinder(root, Vector3(-0.7, 1.71, 0.15), 0.09, 0.02, COPPER.lightened(0.1), false, 0.3, true)
-	_add_box(root, Vector3(-0.7, 1.74, 0.15), Vector3(0.18, 0.015, 0.02), BRASS.darkened(0.1), false, 0.3)
-	_add_box(root, Vector3(-0.58, 1.6, 0.15), Vector3(0.06, 0.03, 0.04), COPPER, false, 0.35)
-	# Cream crock + board + candle
-	_add_cylinder(root, Vector3(0.55, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.12), false, 0.8)
-	_add_cylinder(root, Vector3(0.55, 1.64, 0.15), 0.055, 0.03, CREAM.darkened(0.18), false, 0.8)
-	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.22, 0.04, 0.12), MAHOGANY, false, 0.5)
-	_add_cylinder(root, Vector3(-0.25, 1.58, 0.18), 0.03, 0.16, CANDLE, false, 0.55)
-	# Chimney flue + brass collar + crown (loop 97: not a black monolith)
-	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), iron_mid, true, 0.5)
-	# Rivet strips up flue
-	for ri in 4:
-		var ry := 1.55 + float(ri) * 0.25
-		_add_box(root, Vector3(-0.28, ry, 0.1), Vector3(0.04, 0.04, 0.04), iron_light, false, 0.45)
-		_add_box(root, Vector3(0.28, ry, 0.1), Vector3(0.04, 0.04, 0.04), iron_light, false, 0.45)
-	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(0.7, 0.1, 0.58), BRASS.darkened(0.1), false, 0.35)
-	_add_box(root, Vector3(0, 1.62, -0.05), Vector3(0.62, 0.04, 0.5), BRASS, false, 0.32)
-	# Crown moulding
-	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.75, 0.08, 0.58), iron_mid.lightened(0.06), false, 0.5)
-	_add_box(root, Vector3(0, 2.62, -0.12), Vector3(0.55, 0.06, 0.42), iron_dark, false, 0.5)
-	# Smoke plate detail
-	_add_box(root, Vector3(0, 2.1, 0.12), Vector3(0.35, 0.5, 0.04), iron_dark, false, 0.5)
-	# Hanging pan rail above range — skillets with bottoms + handles (not coil rings)
-	_add_box(root, Vector3(0, 1.78, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
-	# Left skillet: bottom disc + deep rim + long handle
-	_add_cylinder(root, Vector3(-0.45, 1.52, 0.4), 0.1, 0.02, COPPER.darkened(0.12), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.45, 1.56, 0.4), 0.12, 0.07, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.45, 1.6, 0.4), 0.125, 0.02, COPPER.lightened(0.08), false, 0.32, true)
-	_add_box(root, Vector3(-0.22, 1.56, 0.4), Vector3(0.2, 0.025, 0.04), COPPER.darkened(0.05), false, 0.35)
-	_add_cylinder(root, Vector3(-0.45, 1.68, 0.38), 0.01, 0.16, IRON, false, 0.4)
-	# Right stockpot: belly + lid knob + side handle
-	_add_cylinder(root, Vector3(0.4, 1.5, 0.4), 0.08, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-	_add_cylinder(root, Vector3(0.4, 1.56, 0.4), 0.1, 0.1, COPPER.lightened(0.04), false, 0.35, true)
-	_add_cylinder(root, Vector3(0.4, 1.63, 0.4), 0.105, 0.02, COPPER.lightened(0.1), false, 0.32, true)
-	_add_cylinder(root, Vector3(0.4, 1.66, 0.4), 0.035, 0.03, BRASS, false, 0.3, true)
-	_add_box(root, Vector3(0.52, 1.56, 0.4), Vector3(0.05, 0.06, 0.04), COPPER, false, 0.35)
-	_add_cylinder(root, Vector3(0.4, 1.72, 0.38), 0.01, 0.12, IRON, false, 0.4)
+	# Hotplate — four rings (not two giant discs)
+	_add_box(root, Vector3(0, 1.28, 0), Vector3(2.22, 0.08, 0.9), iron_dark, true, 0.45)
+	for ring_x in [-0.7, -0.22, 0.22, 0.7]:
+		_add_cylinder(root, Vector3(ring_x, 1.34, 0.05), 0.16, 0.03, iron_mid, false, 0.4)
+		_add_cylinder(root, Vector3(ring_x, 1.36, 0.05), 0.145, 0.015, BRASS.darkened(0.22), false, 0.35, true)
+		_add_cylinder(root, Vector3(ring_x, 1.37, 0.05), 0.07, 0.02, iron_dark, false, 0.45)
+	# Hotplate vessels: squat kettle + saucepan + iron skillet (NO tall copper tower)
+	# Kettle (left) — bulbous
+	_add_cylinder(root, Vector3(-0.7, 1.42, 0.05), 0.08, 0.04, COPPER.darkened(0.1), false, 0.32, true)
+	_add_cylinder(root, Vector3(-0.7, 1.5, 0.05), 0.12, 0.12, COPPER, false, 0.32, true)
+	_add_sphere_blob(root, Vector3(-0.7, 1.52, 0.05), 0.1, COPPER.lightened(0.04))
+	_add_cylinder(root, Vector3(-0.7, 1.6, 0.05), 0.06, 0.04, COPPER.darkened(0.05), false, 0.32, true)
+	_add_cylinder(root, Vector3(-0.7, 1.64, 0.05), 0.03, 0.03, BRASS, false, 0.28, true)
+	_add_box(root, Vector3(-0.52, 1.5, 0.05), Vector3(0.12, 0.025, 0.03), COPPER.darkened(0.05), false, 0.32)
+	_add_box(root, Vector3(-0.82, 1.52, 0.05), Vector3(0.04, 0.08, 0.03), COPPER, false, 0.32)
+	# Saucepan (mid-left)
+	_add_cylinder(root, Vector3(-0.2, 1.42, 0.08), 0.09, 0.1, COPPER.lightened(0.05), false, 0.32, true)
+	_add_cylinder(root, Vector3(-0.2, 1.48, 0.08), 0.095, 0.02, COPPER.lightened(0.1), false, 0.3, true)
+	_add_box(root, Vector3(-0.02, 1.44, 0.08), Vector3(0.14, 0.02, 0.03), COPPER, false, 0.32)
+	# Iron skillet (mid-right)
+	_add_cylinder(root, Vector3(0.25, 1.4, 0.05), 0.14, 0.04, iron_dark, false, 0.4)
+	_add_cylinder(root, Vector3(0.25, 1.43, 0.05), 0.145, 0.02, iron_mid, false, 0.4)
+	_add_box(root, Vector3(0.48, 1.41, 0.05), Vector3(0.2, 0.022, 0.035), iron_light, false, 0.4)
+	# Small copper pot (right ring)
+	_add_cylinder(root, Vector3(0.7, 1.42, 0.05), 0.07, 0.08, COPPER.darkened(0.06), false, 0.32, true)
+	_add_cylinder(root, Vector3(0.7, 1.48, 0.05), 0.075, 0.02, COPPER.lightened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0.7, 1.5, 0.05), 0.025, 0.025, BRASS, false, 0.28, true)
+	# Mantel shelf + still-life
+	_add_box(root, Vector3(0, 1.52, 0.12), Vector3(2.35, 0.06, 0.58), iron_mid, false, 0.45)
+	_add_box(root, Vector3(0, 1.56, 0.12), Vector3(2.32, 0.02, 0.54), BRASS.darkened(0.12), false, 0.32)
+	# Mantel crock, tin, candle, spoon rest — not copper coil stacks
+	_add_cylinder(root, Vector3(-0.75, 1.64, 0.12), 0.07, 0.14, CREAM.darkened(0.1), false, 0.8)
+	_add_cylinder(root, Vector3(-0.75, 1.73, 0.12), 0.055, 0.03, CREAM.darkened(0.18), false, 0.8)
+	_add_cylinder(root, Vector3(-0.4, 1.62, 0.15), 0.05, 0.1, Color(0.55, 0.52, 0.48), false, 0.45)
+	_add_box(root, Vector3(-0.05, 1.6, 0.18), Vector3(0.2, 0.03, 0.1), MAHOGANY, false, 0.5)
+	_add_cylinder(root, Vector3(0.25, 1.66, 0.15), 0.025, 0.14, CANDLE, false, 0.55)
+	_add_sphere_blob(root, Vector3(0.25, 1.75, 0.15), 0.022, Color(1.0, 0.75, 0.35))
+	_add_cylinder(root, Vector3(0.65, 1.64, 0.12), 0.08, 0.12, CLAY, false, 0.8)
+	_add_cylinder(root, Vector3(0.65, 1.72, 0.12), 0.06, 0.03, CLAY.darkened(0.1), false, 0.8)
+	# Side hot-water boiler cylinder (classic range silhouette)
+	_add_cylinder(root, Vector3(1.05, 0.85, -0.05), 0.18, 0.9, iron_mid, true, 0.5)
+	_add_cylinder(root, Vector3(1.05, 1.3, -0.05), 0.19, 0.06, BRASS.darkened(0.1), false, 0.32, true)
+	_add_cylinder(root, Vector3(1.05, 0.45, -0.05), 0.19, 0.06, iron_dark, false, 0.5)
+	_add_cylinder(root, Vector3(1.05, 1.0, 0.12), 0.03, 0.04, BRASS, false, 0.3, true)
+	# Flue — stepped stack, not black slab
+	_add_box(root, Vector3(0, 1.7, -0.1), Vector3(0.85, 0.12, 0.6), iron_mid, true, 0.48)
+	_add_box(root, Vector3(0, 1.78, -0.1), Vector3(0.72, 0.06, 0.52), BRASS.darkened(0.1), false, 0.32)
+	_add_box(root, Vector3(0, 2.15, -0.12), Vector3(0.52, 0.85, 0.42), iron_body, true, 0.5)
+	for ri in 5:
+		var ry := 1.85 + float(ri) * 0.14
+		_add_box(root, Vector3(-0.24, ry, 0.08), Vector3(0.035, 0.035, 0.035), iron_light, false, 0.45)
+		_add_box(root, Vector3(0.24, ry, 0.08), Vector3(0.035, 0.035, 0.035), iron_light, false, 0.45)
+	# Smoke plate + damper pull
+	_add_box(root, Vector3(0, 2.05, 0.1), Vector3(0.32, 0.45, 0.04), iron_dark, false, 0.5)
+	_add_cylinder(root, Vector3(0, 2.0, 0.14), 0.02, 0.08, BRASS, false, 0.3, true)
+	# Stepped crown
+	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.68, 0.08, 0.52), iron_mid.lightened(0.05), false, 0.48)
+	_add_box(root, Vector3(0, 2.62, -0.12), Vector3(0.52, 0.06, 0.4), iron_dark, false, 0.5)
+	_add_box(root, Vector3(0, 2.68, -0.12), Vector3(0.38, 0.05, 0.3), iron_mid, false, 0.48)
+	# Short hanging rail under mantel (pans — not giant tower stack)
+	_add_box(root, Vector3(0, 1.62, 0.38), Vector3(1.4, 0.03, 0.04), MAHOGANY_DARK, false, 0.5)
+	_add_cylinder(root, Vector3(-0.4, 1.48, 0.4), 0.09, 0.05, COPPER, false, 0.32, true)
+	_add_box(root, Vector3(-0.22, 1.48, 0.4), Vector3(0.14, 0.02, 0.03), COPPER.darkened(0.05), false, 0.32)
+	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.008, 0.12, IRON, false, 0.4)
+	_add_cylinder(root, Vector3(0.35, 1.46, 0.4), 0.08, 0.08, COPPER.lightened(0.04), false, 0.32, true)
+	_add_cylinder(root, Vector3(0.35, 1.52, 0.4), 0.03, 0.025, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0.35, 1.56, 0.38), 0.008, 0.1, IRON, false, 0.4)
 	var fire := OmniLight3D.new()
-	fire.light_color = Color(1.0, 0.52, 0.2)
-	fire.light_energy = 1.85
-	fire.omni_range = 6.2
-	fire.position = Vector3(0, 0.5, 0.55)
+	fire.light_color = Color(1.0, 0.5, 0.22)
+	fire.light_energy = 1.95
+	fire.omni_range = 6.4
+	fire.position = Vector3(0, 0.48, 0.55)
 	root.add_child(fire)
-	# Copper kettle on hotplate
-	_add_cylinder(root, Vector3(-0.55, 1.45, 0.05), 0.13, 0.22, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.05, 0.1, COPPER, false, 0.35, true)
-	_add_box(root, Vector3(-0.35, 1.48, 0.05), Vector3(0.18, 0.03, 0.03), COPPER, false, 0.35)
-	# Iron skillet with brass handle
-	_add_cylinder(root, Vector3(0.55, 1.36, 0.05), 0.16, 0.05, iron_dark, false, 0.4)
-	_add_box(root, Vector3(0.78, 1.36, 0.05), Vector3(0.22, 0.025, 0.04), BRASS.darkened(0.15), false, 0.35)
-	_add_contact_shadow(root, 1.2, 0.55)
+	_add_contact_shadow(root, 1.25, 0.58)
 	return root
 
 static func _make_dresser(prop: Dictionary) -> Node3D:
