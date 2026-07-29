@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~02:15 (overnight goal active)  
+**Updated:** 2026-07-29 ~02:35 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -18,22 +18,22 @@
 | 9 | Door transition safety | **ADVANCED 76** suite PASS |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84** prep kits |
-| 12 | Conservatory garden identity | **ADVANCED 77+82** glass void fix |
+| 12 | Conservatory garden identity | **ADVANCED 77+82+85** door approach |
 | 13 | Gallery engine + morning densify | **ADVANCED 78+82** morning fill |
-| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79** |
+| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85** workshop walls |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
 | 16 | Gallery centre experiment density | **ADVANCED 81** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
 | 18 | Tea still-life + window room-side views | **ADVANCED 83** |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
+| 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 67–77 | Core visual queue through conservatory |
-| 78–83 | Gallery/hall/workshop/glass/tea/window polish |
-| 84 | **Prep table still-life:** 4 kitchen kits (flour crock/dough board/knife; bread/pie/crock; veg basket; pastry pin/butter) not bare cylinders. **Light:** kitchen warm fill (not flat orange); gallery slightly brighter. |
+| 67–84 | Core queue through prep still-life / light |
+| 85 | **Workshop walls:** 2nd window, dual N chalk boards, more tool racks/shelves, scrap, still-life oils, sconces. **Conservatory door approach:** flanking benches, urns, plants, sconces. |
 
 ## Still high-value if continuing
 
@@ -43,4 +43,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_84/`  
+- Shots: `auto_loop_67/` … `auto_loop_85/`  
