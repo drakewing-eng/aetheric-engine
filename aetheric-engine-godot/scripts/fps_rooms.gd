@@ -519,6 +519,11 @@ const ROOMS := {
 				"art": "still_life", "seed": 0, "frame": 3},
 			{"kind": "painting", "pos": [4.55, 2.25, 2.5], "yaw": -90.0, "width": 0.5, "height": 0.45,
 				"art": "still_life", "seed": 1, "frame": 2},
+			# Loop 88: south wall still-life (from_north dead-end fix)
+			{"kind": "painting", "pos": [-3.0, 2.2, 4.2], "yaw": 180.0, "width": 0.55, "height": 0.5,
+				"art": "still_life", "seed": 0, "frame": 3},
+			{"kind": "painting", "pos": [3.0, 2.2, 4.2], "yaw": 180.0, "width": 0.55, "height": 0.5,
+				"art": "still_life", "seed": 1, "frame": 2},
 		],
 		"props": [
 			# Loop 85: wall densify — chalks visible from spawn, more shelves/scrap
@@ -557,6 +562,16 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -4.15], "yaw": 0.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [4.3, 0.0, 3.0], "yaw": -90.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [-4.3, 0.0, -3.8], "yaw": 90.0, "height": 2.25},
+			# Loop 88: south wall densify (from_north was empty plaster dead-end)
+			{"kind": "tool_rack", "pos": [-2.5, 0.0, 4.15], "yaw": 180.0, "seed": 4},
+			{"kind": "tool_rack", "pos": [2.5, 0.0, 4.15], "yaw": 180.0, "seed": 5},
+			{"kind": "chalk_board", "pos": [0.0, 0.0, 4.15], "yaw": 180.0, "seed": 1},
+			{"kind": "crate", "pos": [-1.5, 0.0, 3.5], "scale": 0.8, "seed": 2},
+			{"kind": "crate", "pos": [1.6, 0.0, 3.6], "scale": 0.7, "seed": 0},
+			{"kind": "copper_scrap", "pos": [0.5, 0.0, 3.4], "scale": 0.85, "seed": 3},
+			{"kind": "wall_sconce", "pos": [-1.5, 0.0, 4.15], "yaw": 180.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [1.5, 0.0, 4.15], "yaw": 180.0, "height": 2.3},
+			{"kind": "oil_lamp", "pos": [0.0, 0.0, 3.2], "yaw": 0.0, "height": 1.0},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
 				"surface": "iron", "seed": 3},
 		],

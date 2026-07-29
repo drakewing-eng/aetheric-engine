@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~03:15 (overnight goal active)  
+**Updated:** 2026-07-29 ~03:35 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -20,7 +20,7 @@
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84+87** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85** door approach |
 | 13 | Gallery engine + morning densify | **ADVANCED 78+82** morning fill |
-| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85** workshop walls |
+| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88** S wall |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
 | 16 | Gallery centre experiment density | **ADVANCED 81** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
@@ -29,13 +29,14 @@
 | 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
 | 21 | Mirror silver plate + fireplace fire | **ADVANCED 86** |
 | 22 | Rug border + hall south + dresser plates | **ADVANCED 87** |
+| 23 | Workshop south wall + open desk gallery | **ADVANCED 88** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 67–86 | Core queue through mirrors/fireplace |
-| 87 | **Rugs:** raised border + gold rails + centre medallion. **Hall south:** plants, chair, oil lamp, flanking oils. **Dresser:** plate stacks/jugs (clear kitchen, not book spines). |
+| 67–87 | Core queue through rugs/hall/dresser |
+| 88 | **Workshop south wall:** tool racks, chalk, crates, scrap, oils, sconces (from_north dead-end fixed). **Desk:** open pigeonhole gallery (not solid black slab from behind). |
 
 ## Still high-value if continuing
 
@@ -45,4 +46,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_87/`  
+- Shots: `auto_loop_67/` … `auto_loop_88/`  

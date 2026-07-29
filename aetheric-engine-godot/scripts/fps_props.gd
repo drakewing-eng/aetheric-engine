@@ -228,10 +228,20 @@ static func _make_desk(prop: Dictionary) -> Node3D:
 		for lz in [-0.28, 0.28]:
 			_add_cylinder(root, Vector3(lx, 0.08, lz), 0.035, 0.14, MAHOGANY_DARK, true)
 			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.05, 0.035, MAHOGANY, true)
-	# Back gallery shelf
-	_add_box(root, Vector3(0, top_y + 0.22, -0.32), Vector3(1.4, 0.35, 0.06), MAHOGANY, false, 0.45)
-	_add_box(root, Vector3(0, top_y + 0.08, -0.28), Vector3(1.35, 0.04, 0.2), MAHOGANY_DARK, false, 0.45)
-	# Still life
+	# Loop 88: open pigeonhole gallery (not solid black slab from behind)
+	_add_box(root, Vector3(0, top_y + 0.08, -0.3), Vector3(1.38, 0.04, 0.22), MAHOGANY_DARK, false, 0.45)
+	_add_box(root, Vector3(0, top_y + 0.38, -0.32), Vector3(1.4, 0.05, 0.08), MAHOGANY, false, 0.45)
+	# Side uprights + open compartments
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.68, top_y + 0.23, -0.3), Vector3(0.05, 0.3, 0.2), MAHOGANY, false, 0.45)
+	for i in 3:
+		var gx := -0.4 + float(i) * 0.4
+		_add_box(root, Vector3(gx, top_y + 0.23, -0.32), Vector3(0.03, 0.28, 0.06), MAHOGANY_DARK, false, 0.48)
+	# Letters / ink in pigeonholes (low so not a dark wall)
+	_add_box(root, Vector3(-0.4, top_y + 0.14, -0.28), Vector3(0.12, 0.08, 0.08), PAPER.darkened(0.05), false)
+	_add_box(root, Vector3(0.0, top_y + 0.14, -0.28), Vector3(0.1, 0.06, 0.08), PAPER, false)
+	_add_box(root, Vector3(0.4, top_y + 0.14, -0.28), Vector3(0.08, 0.1, 0.08), Color(0.35, 0.18, 0.1), false, 0.6)
+	# Still life on writing surface
 	_add_box(root, Vector3(0.28, top_y + 0.04, 0.12), Vector3(0.34, 0.012, 0.24), PAPER, false)
 	_add_box(root, Vector3(0.32, top_y + 0.05, 0.08), Vector3(0.22, 0.01, 0.16), PAPER.darkened(0.05), false)
 	_add_box(root, Vector3(-0.25, top_y + 0.04, -0.05), Vector3(0.28, 0.01, 0.2), PAPER, false)
