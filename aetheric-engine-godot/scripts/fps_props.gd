@@ -559,7 +559,7 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_rug(prop: Dictionary) -> Node3D:
-	## Loop 87: textured field + raised border/fringe so rugs read as woven carpets.
+	## Loop 87/109: woven field texture + thin fringe/lip (no cardboard medallion blotch).
 	var root := Node3D.new()
 	root.name = "Rug"
 	var size: Array = prop.get("size", [4.6, 3.4])
@@ -574,11 +574,23 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	var has_tex := false
+	var is_runner := maxf(sw, sd) / maxf(0.01, minf(sw, sd)) > 2.2
 	if tex_path != "":
 		var tex: Texture2D = _load_tex(tex_path)
 		if tex:
 			mat.albedo_texture = tex
-			mat.uv1_scale = Vector3(sw * 0.35, sd * 0.35, 1.0)
+			# Loop 109: map full woven plate once (medallion reads); runners tile along length only
+			if is_runner:
+				# ~2–3 cartouche repeats along long axis; single width
+				var along: float = maxf(sw, sd)
+				var tile_n: float = clampf(along / 3.2, 1.5, 3.5)
+				if sd >= sw:
+					mat.uv1_scale = Vector3(1.0, tile_n, 1.0)
+				else:
+					mat.uv1_scale = Vector3(tile_n, 1.0, 1.0)
+			else:
+				# Full medallion + multi-band border once across the plane
+				mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
 			has_tex = true
 	if not has_tex:
 		# Fallback Persian-ish field (deep red) if texture missing
@@ -589,24 +601,33 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	body.add_child(mi)
 	body.position = Vector3(0, 0.035, 0)
 	root.add_child(body)
-	# Raised border (darker) + corner medallion for volume
 	var border := Color(0.22, 0.1, 0.08)
 	var gold := Color(0.55, 0.4, 0.2)
-	var bw := 0.08
-	_add_box(root, Vector3(0, 0.04, sd * 0.5 - bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
-	_add_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
-	_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
-	_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
-	# Inner gold rail (loop 105: thin only — large solid medallion read as cardboard blotch)
-	_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.01, 0.025), gold, false, 0.7)
-	_add_box(root, Vector3(0, 0.042, 0), Vector3(0.025, 0.01, sd * 0.88), gold, false, 0.7)
-	# Small centre rosette only when no field texture (texture already has medallion)
-	if not has_tex and sw > 2.5 and sd > 2.0:
-		_add_cylinder(root, Vector3(0, 0.048, 0), minf(sw, sd) * 0.06, 0.01, gold.darkened(0.1), false, 0.75)
-		_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.035, 0.01, Color(0.45, 0.18, 0.12), false, 0.85)
-	elif has_tex and sw > 2.5 and sd > 2.0:
-		# Subtle raised ring only (lets woven field show)
-		_add_cylinder(root, Vector3(0, 0.042, 0), minf(sw, sd) * 0.12, 0.008, gold.darkened(0.2), false, 0.8)
+	var fringe := Color(0.42, 0.28, 0.16)
+	if has_tex:
+		# Loop 109: very thin lip only — woven border is in the plate; no cross-rails/medallion mesh
+		var bw := 0.035
+		_add_box(root, Vector3(0, 0.038, sd * 0.5 - bw * 0.5), Vector3(sw * 0.99, 0.012, bw), border.darkened(0.15), false, 0.92)
+		_add_box(root, Vector3(0, 0.038, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.99, 0.012, bw), border.darkened(0.15), false, 0.92)
+		_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), border.darkened(0.15), false, 0.92)
+		_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), border.darkened(0.15), false, 0.92)
+		# Short fringe teeth on short ends (reads as pile edge from standing height)
+		var fringe_n := int(clampf(sw * 8.0, 8.0, 28.0))
+		for fi in fringe_n:
+			var fx := -sw * 0.45 + (sw * 0.9) * (float(fi) / float(maxi(fringe_n - 1, 1)))
+			_add_box(root, Vector3(fx, 0.032, sd * 0.5 + 0.02), Vector3(0.04, 0.008, 0.05), fringe, false, 0.95)
+			_add_box(root, Vector3(fx, 0.032, -sd * 0.5 - 0.02), Vector3(0.04, 0.008, 0.05), fringe, false, 0.95)
+	else:
+		var bw := 0.08
+		_add_box(root, Vector3(0, 0.04, sd * 0.5 - bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
+		_add_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
+		_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
+		_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
+		_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.01, 0.025), gold, false, 0.7)
+		_add_box(root, Vector3(0, 0.042, 0), Vector3(0.025, 0.01, sd * 0.88), gold, false, 0.7)
+		if sw > 2.5 and sd > 2.0:
+			_add_cylinder(root, Vector3(0, 0.048, 0), minf(sw, sd) * 0.06, 0.01, gold.darkened(0.1), false, 0.75)
+			_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.035, 0.01, Color(0.45, 0.18, 0.12), false, 0.85)
 	return root
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
@@ -2367,16 +2388,21 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	var chalk_dim := Color(0.88, 0.9, 0.85)
 	match seed0 % 4:
 		0:
-			# Equations / coil notes — multi-line dense
-			for li in 8:
-				var ly := 1.5 - float(li) * 0.08
-				var lw := 0.6 + float((li + seed0) % 4) * 0.1
-				var lx := -0.12 + float(li % 3) * 0.06
-				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.022, 0.014), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.14, 0.014, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.07, 0.012, chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.35, 0.02, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.4, 1.35, 0.05), Vector3(0.1, 0.1, 0.012), chalk, false, 0.95)
+			# Loop 109: denser equation plate — double column + coil callout + ticks
+			for li in 11:
+				var ly := 1.55 - float(li) * 0.065
+				var lw := 0.45 + float((li + seed0) % 5) * 0.08
+				var lx := -0.28 + float(li % 2) * 0.12
+				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.02, 0.014), chalk if li % 3 else chalk_dim, false, 0.95)
+			# Right-hand short annotations
+			for li in 6:
+				_add_box(root, Vector3(0.38, 1.48 - float(li) * 0.09, 0.05), Vector3(0.32, 0.016, 0.012), chalk_dim, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.16, 0.016, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.1, 0.014, chalk_dim, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 0.98, 0.05), 0.05, 0.012, chalk, false, 0.95)
+			_add_box(root, Vector3(-0.35, 0.95, 0.05), Vector3(0.4, 0.022, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.42, 1.4, 0.05), Vector3(0.12, 0.12, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.25, 1.55, 0.05), Vector3(0.55, 0.024, 0.014), chalk, false, 0.95)
 		1:
 			# Loop 108: denser engine diagram — multi-ring + formula bars (reads at hallway length)
 			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.32, 0.018, chalk, false, 0.95)
@@ -2395,31 +2421,43 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 			for li in 4:
 				_add_box(root, Vector3(0.35, 1.4 - float(li) * 0.08, 0.05), Vector3(0.28, 0.016, 0.012), chalk_dim, false, 0.95)
 		2:
-			# Dense grid / ledger + bold annotations
-			for i in 7:
-				var yy := 0.9 + float(i) * 0.09
-				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(1.0, 0.012, 0.012), chalk_dim, false, 0.95)
-			for j in 6:
-				var xx := -0.48 + float(j) * 0.18
-				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.012, 0.65, 0.012), chalk_dim, false, 0.95)
-			# Bold fill cells
-			_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.14, 0.07, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.2, 1.15, 0.05), Vector3(0.14, 0.07, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.0, 0.05), Vector3(0.22, 0.018, 0.012), chalk, false, 0.95)
+			# Loop 109: denser ledger grid + filled cells + margin ticks
+			for i in 10:
+				var yy := 0.88 + float(i) * 0.07
+				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(1.05, 0.012, 0.012), chalk_dim, false, 0.95)
+			for j in 8:
+				var xx := -0.5 + float(j) * 0.14
+				_add_box(root, Vector3(xx, 1.2, 0.05), Vector3(0.012, 0.72, 0.012), chalk_dim, false, 0.95)
+			# Bold fill cells + diagonal hatch marks
+			_add_box(root, Vector3(-0.28, 1.4, 0.05), Vector3(0.16, 0.08, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(0.14, 1.25, 0.05), Vector3(0.16, 0.08, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.1, 1.05, 0.05), Vector3(0.2, 0.07, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(0.28, 1.48, 0.05), Vector3(0.18, 0.06, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(0.0, 0.95, 0.05), Vector3(0.35, 0.02, 0.012), chalk, false, 0.95)
+			# Title bar + side ticks
+			_add_box(root, Vector3(-0.15, 1.55, 0.05), Vector3(0.7, 0.022, 0.014), chalk, false, 0.95)
+			for t in 6:
+				_add_box(root, Vector3(-0.52, 0.95 + float(t) * 0.1, 0.05), Vector3(0.05, 0.014, 0.01), chalk, false, 0.95)
 		_:
-			# Wave / aether trace + axis + labels
-			for i in 9:
-				var wx := -0.48 + float(i) * 0.11
-				var wy := 1.18 + sin(float(i) * 0.85 + float(seed0)) * 0.16
-				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.14, 0.016, 0.012), chalk, false, 0.95)
+			# Loop 109: denser aether wave + dual traces + scale labels
+			for i in 12:
+				var wx := -0.5 + float(i) * 0.09
+				var wy := 1.2 + sin(float(i) * 0.75 + float(seed0)) * 0.18
+				_add_box(root, Vector3(wx, wy, 0.05), Vector3(0.12, 0.018, 0.013), chalk, false, 0.95)
+				# Second phase-shifted trace
+				var wy2 := 1.15 + cos(float(i) * 0.75 + 0.4) * 0.12
+				_add_box(root, Vector3(wx, wy2, 0.05), Vector3(0.1, 0.014, 0.012), chalk_dim, false, 0.95)
 			# Baseline + vertical axis
-			_add_box(root, Vector3(0.0, 0.98, 0.05), Vector3(1.0, 0.014, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.48, 1.2, 0.05), Vector3(0.014, 0.55, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.25, 1.48, 0.05), Vector3(0.45, 0.018, 0.012), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.1, 0.012, chalk, false, 0.95)
-			# Tick marks on axis
-			for t in 5:
-				_add_box(root, Vector3(-0.3 + float(t) * 0.15, 0.95, 0.05), Vector3(0.012, 0.04, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 0.95, 0.05), Vector3(1.05, 0.016, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.5, 1.22, 0.05), Vector3(0.016, 0.6, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.2, 1.52, 0.05), Vector3(0.55, 0.02, 0.014), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.38, 1.0, 0.05), 0.12, 0.014, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.38, 1.0, 0.05), 0.06, 0.012, chalk_dim, false, 0.95)
+			# Tick marks + value bars
+			for t in 7:
+				_add_box(root, Vector3(-0.35 + float(t) * 0.12, 0.92, 0.05), Vector3(0.012, 0.045, 0.01), chalk, false, 0.95)
+			for li in 3:
+				_add_box(root, Vector3(0.35, 1.4 - float(li) * 0.1, 0.05), Vector3(0.3, 0.016, 0.012), chalk_dim, false, 0.95)
 	# Chalk rail + sticks
 	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
