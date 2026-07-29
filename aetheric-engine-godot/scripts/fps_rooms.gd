@@ -198,6 +198,15 @@ const ROOMS := {
 				"art": "landscape", "seed": 2, "frame": 1},
 			{"kind": "painting", "pos": [-3.0, 2.0, 4.7], "yaw": 180.0, "width": 0.65, "height": 0.8,
 				"art": "still_life", "seed": 1, "frame": 2},
+			# Loop 97: long hall side walls — more oils so stripe paper isn't empty expanse
+			{"kind": "painting", "pos": [6.7, 2.1, 2.2], "yaw": -90.0, "width": 0.6, "height": 0.75,
+				"art": "landscape", "seed": 1, "frame": 1},
+			{"kind": "painting", "pos": [-6.7, 2.1, -0.5], "yaw": 90.0, "width": 0.55, "height": 0.7,
+				"art": "still_life", "seed": 1, "frame": 2},
+			{"kind": "painting", "pos": [6.7, 2.05, -1.8], "yaw": -90.0, "width": 0.55, "height": 0.65,
+				"art": "still_life", "seed": 0, "frame": 1},
+			{"kind": "painting", "pos": [-6.7, 2.05, 3.2], "yaw": 90.0, "width": 0.58, "height": 0.72,
+				"art": "landscape", "seed": 4, "frame": 0},
 		],
 		"props": [
 			# Loop 79: arrival identity — runner only (no stone path on runner), consoles
@@ -247,6 +256,13 @@ const ROOMS := {
 			{"kind": "chair", "pos": [-2.4, 0.0, 3.2], "yaw": 160.0, "seed": 2,
 				"fabric": Color(0.28, 0.16, 0.12)},
 			{"kind": "oil_lamp", "pos": [0.6, 0.0, 3.5], "yaw": -10.0, "height": 1.1},
+			# Loop 97: upper hall densify (long empty stripe paper between doors)
+			{"kind": "wall_sconce", "pos": [-4.5, 0.0, -2.0], "yaw": 90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [4.5, 0.0, -2.0], "yaw": -90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [-4.5, 0.0, 2.0], "yaw": 90.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [4.5, 0.0, 2.0], "yaw": -90.0, "height": 2.35},
+			{"kind": "oil_lamp", "pos": [2.5, 0.0, -2.0], "yaw": 20.0, "height": 1.05},
+			{"kind": "oil_lamp", "pos": [-2.5, 0.0, 1.2], "yaw": -15.0, "height": 1.0},
 		],
 		"doors": [
 			{

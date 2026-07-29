@@ -326,12 +326,21 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	for bx in [-0.2, 0.0, 0.2]:
 		for bz in [-0.1, 0.12]:
 			_add_cylinder(root, Vector3(bx, 0.6, bz), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
-	# High back + wings
+	# High back + wings (loop 97: no thick mahogany crown blotch — fabric top rail + thin wood bead)
 	_add_box(root, Vector3(0, 0.95, -0.3), Vector3(0.9, 0.95, 0.16), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.35, -0.28), Vector3(0.82, 0.18, 0.12), MAHOGANY, false, 0.42)
+	# Soft padded top of back (same fabric — never a brown slab from side)
+	_add_box(root, Vector3(0, 1.38, -0.28), Vector3(0.78, 0.12, 0.14), fabric.darkened(0.05), false, 0.9)
+	# Thin carved wood bead only (period crest line, not a blotch)
+	_add_box(root, Vector3(0, 1.46, -0.27), Vector3(0.7, 0.04, 0.08), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 1.48, -0.26), Vector3(0.2, 0.05, 0.05), MAHOGANY.lightened(0.05), false, 0.45)
+	# Button tufts on back
+	for by in [0.85, 1.05, 1.2]:
+		for bx in [-0.18, 0.0, 0.18]:
+			_add_cylinder(root, Vector3(bx, by, -0.2), 0.016, 0.018, fabric.darkened(0.22), false, 0.95)
 	# Wings
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.42, 1.05, -0.12), Vector3(0.14, 0.7, 0.45), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.42, 1.35, -0.1), Vector3(0.12, 0.1, 0.35), fabric.darkened(0.06), false, 0.9)
 	# Arms
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.42, 0.62, 0.08), Vector3(0.16, 0.22, 0.72), fabric, true, 0.88)
@@ -1032,10 +1041,20 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0.55, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.12), false, 0.8)
 	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.22, 0.04, 0.12), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.25, 1.58, 0.18), 0.03, 0.16, CANDLE, false, 0.55)
-	# Chimney flue + brass collar + crown
-	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), iron_body, true, 0.5)
-	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(0.65, 0.08, 0.55), BRASS.darkened(0.12), false, 0.35)
-	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.7, 0.1, 0.55), iron_dark, false, 0.5)
+	# Chimney flue + brass collar + crown (loop 97: not a black monolith)
+	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), iron_mid, true, 0.5)
+	# Rivet strips up flue
+	for ri in 4:
+		var ry := 1.55 + float(ri) * 0.25
+		_add_box(root, Vector3(-0.28, ry, 0.1), Vector3(0.04, 0.04, 0.04), iron_light, false, 0.45)
+		_add_box(root, Vector3(0.28, ry, 0.1), Vector3(0.04, 0.04, 0.04), iron_light, false, 0.45)
+	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(0.7, 0.1, 0.58), BRASS.darkened(0.1), false, 0.35)
+	_add_box(root, Vector3(0, 1.62, -0.05), Vector3(0.62, 0.04, 0.5), BRASS, false, 0.32)
+	# Crown moulding
+	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.75, 0.08, 0.58), iron_mid.lightened(0.06), false, 0.5)
+	_add_box(root, Vector3(0, 2.62, -0.12), Vector3(0.55, 0.06, 0.42), iron_dark, false, 0.5)
+	# Smoke plate detail
+	_add_box(root, Vector3(0, 2.1, 0.12), Vector3(0.35, 0.5, 0.04), iron_dark, false, 0.5)
 	# Hanging pan rail above range
 	_add_box(root, Vector3(0, 1.75, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
 	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.1, 0.08, COPPER, false, 0.35, true)
