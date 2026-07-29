@@ -1,39 +1,39 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 (overnight goal)  
-**Primary goal:** Deveraux visual + interaction overhaul (7-item ordered list)  
-**Plan bible:** `visual-deveraux-house-plan-interior-design.md`  
-**Uniqueness:** `visual/uniqueness-rule.md`  
+**Updated:** 2026-07-29 (overnight goal active)  
+**HEAD:** see latest commit  
 **10m density scheduler:** OFF  
+**Do not mark goal complete after one pass** — living priority queue.
 
-## Ordered work list status
+## Ordered work list
 
 | # | Item | Status |
 |---|------|--------|
-| 1 | Furniture spacing / overlap | **DONE loop 67** — drawing room re-laid: no stacked chairs/desks; clear walk rings |
-| 2 | Furniture collision | **DONE loop 67** — billboard `col_size` hulls; solid seats/benches; workbench solid tops/legs |
-| 3 | Walking not skating | **DONE loop 67** — ACCEL/FRICTION walk model, slower WALK_SPEED |
-| 4 | Unique Victorian objects (esp tools) | **IN PROGRESS** — tool_rack seed tool types; workbench seed dressing; more remaining |
-| 5 | Geometric / surface detail | **IN PROGRESS** — chair piping/splat variants; painting corner ornaments; workbench banding |
-| 6 | Victorian wall art | **PARTIAL** — gilt multi-step frames; content still procedural landscapes (period-subject OK, style still simplified) |
-| 7 | Plant diversity | **DONE loop 67** — palm/fern mix + size tiers; mesh pots; conservatory/hall/drawing diversified |
+| 1 | Furniture spacing / overlap | **DONE 67–68** drawing re-layout; kitchen thinned; gallery stools spread |
+| 2 | Furniture collision | **DONE 67** billboard `col_size`; solid furniture hulls; workbench solid |
+| 3 | Walking not skating | **DONE 67** ACCEL/FRICTION + lower speed in `fps_player.gd` |
+| 4 | Unique Victorian objects | **ADVANCED** tool_rack 6 tool kinds by seed; workbench seed dressing; more possible |
+| 5 | Geometric / surface detail | **ADVANCED** chair splat variants; gilt corner frames; bench banding |
+| 6 | Victorian wall art | **PARTIAL** multi-step gilt frames; subjects landscape/still-life (style still simple plates) |
+| 7 | Plant diversity | **DONE 67** palm+fern, size tiers, mesh pots across rooms |
 
-## Loop log
+## Loops
 
 | Loop | Work |
 |------|------|
-| 66 | Uniqueness pass (prior session) |
-| **67** | Spacing layout + collision hulls + walk accel + unique tool racks + plant kinds/sizes + chair/frame detail |
+| 67 | Spacing + collision + walk + tools + plants + frames |
+| 68 | Kitchen de-clutter; gallery stool/lamp spread; workbench uniqueness |
 
-## Remaining high-value
+## Still high-value if continuing
 
-1. Deeper prop uniqueness (kitchen still-lifes, more tool variety on benches)  
-2. Richer period art plates if assets available (or further frame/canvas polish)  
-3. Mesh sofa alternative where billboards thin from side  
-4. Human E-door playtest  
-5. Scan other rooms for residual overlap (gallery stools, kitchen)  
+- Side-view mesh furniture where billboards thin  
+- Richer art plates (if generating assets)  
+- Morning room light polish  
+- Human E-door playtest  
+- Further tool/prop micro-variety  
 
-## Paths
+## Anchors
 
-- Shots: `SCRATCH/screenshots/auto_loop_67/`  
-- Code: `fps_rooms.gd`, `fps_props.gd`, `fps_player.gd`  
+- Plan: `SCRATCH/memory/visual-deveraux-house-plan-interior-design.md`  
+- Uniqueness: `SCRATCH/memory/visual/uniqueness-rule.md`  
+- Shots: `auto_loop_67/`, `auto_loop_68/`  
