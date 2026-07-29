@@ -849,17 +849,23 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_contact_shadow(root, 0.34, 0.34)
 		return root
 	if dress == 0:
-		_add_cylinder(root, Vector3(0, top_y, 0), 0.09, 0.06, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.11, 0), 0.028, 0.18, BRASS, false, 0.3, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.23, 0), 0.05, 0.04, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.39, 0), 0.04, 0.3, Color(0.9, 0.86, 0.72), false, 0.45)
-		_add_sphere_blob(root, Vector3(0, top_y + 0.29, 0), 0.03, Color(1.0, 0.8, 0.4))
+		# Mini Argand on table (loop 102: short caged chimney, not white stick)
+		_add_cylinder(root, Vector3(0, top_y, 0), 0.08, 0.05, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.07, 0.08, BRASS.darkened(0.05), false, 0.28, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.05, 0.03, BRASS, false, 0.28, true)
+		var glass_t := Color(0.72, 0.58, 0.32)
+		_add_cylinder(root, Vector3(0, top_y + 0.22, 0), 0.038, 0.12, glass_t, false, 0.4)
+		for ri in 3:
+			var ra := float(ri) * TAU / 3.0
+			_add_box(root, Vector3(cos(ra) * 0.04, top_y + 0.22, sin(ra) * 0.04), Vector3(0.01, 0.11, 0.01), BRASS, false, 0.3)
+		_add_cylinder(root, Vector3(0, top_y + 0.29, 0), 0.032, 0.025, BRASS, false, 0.28, true)
+		_add_sphere_blob(root, Vector3(0, top_y + 0.2, 0), 0.022, Color(1.0, 0.8, 0.4))
 		_add_box(root, Vector3(0.12, top_y - 0.01, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2 + seed0), false)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 0.55
 		lamp.omni_range = 2.6
-		lamp.position = Vector3(0, top_y + 0.3, 0)
+		lamp.position = Vector3(0, top_y + 0.22, 0)
 		root.add_child(lamp)
 	elif dress == 1:
 		_add_box(root, Vector3(-0.05, top_y + 0.01, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
@@ -1530,8 +1536,7 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 
 
 static func _make_urn(prop: Dictionary) -> Node3D:
-	## Stone / terracotta pedestal urn for conservatory corners.
-	## Loop 100: trailing ivy + palm sprays only — no green sphere crown.
+	## Stone / terracotta pedestal urn — loop 102: trailing ivy only (no green cubes).
 	var root := Node3D.new()
 	root.name = "Urn"
 	var seed0: int = int(prop.get("seed", 0))
@@ -1541,23 +1546,32 @@ static func _make_urn(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.12 * scale, 0.28 * scale, body, true, 0.7)
 	_add_cylinder(root, Vector3(0, 0.55 * scale, 0), 0.2 * scale, 0.12 * scale, body.lightened(0.05), false, 0.7)
 	_add_cylinder(root, Vector3(0, 0.62 * scale, 0), 0.16 * scale, 0.05 * scale, body.darkened(0.08), false, 0.7)
-	# Soil + leaf/stem sprays (no sphere blob)
+	# Soil pad
 	_add_cylinder(root, Vector3(0, 0.64 * scale, 0), 0.14 * scale, 0.04 * scale, Color(0.18, 0.12, 0.08), false, 0.9)
-	var leaf_a := Color(0.2, 0.42, 0.16)
-	var leaf_b := Color(0.14, 0.34, 0.12)
-	var stem_c := Color(0.28, 0.24, 0.12)
-	# Central stems
-	for si in 3:
-		var sa := float(si) * 0.7 + float(seed0) * 0.2
-		_add_cylinder(root, Vector3(cos(sa) * 0.03 * scale, 0.78 * scale, sin(sa) * 0.03 * scale), 0.012 * scale, 0.22 * scale, stem_c, false, 0.85)
-	# Radial fronds (flat leaves, not cubes)
-	for i in 6:
-		var ang := float(i) * TAU / 6.0 + float(seed0) * 0.3
-		var lx: float = cos(ang) * 0.12 * scale
-		var lz: float = sin(ang) * 0.12 * scale
-		_add_box(root, Vector3(lx * 0.5, 0.82 * scale, lz * 0.5), Vector3(0.03 * scale, 0.16 * scale, 0.06 * scale), leaf_b if i % 2 == 0 else leaf_a, false, 0.92)
-		_add_box(root, Vector3(lx, 0.78 * scale, lz), Vector3(0.12 * scale, 0.025 * scale, 0.04 * scale), leaf_a.lightened(0.04), false, 0.92)
-		_add_box(root, Vector3(lx * 1.15, 0.72 * scale, lz * 1.15), Vector3(0.08 * scale, 0.02 * scale, 0.05 * scale), leaf_b, false, 0.92)
+	var leaf_a := Color(0.18, 0.4, 0.14)
+	var leaf_b := Color(0.12, 0.32, 0.1)
+	var stem_c := Color(0.26, 0.22, 0.1)
+	# Thin upright stems
+	for si in 4:
+		var sa := float(si) * 0.9 + float(seed0) * 0.25
+		var sx: float = cos(sa) * 0.04 * scale
+		var sz: float = sin(sa) * 0.04 * scale
+		_add_cylinder(root, Vector3(sx, 0.78 * scale, sz), 0.008 * scale, 0.24 * scale, stem_c, false, 0.85)
+	# Trailing vines down urn sides (thin stems + tiny leaves)
+	for i in 5:
+		var ang := float(i) * TAU / 5.0 + float(seed0) * 0.4
+		var lx: float = cos(ang) * 0.14 * scale
+		var lz: float = sin(ang) * 0.14 * scale
+		# Vine stem hanging down
+		_add_cylinder(root, Vector3(lx, 0.55 * scale, lz), 0.008 * scale, 0.28 * scale, stem_c, false, 0.85)
+		# Tiny leaf pairs along vine (thin, not cubes)
+		for j in 3:
+			var jy: float = 0.68 * scale - float(j) * 0.08 * scale
+			_add_box(root, Vector3(lx + cos(ang) * 0.03 * scale, jy, lz + sin(ang) * 0.03 * scale),
+				Vector3(0.05 * scale, 0.012 * scale, 0.02 * scale), leaf_a if j % 2 == 0 else leaf_b, false, 0.92)
+		# Crown tip fronds (very thin vertical blades)
+		_add_box(root, Vector3(lx * 0.4, 0.88 * scale, lz * 0.4),
+			Vector3(0.015 * scale, 0.12 * scale, 0.04 * scale), leaf_b, false, 0.92)
 	_add_contact_shadow(root, 0.25 * scale, 0.25 * scale)
 	return root
 
@@ -1612,47 +1626,61 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 
 
 static func _make_oil_lamp(prop: Dictionary) -> Node3D:
-	## Freestanding Argand / table oil lamp — seed forks base + chimney.
-	## Solid frosted chimney: alpha glass reads black under metal materials.
+	## Argand oil lamp (loop 102): short amber chimney in brass cage —
+	## never a tall pale toilet-paper tube.
 	var root := Node3D.new()
 	root.name = "OilLamp"
 	var h: float = float(prop.get("height", 1.05))
 	var ppos: Array = prop.get("pos", [0, 0, 0])
 	var seed0: int = int(prop.get("seed", int(absf(h * 17.0 + float(ppos[0]) * 7.0 + float(ppos[2]) * 11.0))))
 	var style := seed0 % 3
+	# Stem height scales; chimney is FIXED short size so tall props stay readable
+	var stem_top: float = clampf(h * 0.48, 0.38, 0.58)
 	if style == 0:
 		# Mahogany pedestal Argand
 		_add_cylinder(root, Vector3(0, 0.04, 0), 0.12, 0.08, MAHOGANY_DARK, true, 0.5)
 		_add_cylinder(root, Vector3(0, 0.12, 0), 0.08, 0.1, MAHOGANY, true, 0.48)
-		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.035, h * 0.4, BRASS, true, 0.3, true)
+		_add_cylinder(root, Vector3(0, stem_top * 0.55, 0), 0.035, stem_top * 0.7, BRASS, true, 0.3, true)
 	elif style == 1:
-		# Brass tripod floor lamp
+		# Brass tripod
 		_add_cylinder(root, Vector3(0, 0.05, 0), 0.1, 0.06, BRASS.darkened(0.1), true, 0.32, true)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
 			_add_box(root, Vector3(cos(rad) * 0.1, 0.03, sin(rad) * 0.1), Vector3(0.14, 0.03, 0.04), BRASS, true, 0.32)
-		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.03, h * 0.45, BRASS.lightened(0.05), true, 0.28, true)
+		_add_cylinder(root, Vector3(0, stem_top * 0.55, 0), 0.03, stem_top * 0.75, BRASS.lightened(0.05), true, 0.28, true)
 	else:
-		# Ebony square base + copper font
+		# Ebony base + copper stem
 		_add_box(root, Vector3(0, 0.04, 0), Vector3(0.18, 0.08, 0.18), Color(0.1, 0.08, 0.07), true, 0.55)
 		_add_box(root, Vector3(0, 0.12, 0), Vector3(0.12, 0.06, 0.12), Color(0.14, 0.1, 0.08), true, 0.5)
-		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.032, h * 0.4, COPPER, true, 0.35, true)
-	# Oil font + frosted chimney (loop 86: warmer glass, brass collar, not chalk stick)
+		_add_cylinder(root, Vector3(0, stem_top * 0.55, 0), 0.032, stem_top * 0.7, COPPER, true, 0.35, true)
+	# Bulbous oil font (wide, metal-dominant)
 	var font_c := BRASS.darkened(0.05) if style != 2 else COPPER.darkened(0.05)
-	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.1, 0.12, font_c, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, h * 0.63, 0), 0.08, 0.05, font_c.lightened(0.08), false, 0.28, true)
-	_add_cylinder(root, Vector3(0, h * 0.68, 0), 0.055, 0.04, BRASS, false, 0.3, true)
-	# Frosted chimney — warm amber glass (loop 100: not chalk/toilet-paper white)
-	_add_cylinder(root, Vector3(0, h * 0.82, 0), 0.05, h * 0.26, Color(0.88, 0.82, 0.62), false, 0.38)
-	_add_cylinder(root, Vector3(0, h * 0.82, 0), 0.042, h * 0.22, Color(0.95, 0.9, 0.72), false, 0.35)
-	_add_cylinder(root, Vector3(0, h * 0.7, 0), 0.055, 0.035, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, h * 0.96, 0), 0.035, 0.05, BRASS, false, 0.3, true)
-	_add_sphere_blob(root, Vector3(0, h * 0.72, 0), 0.035, Color(1.0, 0.85, 0.45))
+	var fy: float = stem_top + 0.02
+	_add_cylinder(root, Vector3(0, fy, 0), 0.11, 0.1, font_c, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, fy + 0.07, 0), 0.09, 0.05, font_c.lightened(0.08), false, 0.28, true)
+	# Brass gallery / burner collar
+	_add_cylinder(root, Vector3(0, fy + 0.11, 0), 0.065, 0.035, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, fy + 0.14, 0), 0.05, 0.025, BRASS.darkened(0.08), false, 0.3, true)
+	# Short amber chimney (fixed ~0.14 tall) + brass cage ribs
+	var glass := Color(0.72, 0.58, 0.32)
+	var glass_hi := Color(0.82, 0.68, 0.4)
+	var cy: float = fy + 0.22
+	_add_cylinder(root, Vector3(0, cy, 0), 0.045, 0.14, glass, false, 0.42)
+	_add_cylinder(root, Vector3(0, cy, 0), 0.032, 0.12, glass_hi, false, 0.38)
+	# Vertical brass cage (4 ribs) so silhouette reads as lamp not paper roll
+	for i in 4:
+		var ang := float(i) * TAU / 4.0 + 0.2
+		_add_box(root, Vector3(cos(ang) * 0.048, cy, sin(ang) * 0.048), Vector3(0.012, 0.13, 0.012), BRASS.darkened(0.05), false, 0.3)
+	# Top cap + bottom collar ring
+	_add_cylinder(root, Vector3(0, cy + 0.08, 0), 0.04, 0.03, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, cy - 0.08, 0), 0.05, 0.02, BRASS.darkened(0.1), false, 0.3, true)
+	# Flame glow inside
+	_add_sphere_blob(root, Vector3(0, cy - 0.02, 0), 0.028, Color(1.0, 0.78, 0.35))
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.84, 0.52)
-	light.light_energy = 0.85 + float(style) * 0.08
+	light.light_energy = 0.9 + float(style) * 0.08
 	light.omni_range = 4.0 + float(style) * 0.3
-	light.position = Vector3(0, h * 0.75, 0)
+	light.position = Vector3(0, cy, 0)
 	root.add_child(light)
 	_add_contact_shadow(root, 0.14, 0.14)
 	return root
@@ -2286,34 +2314,35 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	# Frame lip
 	_add_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
 	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
-	# Bright chalk so marks survive distance / filmic tonemap
-	var chalk := Color(0.96, 0.96, 0.93)
-	var chalk_dim := Color(0.82, 0.84, 0.8)
+	# Bright chalk so marks survive distance / filmic tonemap (loop 102: thicker strokes)
+	var chalk := Color(0.98, 0.98, 0.95)
+	var chalk_dim := Color(0.88, 0.9, 0.85)
 	match seed0 % 4:
 		0:
 			# Equations / coil notes — multi-line dense
-			for li in 7:
-				var ly := 1.48 - float(li) * 0.09
-				var lw := 0.55 + float((li + seed0) % 4) * 0.1
-				var lx := -0.15 + float(li % 3) * 0.08
-				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.018, 0.012), chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.12, 0.012, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.06, 0.01, chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.3, 0.015, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.4, 1.35, 0.05), Vector3(0.08, 0.08, 0.01), chalk, false, 0.95)  # sigma-ish
+			for li in 8:
+				var ly := 1.5 - float(li) * 0.08
+				var lw := 0.6 + float((li + seed0) % 4) * 0.1
+				var lx := -0.12 + float(li % 3) * 0.06
+				_add_box(root, Vector3(lx, ly, 0.05), Vector3(lw, 0.022, 0.014), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.14, 0.014, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.35, 1.05, 0.05), 0.07, 0.012, chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.35, 0.02, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.4, 1.35, 0.05), Vector3(0.1, 0.1, 0.012), chalk, false, 0.95)
 		1:
-			# Concentric coils + radii (engine notes)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.28, 0.012, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.18, 0.011, chalk_dim, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.09, 0.01, chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.55, 0.014, 0.01), chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.014, 0.55, 0.01), chalk, false, 0.95)
-			# Diagonal ray ticks
-			for di in 4:
-				var ang := float(di) * 0.7
-				_add_box(root, Vector3(cos(ang) * 0.2, 1.22 + sin(ang) * 0.2, 0.05), Vector3(0.18, 0.012, 0.01), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.4, 1.48, 0.05), Vector3(0.35, 0.016, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(0.35, 0.98, 0.05), Vector3(0.35, 0.014, 0.012), chalk, false, 0.95)
+			# Concentric coils + radii (engine notes) — thicker for room-length read
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.3, 0.016, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.2, 0.014, chalk_dim, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.1, 0.012, chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.6, 0.02, 0.012), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.02, 0.6, 0.012), chalk, false, 0.95)
+			# Spiral arc ticks + label bars
+			for di in 6:
+				var ang := float(di) * 0.55
+				_add_box(root, Vector3(cos(ang) * 0.22, 1.22 + sin(ang) * 0.22, 0.05), Vector3(0.2, 0.016, 0.012), chalk_dim, false, 0.95)
+			_add_box(root, Vector3(-0.35, 1.5, 0.05), Vector3(0.45, 0.022, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(0.3, 0.96, 0.05), Vector3(0.4, 0.02, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.35, 0.96, 0.05), Vector3(0.3, 0.018, 0.014), chalk, false, 0.95)
 		2:
 			# Dense grid / ledger + bold annotations
 			for i in 7:
