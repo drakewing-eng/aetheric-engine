@@ -1601,32 +1601,31 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(w * 0.85, 0.035, 0.04), iron_paint, false, 0.45)
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(0.04, 0.035, 0.3), iron_paint, false, 0.45)
 	else:
-		# Teak garden settle (loop 101) — solid high-back only (no picket/window grid)
+		# Teak garden settle (loop 118): open back rails (not solid fridge slab from front)
 		var teak := Color(0.42, 0.28, 0.14)
 		var teak_d := Color(0.3, 0.18, 0.08)
 		var teak_l := Color(0.52, 0.36, 0.18)
-		# Solid seat plank
+		# Solid seat plank + cushion strip
 		_add_box(root, Vector3(0, seat_y - 0.02, 0.02), Vector3(w * 0.96, 0.08, seat_d), teak, true, 0.55)
 		_add_box(root, Vector3(0, seat_y + 0.025, 0.02), Vector3(w * 0.93, 0.03, seat_d * 0.9), teak_l, false, 0.58)
 		_add_box(root, Vector3(0, seat_y + 0.01, 0.24), Vector3(w * 0.95, 0.04, 0.035), teak_d, false, 0.55)
-		# Full solid back slab (front + rear — never empty or grid)
-		_add_box(root, Vector3(0, 0.82, -0.2), Vector3(w * 0.9, 0.7, 0.07), teak_d, true, 0.52)
-		_add_box(root, Vector3(0, 0.82, -0.16), Vector3(w * 0.86, 0.64, 0.03), teak, false, 0.55)
-		# Three horizontal face rails only (settle language, not window panes)
-		_add_box(root, Vector3(0, 0.58, -0.14), Vector3(w * 0.84, 0.05, 0.04), teak_l, false, 0.5)
-		_add_box(root, Vector3(0, 0.85, -0.14), Vector3(w * 0.84, 0.04, 0.04), teak, false, 0.5)
-		_add_box(root, Vector3(0, 1.1, -0.14), Vector3(w * 0.88, 0.07, 0.05), teak_l, true, 0.5)
-		# Soft crest curve
-		_add_box(root, Vector3(0, 1.16, -0.13), Vector3(w * 0.4, 0.04, 0.04), teak, false, 0.5)
-		# Side uprights flush with back
+		# Open back: frame + wide vertical boards with gaps (settle language)
+		_add_box(root, Vector3(0, 0.58, -0.2), Vector3(w * 0.9, 0.06, 0.06), teak_d, true, 0.5)
+		_add_box(root, Vector3(0, 1.12, -0.2), Vector3(w * 0.92, 0.08, 0.07), teak_l, true, 0.5)
+		_add_box(root, Vector3(0, 1.18, -0.18), Vector3(w * 0.5, 0.05, 0.05), teak, false, 0.5)
+		var n_board := 6
+		for i in n_board:
+			var t := float(i) / float(n_board - 1)
+			var bx: float = -w * 0.38 + t * w * 0.76
+			_add_box(root, Vector3(bx, 0.85, -0.18), Vector3(0.08, 0.48, 0.04), teak if i % 2 == 0 else teak_d, false, 0.55)
+		# Side uprights + arms
 		for sx in [-1.0, 1.0]:
 			var ex: float = sx * w * 0.44
 			_add_box(root, Vector3(ex, 0.8, -0.18), Vector3(0.1, 0.72, 0.1), teak_d, true, 0.5)
-			# Arm + solid side panel
 			_add_box(root, Vector3(ex, 0.58, 0.02), Vector3(0.1, 0.14, 0.46), teak, true, 0.52)
 			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.11, 0.05, 0.48), teak_l, false, 0.5)
-			_add_box(root, Vector3(ex, 0.55, -0.02), Vector3(0.06, 0.35, 0.36), teak_d, false, 0.55)
-			# Legs
+			# Open under-arm (no full side slab)
+			_add_box(root, Vector3(ex, 0.55, -0.12), Vector3(0.06, 0.2, 0.16), teak_d, false, 0.55)
 			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
 			_add_box(root, Vector3(ex, 0.22, -0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
 			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.1, 0.04, 0.12), teak, true, 0.52)
@@ -1887,23 +1886,29 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 		var pcol: Color = pcols[(i + seed0) % 5]
 		var shape := (i + seed0) % 4
 		if shape == 0:
-			_add_cylinder(root, Vector3(x, 1.82, 0.1), pr, ph, pcol, false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.72, 0.1), pr + 0.02, 0.03, pcol.lightened(0.08), false, 0.35, true)
+			# Loop 118: pan with bottom disc + flared rim (not floating ring)
+			_add_cylinder(root, Vector3(x, 1.78, 0.1), pr * 0.85, 0.02, pcol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.84, 0.1), pr, ph, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.72 + ph * 0.5, 0.1), pr + 0.025, 0.025, pcol.lightened(0.1), false, 0.32, true)
 		elif shape == 1:
-			_add_cylinder(root, Vector3(x, 1.78, 0.1), pr * 1.2, ph * 0.7, pcol, false, 0.35, true)
-			_add_box(root, Vector3(x + pr * 0.85, 1.78, 0.1), Vector3(0.1, 0.025, 0.04), pcol, false, 0.35)
+			_add_cylinder(root, Vector3(x, 1.76, 0.1), pr, 0.02, pcol.darkened(0.08), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.8, 0.1), pr * 1.15, ph * 0.75, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.8 + ph * 0.35, 0.1), pr * 1.2, 0.02, pcol.lightened(0.08), false, 0.32, true)
+			_add_box(root, Vector3(x + pr * 0.95, 1.8, 0.1), Vector3(0.12, 0.025, 0.04), pcol, false, 0.35)
 		elif shape == 2:
-			_add_cylinder(root, Vector3(x, 1.85, 0.1), pr * 0.75, ph * 1.25, pcol.darkened(0.05), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.98, 0.1), 0.03, 0.04, BRASS, false, 0.3, true)
+			_add_cylinder(root, Vector3(x, 1.8, 0.1), pr * 0.7, 0.02, pcol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.88, 0.1), pr * 0.8, ph * 1.15, pcol.darkened(0.05), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.98, 0.1), 0.035, 0.035, BRASS, false, 0.3, true)
 		else:
 			# Ladle
 			_add_cylinder(root, Vector3(x, 1.85, 0.1), 0.012, 0.35, IRON.lightened(0.08), false, 0.4)
-			_add_cylinder(root, Vector3(x, 1.65, 0.12), 0.06, 0.05, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.64, 0.12), 0.055, 0.02, pcol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.67, 0.12), 0.06, 0.05, pcol, false, 0.35, true)
 			_add_box(root, Vector3(x, 2.0, 0.08), Vector3(0.03, 0.04, 0.06), OAK, false, 0.55)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
-	## seed: kettle / pan / stockpot / jug / coal scuttle — no clone still-lifes.
+	## Loop 118: bulbous copper vessels with rims/handles (not flat coil stacks).
 	var root := Node3D.new()
 	root.name = "CopperPot"
 	var scale: float = prop.get("scale", 1.0)
@@ -1911,39 +1916,50 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 	var style := seed0 % 5
 	var col := COPPER if style % 2 == 0 else COPPER.darkened(0.08)
 	if style == 0:
-		# Classic kettle + bail handle
-		_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.14 * scale, 0.22 * scale, col, true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.15 * scale, 0.03 * scale, col.lightened(0.1), false, 0.3, true)
-		_add_cylinder(root, Vector3(0, 0.25 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.18, 0.1, 0.06), false)
-		_add_box(root, Vector3(0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.16 * scale, 0.14 * scale, 0), Vector3(0.04 * scale, 0.08 * scale, 0.12 * scale), col, false, 0.35)
-		_add_box(root, Vector3(0, 0.3 * scale, 0), Vector3(0.34 * scale, 0.02 * scale, 0.02 * scale), col.darkened(0.05), false, 0.35)
+		# Classic kettle — belly + shoulder + bail
+		_add_cylinder(root, Vector3(0, 0.06 * scale, 0), 0.11 * scale, 0.08 * scale, col.darkened(0.06), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.14 * scale, 0), 0.15 * scale, 0.12 * scale, col, true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.22 * scale, 0), 0.13 * scale, 0.08 * scale, col.lightened(0.05), true, 0.32, true)
+		_add_cylinder(root, Vector3(0, 0.28 * scale, 0), 0.14 * scale, 0.03 * scale, col.lightened(0.1), false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.3 * scale, 0), 0.09 * scale, 0.025 * scale, Color(0.18, 0.1, 0.06), false)
+		_add_box(root, Vector3(0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), col, false, 0.35)
+		_add_box(root, Vector3(0, 0.32 * scale, 0), Vector3(0.32 * scale, 0.02 * scale, 0.025 * scale), BRASS.darkened(0.1), false, 0.3)
+		_add_box(root, Vector3(0.14 * scale, 0.16 * scale, 0), Vector3(0.08 * scale, 0.04 * scale, 0.06 * scale), col.darkened(0.05), false, 0.35)
 	elif style == 1:
-		# Wide shallow pan + long handle
-		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.18 * scale, 0.12 * scale, col.lightened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.15 * scale, 0), 0.19 * scale, 0.025 * scale, col, false, 0.3, true)
-		_add_box(root, Vector3(0.22 * scale, 0.1 * scale, 0), Vector3(0.16 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.16 * scale, 0.1 * scale, 0), Vector3(0.08 * scale, 0.03 * scale, 0.05 * scale), col, false, 0.35)
+		# Wide skillet — deep rim + long handle + helper loop
+		_add_cylinder(root, Vector3(0, 0.05 * scale, 0), 0.16 * scale, 0.06 * scale, col.darkened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.1 * scale, 0), 0.19 * scale, 0.08 * scale, col.lightened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.15 * scale, 0), 0.2 * scale, 0.03 * scale, col, false, 0.3, true)
+		_add_box(root, Vector3(0.24 * scale, 0.11 * scale, 0), Vector3(0.22 * scale, 0.028 * scale, 0.05 * scale), col, false, 0.35)
+		_add_cylinder(root, Vector3(0.36 * scale, 0.11 * scale, 0), 0.025 * scale, 0.04 * scale, col.darkened(0.08), false, 0.35, true)
+		_add_box(root, Vector3(-0.18 * scale, 0.12 * scale, 0), Vector3(0.06 * scale, 0.04 * scale, 0.05 * scale), col, false, 0.35)
 	elif style == 2:
-		# Tall stockpot with lid knob
-		_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.3 * scale, col.darkened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.125 * scale, 0.03 * scale, col, false, 0.3, true)
-		_add_cylinder(root, Vector3(0, 0.36 * scale, 0), 0.04 * scale, 0.05 * scale, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.13 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
+		# Tall stockpot with lid + side handles
+		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.11 * scale, 0.1 * scale, col.darkened(0.08), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.2 * scale, 0), 0.13 * scale, 0.18 * scale, col.darkened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.12 * scale, 0.08 * scale, col, true, 0.32, true)
+		_add_cylinder(root, Vector3(0, 0.38 * scale, 0), 0.135 * scale, 0.03 * scale, col.lightened(0.08), false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.42 * scale, 0), 0.05 * scale, 0.04 * scale, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
 	elif style == 3:
-		# Water jug / ewer with spout
-		_add_cylinder(root, Vector3(0, 0.14 * scale, 0), 0.1 * scale, 0.26 * scale, col.lightened(0.04), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.28 * scale, 0), 0.06 * scale, 0.06 * scale, col, false, 0.32, true)
-		_add_box(root, Vector3(0.12 * scale, 0.2 * scale, 0), Vector3(0.1 * scale, 0.04 * scale, 0.05 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.1 * scale, 0.18 * scale, 0), Vector3(0.04 * scale, 0.12 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
+		# Water jug / ewer — bulb body + neck + spout + handle
+		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.08 * scale, 0.08 * scale, col.darkened(0.05), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.12 * scale, col.lightened(0.04), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, 0.26 * scale, 0), 0.07 * scale, 0.1 * scale, col, true, 0.32, true)
+		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.06 * scale, 0.04 * scale, col.lightened(0.06), false, 0.32, true)
+		_add_box(root, Vector3(0.12 * scale, 0.24 * scale, 0), Vector3(0.12 * scale, 0.035 * scale, 0.05 * scale), col, false, 0.35)
+		_add_box(root, Vector3(-0.1 * scale, 0.2 * scale, 0), Vector3(0.04 * scale, 0.14 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
+		_add_box(root, Vector3(-0.08 * scale, 0.3 * scale, 0), Vector3(0.1 * scale, 0.025 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
 	else:
-		# Coal scuttle / bucket with hoop
-		_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.15 * scale, 0.22 * scale, col.darkened(0.1), true, 0.4, true)
-		_add_cylinder(root, Vector3(0, 0.22 * scale, 0), 0.16 * scale, 0.03 * scale, IRON.lightened(0.1), false, 0.45)
-		_add_box(root, Vector3(0, 0.28 * scale, 0), Vector3(0.02 * scale, 0.12 * scale, 0.28 * scale), IRON, false, 0.4)
+		# Coal scuttle / bucket — tapered + hoop + bail
+		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.12 * scale, 0.1 * scale, col.darkened(0.12), true, 0.4, true)
+		_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.16 * scale, 0.14 * scale, col.darkened(0.1), true, 0.4, true)
+		_add_cylinder(root, Vector3(0, 0.26 * scale, 0), 0.17 * scale, 0.03 * scale, IRON.lightened(0.1), false, 0.45)
+		_add_box(root, Vector3(0, 0.34 * scale, 0), Vector3(0.025 * scale, 0.14 * scale, 0.3 * scale), IRON, false, 0.4)
 		_add_box(root, Vector3(0.1 * scale, 0.14 * scale, 0.1 * scale), Vector3(0.06 * scale, 0.04 * scale, 0.06 * scale), Color(0.12, 0.1, 0.1), false, 0.8)
-	_add_contact_shadow(root, 0.18 * scale, 0.18 * scale)
+	_add_contact_shadow(root, 0.2 * scale, 0.2 * scale)
 	return root
 
 
