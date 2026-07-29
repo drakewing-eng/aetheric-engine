@@ -636,13 +636,13 @@ const ROOMS := {
 		"wainscot_height": 4.0,
 		"walls": {},
 		"features": [
-			# Loop 82: garden view plates on glass (fix black void behind solid walls)
+			# Loop 82/91: painted exterior plates (not green orbs). South = lawn path hero from spawn.
 			{"kind": "glass_wall", "pos": [4.35, 0.0, 0.0], "yaw": -90.0, "width": 3.8, "height": 3.5,
-				"seed": 0, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
+				"seed": 0, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 			{"kind": "glass_wall", "pos": [-4.35, 0.0, 0.0], "yaw": 90.0, "width": 3.8, "height": 3.5,
-				"seed": 1, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+				"seed": 1, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
 			{"kind": "glass_wall", "pos": [0.0, 0.0, -3.85], "yaw": 0.0, "width": 4.8, "height": 3.5,
-				"seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
+				"seed": 2, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.2, 3.85], "yaw": 180.0, "width": 1.5, "height": 2.3},
 		],
 		"props": [
@@ -690,6 +690,12 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [2.2, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [-2.2, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{"kind": "oil_lamp", "pos": [0.0, 0.0, -2.0], "height": 0.95},
+			# Loop 91: centre/side volume so glass room doesn't feel empty mid-floor
+			{"kind": "side_table", "pos": [-1.8, 0.0, 0.4], "yaw": 25.0, "seed": 6},
+			{"kind": "watering_can", "pos": [-1.4, 0.0, 0.7], "scale": 0.85, "yaw": -30.0},
+			{"kind": "plant", "pos": [1.8, 0.0, 0.3], "scale": 0.55, "seed": 11,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
+			{"kind": "oil_lamp", "pos": [1.5, 0.0, 1.6], "height": 0.95},
 		],
 		"doors": [
 			{

@@ -2400,11 +2400,9 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	view_mi.material_override = vmat
 	# Loop 83: view plate on room side of wall (+Z) so facade never occludes to black
+	# Loop 91: do not paint sky/lawn bands over the painted exterior plate
 	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
-	# Soft sky/lawn bands if texture is dull
-	_add_box(root, Vector3(0, h * 0.78, 0.03), Vector3(w - stile * 2.0, h * 0.22, 0.015), Color(0.55, 0.72, 0.88), false, 0.98)
-	_add_box(root, Vector3(0, h * 0.18, 0.03), Vector3(w - stile * 2.0, h * 0.16, 0.015), Color(0.32, 0.48, 0.22), false, 0.92)
 	# Very thin cool glass (alpha low) — never solid black
 	var gmat := StandardMaterial3D.new()
 	gmat.albedo_color = Color(0.82, 0.92, 0.98, 0.1)
@@ -2431,9 +2429,8 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_glass_wall(feat: Dictionary) -> Node3D:
-	## Conservatory iron-framed glass. Loop 82: garden view plate sits *in front of*
-	## the room wall plane (local +Z into room) so solid paneling never occludes it
-	## into a pure black void. Same unshaded approach as sash windows.
+	## Conservatory iron-framed glass. Loop 91: painted garden plate is the exterior
+	## (no green sphere-blob overlay). Mullion grid + light glass tint only.
 	var root := Node3D.new()
 	root.name = "GlassWall"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -2448,15 +2445,15 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 		view_path = "res://assets/rooms/textures/views/view_garden.jpg"
 	var view_mi := MeshInstance3D.new()
 	var vm := QuadMesh.new()
-	vm.size = Vector2(w - 0.1, h - 0.1)
+	vm.size = Vector2(w - 0.08, h - 0.08)
 	view_mi.mesh = vm
 	var vmat := StandardMaterial3D.new()
 	var vtex := _load_tex(view_path)
 	if vtex:
 		vmat.albedo_texture = vtex
-		vmat.albedo_color = Color(1.05, 1.08, 1.0)
+		vmat.albedo_color = Color(1.08, 1.1, 1.05)  # slight lift for filmic
 	else:
-		vmat.albedo_color = Color(0.4, 0.58, 0.36)
+		vmat.albedo_color = Color(0.45, 0.62, 0.4)
 	vmat.roughness = 1.0
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
@@ -2464,35 +2461,35 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	# +Z into room so facade wall at exterior cannot hide the plate
 	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
-	# Soft sky/lawn bands + hedge blobs over plate (always room-side)
-	_add_box(root, Vector3(0, h * 0.78, 0.03), Vector3(w - 0.14, h * 0.28, 0.02), Color(0.55, 0.7, 0.85), false, 0.98)
-	_add_box(root, Vector3(0, h * 0.12, 0.04), Vector3(w - 0.14, h * 0.18, 0.03), Color(0.28, 0.42, 0.2), false, 0.92)
-	for i in 8:
-		var fx := -w * 0.4 + float(i) * (w * 0.115)
-		_add_sphere_blob(root, Vector3(fx, h * 0.28, 0.06), 0.12 + float(i % 3) * 0.025, Color(0.14, 0.34, 0.12))
-		_add_sphere_blob(root, Vector3(fx * 0.92, h * 0.2, 0.08), 0.09, Color(0.18, 0.38, 0.14))
-	# Perimeter iron (in front of view)
+	# Subtle sill ledge only (do NOT paint opaque sky/lawn bands or hedge orbs over plate)
+	_add_box(root, Vector3(0, 0.06, 0.08), Vector3(w - 0.1, 0.08, 0.12), STONE.darkened(0.05), false, 0.7)
+	# Brass/copper glazing bar caps at corners (period conservatory detail)
+	for sx in [-1.0, 1.0]:
+		for sy in [0.08, h - 0.08]:
+			_add_box(root, Vector3(sx * (w * 0.5 - 0.05), sy, 0.14), Vector3(0.08, 0.06, 0.06), BRASS.darkened(0.1), false, 0.35)
+	# Perimeter iron (in front of view) — mid-grey so not pure black frame
 	var bar := 0.07
-	_add_box(root, Vector3(0, bar * 0.5, 0.1), Vector3(w, bar, 0.09), IRON, true, 0.4)
-	_add_box(root, Vector3(0, h - bar * 0.5, 0.1), Vector3(w, bar, 0.09), IRON, true, 0.4)
-	_add_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), IRON, true, 0.4)
-	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), IRON, true, 0.4)
-	# Mullion grid
+	var frame_iron := Color(0.34, 0.34, 0.36)
+	_add_box(root, Vector3(0, bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
+	_add_box(root, Vector3(0, h - bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
+	_add_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
+	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
+	# Mullion grid — thinner, slightly brass-tinged for period conservatory
 	for i in 4:
 		var fx2 := -w * 0.35 + float(i) * (w * 0.23)
-		_add_box(root, Vector3(fx2, h * 0.5, 0.11), Vector3(0.04, h - 0.14, 0.045), IRON.lightened(0.08), false, 0.4)
+		_add_box(root, Vector3(fx2, h * 0.5, 0.11), Vector3(0.035, h - 0.14, 0.04), frame_iron.lightened(0.08), false, 0.45)
 	for j in 3:
 		var fy := h * 0.22 * float(j + 1)
-		_add_box(root, Vector3(0, fy, 0.11), Vector3(w - 0.14, 0.04, 0.045), IRON.lightened(0.08), false, 0.4)
-	# Glass tint overlay (very light — garden must remain readable)
+		_add_box(root, Vector3(0, fy, 0.11), Vector3(w - 0.14, 0.035, 0.04), frame_iron.lightened(0.08), false, 0.45)
+	# Very light glass tint — garden plate must dominate
 	var glass := MeshInstance3D.new()
 	var gm := BoxMesh.new()
-	gm.size = Vector3(w - 0.14, h - 0.14, 0.012)
+	gm.size = Vector3(w - 0.14, h - 0.14, 0.01)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.7, 0.82, 0.86, 0.18)
-	gmat.metallic = 0.15
-	gmat.roughness = 0.08
+	gmat.albedo_color = Color(0.78, 0.88, 0.92, 0.1)
+	gmat.metallic = 0.08
+	gmat.roughness = 0.06
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	gmat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
@@ -2500,9 +2497,9 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	glass.position = Vector3(0, h * 0.5, 0.13)
 	root.add_child(glass)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color(0.8, 0.92, 0.96)
-	fill.light_energy = 0.55
-	fill.omni_range = 5.0
+	fill.light_color = Color(0.82, 0.94, 0.98)
+	fill.light_energy = 0.7
+	fill.omni_range = 5.5
 	fill.position = Vector3(0, h * 0.55, 0.6)
 	root.add_child(fill)
 	return root

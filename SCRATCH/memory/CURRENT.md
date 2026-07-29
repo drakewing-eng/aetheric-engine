@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~03:25 (overnight goal active)  
+**Updated:** 2026-07-29 ~03:40 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -18,13 +18,13 @@
 | 9 | Door transition safety | **ADVANCED 76** suite PASS |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84+87** |
-| 12 | Conservatory garden identity | **ADVANCED 77+82+85** door approach |
+| 12 | Conservatory garden identity | **ADVANCED 77+82+85+91** exterior plates |
 | 13 | Gallery engine + morning densify | **ADVANCED 78+82+90** NW fill |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89** iron plates |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90** S wall |
 | 16 | Gallery centre experiment density | **ADVANCED 81+89** chalk denser |
-| 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
-| 18 | Tea still-life + window room-side views | **ADVANCED 83** |
+| 17 | Conservatory glass void + morning fill | **ADVANCED 82+91** |
+| 18 | Tea still-life + window room-side views | **ADVANCED 83+91** views |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
 | 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
 | 21 | Mirror silver plate + fireplace fire | **ADVANCED 86** |
@@ -32,6 +32,7 @@
 | 23 | Workshop south wall + open desk gallery | **ADVANCED 88** |
 | 24 | Material fix dark wood≠iron + iron paths | **DONE 89** |
 | 25 | Kitchen range hero + S wall + morning NW | **DONE 90** |
+| 26 | Conservatory exterior plates (no green orbs) | **DONE 91** |
 
 ## Loops
 
@@ -40,15 +41,16 @@
 | 67–87 | Core queue through rugs/hall/dresser |
 | 88 | Workshop south wall densify + open desk pigeonholes |
 | 89 | Mahogany≠iron material fix; riveted iron floor plates; denser chalk |
-| 90 | **Kitchen range hero:** mid-grey iron, brass trim/hinges/handles, grate + emissive flame layers, brass hotplate rings. **Kitchen south wall** shelves/art/crocks/lamps (from_south empty plaster). **Morning NW corner** side table, lamp, letters, low bookcase, fern. |
+| 90 | Kitchen range brass/fire hero; kitchen S wall; morning NW fill |
+| 91 | **Exterior views:** regenerated garden/orchard/yard/street plates (path, trunks, hedge, flowers, brick wall + gate — not flat green orbs). Glass wall no longer paints sphere-blob hedge over plate. South glass = lawn path hero. Window sky/lawn wash removed. Conservatory mid-floor props. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Conservatory exterior view still simplified green orbs  
+- Exterior views still stylized illustration (not photo) — optional further polish  
 - Optional micro-polish only  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_90/`  
+- Shots: `auto_loop_67/` … `auto_loop_91/`  
