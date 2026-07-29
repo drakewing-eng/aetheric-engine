@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ce7ekef4ivbjq"
-path="res://.godot/imported/mirror_plate.jpg-63d214ed221eba987a5c06e2fe4d3c8b.ctex"
+uid="uid://c6x7nhrt8yhgh"
+path="res://.godot/imported/view_night.jpg-1c9f00e31b99b244289c025c123d95b5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/rooms/textures/victorian/mirror_plate.jpg"
-dest_files=["res://.godot/imported/mirror_plate.jpg-63d214ed221eba987a5c06e2fe4d3c8b.ctex"]
+source_file="res://assets/rooms/textures/views/view_night.jpg"
+dest_files=["res://.godot/imported/view_night.jpg-1c9f00e31b99b244289c025c123d95b5.ctex"]
 
 [params]
 

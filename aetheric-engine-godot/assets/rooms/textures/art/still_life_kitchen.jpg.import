@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ce7ekef4ivbjq"
-path="res://.godot/imported/mirror_plate.jpg-63d214ed221eba987a5c06e2fe4d3c8b.ctex"
+uid="uid://drql65e2patag"
+path="res://.godot/imported/still_life_kitchen.jpg-ced22b138cad7631020c0d7dfd6f84a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/rooms/textures/victorian/mirror_plate.jpg"
-dest_files=["res://.godot/imported/mirror_plate.jpg-63d214ed221eba987a5c06e2fe4d3c8b.ctex"]
+source_file="res://assets/rooms/textures/art/still_life_kitchen.jpg"
+dest_files=["res://.godot/imported/still_life_kitchen.jpg-ced22b138cad7631020c0d7dfd6f84a0.ctex"]
 
 [params]
 

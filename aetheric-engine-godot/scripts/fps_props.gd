@@ -57,6 +57,7 @@ const ART_LANDSCAPES := [
 const ART_STILL_LIFES := [
 	"res://assets/rooms/textures/art/still_life_fruit.jpg",
 	"res://assets/rooms/textures/art/still_life_dark.jpg",
+	"res://assets/rooms/textures/art/still_life_kitchen.jpg",
 ]
 const ART_BOTANICALS := [
 	"res://assets/rooms/textures/art/botanical_palm.jpg",
@@ -3600,8 +3601,8 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
-	## Victorian looking-glass (loop 105): silvered mid-tone plate with room silhouette
-	## + sheen — never black void, never light-blue placeholder bars.
+	## Victorian looking-glass (loop 133): full painterly silvered plate (hall reflection),
+	## ornate gilt frame only — NO dark silhouette blocks over the plate.
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -3610,45 +3611,43 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var w: float = float(feat.get("width", 1.05))
 	var h: float = float(feat.get("height", 1.45))
 	# Ornate gilt frame + dark liner
-	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.12, h + 0.12, 0.09), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.04, h + 0.04, 0.04), BRASS.darkened(0.1), false, 0.35)
-	_add_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.08, h - 0.08, 0.03), Color(0.18, 0.12, 0.08), false, 0.55)
-	# Inner gold bead
-	_add_box(root, Vector3(0, 0, 0.09), Vector3(w - 0.12, h - 0.12, 0.012), BRASS.lightened(0.08), false, 0.3)
+	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.14, h + 0.14, 0.1), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.06, h + 0.06, 0.05), BRASS.darkened(0.12), false, 0.35)
+	_add_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.06, h - 0.06, 0.03), Color(0.16, 0.1, 0.07), false, 0.55)
+	# Inner gold bead around aperture
+	_add_box(root, Vector3(0, 0, 0.095), Vector3(w - 0.1, h - 0.1, 0.012), BRASS.lightened(0.08), false, 0.3)
 	# Crest + corner bosses
-	_add_box(root, Vector3(0, h * 0.5 + 0.08, 0.06), Vector3(0.28, 0.14, 0.05), BRASS.lightened(0.1), false, 0.3)
-	_add_box(root, Vector3(0, h * 0.5 + 0.14, 0.06), Vector3(0.12, 0.07, 0.04), BRASS, false, 0.3)
+	_add_box(root, Vector3(0, h * 0.5 + 0.09, 0.06), Vector3(0.32, 0.15, 0.055), BRASS.lightened(0.1), false, 0.3)
+	_add_box(root, Vector3(0, h * 0.5 + 0.16, 0.06), Vector3(0.14, 0.08, 0.04), BRASS, false, 0.3)
+	_add_cylinder(root, Vector3(0, h * 0.5 + 0.2, 0.07), 0.04, 0.03, BRASS.lightened(0.12), false, 0.28, true)
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.09, 0.09, 0.04), BRASS.lightened(0.05), false, 0.3)
-	# Loop 128 silver plate — warm mid-tone + stronger sheen so it reads as looking-glass
+			_add_box(root, Vector3(sx * (w * 0.5), sy * (h * 0.5), 0.07), Vector3(0.1, 0.1, 0.045), BRASS.lightened(0.05), false, 0.3)
+	# Silvered plate — painterly interior reflection (loop 133)
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
-	gm.size = Vector2(w - 0.18, h - 0.18)
+	gm.size = Vector2(w - 0.16, h - 0.16)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		gmat.albedo_color = Color(1.15, 1.12, 1.06)
+		gmat.albedo_color = Color(1.05, 1.04, 1.02)
 	else:
-		gmat.albedo_color = Color(0.62, 0.62, 0.58)
+		gmat.albedo_color = Color(0.55, 0.55, 0.52)
 	gmat.roughness = 1.0
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
-	glass.position = Vector3(0, 0, 0.105)
+	glass.position = Vector3(0, 0, 0.108)
 	root.add_child(glass)
-	# Diagonal sheen strips + soft room-silhouette blocks (reads as reflection)
-	_add_unshaded_plate(root, Vector3(-w * 0.15, h * 0.1, 0.112), Vector3(0.045, h * 0.6, 0.003), Color(0.82, 0.8, 0.75))
-	_add_unshaded_plate(root, Vector3(w * 0.2, -h * 0.08, 0.112), Vector3(0.03, h * 0.4, 0.003), Color(0.72, 0.7, 0.65))
-	_add_unshaded_plate(root, Vector3(-w * 0.05, -h * 0.15, 0.113), Vector3(w * 0.25, h * 0.18, 0.002), Color(0.35, 0.32, 0.28))
-	_add_unshaded_plate(root, Vector3(w * 0.12, h * 0.05, 0.113), Vector3(w * 0.12, h * 0.35, 0.002), Color(0.42, 0.4, 0.36))
+	# Thin glass catch only (no silhouette blocks — plate already has reflection)
+	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.12, 0.115), Vector3(0.028, h * 0.4, 0.002), Color(0.88, 0.86, 0.82))
 	var catch_l := OmniLight3D.new()
 	catch_l.light_color = Color(1.0, 0.95, 0.88)
-	catch_l.light_energy = 0.4
-	catch_l.omni_range = 2.0
-	catch_l.position = Vector3(0.12, 0.1, 0.4)
+	catch_l.light_energy = 0.35
+	catch_l.omni_range = 1.8
+	catch_l.position = Vector3(0.1, 0.08, 0.35)
 	root.add_child(catch_l)
 	return root
 

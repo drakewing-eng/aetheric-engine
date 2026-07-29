@@ -874,10 +874,13 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [0.0, 1.15, -3.85], "yaw": 0.0, "width": 1.55, "height": 2.35},
 			{"kind": "window", "pos": [4.35, 1.7, 0.5], "yaw": -90.0, "width": 1.1, "height": 1.5, "seed": 7, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
 			{"kind": "window", "pos": [-4.35, 1.7, 0.5], "yaw": 90.0, "width": 1.0, "height": 1.4, "seed": 8, "view": "res://assets/rooms/textures/views/view_street.jpg"},
+			# Loop 133: kitchen still-life oils (copper/crocks) — not fruit/salon dark
 			{"kind": "painting", "pos": [-2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.7, "height": 0.55,
-				"art": "still_life", "seed": 0, "frame": 3},
+				"art": "still_life", "seed": 2, "frame": 3,
+				"texture": "res://assets/rooms/textures/art/still_life_kitchen.jpg"},
 			{"kind": "painting", "pos": [2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
-				"art": "still_life", "seed": 1, "frame": 3},
+				"art": "still_life", "seed": 2, "frame": 3,
+				"texture": "res://assets/rooms/textures/art/still_life_kitchen.jpg"},
 			# Loop 90: south wall art flanks hall door (from_south empty plaster)
 			{"kind": "painting", "pos": [-2.4, 2.2, -3.75], "yaw": 0.0, "width": 0.65, "height": 0.5,
 				"art": "still_life", "seed": 2, "frame": 2},
