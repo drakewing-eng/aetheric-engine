@@ -592,13 +592,16 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
 	_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
 	_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
-	# Inner gold rail
-	_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.012, 0.03), gold, false, 0.7)
-	_add_box(root, Vector3(0, 0.042, 0), Vector3(0.03, 0.012, sd * 0.88), gold, false, 0.7)
-	# Centre medallion only on broad carpets (not thin hall runners)
-	if sw > 2.5 and sd > 2.0:
-		_add_box(root, Vector3(0, 0.045, 0), Vector3(sw * 0.28, 0.015, sd * 0.22), gold.darkened(0.15), false, 0.75)
-		_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.08, 0.012, Color(0.45, 0.18, 0.12), false, 0.85)
+	# Inner gold rail (loop 105: thin only — large solid medallion read as cardboard blotch)
+	_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.01, 0.025), gold, false, 0.7)
+	_add_box(root, Vector3(0, 0.042, 0), Vector3(0.025, 0.01, sd * 0.88), gold, false, 0.7)
+	# Small centre rosette only when no field texture (texture already has medallion)
+	if not has_tex and sw > 2.5 and sd > 2.0:
+		_add_cylinder(root, Vector3(0, 0.048, 0), minf(sw, sd) * 0.06, 0.01, gold.darkened(0.1), false, 0.75)
+		_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.035, 0.01, Color(0.45, 0.18, 0.12), false, 0.85)
+	elif has_tex and sw > 2.5 and sd > 2.0:
+		# Subtle raised ring only (lets woven field show)
+		_add_cylinder(root, Vector3(0, 0.042, 0), minf(sw, sd) * 0.12, 0.008, gold.darkened(0.2), false, 0.8)
 	return root
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
@@ -3021,9 +3024,8 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
-	## Victorian looking-glass — gilt frame + dark silver plate.
-	## Loop 92: never light-blue + white placeholder bars (read as broken art).
-	## Dark plate + muted room silhouette + soft sheen; unshaded so no black void.
+	## Victorian looking-glass (loop 105): silvered mid-tone plate with room silhouette
+	## + sheen — never black void, never light-blue placeholder bars.
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -3031,7 +3033,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = float(feat.get("width", 1.05))
 	var h: float = float(feat.get("height", 1.45))
-	# Ornate gilt frame + dark liner (into room so wall never occludes)
+	# Ornate gilt frame + dark liner
 	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.12, h + 0.12, 0.09), BRASS, true, 0.32)
 	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.04, h + 0.04, 0.04), BRASS.darkened(0.1), false, 0.35)
 	_add_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.08, h - 0.08, 0.03), Color(0.18, 0.12, 0.08), false, 0.55)
@@ -3043,8 +3045,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
 			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.09, 0.09, 0.04), BRASS.lightened(0.05), false, 0.3)
-	# Looking-glass plate — painted silver plate texture (unshaded; never black metal void
-	# and never light-blue + white bars from loop 86).
+	# Silver plate (texture mid-tone silver + silhouette; boost if missing)
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
 	gm.size = Vector2(w - 0.18, h - 0.18)
@@ -3053,23 +3054,24 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		gmat.albedo_color = Color(1.05, 1.05, 1.08)
+		gmat.albedo_color = Color(1.15, 1.18, 1.22)  # lift silver so plate reads at room distance
 	else:
-		gmat.albedo_color = Color(0.28, 0.34, 0.38)
+		gmat.albedo_color = Color(0.55, 0.6, 0.65)
 	gmat.roughness = 1.0
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, 0, 0.105)
 	root.add_child(glass)
-	# Very soft highlight edge (gilt catch) — thin, not abstract bars
-	_add_unshaded_plate(root, Vector3(-w * 0.28, h * 0.12, 0.112), Vector3(0.03, h * 0.45, 0.004), Color(0.55, 0.58, 0.6))
-	# Catch light (soft)
+	# Soft diagonal sheen strip (gilt catch light — not abstract bars)
+	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.08, 0.112), Vector3(0.04, h * 0.55, 0.003), Color(0.72, 0.76, 0.8))
+	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.05, 0.112), Vector3(0.025, h * 0.35, 0.003), Color(0.62, 0.66, 0.7))
+	# Soft catch light
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(0.9, 0.92, 1.0)
-	catch_l.light_energy = 0.22
-	catch_l.omni_range = 1.6
-	catch_l.position = Vector3(0.1, 0.12, 0.35)
+	catch_l.light_color = Color(0.92, 0.94, 1.0)
+	catch_l.light_energy = 0.28
+	catch_l.omni_range = 1.8
+	catch_l.position = Vector3(0.12, 0.1, 0.4)
 	root.add_child(catch_l)
 	return root
 
