@@ -1055,21 +1055,38 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	# Logs
 	_add_box(root, Vector3(-0.08, 0.28, 0.35), Vector3(0.4, 0.08, 0.12), MAHOGANY_DARK, false, 0.7)
 	_add_box(root, Vector3(0.1, 0.34, 0.36), Vector3(0.32, 0.07, 0.1), MAHOGANY, false, 0.7)
-	# Emissive flame layers
-	for fi in 3:
+	# Loop 107: organic range fire (not flat pink/yellow slabs)
+	var rbase := MeshInstance3D.new()
+	var rbm := SphereMesh.new()
+	rbm.radius = 0.16
+	rbm.height = 0.14
+	rbase.mesh = rbm
+	var rbmat := StandardMaterial3D.new()
+	rbmat.albedo_color = Color(1.0, 0.3, 0.05)
+	rbmat.emission_enabled = true
+	rbmat.emission = Color(1.0, 0.25, 0.02)
+	rbmat.emission_energy_multiplier = 3.0
+	rbmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rbase.material_override = rbmat
+	rbase.position = Vector3(0, 0.32, 0.44)
+	root.add_child(rbase)
+	for fi in 4:
 		var em := MeshInstance3D.new()
-		var em_mesh := BoxMesh.new()
-		em_mesh.size = Vector3(0.4 - float(fi) * 0.08, 0.16 + float(fi) * 0.08, 0.035)
+		var em_mesh := CylinderMesh.new()
+		var t := float(fi) / 3.0
+		em_mesh.bottom_radius = 0.07 - t * 0.03
+		em_mesh.top_radius = 0.015
+		em_mesh.height = 0.16 + t * 0.12
 		em.mesh = em_mesh
 		var emat := StandardMaterial3D.new()
-		var warm := Color(1.0, 0.48 - float(fi) * 0.08, 0.1 + float(fi) * 0.06)
+		var warm := Color(1.0, 0.45 + t * 0.4, 0.1 + t * 0.15)
 		emat.albedo_color = warm
 		emat.emission_enabled = true
 		emat.emission = warm
-		emat.emission_energy_multiplier = 2.6 - float(fi) * 0.35
+		emat.emission_energy_multiplier = 2.8 - t * 0.4
 		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		em.material_override = emat
-		em.position = Vector3(float(fi - 1) * 0.05, 0.36 + float(fi) * 0.07, 0.46 + float(fi) * 0.015)
+		em.position = Vector3(float(fi - 1.5) * 0.06, 0.38 + t * 0.08, 0.46)
 		root.add_child(em)
 	# Hotplate top with rings + brass ring rims
 	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), iron_dark, true, 0.45)
@@ -2723,54 +2740,72 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
 	# Ash bed
 	_add_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), Color(0.22, 0.18, 0.14), false, 0.85)
-	# Loop 95: multi-layer emissive flame that reads from room centre (not flat red slab)
-	# Base glow plate
+	# Loop 107: organic flame (spheres + tapered cylinders) — not flat yellow slabs
 	var base_em := MeshInstance3D.new()
-	var base_m := BoxMesh.new()
-	base_m.size = Vector3(0.7, 0.12, 0.08)
+	var base_m := SphereMesh.new()
+	base_m.radius = 0.22
+	base_m.height = 0.18
 	base_em.mesh = base_m
 	var base_mat := StandardMaterial3D.new()
-	base_mat.albedo_color = Color(1.0, 0.35, 0.08)
+	base_mat.albedo_color = Color(1.0, 0.32, 0.06)
 	base_mat.emission_enabled = true
-	base_mat.emission = Color(1.0, 0.3, 0.05)
-	base_mat.emission_energy_multiplier = 3.2
+	base_mat.emission = Color(1.0, 0.28, 0.04)
+	base_mat.emission_energy_multiplier = 3.4
 	base_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	base_em.material_override = base_mat
-	base_em.position = Vector3(0, 0.32, 0.32)
+	base_em.position = Vector3(0, 0.3, 0.3)
 	root.add_child(base_em)
-	# Stacked flame tongues (taller, staggered, more orange→yellow)
-	for fi in 5:
+	# Flame tongues — tapered cylinders leaning outward
+	for fi in 6:
 		var em := MeshInstance3D.new()
-		var em_mesh := BoxMesh.new()
-		var fw := 0.42 - float(fi) * 0.06
-		var fh := 0.14 + float(fi) * 0.07
-		em_mesh.size = Vector3(fw, fh, 0.035)
+		var em_mesh := CylinderMesh.new()
+		var t := float(fi) / 5.0
+		em_mesh.bottom_radius = 0.08 - t * 0.04
+		em_mesh.top_radius = 0.02
+		em_mesh.height = 0.22 + t * 0.2
 		em.mesh = em_mesh
 		var emat := StandardMaterial3D.new()
-		var t := float(fi) / 4.0
-		var warm := Color(1.0, 0.35 + t * 0.45, 0.08 + t * 0.15)
+		var warm := Color(1.0, 0.4 + t * 0.45, 0.1 + t * 0.2)
 		emat.albedo_color = warm
 		emat.emission_enabled = true
 		emat.emission = warm
-		emat.emission_energy_multiplier = 3.5 - float(fi) * 0.35
+		emat.emission_energy_multiplier = 3.6 - t * 0.5
 		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		em.material_override = emat
-		em.position = Vector3(float((fi % 3) - 1) * 0.08, 0.36 + float(fi) * 0.09, 0.3 + float(fi) * 0.012)
+		var ang := float(fi) * 0.9
+		em.position = Vector3(cos(ang) * 0.1, 0.38 + t * 0.12, 0.28 + sin(ang) * 0.04)
 		root.add_child(em)
-	# Coal embers
-	for ei in 4:
+	# Tip glow spheres
+	for ti in 3:
+		var tip := MeshInstance3D.new()
+		var tm := SphereMesh.new()
+		tm.radius = 0.045 - float(ti) * 0.008
+		tm.height = tm.radius * 2.0
+		tip.mesh = tm
+		var tmat := StandardMaterial3D.new()
+		tmat.albedo_color = Color(1.0, 0.85, 0.35)
+		tmat.emission_enabled = true
+		tmat.emission = Color(1.0, 0.8, 0.3)
+		tmat.emission_energy_multiplier = 3.0
+		tmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		tip.material_override = tmat
+		tip.position = Vector3(float(ti - 1) * 0.07, 0.55 + float(ti) * 0.04, 0.3)
+		root.add_child(tip)
+	# Coal embers (small spheres)
+	for ei in 5:
 		var ember := MeshInstance3D.new()
-		var ems := BoxMesh.new()
-		ems.size = Vector3(0.08, 0.04, 0.05)
+		var ems := SphereMesh.new()
+		ems.radius = 0.03
+		ems.height = 0.05
 		ember.mesh = ems
 		var emat2 := StandardMaterial3D.new()
-		emat2.albedo_color = Color(1.0, 0.25, 0.05)
+		emat2.albedo_color = Color(1.0, 0.22, 0.04)
 		emat2.emission_enabled = true
-		emat2.emission = Color(1.0, 0.2, 0.0)
-		emat2.emission_energy_multiplier = 2.5
+		emat2.emission = Color(1.0, 0.18, 0.0)
+		emat2.emission_energy_multiplier = 2.6
 		emat2.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		ember.material_override = emat2
-		ember.position = Vector3(-0.2 + float(ei) * 0.12, 0.22, 0.28)
+		ember.position = Vector3(-0.22 + float(ei) * 0.11, 0.2, 0.28)
 		root.add_child(ember)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.55, 0.25)
