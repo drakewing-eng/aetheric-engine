@@ -953,6 +953,7 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 
 static func _make_hall_table(prop: Dictionary) -> Node3D:
 	## Hall console — seed forks base (turned / square / demi) + still-life kit.
+	## Loop 144: turned-profile legs (not fat pipe cylinders) + warmer pedestal.
 	var root := Node3D.new()
 	root.name = "HallTable"
 	var seed0: int = int(prop.get("seed", 0))
@@ -960,29 +961,42 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 	var dress := (seed0 / 3) % 4
 	var top_y := 0.82
 	if base == 0:
-		# Classic turned-leg console
+		# Classic turned-leg console — stacked diameters for lathe read
 		_add_box(root, Vector3(0, top_y, 0), Vector3(1.4, 0.05, 0.5), MAHOGANY, true, 0.48)
 		_add_box(root, Vector3(0, top_y - 0.04, 0), Vector3(1.35, 0.04, 0.46), MAHOGANY_DARK, false, 0.45)
+		_add_box(root, Vector3(0, top_y - 0.12, 0), Vector3(1.28, 0.08, 0.42), MAHOGANY, false, 0.48)
 		_add_box(root, Vector3(0, 0.4, 0), Vector3(1.15, 0.03, 0.4), MAHOGANY_DARK, false, 0.45)
 		for sx in [-1.0, 1.0]:
 			for sz in [-0.12, 0.12]:
-				_add_cylinder(root, Vector3(sx * 0.52, 0.4, sz), 0.045, 0.78, MAHOGANY_DARK, true)
-				_add_cylinder(root, Vector3(sx * 0.52, 0.02, sz), 0.06, 0.04, MAHOGANY, true)
+				var lx: float = float(sx) * 0.52
+				var lz: float = float(sz)
+				_add_cylinder(root, Vector3(lx, 0.68, lz), 0.038, 0.08, MAHOGANY, true)
+				_add_cylinder(root, Vector3(lx, 0.55, lz), 0.028, 0.18, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(lx, 0.4, lz), 0.035, 0.1, MAHOGANY, true)
+				_add_cylinder(root, Vector3(lx, 0.22, lz), 0.025, 0.22, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(lx, 0.08, lz), 0.032, 0.08, MAHOGANY, true)
+				_add_cylinder(root, Vector3(lx, 0.02, lz), 0.05, 0.04, MAHOGANY.lightened(0.04), true)
 	elif base == 1:
-		# Square pedestal console (heavier, ebony feet)
-		_add_box(root, Vector3(0, top_y, 0), Vector3(1.35, 0.06, 0.48), MAHOGANY_DARK, true, 0.45)
-		_add_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.28, 0.02, 0.42), MAHOGANY, false, 0.42)
+		# Square pedestal console — warm mahogany panels (not ebony Minecraft blocks)
+		_add_box(root, Vector3(0, top_y, 0), Vector3(1.35, 0.06, 0.48), MAHOGANY, true, 0.45)
+		_add_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.28, 0.02, 0.42), MAHOGANY.lightened(0.05), false, 0.42)
+		_add_box(root, Vector3(0, top_y - 0.1, 0), Vector3(1.2, 0.08, 0.4), MAHOGANY_DARK, false, 0.48)
 		for sx in [-0.48, 0.48]:
-			_add_box(root, Vector3(sx, 0.4, 0), Vector3(0.14, 0.76, 0.38), Color(0.14, 0.1, 0.08), true, 0.5)
-			_add_box(root, Vector3(sx, 0.04, 0), Vector3(0.18, 0.08, 0.42), MAHOGANY_DARK, true, 0.48)
+			_add_box(root, Vector3(sx, 0.42, 0), Vector3(0.16, 0.72, 0.36), MAHOGANY_DARK, true, 0.48)
+			_add_box(root, Vector3(sx, 0.42, 0.16), Vector3(0.12, 0.55, 0.04), MAHOGANY, false, 0.5)
+			_add_box(root, Vector3(sx, 0.04, 0), Vector3(0.2, 0.08, 0.4), MAHOGANY, true, 0.48)
 		_add_box(root, Vector3(0, 0.22, 0), Vector3(0.9, 0.04, 0.32), MAHOGANY, false, 0.48)
+		_add_cylinder(root, Vector3(0, 0.42, 0), 0.03, 0.02, BRASS.darkened(0.2), false, 0.35, true)
 	else:
-		# Demi-lune against wall
+		# Demi-lune against wall — turned legs with rings
 		_add_box(root, Vector3(0, top_y, 0.06), Vector3(1.25, 0.05, 0.38), MAHOGANY, true, 0.48)
 		_add_cylinder(root, Vector3(0, top_y, 0.06), 0.55, 0.05, MAHOGANY, true, 0.48)
-		_add_cylinder(root, Vector3(-0.4, 0.4, 0.1), 0.04, 0.78, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.4, 0.4, 0.1), 0.04, 0.78, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.0, 0.4, -0.05), 0.045, 0.78, MAHOGANY_DARK, true)
+		_add_box(root, Vector3(0, top_y - 0.1, 0.08), Vector3(1.05, 0.06, 0.28), MAHOGANY_DARK, false, 0.48)
+		for leg in [Vector3(-0.4, 0.0, 0.1), Vector3(0.4, 0.0, 0.1), Vector3(0.0, 0.0, -0.05)]:
+			_add_cylinder(root, Vector3(leg.x, 0.65, leg.z), 0.035, 0.08, MAHOGANY, true)
+			_add_cylinder(root, Vector3(leg.x, 0.45, leg.z), 0.025, 0.28, MAHOGANY_DARK, true)
+			_add_cylinder(root, Vector3(leg.x, 0.22, leg.z), 0.03, 0.12, MAHOGANY, true)
+			_add_cylinder(root, Vector3(leg.x, 0.02, leg.z), 0.04, 0.04, MAHOGANY.lightened(0.04), true)
 		_add_box(root, Vector3(0, 0.35, 0.08), Vector3(0.7, 0.03, 0.15), MAHOGANY, false, 0.48)
 	var ty := top_y + 0.05
 	# Loop 122 dressing — period candlesticks / miniature Argand (never gold coin stacks)
@@ -3182,56 +3196,98 @@ static func _add_tapered_cylinder(
 
 
 static func _make_fireplace(prop: Dictionary) -> Node3D:
-	## Marble surround + firebox + seed mantel kit (clock / urns / candlesticks).
+	## Marble surround + firebox + seed mantel kit + fender/tools/overmantel (loop 144).
 	var root := Node3D.new()
 	root.name = "Fireplace"
 	var seed0: int = int(prop.get("seed", 0))
-	# Outer surround + moulded lintel
+	var grate_iron := Color(0.36, 0.36, 0.38)
+	var iron_tool := Color(0.28, 0.28, 0.3)
+	# Outer surround body + fielded lintel moulding stack
 	_add_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), MARBLE, true, 0.35)
-	_add_box(root, Vector3(0, 1.35, 0.08), Vector3(1.55, 0.08, 0.12), MARBLE.darkened(0.05), false, 0.32)
-	# Inner dark firebox recess
+	_add_box(root, Vector3(0, 1.28, 0.1), Vector3(1.55, 0.06, 0.14), MARBLE.darkened(0.04), false, 0.32)
+	_add_box(root, Vector3(0, 1.35, 0.1), Vector3(1.6, 0.08, 0.16), MARBLE.darkened(0.06), false, 0.32)
+	# Inner dark firebox recess + arched lintel lip
 	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), Color(0.06, 0.05, 0.05), false, 0.9)
-	# Mantel shelf
+	_add_box(root, Vector3(0, 0.95, 0.2), Vector3(0.88, 0.06, 0.1), Color(0.1, 0.09, 0.09), false, 0.7)
+	# Mantel shelf — deeper edge read from room
 	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
 	_add_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), MARBLE.lightened(0.05), false, 0.3)
-	# Loop 126 mantel ornaments — candlesticks / urns / clock (not brass cylinders)
+	_add_box(root, Vector3(0, 1.42, 0.22), Vector3(1.9, 0.04, 0.08), MARBLE.darkened(0.05), false, 0.32)
+	# Loop 144: chimney-glass overmantel — silvered plate (period looking-glass above fire)
+	_add_box(root, Vector3(0, 1.95, 0.0), Vector3(1.05, 0.85, 0.08), BRASS.darkened(0.08), false, 0.32)
+	_add_box(root, Vector3(0, 1.95, 0.04), Vector3(0.92, 0.72, 0.04), BRASS.darkened(0.18), false, 0.35)
+	_add_box(root, Vector3(0, 1.95, 0.055), Vector3(0.82, 0.62, 0.02), Color(0.14, 0.12, 0.1), false, 0.55)
+	var om_plate := MeshInstance3D.new()
+	var om_mesh := QuadMesh.new()
+	om_mesh.size = Vector2(0.76, 0.56)
+	om_plate.mesh = om_mesh
+	var om_mat := StandardMaterial3D.new()
+	var om_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
+	if om_tex:
+		om_mat.albedo_texture = om_tex
+		om_mat.albedo_color = Color(1.2, 1.18, 1.14)
+		om_mat.emission_enabled = true
+		om_mat.emission_texture = om_tex
+		om_mat.emission = Color(0.55, 0.52, 0.48)
+		om_mat.emission_energy_multiplier = 0.35
+	else:
+		om_mat.albedo_color = Color(0.65, 0.68, 0.66)
+	om_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	om_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	om_plate.material_override = om_mat
+	om_plate.position = Vector3(0, 1.95, 0.07)
+	root.add_child(om_plate)
+	_add_unshaded_plate(root, Vector3(-0.18, 2.08, 0.075), Vector3(0.01, 0.16, 0.004), Color(0.88, 0.9, 0.92))
+	_add_box(root, Vector3(0, 2.42, 0.02), Vector3(0.28, 0.1, 0.05), BRASS.lightened(0.05), false, 0.3)
+	_add_cylinder(root, Vector3(0, 2.5, 0.03), 0.035, 0.04, BRASS, false, 0.28, true)
+	# Loop 126/144 mantel ornaments — taller readable candlesticks / urns / clock
 	match seed0 % 3:
 		0:
 			# Twin candlesticks + carriage clock
-			for sx in [-0.55, 0.55]:
-				_add_cylinder(root, Vector3(sx, 1.54, 0.05), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
-				_add_cylinder(root, Vector3(sx, 1.6, 0.05), 0.025, 0.1, MAHOGANY, false, 0.48)
-				_add_cylinder(root, Vector3(sx, 1.66, 0.05), 0.04, 0.02, BRASS.darkened(0.2), false, 0.35, true)
-				_add_cylinder(root, Vector3(sx, 1.78, 0.05), 0.018, 0.2, CANDLE, false, 0.6)
-				_add_sphere_blob(root, Vector3(sx, 1.9, 0.05), 0.025, Color(1.0, 0.75, 0.35))
-			_add_box(root, Vector3(0, 1.58, 0.08), Vector3(0.18, 0.14, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
-			_add_box(root, Vector3(0, 1.68, 0.08), Vector3(0.12, 0.1, 0.06), Color(0.85, 0.82, 0.75), false, 0.45)
+			for sx in [-0.58, 0.58]:
+				_add_cylinder(root, Vector3(sx, 1.54, 0.08), 0.055, 0.035, MAHOGANY_DARK, false, 0.5)
+				_add_cylinder(root, Vector3(sx, 1.62, 0.08), 0.03, 0.12, MAHOGANY, false, 0.48)
+				_add_cylinder(root, Vector3(sx, 1.7, 0.08), 0.045, 0.025, BRASS.darkened(0.15), false, 0.35, true)
+				_add_cylinder(root, Vector3(sx, 1.88, 0.08), 0.02, 0.28, CANDLE, false, 0.6)
+				_add_sphere_blob(root, Vector3(sx, 2.04, 0.08), 0.03, Color(1.0, 0.75, 0.35))
+			_add_box(root, Vector3(0, 1.6, 0.1), Vector3(0.22, 0.18, 0.12), Color(0.12, 0.1, 0.1), false, 0.4)
+			_add_box(root, Vector3(0, 1.72, 0.12), Vector3(0.14, 0.12, 0.06), Color(0.88, 0.85, 0.78), false, 0.45)
+			_add_box(root, Vector3(0, 1.8, 0.1), Vector3(0.18, 0.03, 0.1), BRASS.darkened(0.12), false, 0.35)
 		1:
 			# Twin urns + centre candlesticks with bases
-			_add_cylinder(root, Vector3(-0.5, 1.56, 0.05), 0.05, 0.04, CREAM.darkened(0.15), false, 0.7)
-			_add_cylinder(root, Vector3(-0.5, 1.64, 0.05), 0.07, 0.16, CREAM.darkened(0.08), false, 0.7)
-			_add_cylinder(root, Vector3(0.5, 1.56, 0.05), 0.05, 0.04, CREAM.darkened(0.15), false, 0.7)
-			_add_cylinder(root, Vector3(0.5, 1.64, 0.05), 0.07, 0.16, CREAM.darkened(0.08), false, 0.7)
+			for sxu in [-0.55, 0.55]:
+				_add_cylinder(root, Vector3(sxu, 1.56, 0.08), 0.055, 0.045, CREAM.darkened(0.15), false, 0.7)
+				_add_cylinder(root, Vector3(sxu, 1.68, 0.08), 0.08, 0.2, CREAM.darkened(0.08), false, 0.7)
+				_add_cylinder(root, Vector3(sxu, 1.8, 0.08), 0.05, 0.04, CREAM, false, 0.7)
 			for sx2 in [-0.15, 0.15]:
-				_add_cylinder(root, Vector3(sx2, 1.54, 0.08), 0.035, 0.025, MAHOGANY_DARK, false, 0.5)
-				_add_cylinder(root, Vector3(sx2, 1.62, 0.08), 0.02, 0.16, CANDLE, false, 0.55)
-				_add_sphere_blob(root, Vector3(sx2, 1.72, 0.08), 0.022, Color(1.0, 0.75, 0.35))
+				_add_cylinder(root, Vector3(sx2, 1.54, 0.1), 0.04, 0.03, MAHOGANY_DARK, false, 0.5)
+				_add_cylinder(root, Vector3(sx2, 1.66, 0.1), 0.022, 0.2, CANDLE, false, 0.55)
+				_add_sphere_blob(root, Vector3(sx2, 1.8, 0.1), 0.025, Color(1.0, 0.75, 0.35))
 		_:
 			# Carriage clock + small vases
-			_add_box(root, Vector3(0.0, 1.58, 0.06), Vector3(0.18, 0.22, 0.1), BRASS.darkened(0.1), false, 0.32)
-			_add_box(root, Vector3(0.0, 1.62, 0.1), Vector3(0.12, 0.1, 0.02), Color(0.9, 0.88, 0.8), false, 0.5)
-			_add_cylinder(root, Vector3(-0.5, 1.56, 0.05), 0.05, 0.14, Color(0.35, 0.2, 0.15), false, 0.7)
-			_add_cylinder(root, Vector3(0.5, 1.56, 0.05), 0.05, 0.14, Color(0.35, 0.2, 0.15), false, 0.7)
-	# Columns / pilasters with capital
+			_add_box(root, Vector3(0.0, 1.62, 0.08), Vector3(0.2, 0.28, 0.12), BRASS.darkened(0.1), false, 0.32)
+			_add_box(root, Vector3(0.0, 1.68, 0.12), Vector3(0.14, 0.14, 0.03), Color(0.9, 0.88, 0.8), false, 0.5)
+			_add_box(root, Vector3(0.0, 1.8, 0.08), Vector3(0.16, 0.03, 0.1), BRASS.darkened(0.05), false, 0.32)
+			_add_cylinder(root, Vector3(-0.52, 1.58, 0.08), 0.055, 0.18, Color(0.35, 0.2, 0.15), false, 0.7)
+			_add_cylinder(root, Vector3(0.52, 1.58, 0.08), 0.055, 0.18, Color(0.35, 0.2, 0.15), false, 0.7)
+	# Columns / pilasters with capital + plinth
 	_add_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
 	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
-	_add_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
-	_add_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
-	# Hearth + fire dogs (loop 86 richer grate)
-	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.5, 0.08, 0.55), STONE, true, 0.55)
-	_add_box(root, Vector3(0, 0.08, 0.38), Vector3(1.2, 0.03, 0.4), STONE.darkened(0.1), false, 0.6)
+	_add_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), MARBLE.darkened(0.04), false, 0.32)
+	_add_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), MARBLE.darkened(0.04), false, 0.32)
+	_add_box(root, Vector3(-0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), MARBLE.darkened(0.06), false, 0.35)
+	_add_box(root, Vector3(0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), MARBLE.darkened(0.06), false, 0.35)
+	# Hearth slab + ash lip
+	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.55, 0.08, 0.58), STONE, true, 0.55)
+	_add_box(root, Vector3(0, 0.08, 0.38), Vector3(1.25, 0.03, 0.42), STONE.darkened(0.1), false, 0.6)
+	# Loop 144: iron fender rail (hearth reads as hearth, not open hole)
+	_add_box(root, Vector3(0, 0.16, 0.58), Vector3(1.35, 0.04, 0.05), grate_iron, false, 0.42)
+	_add_box(root, Vector3(0, 0.28, 0.58), Vector3(1.3, 0.025, 0.035), grate_iron.lightened(0.08), false, 0.42)
+	for fx in [-0.62, -0.2, 0.2, 0.62]:
+		_add_cylinder(root, Vector3(fx, 0.22, 0.58), 0.018, 0.14, grate_iron.darkened(0.05), false, 0.45)
+	_add_cylinder(root, Vector3(-0.68, 0.14, 0.58), 0.04, 0.08, grate_iron, false, 0.42)
+	_add_cylinder(root, Vector3(0.68, 0.14, 0.58), 0.04, 0.08, grate_iron, false, 0.42)
 	# Andirons (mid-grey iron so not pure black under filmic)
-	var grate_iron := Color(0.36, 0.36, 0.38)
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), grate_iron, false, 0.45)
 		_add_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), grate_iron.lightened(0.1), false, 0.45)
@@ -3247,6 +3303,28 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
 	# Ash bed
 	_add_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), Color(0.22, 0.18, 0.14), false, 0.85)
+	# Loop 144: fire-tool stand + poker / shovel / tongs (right of hearth)
+	_add_cylinder(root, Vector3(0.78, 0.08, 0.42), 0.08, 0.04, iron_tool, false, 0.5)
+	_add_cylinder(root, Vector3(0.78, 0.35, 0.42), 0.018, 0.55, iron_tool.lightened(0.08), false, 0.48)
+	_add_cylinder(root, Vector3(0.78, 0.65, 0.42), 0.1, 0.03, iron_tool, false, 0.5)
+	# Poker
+	_add_cylinder(root, Vector3(0.72, 0.42, 0.48), 0.01, 0.7, iron_tool.darkened(0.05), false, 0.45)
+	_add_box(root, Vector3(0.72, 0.08, 0.48), Vector3(0.03, 0.04, 0.06), iron_tool, false, 0.45)
+	_add_cylinder(root, Vector3(0.72, 0.78, 0.48), 0.022, 0.04, BRASS.darkened(0.15), false, 0.35, true)
+	# Shovel
+	_add_cylinder(root, Vector3(0.84, 0.4, 0.38), 0.01, 0.62, iron_tool.darkened(0.05), false, 0.45)
+	_add_box(root, Vector3(0.84, 0.1, 0.38), Vector3(0.1, 0.02, 0.08), iron_tool, false, 0.45)
+	_add_box(root, Vector3(0.84, 0.12, 0.34), Vector3(0.08, 0.04, 0.02), iron_tool.lightened(0.05), false, 0.45)
+	_add_cylinder(root, Vector3(0.84, 0.72, 0.38), 0.02, 0.035, BRASS.darkened(0.15), false, 0.35, true)
+	# Tongs (paired thin bars)
+	_add_box(root, Vector3(0.78, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), iron_tool, false, 0.45)
+	_add_box(root, Vector3(0.82, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), iron_tool, false, 0.45)
+	_add_box(root, Vector3(0.8, 0.12, 0.5), Vector3(0.06, 0.02, 0.04), iron_tool.darkened(0.05), false, 0.45)
+	# Coal scuttle (left of hearth)
+	_add_cylinder(root, Vector3(-0.82, 0.18, 0.4), 0.14, 0.28, Color(0.22, 0.2, 0.18), false, 0.55)
+	_add_cylinder(root, Vector3(-0.82, 0.34, 0.4), 0.15, 0.04, Color(0.28, 0.26, 0.24), false, 0.5)
+	_add_box(root, Vector3(-0.82, 0.22, 0.52), Vector3(0.04, 0.12, 0.08), iron_tool, false, 0.48)
+	_add_box(root, Vector3(-0.7, 0.12, 0.4), Vector3(0.12, 0.06, 0.1), Color(0.18, 0.14, 0.1), false, 0.75)
 	# Loop 107: organic flame (spheres + tapered cylinders) — not flat yellow slabs
 	var base_em := MeshInstance3D.new()
 	var base_m := SphereMesh.new()
@@ -3316,13 +3394,13 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 		root.add_child(ember)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.55, 0.25)
-	fire.light_energy = 1.85
-	fire.omni_range = 6.5
+	fire.light_energy = 1.95
+	fire.omni_range = 6.8
 	fire.position = Vector3(0, 0.55, 0.45)
 	root.add_child(fire)
 	# Loop 132: rising ember sparks
 	_add_fire_sparks(root, Vector3(0, 0.35, 0.32), 14)
-	_add_contact_shadow(root, 0.95, 0.55)
+	_add_contact_shadow(root, 1.05, 0.65)
 	return root
 
 static func _add_fire_sparks(parent: Node3D, at: Vector3, amount: int = 12) -> void:
@@ -4010,18 +4088,19 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 	## Loop 143: with cross_planes, never add free-standing legs/stretchers (read as rug junk).
 	match bulk:
 		"sofa":
-			# Loop 138: tight bulk fully behind chesterfield card (no green slab above back)
-			var sw: float = clampf(width * 0.72, 1.4, 2.0)
-			_add_box(root, Vector3(0, 0.22, -0.32), Vector3(sw, 0.14, 0.32), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.4, -0.3), Vector3(sw * 0.88, 0.18, 0.28), Color(0.28, 0.36, 0.22), false, 0.88)
-			# Low back only — do not tower above painted crest
-			_add_box(root, Vector3(0, 0.7, -0.42), Vector3(sw * 0.9, 0.38, 0.14), Color(0.26, 0.34, 0.2), false, 0.9)
+			# Loop 144: low dark bulk only — no green slab peeks above chesterfield crest
+			var sw: float = clampf(width * 0.68, 1.3, 1.9)
+			var seat_g := Color(0.22, 0.26, 0.16)  # near-shadow olive, not bright green
+			_add_box(root, Vector3(0, 0.2, -0.34), Vector3(sw, 0.12, 0.28), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.36, -0.32), Vector3(sw * 0.85, 0.14, 0.24), seat_g, false, 0.88)
+			# Back mass stays low + deep (y top ≈ 0.72 — under painted crest)
+			_add_box(root, Vector3(0, 0.58, -0.44), Vector3(sw * 0.82, 0.28, 0.12), seat_g.darkened(0.08), false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * (sw * 0.38), 0.52, -0.32),
-					Vector3(0.14, 0.28, 0.28), Color(0.24, 0.32, 0.18), false, 0.88)
+				_add_box(root, Vector3(sx * (sw * 0.36), 0.42, -0.34),
+					Vector3(0.12, 0.18, 0.22), seat_g.darkened(0.05), false, 0.88)
 				if not cross_planes:
-					_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.18), 0.032, 0.12, MAHOGANY, false)
-					_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.4), 0.03, 0.12, MAHOGANY, false)
+					_add_cylinder(root, Vector3(sx * (sw * 0.34), 0.08, -0.2), 0.03, 0.12, MAHOGANY, false)
+					_add_cylinder(root, Vector3(sx * (sw * 0.34), 0.08, -0.4), 0.028, 0.12, MAHOGANY, false)
 		"desk":
 			# Loop 138: pedestals tucked behind card
 			var dw: float = clampf(width * 0.75, 1.0, 1.45)

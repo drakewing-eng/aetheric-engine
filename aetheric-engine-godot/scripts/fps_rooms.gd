@@ -42,7 +42,8 @@ const ROOMS := {
 				"art": "landscape", "seed": 3, "frame": 1},
 			{"kind": "painting", "pos": [0.0, 2.15, -4.7], "yaw": 0.0, "width": 1.15, "height": 0.95,
 				"art": "landscape", "seed": 4, "frame": 0},
-			{"kind": "painting", "pos": [3.2, 2.1, -4.7], "yaw": 0.0, "width": 0.85, "height": 0.8,
+			# Loop 144: still-life clear of chimney-glass overmantel (fireplace at x≈2.55)
+			{"kind": "painting", "pos": [3.85, 2.05, -4.7], "yaw": 0.0, "width": 0.7, "height": 0.72,
 				"art": "still_life", "seed": 1, "frame": 0},
 			{"kind": "door_frame", "pos": [0.0, 1.2, 4.42], "yaw": 180.0, "width": 1.55, "height": 2.4, "seed": 0},
 			# Loop 93: south door wall densify (from_north empty damask around hall door)
@@ -81,7 +82,8 @@ const ROOMS := {
 			{"kind": "ottoman", "pos": [0.0, 0.0, -2.05], "yaw": 0.0, "seed": 0,
 				"fabric": Color(0.32, 0.38, 0.2)},
 			{"kind": "side_table", "pos": [-1.75, 0.0, -3.35], "yaw": 12.0, "seed": 0},
-			{"kind": "side_table", "pos": [1.75, 0.0, -3.35], "yaw": -12.0, "seed": 4},
+			# Loop 144: keep fire-side table clear of coal scuttle / tools
+			{"kind": "side_table", "pos": [1.55, 0.0, -3.15], "yaw": -18.0, "seed": 4},
 			{"kind": "fireplace", "pos": [2.55, 0.0, -4.62], "yaw": 0.0, "seed": 0},
 			# West: library only (no chairs clipping bookshelves)
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, -1.8], "yaw": 90.0, "width": 1.7, "height": 2.5, "seed": 3},
@@ -280,11 +282,11 @@ const ROOMS := {
 			# Loop 92: lamp near looking-glass (west hall corner read)
 			{"kind": "oil_lamp", "pos": [-5.6, 0.0, -1.4], "yaw": 15.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-6.7, 0.0, -1.0], "yaw": 90.0, "height": 2.25},
-			# Loop 98: NW corner densify (entrance_hall_center empty floor by mirror)
+			# Loop 98/144: NW corner densify — plant clear of chair seat
 			{"kind": "hall_table", "pos": [-5.0, 0.0, -3.4], "yaw": 5.0, "seed": 2},
 			{
 				"kind": "billboard_prop",
-				"pos": [-4.0, 0.0, -2.8],
+				"pos": [-3.7, 0.0, -2.5],
 				"yaw": 120.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
@@ -295,15 +297,15 @@ const ROOMS := {
 				"col_size": [0.5, 0.95, 0.5],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "plant", "pos": [-6.0, 0.0, -3.5], "scale": 0.7, "seed": 4,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
+			{"kind": "plant", "pos": [-6.15, 0.0, -3.7], "scale": 0.65, "seed": 4,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.65},
 			# Second stand near kitchen/south — visitors leave coats by service door
 			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
 			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
-			# Hall chairs flank runner — painted heroes (loop 135)
+			# Hall chairs flank runner — painted heroes (loop 135/144 spacing)
 			{
 				"kind": "billboard_prop",
-				"pos": [1.85, 0.0, -1.4],
+				"pos": [2.05, 0.0, -1.5],
 				"yaw": -100.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
@@ -316,7 +318,7 @@ const ROOMS := {
 			},
 			{
 				"kind": "billboard_prop",
-				"pos": [-1.9, 0.0, 1.5],
+				"pos": [-2.1, 0.0, 1.55],
 				"yaw": 80.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
@@ -327,10 +329,10 @@ const ROOMS := {
 				"col_size": [0.5, 0.95, 0.5],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "plant", "pos": [5.5, 0.0, -0.4], "scale": 0.9, "seed": 3,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.85, "height": 0.95},
-			{"kind": "plant", "pos": [-5.5, 0.0, 1.8], "scale": 0.75, "seed": 1,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 0.95},
+			{"kind": "plant", "pos": [5.6, 0.0, -0.6], "scale": 0.85, "seed": 3,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.8, "height": 0.9},
+			{"kind": "plant", "pos": [-5.7, 0.0, 2.0], "scale": 0.7, "seed": 1,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.65, "height": 0.9},
 			# Freestanding oil lamp south of center (table kits already carry their own lights)
 			{"kind": "oil_lamp", "pos": [-0.55, 0.0, 2.6], "yaw": 15.0, "height": 1.15},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},

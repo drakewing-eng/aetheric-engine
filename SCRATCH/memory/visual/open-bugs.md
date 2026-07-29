@@ -71,3 +71,9 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - Iron `floor_path`: riveted diamond-tread plates + curbs (gallery/workshop no longer Minecraft black slabs).  
 - Chalk boards denser for distance read.  
 
+## Status update 2026-07-29 (loop 144)
+
+- **Fireplace polish:** chimney-glass overmantel, iron fender rail, fire tools (poker/shovel/tongs), coal scuttle, taller mantel ornaments, pilaster plinths. Still-life painting shifted clear of overmantel.  
+- **Hall polish:** console turned-profile legs + warmer pedestal (not pipe/ebony blocks); plant/chair spacing for NW corner.  
+- Residual: hall chair cutout cross-planes can still flash green scrap (accepted paper-thin tradeoff).  
+
