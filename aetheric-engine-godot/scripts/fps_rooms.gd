@@ -807,6 +807,9 @@ const ROOMS := {
 				"art": "still_life", "seed": 2, "frame": 2},
 			{"kind": "painting", "pos": [2.4, 2.2, -3.75], "yaw": 0.0, "width": 0.6, "height": 0.48,
 				"art": "landscape", "seed": 3, "frame": 1},
+			# Loop 95: east wall art between sink and range (kitchen_center empty plaster)
+			{"kind": "painting", "pos": [4.25, 2.2, 1.0], "yaw": -90.0, "width": 0.55, "height": 0.5,
+				"art": "still_life", "seed": 0, "frame": 3},
 		],
 		"props": [
 			# Signature kitchen read — NEVER lab workbench
@@ -866,6 +869,12 @@ const ROOMS := {
 			{"kind": "crate", "pos": [1.5, 0.0, -2.2], "scale": 0.6, "seed": 8},
 			{"kind": "copper_pot", "pos": [-2.0, 0.0, -2.6], "scale": 0.65, "seed": 9},
 			{"kind": "oil_lamp", "pos": [1.2, 0.0, -2.8], "yaw": 10.0, "height": 0.95},
+			# Loop 95: NE corner densify (kitchen_center empty cream between sink + range)
+			{"kind": "wall_shelf", "pos": [4.2, 0.0, 3.0], "yaw": -90.0, "width": 1.1, "shelf_y": 1.9, "seed": 11},
+			{"kind": "wall_sconce", "pos": [3.8, 0.0, 3.2], "yaw": -90.0, "height": 2.35},
+			{"kind": "copper_pot", "pos": [2.4, 0.0, 2.9], "scale": 0.8, "seed": 10},
+			{"kind": "crate", "pos": [2.8, 0.0, 1.8], "scale": 0.6, "seed": 12},
+			{"kind": "oil_lamp", "pos": [2.6, 0.0, 2.2], "height": 0.95},
 		],
 		"doors": [
 			{

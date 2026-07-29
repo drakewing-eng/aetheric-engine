@@ -1338,10 +1338,37 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
 			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), OAK.darkened(0.18), false, 0.55)
 		else:
-			# Stone flags (conservatory / garden)
-			var col := STONE if (i + seed0) % 2 == 0 else STONE.darkened(0.08)
-			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.82 + float(i % 2) * 0.12), 0.045, 0.48), col, false, 0.72)
-			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.75, 0.01, 0.02), Color(0.45, 0.42, 0.38), false, 0.85)
+			# Stone flags (conservatory) — loop 95: irregular pavers + moss, not pale Minecraft slabs
+			var pw := width * (0.78 + float(i % 3) * 0.08)
+			var pd := 0.46 + float((i + seed0) % 2) * 0.06
+			var col := STONE.lightened(0.04) if (i + seed0) % 2 == 0 else STONE.darkened(0.06)
+			if (i + seed0) % 3 == 0:
+				col = Color(0.5, 0.48, 0.42)
+			# Raised flag body
+			_add_box(root, Vector3(ox, 0.025, z), Vector3(pw, 0.04, pd), col, false, 0.7)
+			# Bevel / edge shadow
+			_add_box(root, Vector3(ox, 0.012, z), Vector3(pw * 1.02, 0.012, pd * 1.02), Color(0.38, 0.36, 0.32), false, 0.8)
+			# Mortar seam
+			_add_box(root, Vector3(ox, 0.018, z + pd * 0.48), Vector3(pw * 0.9, 0.01, 0.04), Color(0.42, 0.4, 0.36), false, 0.85)
+			# Moss tuft on corners (period damp conservatory)
+			if (i + seed0) % 3 != 1:
+				_add_box(
+					root,
+					Vector3(ox + pw * 0.28, 0.04, z - pd * 0.2),
+					Vector3(0.08, 0.012, 0.06),
+					Color(0.22, 0.38, 0.18), false, 0.9
+				)
+			if (i + seed0) % 4 == 0:
+				_add_box(
+					root,
+					Vector3(ox - pw * 0.25, 0.038, z + pd * 0.15),
+					Vector3(0.06, 0.01, 0.05),
+					Color(0.28, 0.42, 0.2), false, 0.9
+				)
+	# Stone path side gravel curb
+	if surface == "stone":
+		_add_box(root, Vector3(-width * 0.5, 0.015, 0), Vector3(0.08, 0.025, length * 0.95), Color(0.48, 0.45, 0.4), false, 0.75)
+		_add_box(root, Vector3(width * 0.5, 0.015, 0), Vector3(0.08, 0.025, length * 0.95), Color(0.48, 0.45, 0.4), false, 0.75)
 	return root
 
 
@@ -2372,44 +2399,77 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	# Hearth + fire dogs (loop 86 richer grate)
 	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.5, 0.08, 0.55), STONE, true, 0.55)
 	_add_box(root, Vector3(0, 0.08, 0.38), Vector3(1.2, 0.03, 0.4), STONE.darkened(0.1), false, 0.6)
-	# Andirons
+	# Andirons (mid-grey iron so not pure black under filmic)
+	var grate_iron := Color(0.36, 0.36, 0.38)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), IRON, false, 0.4)
-		_add_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), IRON.lightened(0.1), false, 0.4)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.1, 0.42), 0.03, 0.08, IRON.darkened(0.05), false, 0.4)
+		_add_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), grate_iron, false, 0.45)
+		_add_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), grate_iron.lightened(0.1), false, 0.45)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.1, 0.42), 0.03, 0.08, grate_iron.darkened(0.05), false, 0.45)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.32, 0.22), 0.02, 0.03, BRASS.darkened(0.2), false, 0.35, true)
 	# Grate bars
 	for i in 5:
 		var gx := -0.32 + float(i) * 0.16
-		_add_box(root, Vector3(gx, 0.2, 0.22), Vector3(0.025, 0.22, 0.04), IRON.darkened(0.08), false, 0.4)
+		_add_box(root, Vector3(gx, 0.2, 0.22), Vector3(0.025, 0.22, 0.04), grate_iron.darkened(0.08), false, 0.45)
 	# Logs
 	_add_box(root, Vector3(-0.12, 0.24, 0.2), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
 	_add_box(root, Vector3(0.15, 0.3, 0.22), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
 	_add_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
 	# Ash bed
 	_add_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), Color(0.22, 0.18, 0.14), false, 0.85)
-	# Layered emissive flame (not single black hole)
-	for fi in 3:
+	# Loop 95: multi-layer emissive flame that reads from room centre (not flat red slab)
+	# Base glow plate
+	var base_em := MeshInstance3D.new()
+	var base_m := BoxMesh.new()
+	base_m.size = Vector3(0.7, 0.12, 0.08)
+	base_em.mesh = base_m
+	var base_mat := StandardMaterial3D.new()
+	base_mat.albedo_color = Color(1.0, 0.35, 0.08)
+	base_mat.emission_enabled = true
+	base_mat.emission = Color(1.0, 0.3, 0.05)
+	base_mat.emission_energy_multiplier = 3.2
+	base_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	base_em.material_override = base_mat
+	base_em.position = Vector3(0, 0.32, 0.32)
+	root.add_child(base_em)
+	# Stacked flame tongues (taller, staggered, more orange→yellow)
+	for fi in 5:
 		var em := MeshInstance3D.new()
 		var em_mesh := BoxMesh.new()
-		var fw := 0.55 - float(fi) * 0.12
-		var fh := 0.22 + float(fi) * 0.1
-		em_mesh.size = Vector3(fw, fh, 0.04)
+		var fw := 0.42 - float(fi) * 0.06
+		var fh := 0.14 + float(fi) * 0.07
+		em_mesh.size = Vector3(fw, fh, 0.035)
 		em.mesh = em_mesh
 		var emat := StandardMaterial3D.new()
-		var warm := Color(1.0, 0.45 - float(fi) * 0.08, 0.1 + float(fi) * 0.05)
+		var t := float(fi) / 4.0
+		var warm := Color(1.0, 0.35 + t * 0.45, 0.08 + t * 0.15)
 		emat.albedo_color = warm
 		emat.emission_enabled = true
 		emat.emission = warm
-		emat.emission_energy_multiplier = 2.8 - float(fi) * 0.4
+		emat.emission_energy_multiplier = 3.5 - float(fi) * 0.35
 		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		em.material_override = emat
-		em.position = Vector3(float(fi - 1) * 0.06, 0.38 + float(fi) * 0.08, 0.26 + float(fi) * 0.02)
+		em.position = Vector3(float((fi % 3) - 1) * 0.08, 0.36 + float(fi) * 0.09, 0.3 + float(fi) * 0.012)
 		root.add_child(em)
+	# Coal embers
+	for ei in 4:
+		var ember := MeshInstance3D.new()
+		var ems := BoxMesh.new()
+		ems.size = Vector3(0.08, 0.04, 0.05)
+		ember.mesh = ems
+		var emat2 := StandardMaterial3D.new()
+		emat2.albedo_color = Color(1.0, 0.25, 0.05)
+		emat2.emission_enabled = true
+		emat2.emission = Color(1.0, 0.2, 0.0)
+		emat2.emission_energy_multiplier = 2.5
+		emat2.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		ember.material_override = emat2
+		ember.position = Vector3(-0.2 + float(ei) * 0.12, 0.22, 0.28)
+		root.add_child(ember)
 	var fire := OmniLight3D.new()
-	fire.light_color = Color(1.0, 0.52, 0.22)
-	fire.light_energy = 1.55
-	fire.omni_range = 6.0
-	fire.position = Vector3(0, 0.52, 0.4)
+	fire.light_color = Color(1.0, 0.55, 0.25)
+	fire.light_energy = 1.85
+	fire.omni_range = 6.5
+	fire.position = Vector3(0, 0.55, 0.45)
 	root.add_child(fire)
 	_add_contact_shadow(root, 0.95, 0.55)
 	return root
