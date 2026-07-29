@@ -335,59 +335,56 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair (loop 130): one continuous upholstered shell — side view must not
-	## read as stacked green columns. Fewer vertical cylinders; more fused boxes/blobs.
+	## Wing chair (loop 132): single continuous upholstered envelope.
+	## No stacked columns, no pale sphere knobs, no free vertical cylinders on wings.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	var fabric_d := fabric.darkened(0.1)
-	var fabric_dd := fabric.darkened(0.18)
-	# Wood seat rail + skirt
-	_add_box(root, Vector3(0, 0.26, 0.06), Vector3(0.88, 0.1, 0.82), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.32, 0.06), Vector3(0.9, 0.04, 0.84), MAHOGANY, false, 0.45)
-	# Deep seat — single mass
-	_add_box(root, Vector3(0, 0.46, 0.12), Vector3(0.76, 0.22, 0.68), fabric, true, 0.9)
-	_add_sphere_blob(root, Vector3(0, 0.56, 0.1), 0.28, fabric_d)
-	for bx in [-0.14, 0.14]:
-		_add_cylinder(root, Vector3(bx, 0.58, 0.05), 0.012, 0.01, fabric_dd, false, 0.95)
-	# Back shell — ONE tall box (core) + ONE face pad (not multi-layer shelves)
-	_add_box(root, Vector3(0, 1.0, -0.24), Vector3(0.74, 1.05, 0.28), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.02, -0.1), Vector3(0.62, 0.95, 0.14), fabric_d, false, 0.9)
-	# Crown — single soft roll
-	_add_box(root, Vector3(0, 1.5, -0.16), Vector3(0.7, 0.16, 0.22), fabric_d, false, 0.88)
-	_add_sphere_blob(root, Vector3(0, 1.52, -0.12), 0.16, fabric_d)
-	_add_box(root, Vector3(0, 1.58, -0.22), Vector3(0.5, 0.03, 0.08), MAHOGANY, false, 0.45)
-	# Sparse tufts only
+	var fabric_d := fabric.darkened(0.12)
+	var fabric_dd := fabric.darkened(0.2)
+	# Mahogany base rail only (grounding)
+	_add_box(root, Vector3(0, 0.24, 0.05), Vector3(0.9, 0.1, 0.82), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.3, 0.05), Vector3(0.92, 0.035, 0.84), MAHOGANY, false, 0.45)
+	# Seat — one deep cushion block only
+	_add_box(root, Vector3(0, 0.48, 0.12), Vector3(0.78, 0.24, 0.7), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.58, 0.14), Vector3(0.68, 0.06, 0.58), fabric_d, false, 0.92)
+	# Button tufts (dark fabric, flat)
+	for bx in [-0.15, 0.15]:
+		for bz in [-0.05, 0.15]:
+			_add_cylinder(root, Vector3(bx, 0.62, bz), 0.012, 0.01, fabric_dd, false, 0.95)
+	# Back + wings as ONE fused U-shell (continuous from corner angles)
+	# Main back panel
+	_add_box(root, Vector3(0, 1.05, -0.22), Vector3(0.72, 1.1, 0.3), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.05, -0.08), Vector3(0.58, 1.0, 0.12), fabric_d, false, 0.9)
+	# Wings: full-height solid sides joined to back (no gap, no pipes)
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.4, 1.0, 0.0), Vector3(0.22, 1.0, 0.55), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.28, 1.05, -0.15), Vector3(0.12, 1.05, 0.25), fabric_d, false, 0.9)
+		# Outer face bevel (thin dark edge, not a second column)
+		_add_box(root, Vector3(sx * 0.5, 1.05, 0.02), Vector3(0.04, 0.95, 0.45), fabric_dd, false, 0.9)
+	# Crown rail (single horizontal bar, not orbs)
+	_add_box(root, Vector3(0, 1.55, -0.1), Vector3(0.88, 0.14, 0.4), fabric_d, false, 0.88)
+	_add_box(root, Vector3(0, 1.6, -0.18), Vector3(0.55, 0.04, 0.1), MAHOGANY, false, 0.45)
+	# Arms continuous from wing bottom — padded bars, dark front scroll only
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.4, 0.62, 0.16), Vector3(0.2, 0.18, 0.58), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.4, 0.7, 0.36), Vector3(0.16, 0.12, 0.16), fabric_d, false, 0.88)
+		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.48, 0.32), 0.045, 0.16, MAHOGANY, false, 0.45)
+	# Sparse back tufts
 	for by in [0.95, 1.2]:
 		for bx in [-0.12, 0.12]:
-			_add_cylinder(root, Vector3(bx, by, -0.06), 0.011, 0.012, fabric_dd, false, 0.95)
-	# Wings fused into back: L-shaped solid mass (side = continuous rectangle, not pipes)
-	for sx in [-1.0, 1.0]:
-		# Outer wing wall (tall, deep)
-		_add_box(root, Vector3(sx * 0.42, 1.05, -0.02), Vector3(0.2, 0.85, 0.48), fabric, true, 0.88)
-		# Fill join to back
-		_add_box(root, Vector3(sx * 0.32, 1.05, -0.18), Vector3(0.14, 0.9, 0.2), fabric_d, false, 0.9)
-		# Soft outer edge (one cylinder only, not stacked)
-		_add_cylinder(root, Vector3(sx * 0.5, 1.1, 0.05), 0.1, 0.7, fabric_d, false, 0.88)
-		# Shoulder only at top
-		_add_sphere_blob(root, Vector3(sx * 0.46, 1.45, 0.08), 0.11, fabric_d)
-	# Arms — bar + front scroll, joined to wing underside
-	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 0.64, 0.14), Vector3(0.18, 0.16, 0.55), fabric, true, 0.88)
-		_add_sphere_blob(root, Vector3(sx * 0.4, 0.7, 0.38), 0.1, fabric_d)
-		_add_box(root, Vector3(sx * 0.4, 0.72, -0.08), Vector3(0.16, 0.22, 0.2), fabric_d, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.4, 0.48, 0.3), 0.05, 0.2, MAHOGANY, false, 0.45)
-		_add_box(root, Vector3(sx * 0.4, 0.45, 0.26), Vector3(0.045, 0.26, 0.045), MAHOGANY_DARK, true, 0.45)
+			_add_cylinder(root, Vector3(bx, by, -0.04), 0.01, 0.012, fabric_dd, false, 0.95)
 	# Legs + stretchers
 	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.32, 0.12, 0.28), 0.038, 0.24, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.32, 0.01, 0.28), 0.05, 0.035, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.12, -0.26), 0.036, 0.24, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.01, -0.26), 0.048, 0.035, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.18, 0.32), Vector3(0.68, 0.045, 0.045), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(0, 0.18, -0.26), Vector3(0.64, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.11, 0.28), 0.036, 0.22, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.01, 0.28), 0.048, 0.03, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.11, -0.26), 0.034, 0.22, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.01, -0.26), 0.045, 0.03, MAHOGANY, true)
+	_add_box(root, Vector3(0, 0.16, 0.3), Vector3(0.66, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(0, 0.16, -0.26), Vector3(0.62, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
 	_add_contact_shadow(root, 0.7, 0.64)
 	return root
 
@@ -1226,6 +1223,7 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	fire.omni_range = 6.4
 	fire.position = Vector3(0, 0.48, 0.55)
 	root.add_child(fire)
+	_add_fire_sparks(root, Vector3(0, 0.38, 0.48), 10)
 	_add_contact_shadow(root, 1.25, 0.58)
 	return root
 
@@ -2493,47 +2491,64 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			_add_cylinder(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, COPPER, false, 0.32, true)
 			_add_cylinder(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, BRASS, false, 0.3, true)
 		1:
-			# Harmonic / tuning-fork resonator on iron base (distinct silhouette)
-			_add_box(root, Vector3(0, 0.12, 0), Vector3(1.2, 0.24, 0.95), iron_dark, true, 0.45)
-			_add_box(root, Vector3(0, 0.28, 0), Vector3(1.05, 0.08, 0.82), iron_mid, true, 0.45)
-			_add_box(root, Vector3(0, 0.34, 0), Vector3(0.9, 0.04, 0.7), BRASS.darkened(0.15), false, 0.32)
-			# Twin upright tines (fork)
+			# Harmonic resonator — loop 132: SOLID bulk (not empty shelf tower).
+			# Wide iron cheeks + dense copper diaphragms + central mast fill.
+			_add_box(root, Vector3(0, 0.12, 0), Vector3(1.25, 0.24, 1.0), iron_dark, true, 0.45)
+			_add_box(root, Vector3(0, 0.28, 0), Vector3(1.1, 0.1, 0.88), iron_mid, true, 0.45)
+			_add_box(root, Vector3(0, 0.35, 0), Vector3(0.95, 0.04, 0.75), BRASS.darkened(0.12), false, 0.32)
+			# Thick side cheeks (solid walls — kill hollow shelf read)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * 0.18, 1.0, 0), Vector3(0.1, 1.35, 0.12), iron_mid, true, 0.42)
-				_add_box(root, Vector3(sx * 0.18, 1.0, 0), Vector3(0.06, 1.25, 0.08), BRASS.darkened(0.08), false, 0.3)
-				_add_cylinder(root, Vector3(sx * 0.18, 1.7, 0), 0.07, 0.08, BRASS, false, 0.28, true)
-			# Cross brace + copper diaphragm plates between tines
-			_add_box(root, Vector3(0, 0.55, 0), Vector3(0.5, 0.08, 0.14), iron_dark, true, 0.45)
-			_add_box(root, Vector3(0, 1.15, 0), Vector3(0.48, 0.06, 0.12), iron_mid, false, 0.45)
-			for i in 3:
-				var y: float = 0.75 + float(i) * 0.28
-				var r: float = 0.28 - float(i) * 0.03
-				_add_cylinder(root, Vector3(0, y, 0), r, 0.04, COPPER if i % 2 == 0 else COPPER.darkened(0.1), false, 0.3, true)
-				_add_cylinder(root, Vector3(0, y, 0), r * 0.55, 0.03, Color(0.55, 0.72, 0.75), false, 0.4)
-			# Side resonator box + valve
-			_add_box(root, Vector3(0.48, 0.7, 0.05), Vector3(0.32, 0.55, 0.4), oak_d, true, 0.5)
-			_add_cylinder(root, Vector3(0.48, 0.95, 0.22), 0.08, 0.04, BRASS, false, 0.28, true)
-			_add_box(root, Vector3(0.48, 0.95, 0.22), Vector3(0.14, 0.02, 0.02), BRASS.lightened(0.05), false, 0.28)
-			_add_cylinder(root, Vector3(-0.48, 0.85, 0.1), 0.05, 0.9, COPPER, false, 0.32, true)
-			_add_box(root, Vector3(-0.48, 1.35, 0.25), Vector3(0.1, 0.08, 0.28), COPPER.darkened(0.05), false, 0.32)
-			# Top bridge plate (not a glass dome clone)
-			_add_box(root, Vector3(0, 1.75, 0), Vector3(0.55, 0.06, 0.28), BRASS.darkened(0.05), false, 0.3)
-			_add_cylinder(root, Vector3(0, 1.85, 0), 0.1, 0.12, glass_hi, false, 0.3)
-			top_y = 1.85
-			# Small core glow between tines
+				_add_box(root, Vector3(sx * 0.38, 1.0, 0), Vector3(0.16, 1.4, 0.55), iron_mid, true, 0.42)
+				_add_box(root, Vector3(sx * 0.38, 1.0, 0.08), Vector3(0.1, 1.3, 0.35), iron_dark, false, 0.45)
+				_add_cylinder(root, Vector3(sx * 0.38, 1.72, 0), 0.09, 0.08, BRASS, false, 0.28, true)
+				# Brass edge rails on cheeks
+				_add_box(root, Vector3(sx * 0.46, 1.0, 0.25), Vector3(0.03, 1.25, 0.04), BRASS.darkened(0.1), false, 0.3)
+			# Back panel (closes the silhouette from any angle)
+			_add_box(root, Vector3(0, 1.0, -0.28), Vector3(0.85, 1.35, 0.08), oak_d, true, 0.5)
+			_add_box(root, Vector3(0, 1.0, -0.24), Vector3(0.7, 1.2, 0.04), iron_dark, false, 0.48)
+			# Central mast + stacked copper diaphragms (thick bands, no air-shelf look)
+			_add_cylinder(root, Vector3(0, 1.0, 0.05), 0.08, 1.35, BRASS.darkened(0.05), true, 0.28, true)
+			for i in 5:
+				var y: float = 0.55 + float(i) * 0.22
+				var r: float = 0.34 - float(i) * 0.025
+				var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.1)
+				_add_cylinder(root, Vector3(0, y, 0.05), r, 0.1, copper_col, false, 0.3, true)
+				_add_cylinder(root, Vector3(0, y + 0.03, 0.05), r * 0.88, 0.035, copper_col.lightened(0.08), false, 0.28, true)
+				# Fill between coil and cheeks so no empty shelf voids
+				_add_box(root, Vector3(0, y, 0.05), Vector3(r * 1.5, 0.06, 0.2), copper_col.darkened(0.05), false, 0.35)
+			# Cross braces (instrument, not furniture shelves)
+			_add_box(root, Vector3(0, 0.7, 0.15), Vector3(0.75, 0.06, 0.1), iron_mid, false, 0.42)
+			_add_box(root, Vector3(0, 1.35, 0.15), Vector3(0.75, 0.05, 0.1), iron_mid, false, 0.42)
+			# Side instrument cabinets
+			_add_box(root, Vector3(0.55, 0.65, 0.15), Vector3(0.3, 0.55, 0.42), oak_d, true, 0.5)
+			for gi in 3:
+				_add_cylinder(root, Vector3(0.55, 0.55 + float(gi) * 0.14, 0.32), 0.055, 0.025, BRASS, false, 0.28, true)
+				_add_cylinder(root, Vector3(0.55, 0.56 + float(gi) * 0.14, 0.34), 0.04, 0.01, Color(0.85, 0.88, 0.8), false, 0.5)
+			_add_box(root, Vector3(-0.55, 0.6, 0.1), Vector3(0.28, 0.45, 0.35), iron_dark, true, 0.45)
+			_add_cylinder(root, Vector3(-0.55, 0.9, 0.2), 0.04, 0.55, COPPER, false, 0.32, true)
+			_add_cylinder(root, Vector3(-0.55, 1.2, 0.28), 0.05, 0.04, BRASS, false, 0.3, true)
+			# Top bridge + glass chamber
+			_add_box(root, Vector3(0, 1.72, 0), Vector3(0.85, 0.08, 0.5), iron_mid, false, 0.42)
+			_add_box(root, Vector3(0, 1.78, 0), Vector3(0.7, 0.04, 0.4), BRASS.darkened(0.08), false, 0.3)
+			_add_cylinder(root, Vector3(0, 1.92, 0.05), 0.14, 0.16, glass_c, false, 0.32)
+			_add_cylinder(root, Vector3(0, 2.02, 0.05), 0.1, 0.08, glass_hi, false, 0.3)
+			for ri in 4:
+				var ra := float(ri) * TAU / 4.0
+				_add_box(root, Vector3(cos(ra) * 0.12, 1.95, sin(ra) * 0.12 + 0.05), Vector3(0.015, 0.14, 0.015), BRASS, false, 0.28)
+			top_y = 1.95
 			var fork_core := MeshInstance3D.new()
 			var fcm := SphereMesh.new()
-			fcm.radius = 0.06
-			fcm.height = 0.12
+			fcm.radius = 0.07
+			fcm.height = 0.14
 			fork_core.mesh = fcm
 			var fcmat := StandardMaterial3D.new()
 			fcmat.albedo_color = Color(0.5, 0.88, 1.0)
 			fcmat.emission_enabled = true
 			fcmat.emission = Color(0.4, 0.8, 1.0)
-			fcmat.emission_energy_multiplier = 2.2
+			fcmat.emission_energy_multiplier = 2.4
 			fcmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			fork_core.material_override = fcmat
-			fork_core.position = Vector3(0, 1.35, 0)
+			fork_core.position = Vector3(0, 1.95, 0.05)
 			root.add_child(fork_core)
 		_:
 			# Leyden / glass-stack apparatus (vertical jar battery look)
@@ -3269,8 +3284,47 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	fire.omni_range = 6.5
 	fire.position = Vector3(0, 0.55, 0.45)
 	root.add_child(fire)
+	# Loop 132: rising ember sparks
+	_add_fire_sparks(root, Vector3(0, 0.35, 0.32), 14)
 	_add_contact_shadow(root, 0.95, 0.55)
 	return root
+
+static func _add_fire_sparks(parent: Node3D, at: Vector3, amount: int = 12) -> void:
+	## Lightweight rising ember particles for hearth/range (loop 132).
+	var parts := GPUParticles3D.new()
+	parts.amount = amount
+	parts.lifetime = 1.4
+	parts.explosiveness = 0.05
+	parts.randomness = 0.65
+	parts.position = at
+	parts.visibility_aabb = AABB(Vector3(-0.5, -0.1, -0.4), Vector3(1.0, 1.6, 0.8))
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.012
+	mesh.height = 0.024
+	mesh.radial_segments = 6
+	mesh.rings = 3
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.55, 0.15)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.45, 0.1)
+	mat.emission_energy_multiplier = 2.8
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mesh.material = mat
+	parts.draw_pass_1 = mesh
+	var proc := ParticleProcessMaterial.new()
+	proc.direction = Vector3(0, 1, 0)
+	proc.spread = 28.0
+	proc.initial_velocity_min = 0.25
+	proc.initial_velocity_max = 0.75
+	proc.gravity = Vector3(0, 0.15, 0)
+	proc.damping_min = 0.4
+	proc.damping_max = 1.0
+	proc.scale_min = 0.4
+	proc.scale_max = 1.2
+	proc.color = Color(1.0, 0.6, 0.2, 0.9)
+	parts.process_material = proc
+	parts.emitting = true
+	parent.add_child(parts)
 
 static func _make_window(feat: Dictionary) -> Node3D:
 	## Sash-style window with OUTSIDE view through a hollow aperture.
