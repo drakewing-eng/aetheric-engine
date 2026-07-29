@@ -60,3 +60,7 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - §4 Wallpaper contrast: morning no longer reuses gallery damask — powder-blue stripe + oak panel dado. Workshop limewash over brick + board wainscot. Hall sage stripe. Kitchen cream check. Secondary papers now 4 distinct (test asserts).  
 - Geometry: chair rail is triple (body + under-mould + bead); skirting has cap moulding + corner plinth blocks.  
+
+## Status update 2026-07-28 (loop 76)
+
+- §1 Door: teleport always uses **into-room yaw** (spawn_yaw often faced the leaf). Deeper/wider door triggers; `_door_busy` blocks double-E; post-load floor re-snap. Unique `DoorPortal_<target>` names. Automated `test_door_transitions.gd` PASS (graph, nudge footprint, face-in, triggers, floors). Human playtest still recommended.  

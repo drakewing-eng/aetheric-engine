@@ -11,13 +11,14 @@ extends Node3D
 @onready var bridge: BridgeClient = %BridgeClient
 
 const NPC_SCENE := preload("res://scenes/fps_npc.tscn")
-const DOOR_PROXIMITY := 2.6  # slightly larger so E works with closed leaf + narrow gaps
+const DOOR_PROXIMITY := 2.85  # closed leaf + narrow bound gap — needs reach from approach
 
 var _current_room_id := "drawing_room"
 var _current_doors: Array = []
 var _near_npc: Node3D = null
 var _near_door: Dictionary = {}
 var _door_areas: Array[Area3D] = []
+var _door_busy := false  # loop 76: block double-E while room rebuilds
 
 func _ready() -> void:
 	dialogue.closed.connect(_on_dialogue_closed)
@@ -151,18 +152,27 @@ func _talk_to_npc(npc: Node3D) -> void:
 
 func _go_through_door(door: Dictionary) -> void:
 	## Closed leaf + E → direct room load + teleport. Never walk into portal void.
+	if _door_busy:
+		return
+	_door_busy = true
+	player.set_movement_enabled(false)
 	var spawn: Array = door.get("spawn", [0, 0, 0])
 	var sx := float(spawn[0]) if spawn.size() > 0 else 0.0
 	var sz := float(spawn[2]) if spawn.size() > 2 else 0.0
 	# Nudge spawn toward room centre so feet never land on threshold/void.
-	var nudged := _nudge_spawn_inward(sx, sz, 0.55)
-	# Prefer explicit spawn_yaw when present; else face into room from spawn.
-	var yaw: float
-	if door.has("spawn_yaw"):
-		yaw = float(door["spawn_yaw"])
-	else:
-		yaw = _facing_into_room_yaw([nudged.x, 0.0, nudged.z])
-	await _load_room(str(door["target"]), [nudged.x, 0.0, nudged.z], yaw)
+	var nudged := _nudge_spawn_inward(sx, sz, 0.65)
+	# Always face *into* the room from the landed spawn (loop 76).
+	# Door dict spawn_yaw was often facing the leaf (looked like closet re-entry).
+	var yaw: float = _facing_into_room_yaw([nudged.x, 0.0, nudged.z])
+	var target_id := str(door["target"])
+	await _load_room(target_id, [nudged.x, 0.0, nudged.z], yaw)
+	# Hard floor re-snap after rebuild (CharacterBody can settle mid-frame)
+	if player:
+		player.teleport_to(Vector3(nudged.x, 0.0, nudged.z), yaw)
+		player.set_movement_enabled(true)
+	_door_busy = false
+	_near_door = {}
+	_update_prompt()
 
 
 func _nudge_spawn_inward(sx: float, sz: float, amount: float) -> Vector2:
@@ -190,7 +200,7 @@ func _on_dialogue_closed() -> void:
 	_update_prompt()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if dialogue.visible:
+	if dialogue.visible or _door_busy:
 		return
 	if not event.is_action_pressed("interact"):
 		return

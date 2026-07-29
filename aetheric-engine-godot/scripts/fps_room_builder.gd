@@ -384,7 +384,8 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	var m := minf(minf(dn, ds), minf(dw, de))
 	var depth := 0.28  # shallow jamb recess only — not a walk-in corridor
 	var root := Node3D.new()
-	root.name = "DoorPortal"
+	# Unique names so multi-door rooms (hall) keep every portal in the tree
+	root.name = "DoorPortal_%s" % str(door.get("target", "room"))
 	var floor_col := Color(0.22, 0.14, 0.09)
 	var out_dir := Vector3.ZERO
 	if is_equal_approx(m, dn):
@@ -853,7 +854,9 @@ func _add_door_trigger(door: Dictionary, room_w: float, room_d: float) -> void:
 	var half_d := room_d * 0.5
 	var door_w: float = maxf(float(s[0]), 1.7)
 	var door_h: float = maxf(float(s[1]), 2.2)
-	var depth := 1.6  # how far into the room the trigger extends
+	# Loop 76: deeper/wider trigger so E works at closed leaf without walking into void
+	var depth := 1.85
+	var door_w_trig := door_w + 0.25
 
 	var dn := absf(pz + half_d)
 	var ds := absf(pz - half_d)
@@ -862,20 +865,20 @@ func _add_door_trigger(door: Dictionary, room_w: float, room_d: float) -> void:
 	var m := minf(minf(dn, ds), minf(dw, de))
 
 	var pos := Vector3(px, 1.05, pz)
-	var shape_size := Vector3(door_w, door_h, depth)
+	var shape_size := Vector3(door_w_trig, door_h, depth)
 	if is_equal_approx(m, dn):
 		# North wall → trigger extends south into room (+Z)
 		pos = Vector3(px, 1.05, -half_d + depth * 0.5)
-		shape_size = Vector3(door_w, door_h, depth)
+		shape_size = Vector3(door_w_trig, door_h, depth)
 	elif is_equal_approx(m, ds):
 		pos = Vector3(px, 1.05, half_d - depth * 0.5)
-		shape_size = Vector3(door_w, door_h, depth)
+		shape_size = Vector3(door_w_trig, door_h, depth)
 	elif is_equal_approx(m, dw):
 		pos = Vector3(-half_w + depth * 0.5, 1.05, pz)
-		shape_size = Vector3(depth, door_h, door_w)
+		shape_size = Vector3(depth, door_h, door_w_trig)
 	else:
 		pos = Vector3(half_w - depth * 0.5, 1.05, pz)
-		shape_size = Vector3(depth, door_h, door_w)
+		shape_size = Vector3(depth, door_h, door_w_trig)
 
 	var area := Area3D.new()
 	area.name = "Door_%s" % str(door.get("target", "room"))
