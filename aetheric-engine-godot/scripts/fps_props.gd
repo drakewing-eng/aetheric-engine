@@ -265,74 +265,65 @@ static func _make_desk(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chair(prop: Dictionary) -> Node3D:
-	## Victorian side chair: balloon-ish back, upholstered seat, carved rail, splayed legs, stretcher.
-	## seed forks splat style + fabric so chairs aren't clones.
+	## Victorian side chair (loop 134): open back with elegant splat, padded seat,
+	## turned legs — not a stack of wood blocks from the side.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Chair"
 	var seed0: int = int(prop.get("seed", 0))
 	var fabric: Color = prop.get("fabric", VELVET_GREEN if seed0 % 2 == 0 else VELVET_RED.darkened(0.15))
-	# Seat box + cushion (loop 113: slightly thicker seat for side bulk)
-	_add_box(root, Vector3(0, 0.44, 0.02), Vector3(0.52, 0.07, 0.52), MAHOGANY, true, 0.48)
-	_add_box(root, Vector3(0, 0.5, 0.02), Vector3(0.48, 0.08, 0.48), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.56, 0.02), Vector3(0.44, 0.04, 0.44), fabric.darkened(0.1), false, 0.92)
-	_add_cylinder(root, Vector3(0, 0.52, 0.02), 0.2, 0.06, fabric.darkened(0.05), false, 0.9)
-	# Piping / welt edge (detail)
-	_add_box(root, Vector3(0, 0.53, 0.26), Vector3(0.46, 0.015, 0.02), fabric.darkened(0.2), false, 0.9)
-	# Nailhead band
-	for i in 6:
-		var nx := -0.2 + i * 0.08
-		_add_cylinder(root, Vector3(nx, 0.47, 0.27), 0.01, 0.015, BRASS, false, 0.3, true)
-	# Back frame OPEN (loop 98: no solid mahogany slab from behind)
-	# Side uprights + top crest + lower rail only; splat fills the void
+	var fabric_d := fabric.darkened(0.12)
+	# Seat rail + deep cushion (one mass)
+	_add_box(root, Vector3(0, 0.42, 0.02), Vector3(0.5, 0.08, 0.5), MAHOGANY, true, 0.48)
+	_add_box(root, Vector3(0, 0.5, 0.02), Vector3(0.46, 0.1, 0.46), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.56, 0.02), Vector3(0.4, 0.04, 0.4), fabric_d, false, 0.92)
+	# Seat piping
+	_add_box(root, Vector3(0, 0.52, 0.25), Vector3(0.44, 0.012, 0.018), fabric.darkened(0.18), false, 0.9)
+	for i in 5:
+		_add_cylinder(root, Vector3(-0.18 + float(i) * 0.09, 0.46, 0.26), 0.009, 0.012, BRASS, false, 0.3, true)
+	# Slim uprights (not thick posts)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.23, 0.9, -0.2), Vector3(0.06, 0.78, 0.08), MAHOGANY, true, 0.48)
-	# Top crest rail
-	_add_box(root, Vector3(0, 1.28, -0.19), Vector3(0.48, 0.1, 0.07), MAHOGANY, false, 0.45)
-	_add_box(root, Vector3(0, 1.34, -0.18), Vector3(0.36, 0.05, 0.05), MAHOGANY.lightened(0.05), false, 0.45)
-	# Lower back rail at seat
-	_add_box(root, Vector3(0, 0.58, -0.2), Vector3(0.42, 0.06, 0.05), MAHOGANY_DARK, false, 0.48)
-	# Mid cross rail
-	_add_box(root, Vector3(0, 0.95, -0.2), Vector3(0.4, 0.04, 0.04), MAHOGANY, false, 0.5)
-	# Splat style by seed (fills open back — readable from both sides)
-	if seed0 % 3 == 0:
-		# Triple vertical splat
-		_add_box(root, Vector3(0, 0.95, -0.18), Vector3(0.1, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
-		_add_box(root, Vector3(-0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
-		_add_box(root, Vector3(0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
-	elif seed0 % 3 == 1:
-		# Loop 127 balloon back: thick padded oval + wood rim (side bulk)
-		var pad := fabric
-		if pad.r + pad.g + pad.b > 1.2:
-			pad = Color(0.35, 0.22, 0.18)
-		# Wood rim frame
-		_add_box(root, Vector3(0, 1.0, -0.2), Vector3(0.38, 0.52, 0.05), MAHOGANY, false, 0.48)
-		_add_box(root, Vector3(0, 1.22, -0.19), Vector3(0.32, 0.12, 0.05), MAHOGANY.lightened(0.05), false, 0.48)
-		# Padded insert with depth
-		_add_box(root, Vector3(0, 1.0, -0.15), Vector3(0.3, 0.42, 0.06), pad, false, 0.88)
-		_add_cylinder(root, Vector3(0, 1.02, -0.12), 0.16, 0.38, pad.darkened(0.05), false, 0.88)
-		_add_box(root, Vector3(0, 1.18, -0.12), Vector3(0.24, 0.12, 0.05), pad.darkened(0.08), false, 0.9)
-		for bi in 3:
-			_add_cylinder(root, Vector3((float(bi) - 1.0) * 0.08, 1.02, -0.1), 0.014, 0.018, pad.darkened(0.18), false, 0.9)
-	else:
-		# Lyre-ish central splat
-		_add_box(root, Vector3(0, 0.95, -0.18), Vector3(0.08, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
-		_add_box(root, Vector3(0, 1.12, -0.17), Vector3(0.28, 0.07, 0.035), MAHOGANY, false, 0.5)
-		_add_box(root, Vector3(-0.1, 0.85, -0.18), Vector3(0.04, 0.35, 0.03), MAHOGANY, false, 0.5)
-		_add_box(root, Vector3(0.1, 0.85, -0.18), Vector3(0.04, 0.35, 0.03), MAHOGANY, false, 0.5)
-	# Cabriole-ish front legs (tapered stacked cylinders) + rear legs
-	for offset in [Vector3(-0.2, 0.22, 0.18), Vector3(0.2, 0.22, 0.18)]:
-		_add_cylinder(root, offset, 0.032, 0.42, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.045, 0.04, MAHOGANY, true)
-	for offset in [Vector3(-0.2, 0.22, -0.18), Vector3(0.2, 0.22, -0.18)]:
-		_add_cylinder(root, offset, 0.028, 0.42, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.04, 0.035, MAHOGANY, true)
-	# H-stretcher
-	_add_box(root, Vector3(0, 0.14, 0.0), Vector3(0.38, 0.03, 0.03), MAHOGANY, false, 0.5)
-	_add_box(root, Vector3(-0.19, 0.14, 0.0), Vector3(0.03, 0.03, 0.32), MAHOGANY, false, 0.5)
-	_add_box(root, Vector3(0.19, 0.14, 0.0), Vector3(0.03, 0.03, 0.32), MAHOGANY, false, 0.5)
-	_add_contact_shadow(root, 0.42, 0.4)
+		_add_box(root, Vector3(sx * 0.21, 0.95, -0.2), Vector3(0.045, 0.9, 0.05), MAHOGANY, true, 0.48)
+		_add_cylinder(root, Vector3(sx * 0.21, 0.95, -0.2), 0.022, 0.85, MAHOGANY_DARK, false, 0.48)
+	# Crest rail
+	_add_box(root, Vector3(0, 1.36, -0.19), Vector3(0.46, 0.08, 0.055), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 1.42, -0.18), Vector3(0.28, 0.04, 0.04), MAHOGANY.lightened(0.06), false, 0.45)
+	# Lower back rail
+	_add_box(root, Vector3(0, 0.58, -0.2), Vector3(0.4, 0.05, 0.04), MAHOGANY_DARK, false, 0.48)
+	# Splat by seed
+	match seed0 % 3:
+		0:
+			# Open vertical bars (air between — not solid slab)
+			for bx in [-0.1, 0.0, 0.1]:
+				_add_box(root, Vector3(bx, 0.98, -0.18), Vector3(0.035, 0.65, 0.03), MAHOGANY, false, 0.5)
+			_add_box(root, Vector3(0, 1.15, -0.18), Vector3(0.32, 0.03, 0.03), MAHOGANY_DARK, false, 0.5)
+		1:
+			# Padded balloon insert in wood oval rim
+			_add_box(root, Vector3(0, 1.02, -0.2), Vector3(0.32, 0.55, 0.04), MAHOGANY, false, 0.48)
+			_add_box(root, Vector3(0, 1.02, -0.15), Vector3(0.26, 0.48, 0.05), fabric, false, 0.88)
+			_add_cylinder(root, Vector3(0, 1.05, -0.13), 0.12, 0.35, fabric_d, false, 0.88)
+			for bi in 2:
+				_add_cylinder(root, Vector3((float(bi) - 0.5) * 0.1, 1.05, -0.1), 0.012, 0.014, fabric.darkened(0.2), false, 0.9)
+		_:
+			# Lyre splat
+			_add_box(root, Vector3(0, 0.98, -0.18), Vector3(0.06, 0.65, 0.035), MAHOGANY_DARK, false, 0.5)
+			_add_box(root, Vector3(0, 1.2, -0.17), Vector3(0.26, 0.05, 0.03), MAHOGANY, false, 0.5)
+			for sx in [-1.0, 1.0]:
+				_add_box(root, Vector3(sx * 0.1, 0.9, -0.18), Vector3(0.035, 0.4, 0.028), MAHOGANY, false, 0.5)
+	# Turned legs (tapered look via stacked radii)
+	for offset in [Vector3(-0.18, 0.2, 0.18), Vector3(0.18, 0.2, 0.18)]:
+		_add_cylinder(root, offset, 0.028, 0.38, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(offset.x, 0.08, offset.z), 0.032, 0.08, MAHOGANY, true)
+		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.04, 0.03, MAHOGANY_DARK, true)
+	for offset in [Vector3(-0.18, 0.2, -0.18), Vector3(0.18, 0.2, -0.18)]:
+		_add_cylinder(root, offset, 0.025, 0.38, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(offset.x, 0.02, offset.z), 0.036, 0.03, MAHOGANY, true)
+	# H-stretcher (slim)
+	_add_box(root, Vector3(0, 0.12, 0.0), Vector3(0.34, 0.025, 0.025), MAHOGANY, false, 0.5)
+	_add_box(root, Vector3(-0.17, 0.12, 0.0), Vector3(0.025, 0.025, 0.3), MAHOGANY, false, 0.5)
+	_add_box(root, Vector3(0.17, 0.12, 0.0), Vector3(0.025, 0.025, 0.3), MAHOGANY, false, 0.5)
+	_add_contact_shadow(root, 0.4, 0.38)
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
@@ -3928,16 +3919,22 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(-0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.9, 0.28, 0.06), MAHOGANY, false, 0.45)
-		"wing":
+		"wing", "wing_green":
 			var ww: float = clampf(width * 0.75, 0.7, 1.0)
-			_add_box(root, Vector3(0, 0.35, -0.22), Vector3(ww, 0.2, 0.4), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.5, -0.18), Vector3(ww * 0.9, 0.14, 0.36), VELVET_RED.darkened(0.05), false, 0.9)
-			_add_box(root, Vector3(0, 0.95, -0.36), Vector3(ww * 0.92, 0.85, 0.14), VELVET_RED, false, 0.9)
+			var fab: Color = VELVET_GREEN_DEEP if bulk == "wing_green" else VELVET_RED
+			var fab_d: Color = fab.darkened(0.08)
+			_add_box(root, Vector3(0, 0.32, -0.24), Vector3(ww, 0.18, 0.42), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.5, -0.2), Vector3(ww * 0.9, 0.18, 0.38), fab, false, 0.9)
+			# Continuous back shell + wings (behind card)
+			_add_box(root, Vector3(0, 1.0, -0.38), Vector3(ww * 0.9, 0.95, 0.16), fab, false, 0.9)
+			_add_box(root, Vector3(0, 1.05, -0.28), Vector3(ww * 0.75, 0.85, 0.1), fab_d, false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * ww * 0.4, 1.0, -0.22),
-					Vector3(0.12, 0.6, 0.28), VELVET_RED.darkened(0.08), false, 0.88)
-				_add_box(root, Vector3(sx * ww * 0.4, 0.6, -0.12),
-					Vector3(0.12, 0.18, 0.35), VELVET_RED.darkened(0.05), false, 0.88)
+				_add_box(root, Vector3(sx * ww * 0.38, 1.0, -0.2),
+					Vector3(0.16, 0.75, 0.35), fab_d, false, 0.88)
+				_add_box(root, Vector3(sx * ww * 0.38, 0.62, -0.1),
+					Vector3(0.15, 0.16, 0.4), fab, false, 0.88)
+				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.1), 0.035, 0.16, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.38), 0.032, 0.16, MAHOGANY, false)
 		"chair":
 			var cw: float = clampf(width * 0.7, 0.45, 0.65)
 			_add_box(root, Vector3(0, 0.46, -0.12), Vector3(cw, 0.08, 0.28), MAHOGANY, false, 0.48)

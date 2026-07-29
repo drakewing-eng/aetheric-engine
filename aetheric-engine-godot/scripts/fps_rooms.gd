@@ -91,9 +91,19 @@ const ROOMS := {
 			{"kind": "chair", "pos": [2.35, 0.0, 0.8], "yaw": 90.0, "seed": 1,
 				"fabric": Color(0.38, 0.2, 0.14)},
 			{"kind": "letter_stack", "pos": [3.2, 0.78, 0.55], "yaw": -15.0, "seed": 1},
-			# SW conversation: solid wing chair (was thin billboard)
-			{"kind": "armchair", "pos": [-2.9, 0.0, 2.0], "yaw": 40.0,
-				"fabric": Color(0.48, 0.14, 0.14)},
+			# SW conversation: painted wing hero + mesh bulk (loop 134)
+			{
+				"kind": "billboard_prop",
+				"pos": [-2.9, 0.0, 2.0],
+				"yaw": 40.0,
+				"texture": PROP_DIR + "cutout/hero_armchair.png",
+				"width": 1.15,
+				"height": 1.45,
+				"sink": 0.12,
+				"solid": true,
+				"col_size": [0.95, 1.2, 0.85],
+				"mesh_bulk": "wing",
+			},
 			{"kind": "side_table", "pos": [-1.7, 0.0, 2.35], "yaw": -20.0, "seed": 1},
 			# East-center: solid side chair
 			{"kind": "chair", "pos": [3.2, 0.0, 2.8], "yaw": -140.0, "seed": 2,
@@ -528,9 +538,19 @@ const ROOMS := {
 			{"kind": "chair", "pos": [1.35, 0.0, -2.0], "yaw": 90.0, "seed": 1,
 				"fabric": Color(0.32, 0.38, 0.48)},
 			{"kind": "letter_stack", "pos": [2.1, 0.78, -1.75], "yaw": -20.0, "seed": 2},
-			# Armchair reading nook + tea table (west)
-			{"kind": "armchair", "pos": [-2.0, 0.0, -0.6], "yaw": 55.0,
-				"fabric": Color(0.28, 0.36, 0.32)},
+			# Armchair reading nook — painted green wing + bulk (loop 134)
+			{
+				"kind": "billboard_prop",
+				"pos": [-2.0, 0.0, -0.6],
+				"yaw": 55.0,
+				"texture": "res://assets/props/drawing_room/cutout/hero_wing_green.png",
+				"width": 1.2,
+				"height": 1.5,
+				"sink": 0.12,
+				"solid": true,
+				"col_size": [0.95, 1.25, 0.9],
+				"mesh_bulk": "wing_green",
+			},
 			{"kind": "side_table", "pos": [-1.1, 0.0, -0.2], "yaw": 20.0, "seed": 5, "bare": true},
 			{"kind": "tea_tray", "pos": [-1.1, 0.68, -0.2], "yaw": 15.0, "seed": 1},
 			{"kind": "oil_lamp", "pos": [-1.0, 0.0, 0.5], "height": 1.05},
