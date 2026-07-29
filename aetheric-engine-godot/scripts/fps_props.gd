@@ -784,9 +784,11 @@ static func _make_crock_shelf(prop: Dictionary) -> Node3D:
 				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.07, 0.16, CLAY if (j + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
 				_add_cylinder(root, Vector3(x, y + 0.19, 0.04), 0.06, 0.03, CLAY.darkened(0.1), false, 0.8)
 			elif kind == 2:
-				# Copper bowl
-				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.085, 0.1, COPPER, false, 0.35, true)
-				_add_cylinder(root, Vector3(x, y + 0.14, 0.04), 0.09, 0.02, COPPER.lightened(0.08), false, 0.35, true)
+				# Copper bowl: bottom + belly + flared rim + handle (loop 119)
+				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.07, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+				_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.09, 0.1, COPPER, false, 0.35, true)
+				_add_cylinder(root, Vector3(x, y + 0.15, 0.04), 0.1, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+				_add_box(root, Vector3(x + 0.09, y + 0.09, 0.04), Vector3(0.05, 0.03, 0.03), COPPER, false, 0.35)
 			elif kind == 3:
 				# Jug
 				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.055, 0.14, CREAM.darkened(0.08), false, 0.7)
@@ -1136,11 +1138,19 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(ring_x, 1.3, 0.05), 0.24, 0.04, iron_mid, false, 0.4)
 		_add_cylinder(root, Vector3(ring_x, 1.33, 0.05), 0.22, 0.02, BRASS.darkened(0.2), false, 0.35, true)
 		_add_cylinder(root, Vector3(ring_x, 1.34, 0.05), 0.12, 0.03, iron_dark, false, 0.45)
-	# Mantel shelf + still-life
+	# Mantel shelf + still-life (loop 119: vessels, not coil cylinders)
 	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), iron_mid, false, 0.45)
 	_add_box(root, Vector3(0, 1.48, 0.15), Vector3(2.28, 0.02, 0.52), BRASS.darkened(0.15), false, 0.35)
-	_add_cylinder(root, Vector3(-0.7, 1.58, 0.15), 0.09, 0.18, COPPER, false, 0.35, true)
+	# Bulbous copper kettle on mantel
+	_add_cylinder(root, Vector3(-0.7, 1.54, 0.15), 0.07, 0.06, COPPER.darkened(0.08), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.7, 1.6, 0.15), 0.1, 0.1, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.7, 1.67, 0.15), 0.08, 0.05, COPPER.lightened(0.06), false, 0.32, true)
+	_add_cylinder(root, Vector3(-0.7, 1.71, 0.15), 0.09, 0.02, COPPER.lightened(0.1), false, 0.3, true)
+	_add_box(root, Vector3(-0.7, 1.74, 0.15), Vector3(0.18, 0.015, 0.02), BRASS.darkened(0.1), false, 0.3)
+	_add_box(root, Vector3(-0.58, 1.6, 0.15), Vector3(0.06, 0.03, 0.04), COPPER, false, 0.35)
+	# Cream crock + board + candle
 	_add_cylinder(root, Vector3(0.55, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.12), false, 0.8)
+	_add_cylinder(root, Vector3(0.55, 1.64, 0.15), 0.055, 0.03, CREAM.darkened(0.18), false, 0.8)
 	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.22, 0.04, 0.12), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.25, 1.58, 0.18), 0.03, 0.16, CANDLE, false, 0.55)
 	# Chimney flue + brass collar + crown (loop 97: not a black monolith)
@@ -1157,10 +1167,21 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 2.62, -0.12), Vector3(0.55, 0.06, 0.42), iron_dark, false, 0.5)
 	# Smoke plate detail
 	_add_box(root, Vector3(0, 2.1, 0.12), Vector3(0.35, 0.5, 0.04), iron_dark, false, 0.5)
-	# Hanging pan rail above range
-	_add_box(root, Vector3(0, 1.75, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
-	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.1, 0.08, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(0.35, 1.52, 0.38), 0.09, 0.07, COPPER.lightened(0.05), false, 0.35, true)
+	# Hanging pan rail above range — skillets with bottoms + handles (not coil rings)
+	_add_box(root, Vector3(0, 1.78, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
+	# Left skillet: bottom disc + deep rim + long handle
+	_add_cylinder(root, Vector3(-0.45, 1.52, 0.4), 0.1, 0.02, COPPER.darkened(0.12), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.45, 1.56, 0.4), 0.12, 0.07, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.45, 1.6, 0.4), 0.125, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+	_add_box(root, Vector3(-0.22, 1.56, 0.4), Vector3(0.2, 0.025, 0.04), COPPER.darkened(0.05), false, 0.35)
+	_add_cylinder(root, Vector3(-0.45, 1.68, 0.38), 0.01, 0.16, IRON, false, 0.4)
+	# Right stockpot: belly + lid knob + side handle
+	_add_cylinder(root, Vector3(0.4, 1.5, 0.4), 0.08, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+	_add_cylinder(root, Vector3(0.4, 1.56, 0.4), 0.1, 0.1, COPPER.lightened(0.04), false, 0.35, true)
+	_add_cylinder(root, Vector3(0.4, 1.63, 0.4), 0.105, 0.02, COPPER.lightened(0.1), false, 0.32, true)
+	_add_cylinder(root, Vector3(0.4, 1.66, 0.4), 0.035, 0.03, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0.52, 1.56, 0.4), Vector3(0.05, 0.06, 0.04), COPPER, false, 0.35)
+	_add_cylinder(root, Vector3(0.4, 1.72, 0.38), 0.01, 0.12, IRON, false, 0.4)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.52, 0.2)
 	fire.light_energy = 1.85
@@ -1213,9 +1234,11 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 			_add_cylinder(root, Vector3(px, 1.7, 0.04), 0.065, 0.16, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
 			_add_cylinder(root, Vector3(px, 1.8, 0.04), 0.055, 0.035, CLAY.darkened(0.1), false, 0.8)
 		elif kind == 2:
-			# Copper bowl
-			_add_cylinder(root, Vector3(px, 1.66, 0.04), 0.08, 0.1, COPPER, false, 0.35, true)
-			_add_cylinder(root, Vector3(px, 1.72, 0.04), 0.09, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+			# Copper bowl: bottom + belly + flared rim + handle (loop 119)
+			_add_cylinder(root, Vector3(px, 1.62, 0.04), 0.065, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(px, 1.68, 0.04), 0.085, 0.1, COPPER, false, 0.35, true)
+			_add_cylinder(root, Vector3(px, 1.74, 0.04), 0.095, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+			_add_box(root, Vector3(px + 0.09, 1.68, 0.04), Vector3(0.05, 0.035, 0.03), COPPER, false, 0.35)
 		else:
 			# Jug
 			_add_cylinder(root, Vector3(px, 1.68, 0.04), 0.05, 0.14, CREAM.darkened(0.08), false, 0.75)
@@ -1228,22 +1251,34 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 		else:
 			_add_cylinder(root, Vector3(px, 2.52, 0.02), 0.055, 0.12, CLAY.lightened(0.05), false, 0.8)
 			_add_cylinder(root, Vector3(px, 2.6, 0.02), 0.04, 0.03, CLAY.darkened(0.08), false, 0.8)
-	# Work-top: jars + copper (base cupboard top)
+	# Work-top: jars + bulbous copper (loop 119 vessels, not coil stacks)
 	_add_cylinder(root, Vector3(0.5, 1.18, 0.08), 0.07, 0.18, CLAY if seed0 % 2 == 0 else CLAY.darkened(0.08), false, 0.8)
 	_add_cylinder(root, Vector3(0.5, 1.28, 0.08), 0.05, 0.04, CLAY.darkened(0.1), false, 0.8)
 	_add_cylinder(root, Vector3(0.65, 1.14, 0.02), 0.06, 0.14, CLAY.lightened(0.1), false, 0.8)
-	_add_cylinder(root, Vector3(-0.5, 1.16, 0.08), 0.08, 0.16, COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.28, 1.14, 0.02), 0.06, 0.12, COPPER.darkened(0.08), false, 0.35, true)
+	# Copper stockpot: belly + rim + side handle
+	var dcop := COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1)
+	_add_cylinder(root, Vector3(-0.5, 1.12, 0.08), 0.065, 0.04, dcop.darkened(0.08), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.5, 1.18, 0.08), 0.09, 0.12, dcop, false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.5, 1.26, 0.08), 0.095, 0.025, dcop.lightened(0.08), false, 0.32, true)
+	_add_box(root, Vector3(-0.38, 1.18, 0.08), Vector3(0.05, 0.06, 0.04), dcop, false, 0.35)
+	# Copper skillet: shallow bowl + handle
+	_add_cylinder(root, Vector3(-0.25, 1.12, 0.02), 0.07, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.25, 1.15, 0.02), 0.085, 0.06, COPPER.darkened(0.05), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.25, 1.19, 0.02), 0.09, 0.02, COPPER.lightened(0.06), false, 0.32, true)
+	_add_box(root, Vector3(-0.1, 1.15, 0.02), Vector3(0.14, 0.02, 0.035), COPPER.darkened(0.05), false, 0.35)
 	_add_box(root, Vector3(0.1, 1.1, 0.1), Vector3(0.2, 0.03, 0.14), CREAM.darkened(0.05), false, 0.85)
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root
 
 static func _make_sink(prop: Dictionary) -> Node3D:
-	## Scullery sink — oak base, stoneware basin, pump, drain board (loop 80 identity).
+	## Scullery butler sink — deep stoneware well + drain board + pump (loop 119).
 	var root := Node3D.new()
 	root.name = "Sink"
 	var seed0: int = int(prop.get("seed", 0))
 	var wood := OAK if seed0 % 2 == 0 else Color(0.48, 0.34, 0.2)
+	var ware := Color(0.88, 0.86, 0.8)
+	var ware_d := Color(0.72, 0.7, 0.64)
+	var well := Color(0.38, 0.44, 0.48)
 	# Cabinet body + plinth
 	_add_box(root, Vector3(0, 0.42, 0), Vector3(1.15, 0.78, 0.58), wood, true, 0.5)
 	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(1.2, 0.1, 0.62), wood.darkened(0.1), true, 0.5)
@@ -1254,35 +1289,48 @@ static func _make_sink(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.26, 0.4, 0.3), Vector3(0.38, 0.48, 0.012), wood.darkened(0.14), false, 0.55)
 	_add_cylinder(root, Vector3(-0.1, 0.4, 0.32), 0.018, 0.05, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(0.1, 0.4, 0.32), 0.018, 0.05, BRASS, false, 0.3, true)
-	# Stoneware basin with raised rim + wet well
-	_add_box(root, Vector3(0, 0.9, 0.02), Vector3(1.12, 0.1, 0.55), STONE.lightened(0.08), false, 0.55)
-	_add_box(root, Vector3(0, 0.96, 0.02), Vector3(0.95, 0.05, 0.42), STONE, false, 0.45)
-	_add_box(root, Vector3(0, 0.93, 0.02), Vector3(0.72, 0.08, 0.28), Color(0.32, 0.38, 0.42), false, 0.3)
-	# Drain board (sloped scrubbed wood) beside basin
-	_add_box(root, Vector3(-0.55, 0.94, 0.05), Vector3(0.28, 0.04, 0.4), OAK.lightened(0.15), false, 0.65)
-	_add_box(root, Vector3(-0.55, 0.97, 0.05), Vector3(0.24, 0.015, 0.12), OAK.lightened(0.05), false, 0.6)
-	_add_box(root, Vector3(-0.55, 0.97, -0.08), Vector3(0.24, 0.015, 0.12), OAK.lightened(0.05), false, 0.6)
-	# Backsplash tile strip
-	_add_box(root, Vector3(0, 1.15, -0.22), Vector3(1.1, 0.35, 0.04), CREAM.darkened(0.05), false, 0.75)
-	_add_box(root, Vector3(0, 1.05, -0.2), Vector3(1.05, 0.04, 0.02), Color(0.55, 0.58, 0.52), false, 0.7)
-	# Hand pump + spout + handle
-	_add_cylinder(root, Vector3(0.28, 1.18, -0.08), 0.035, 0.4, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0.28, 1.4, -0.08), 0.05, 0.06, BRASS, false, 0.28, true)
-	_add_box(root, Vector3(0.1, 1.35, 0.02), Vector3(0.38, 0.035, 0.035), BRASS, false, 0.3)
-	_add_cylinder(root, Vector3(-0.08, 1.3, 0.08), 0.022, 0.1, BRASS, false, 0.3, true)
-	_add_box(root, Vector3(0.4, 1.25, -0.05), Vector3(0.04, 0.18, 0.04), BRASS.darkened(0.08), false, 0.3)
-	_add_box(root, Vector3(0.48, 1.32, -0.05), Vector3(0.12, 0.03, 0.03), BRASS, false, 0.3)
-	# Still-life fork (soap, cloth, crock / copper)
+	# Deep butler basin: outer apron + raised rim walls + recessed wet well (not flat slab)
+	_add_box(root, Vector3(0.12, 0.88, 0.02), Vector3(0.78, 0.12, 0.52), ware_d, false, 0.55)
+	# Four rim walls
+	_add_box(root, Vector3(0.12, 1.0, 0.24), Vector3(0.76, 0.12, 0.05), ware, false, 0.5)
+	_add_box(root, Vector3(0.12, 1.0, -0.2), Vector3(0.76, 0.12, 0.05), ware, false, 0.5)
+	_add_box(root, Vector3(-0.24, 1.0, 0.02), Vector3(0.05, 0.12, 0.48), ware, false, 0.5)
+	_add_box(root, Vector3(0.48, 1.0, 0.02), Vector3(0.05, 0.12, 0.48), ware, false, 0.5)
+	# Inner wet well (recessed, darker)
+	_add_box(root, Vector3(0.12, 0.92, 0.02), Vector3(0.62, 0.06, 0.36), well, false, 0.35)
+	# Drain hole
+	_add_cylinder(root, Vector3(0.12, 0.95, 0.02), 0.04, 0.02, IRON.lightened(0.15), false, 0.4)
+	# Drain board (sloped scrubbed wood) left of basin + groove ribs
+	_add_box(root, Vector3(-0.42, 0.96, 0.02), Vector3(0.38, 0.05, 0.48), OAK.lightened(0.18), false, 0.65)
+	for gi in 4:
+		var gz := -0.16 + float(gi) * 0.1
+		_add_box(root, Vector3(-0.42, 0.99, gz), Vector3(0.32, 0.01, 0.02), OAK.lightened(0.05), false, 0.6)
+	# Backsplash tile strip with grout lines
+	_add_box(root, Vector3(0, 1.2, -0.24), Vector3(1.12, 0.42, 0.04), CREAM.darkened(0.02), false, 0.75)
+	for ti in 3:
+		_add_box(root, Vector3(-0.35 + float(ti) * 0.35, 1.2, -0.22), Vector3(0.3, 0.36, 0.02), CREAM.lightened(0.04), false, 0.72)
+	_add_box(root, Vector3(0, 1.05, -0.21), Vector3(1.08, 0.03, 0.02), Color(0.55, 0.58, 0.52), false, 0.7)
+	# Hand pump + spout + handle (clearer silhouette)
+	_add_cylinder(root, Vector3(0.35, 1.22, -0.1), 0.04, 0.38, BRASS.darkened(0.05), false, 0.3, true)
+	_add_cylinder(root, Vector3(0.35, 1.42, -0.1), 0.055, 0.07, BRASS, false, 0.28, true)
+	_add_box(root, Vector3(0.18, 1.38, 0.02), Vector3(0.32, 0.04, 0.04), BRASS, false, 0.3)
+	_add_cylinder(root, Vector3(0.02, 1.32, 0.08), 0.025, 0.1, BRASS, false, 0.3, true)
+	_add_box(root, Vector3(0.48, 1.28, -0.08), Vector3(0.05, 0.2, 0.05), BRASS.darkened(0.08), false, 0.3)
+	_add_box(root, Vector3(0.58, 1.36, -0.08), Vector3(0.14, 0.035, 0.035), BRASS, false, 0.3)
+	# Still-life fork (soap, cloth, crock / copper vessel)
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(-0.35, 0.99, 0.15), Vector3(0.12, 0.035, 0.08), CREAM, false, 0.85)
-		_add_box(root, Vector3(-0.2, 0.97, 0.18), Vector3(0.18, 0.02, 0.12), Color(0.72, 0.76, 0.78), false, 0.7)
-		_add_cylinder(root, Vector3(0.4, 1.02, 0.12), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
-		_add_cylinder(root, Vector3(0.42, 1.1, 0.12), 0.03, 0.04, CREAM.darkened(0.15), false, 0.8)
+		_add_box(root, Vector3(-0.45, 1.02, 0.18), Vector3(0.12, 0.035, 0.08), CREAM, false, 0.85)
+		_add_box(root, Vector3(-0.3, 1.0, 0.2), Vector3(0.18, 0.02, 0.12), Color(0.72, 0.76, 0.78), false, 0.7)
+		_add_cylinder(root, Vector3(0.55, 1.08, 0.14), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
+		_add_cylinder(root, Vector3(0.55, 1.16, 0.14), 0.03, 0.04, CREAM.darkened(0.15), false, 0.8)
 	else:
-		_add_cylinder(root, Vector3(-0.32, 1.02, 0.1), 0.055, 0.14, COPPER, false, 0.35, true)
-		_add_box(root, Vector3(0.32, 0.98, 0.14), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.05), false, 0.85)
-		_add_cylinder(root, Vector3(0.35, 1.02, 0.1), 0.04, 0.08, CLAY, false, 0.8)
-		_add_box(root, Vector3(-0.1, 0.97, 0.2), Vector3(0.14, 0.015, 0.1), Color(0.65, 0.7, 0.72), false, 0.7)
+		# Mini copper bowl with rim (not plain cylinder)
+		_add_cylinder(root, Vector3(-0.4, 1.02, 0.12), 0.05, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.4, 1.06, 0.12), 0.065, 0.08, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.4, 1.11, 0.12), 0.07, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+		_add_box(root, Vector3(0.4, 1.0, 0.16), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.05), false, 0.85)
+		_add_cylinder(root, Vector3(0.42, 1.05, 0.12), 0.04, 0.08, CLAY, false, 0.8)
+		_add_box(root, Vector3(-0.15, 0.99, 0.22), Vector3(0.14, 0.015, 0.1), Color(0.65, 0.7, 0.72), false, 0.7)
 	_add_contact_shadow(root, 0.62, 0.36)
 	return root
 
@@ -1850,18 +1898,34 @@ static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 		var x := -width * 0.38 + float(i) * (width * 0.76 / float(maxi(n - 1, 1)))
 		var kind := (i + seed0) % 4
 		if kind == 0:
-			_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07 + float(i % 2) * 0.015, 0.035, CREAM if (i + seed0) % 2 == 0 else CREAM.darkened(0.08), false, 0.7)
+			# Plate stack with rims
+			_add_cylinder(root, Vector3(x, y + 0.06, 0.04), 0.08 + float(i % 2) * 0.012, 0.02, CREAM if (i + seed0) % 2 == 0 else CREAM.darkened(0.08), false, 0.7)
+			_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.07, 0.018, CREAM.darkened(0.05), false, 0.7)
 		elif kind == 1:
-			_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.05 + float((i + seed0) % 3) * 0.01, 0.1, COPPER if i % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
+			# Loop 119: copper bowl with bottom + flared rim + handle (not tall coil)
+			var ccol := COPPER if i % 2 == 0 else COPPER.darkened(0.1)
+			var cr: float = 0.06 + float((i + seed0) % 3) * 0.012
+			_add_cylinder(root, Vector3(x, y + 0.04, 0.04), cr * 0.75, 0.015, ccol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, y + 0.08, 0.04), cr, 0.07, ccol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, y + 0.12, 0.04), cr + 0.015, 0.018, ccol.lightened(0.08), false, 0.32, true)
+			_add_box(root, Vector3(x + cr * 0.85, y + 0.08, 0.04), Vector3(0.05, 0.03, 0.03), ccol, false, 0.35)
 		elif kind == 2:
-			_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.055, 0.12, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.1), false, 0.75)
+			# Crock with lid
+			_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.055, 0.12, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.1), false, 0.75)
+			_add_cylinder(root, Vector3(x, y + 0.16, 0.04), 0.045, 0.03, CLAY.darkened(0.1), false, 0.75)
 		else:
-			_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.06, 0.05, Color(0.72, 0.68, 0.6), false, 0.65)
+			# Cream bowl / jug mix
+			if (i + seed0) % 2 == 0:
+				_add_cylinder(root, Vector3(x, y + 0.06, 0.04), 0.07, 0.04, Color(0.72, 0.68, 0.6), false, 0.65)
+				_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.075, 0.015, Color(0.78, 0.74, 0.66), false, 0.65)
+			else:
+				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.045, 0.1, CREAM.darkened(0.1), false, 0.7)
+				_add_box(root, Vector3(x + 0.05, y + 0.09, 0.04), Vector3(0.035, 0.06, 0.025), CREAM.darkened(0.15), false, 0.7)
 	return root
 
 
 static func _make_pot_rack(prop: Dictionary) -> Node3D:
-	## Wall copper pan rail — varied pans + ladles (loop 80 side volume).
+	## Wall copper pan rail — wide pans + ladles (loop 119: readable vessels, not coils).
 	var root := Node3D.new()
 	root.name = "PotRack"
 	var seed0: int = int(prop.get("seed", 0))
@@ -1870,12 +1934,13 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
 	# Cross brace
 	_add_box(root, Vector3(0, 1.85, 0), Vector3(1.85, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
-	# 5 hangers: pans + ladle/spoon mix
+	# 5 hangers: wide pans + ladle/spoon mix (hang lower so silhouette reads)
 	for i in 5:
 		var x := -0.7 + i * 0.35
-		_add_cylinder(root, Vector3(x, 2.08, 0.06), 0.012, 0.14, IRON, false, 0.4)
-		var pr: float = 0.08 + float((i * 3 + seed0) % 5) * 0.028
-		var ph: float = 0.055 + float((i + seed0 * 2) % 4) * 0.032
+		# Hook from rail
+		_add_cylinder(root, Vector3(x, 2.1, 0.06), 0.012, 0.18, IRON, false, 0.4)
+		_add_box(root, Vector3(x, 1.98, 0.1), Vector3(0.04, 0.025, 0.05), IRON.lightened(0.1), false, 0.4)
+		var pr: float = 0.11 + float((i * 3 + seed0) % 5) * 0.022
 		var pcols: Array[Color] = [
 			COPPER,
 			COPPER.darkened(0.12),
@@ -1886,25 +1951,31 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 		var pcol: Color = pcols[(i + seed0) % 5]
 		var shape := (i + seed0) % 4
 		if shape == 0:
-			# Loop 118: pan with bottom disc + flared rim (not floating ring)
-			_add_cylinder(root, Vector3(x, 1.78, 0.1), pr * 0.85, 0.02, pcol.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.84, 0.1), pr, ph, pcol, false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.72 + ph * 0.5, 0.1), pr + 0.025, 0.025, pcol.lightened(0.1), false, 0.32, true)
+			# Wide skillet: solid bottom + short wall + long handle
+			_add_cylinder(root, Vector3(x, 1.72, 0.12), pr * 0.9, 0.022, pcol.darkened(0.12), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr, 0.06, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.8, 0.12), pr + 0.02, 0.02, pcol.lightened(0.1), false, 0.32, true)
+			_add_box(root, Vector3(x + pr * 0.95, 1.76, 0.12), Vector3(0.16, 0.025, 0.04), pcol.darkened(0.05), false, 0.35)
 		elif shape == 1:
-			_add_cylinder(root, Vector3(x, 1.76, 0.1), pr, 0.02, pcol.darkened(0.08), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.8, 0.1), pr * 1.15, ph * 0.75, pcol, false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.8 + ph * 0.35, 0.1), pr * 1.2, 0.02, pcol.lightened(0.08), false, 0.32, true)
-			_add_box(root, Vector3(x + pr * 0.95, 1.8, 0.1), Vector3(0.12, 0.025, 0.04), pcol, false, 0.35)
+			# Deep saute: bottom + taller wall + helper loop
+			_add_cylinder(root, Vector3(x, 1.7, 0.12), pr * 0.85, 0.02, pcol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr * 1.05, 0.1, pcol, false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.82, 0.12), pr * 1.1, 0.02, pcol.lightened(0.08), false, 0.32, true)
+			_add_box(root, Vector3(x + pr * 0.95, 1.76, 0.12), Vector3(0.12, 0.03, 0.04), pcol, false, 0.35)
+			_add_box(root, Vector3(x - pr * 0.9, 1.78, 0.12), Vector3(0.05, 0.035, 0.04), pcol, false, 0.35)
 		elif shape == 2:
-			_add_cylinder(root, Vector3(x, 1.8, 0.1), pr * 0.7, 0.02, pcol.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.88, 0.1), pr * 0.8, ph * 1.15, pcol.darkened(0.05), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.98, 0.1), 0.035, 0.035, BRASS, false, 0.3, true)
+			# Covered pot: belly + lid knob
+			_add_cylinder(root, Vector3(x, 1.68, 0.12), pr * 0.65, 0.02, pcol.darkened(0.12), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr * 0.85, 0.14, pcol.darkened(0.05), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.84, 0.12), pr * 0.9, 0.025, pcol.lightened(0.08), false, 0.32, true)
+			_add_cylinder(root, Vector3(x, 1.88, 0.12), 0.04, 0.04, BRASS, false, 0.3, true)
+			_add_box(root, Vector3(x + pr * 0.75, 1.76, 0.12), Vector3(0.05, 0.06, 0.04), pcol, false, 0.35)
 		else:
-			# Ladle
-			_add_cylinder(root, Vector3(x, 1.85, 0.1), 0.012, 0.35, IRON.lightened(0.08), false, 0.4)
-			_add_cylinder(root, Vector3(x, 1.64, 0.12), 0.055, 0.02, pcol.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.67, 0.12), 0.06, 0.05, pcol, false, 0.35, true)
-			_add_box(root, Vector3(x, 2.0, 0.08), Vector3(0.03, 0.04, 0.06), OAK, false, 0.55)
+			# Ladle with bowl + wood handle end
+			_add_cylinder(root, Vector3(x, 1.82, 0.1), 0.012, 0.38, IRON.lightened(0.08), false, 0.4)
+			_add_cylinder(root, Vector3(x, 1.58, 0.14), 0.06, 0.02, pcol.darkened(0.1), false, 0.35, true)
+			_add_cylinder(root, Vector3(x, 1.62, 0.14), 0.07, 0.06, pcol, false, 0.35, true)
+			_add_box(root, Vector3(x, 2.0, 0.08), Vector3(0.035, 0.05, 0.06), OAK, false, 0.55)
 	return root
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
