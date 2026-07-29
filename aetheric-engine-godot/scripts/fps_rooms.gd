@@ -460,6 +460,14 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [2.0, 0.0, 3.6], "yaw": 180.0, "height": 2.15},
+			# Loop 90: NW corner / centre fill (morning_room_center was bare floor + plant)
+			{"kind": "side_table", "pos": [-2.6, 0.0, -2.6], "yaw": 35.0, "seed": 3, "bare": true},
+			{"kind": "oil_lamp", "pos": [-2.55, 0.0, -2.55], "yaw": 20.0, "height": 1.0},
+			{"kind": "letter_stack", "pos": [-2.5, 0.68, -2.45], "yaw": -15.0, "seed": 4},
+			{"kind": "bookshelf", "pos": [-3.5, 0.0, 1.0], "yaw": 90.0, "width": 1.15, "height": 1.85, "depth": 0.32, "seed": 5},
+			{"kind": "plant", "pos": [-0.4, 0.0, -2.8], "scale": 0.5, "seed": 4,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.55},
+			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -2.8], "yaw": 90.0, "height": 2.15},
 		],
 		"doors": [
 			{
@@ -721,6 +729,11 @@ const ROOMS := {
 				"art": "still_life", "seed": 0, "frame": 3},
 			{"kind": "painting", "pos": [2.5, 2.55, 3.55], "yaw": 180.0, "width": 0.65, "height": 0.5,
 				"art": "still_life", "seed": 1, "frame": 3},
+			# Loop 90: south wall art flanks hall door (from_south empty plaster)
+			{"kind": "painting", "pos": [-2.4, 2.2, -3.75], "yaw": 0.0, "width": 0.65, "height": 0.5,
+				"art": "still_life", "seed": 2, "frame": 2},
+			{"kind": "painting", "pos": [2.4, 2.2, -3.75], "yaw": 0.0, "width": 0.6, "height": 0.48,
+				"art": "landscape", "seed": 3, "frame": 1},
 		],
 		"props": [
 			# Signature kitchen read — NEVER lab workbench
@@ -768,6 +781,13 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [3.8, 0.0, 1.5], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
 			{"kind": "wall_sconce", "pos": [2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
+			# Loop 90: south wall densify (from_south was empty cream around hall door)
+			{"kind": "wall_shelf", "pos": [-2.6, 0.0, -3.7], "yaw": 0.0, "width": 1.4, "shelf_y": 1.85, "seed": 9},
+			{"kind": "wall_shelf", "pos": [2.6, 0.0, -3.7], "yaw": 0.0, "width": 1.4, "shelf_y": 1.85, "seed": 10},
+			{"kind": "crock_shelf", "pos": [-3.5, 0.0, -3.2], "yaw": 0.0, "width": 1.1, "height": 1.45, "seed": 3},
+			{"kind": "copper_pot", "pos": [2.4, 0.0, -3.0], "scale": 0.75, "seed": 8},
+			{"kind": "crate", "pos": [3.3, 0.0, -3.1], "scale": 0.7, "seed": 4},
+			{"kind": "oil_lamp", "pos": [-1.4, 0.0, -3.0], "yaw": -10.0, "height": 0.95},
 		],
 		"doors": [
 			{

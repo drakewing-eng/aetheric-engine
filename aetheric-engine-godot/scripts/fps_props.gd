@@ -934,55 +934,107 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 # ─── Kitchen identity ────────────────────────────────────────────────────────
 
 static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
-	## Cast-iron Victorian kitchen range — large signature read from doorway.
+	## Cast-iron Victorian kitchen range — loop 90: mid-grey iron + brass trim + emissive fire
+	## so it reads as a working range, not a black monolith from the doorway.
 	var root := Node3D.new()
 	root.name = "KitchenRange"
-	# Plinth / hearth base (stone)
+	# Mid-grey iron that survives filmic tonemap (pure IRON → black mass)
+	var iron_mid := Color(0.36, 0.36, 0.38)
+	var iron_body := Color(0.30, 0.30, 0.32)
+	var iron_dark := Color(0.24, 0.24, 0.26)
+	var iron_light := Color(0.44, 0.44, 0.46)
+	# Plinth / hearth base (stone + ash lip)
 	_add_box(root, Vector3(0, 0.08, 0.05), Vector3(2.35, 0.16, 1.0), STONE, true, 0.7)
-	# Main iron body (wider/taller for doorway silhouette)
-	_add_box(root, Vector3(0, 0.65, 0), Vector3(2.15, 1.1, 0.85), IRON, true, 0.55)
-	# Side panels with rivet strip suggestion
-	_add_box(root, Vector3(-1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), IRON.darkened(0.08), false, 0.5)
-	_add_box(root, Vector3(1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), IRON.darkened(0.08), false, 0.5)
-	# Oven doors (fielded) + brass handles
-	_add_box(root, Vector3(-0.5, 0.48, 0.42), Vector3(0.68, 0.52, 0.06), IRON.lightened(0.1), false, 0.5)
-	_add_box(root, Vector3(0.5, 0.48, 0.42), Vector3(0.68, 0.52, 0.06), IRON.lightened(0.1), false, 0.5)
-	_add_box(root, Vector3(-0.5, 0.48, 0.46), Vector3(0.5, 0.36, 0.02), IRON.darkened(0.05), false, 0.55)
-	_add_box(root, Vector3(0.5, 0.48, 0.46), Vector3(0.5, 0.36, 0.02), IRON.darkened(0.05), false, 0.55)
-	_add_cylinder(root, Vector3(-0.5, 0.48, 0.5), 0.03, 0.18, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.5, 0.48, 0.5), 0.03, 0.18, BRASS, false, 0.3, true)
-	# Firebox opening glow
-	_add_box(root, Vector3(0, 0.35, 0.44), Vector3(0.55, 0.35, 0.04), Color(0.55, 0.22, 0.06), false, 0.9)
-	# Hotplate top with rings
-	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), IRON.darkened(0.12), true, 0.4)
-	_add_cylinder(root, Vector3(-0.55, 1.3, 0.05), 0.22, 0.04, IRON.lightened(0.08), false, 0.35)
-	_add_cylinder(root, Vector3(-0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
-	_add_cylinder(root, Vector3(0.55, 1.3, 0.05), 0.22, 0.04, IRON.lightened(0.08), false, 0.35)
-	_add_cylinder(root, Vector3(0.55, 1.32, 0.05), 0.12, 0.03, IRON.darkened(0.05), false, 0.4)
-	# Mantel shelf + kettle / crock still-life
-	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), IRON.lightened(0.05), false, 0.45)
-	_add_cylinder(root, Vector3(-0.55, 1.58, 0.15), 0.08, 0.18, COPPER, false, 0.35, true)
-	_add_cylinder(root, Vector3(0.5, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.15), false, 0.8)
-	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.2, 0.04, 0.12), MAHOGANY, false, 0.5)
-	# Chimney flue + crown
-	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), IRON, true, 0.5)
-	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.7, 0.1, 0.55), IRON.darkened(0.05), false, 0.5)
+	_add_box(root, Vector3(0, 0.14, 0.42), Vector3(1.1, 0.04, 0.28), STONE.darkened(0.12), false, 0.75)
+	# Main iron body
+	_add_box(root, Vector3(0, 0.65, 0), Vector3(2.15, 1.1, 0.85), iron_body, true, 0.55)
+	# Side panels + rivet strips
+	_add_box(root, Vector3(-1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), iron_dark, false, 0.5)
+	_add_box(root, Vector3(1.05, 0.65, 0.1), Vector3(0.08, 1.0, 0.7), iron_dark, false, 0.5)
+	for side in [-1.0, 1.0]:
+		for ri in 5:
+			var ry := 0.28 + float(ri) * 0.18
+			_add_cylinder(root, Vector3(side * 1.08, ry, 0.38), 0.016, 0.02, iron_light, false, 0.4)
+	# Brass corner beading / trim rails (period range identity)
+	_add_box(root, Vector3(0, 1.18, 0.44), Vector3(2.18, 0.03, 0.04), BRASS, false, 0.35)
+	_add_box(root, Vector3(0, 0.18, 0.44), Vector3(2.18, 0.03, 0.04), BRASS.darkened(0.1), false, 0.35)
+	_add_box(root, Vector3(-1.05, 0.65, 0.44), Vector3(0.04, 1.0, 0.03), BRASS.darkened(0.08), false, 0.35)
+	_add_box(root, Vector3(1.05, 0.65, 0.44), Vector3(0.04, 1.0, 0.03), BRASS.darkened(0.08), false, 0.35)
+	# Twin oven doors — fielded panels + hinges + brass bar handles
+	for door_x in [-0.52, 0.52]:
+		_add_box(root, Vector3(door_x, 0.52, 0.42), Vector3(0.72, 0.58, 0.07), iron_mid, false, 0.5)
+		# Fielded recess
+		_add_box(root, Vector3(door_x, 0.52, 0.47), Vector3(0.52, 0.4, 0.02), iron_dark, false, 0.55)
+		# Inner raised panel
+		_add_box(root, Vector3(door_x, 0.52, 0.485), Vector3(0.38, 0.28, 0.015), iron_light, false, 0.52)
+		# Hinges
+		_add_box(root, Vector3(door_x - 0.3, 0.72, 0.46), Vector3(0.06, 0.08, 0.04), BRASS, false, 0.32)
+		_add_box(root, Vector3(door_x - 0.3, 0.32, 0.46), Vector3(0.06, 0.08, 0.04), BRASS, false, 0.32)
+		# Horizontal brass handle bar
+		_add_cylinder(root, Vector3(door_x + 0.12, 0.52, 0.52), 0.018, 0.28, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(door_x + 0.12, 0.62, 0.52), 0.012, 0.04, BRASS.darkened(0.1), false, 0.3, true)
+		_add_cylinder(root, Vector3(door_x + 0.12, 0.42, 0.52), 0.012, 0.04, BRASS.darkened(0.1), false, 0.3, true)
+	# Centre firebox opening — grate + layered emissive flame (like fireplace loop 86)
+	_add_box(root, Vector3(0, 0.38, 0.4), Vector3(0.62, 0.42, 0.08), iron_dark, false, 0.5)
+	# Ash bed
+	_add_box(root, Vector3(0, 0.2, 0.38), Vector3(0.55, 0.05, 0.22), Color(0.22, 0.18, 0.14), false, 0.85)
+	# Grate bars
+	for gi in 4:
+		var gx := -0.2 + float(gi) * 0.13
+		_add_box(root, Vector3(gx, 0.32, 0.42), Vector3(0.03, 0.22, 0.04), iron_dark.darkened(0.05), false, 0.45)
+	# Logs
+	_add_box(root, Vector3(-0.08, 0.28, 0.35), Vector3(0.4, 0.08, 0.12), MAHOGANY_DARK, false, 0.7)
+	_add_box(root, Vector3(0.1, 0.34, 0.36), Vector3(0.32, 0.07, 0.1), MAHOGANY, false, 0.7)
+	# Emissive flame layers
+	for fi in 3:
+		var em := MeshInstance3D.new()
+		var em_mesh := BoxMesh.new()
+		em_mesh.size = Vector3(0.4 - float(fi) * 0.08, 0.16 + float(fi) * 0.08, 0.035)
+		em.mesh = em_mesh
+		var emat := StandardMaterial3D.new()
+		var warm := Color(1.0, 0.48 - float(fi) * 0.08, 0.1 + float(fi) * 0.06)
+		emat.albedo_color = warm
+		emat.emission_enabled = true
+		emat.emission = warm
+		emat.emission_energy_multiplier = 2.6 - float(fi) * 0.35
+		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		em.material_override = emat
+		em.position = Vector3(float(fi - 1) * 0.05, 0.36 + float(fi) * 0.07, 0.46 + float(fi) * 0.015)
+		root.add_child(em)
+	# Hotplate top with rings + brass ring rims
+	_add_box(root, Vector3(0, 1.22, 0), Vector3(2.2, 0.09, 0.88), iron_dark, true, 0.45)
+	for ring_x in [-0.55, 0.55]:
+		_add_cylinder(root, Vector3(ring_x, 1.3, 0.05), 0.24, 0.04, iron_mid, false, 0.4)
+		_add_cylinder(root, Vector3(ring_x, 1.33, 0.05), 0.22, 0.02, BRASS.darkened(0.2), false, 0.35, true)
+		_add_cylinder(root, Vector3(ring_x, 1.34, 0.05), 0.12, 0.03, iron_dark, false, 0.45)
+	# Mantel shelf + still-life
+	_add_box(root, Vector3(0, 1.45, 0.15), Vector3(2.3, 0.06, 0.55), iron_mid, false, 0.45)
+	_add_box(root, Vector3(0, 1.48, 0.15), Vector3(2.28, 0.02, 0.52), BRASS.darkened(0.15), false, 0.35)
+	_add_cylinder(root, Vector3(-0.7, 1.58, 0.15), 0.09, 0.18, COPPER, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.55, 1.55, 0.15), 0.07, 0.14, CREAM.darkened(0.12), false, 0.8)
+	_add_box(root, Vector3(0.1, 1.52, 0.2), Vector3(0.22, 0.04, 0.12), MAHOGANY, false, 0.5)
+	_add_cylinder(root, Vector3(-0.25, 1.58, 0.18), 0.03, 0.16, CANDLE, false, 0.55)
+	# Chimney flue + brass collar + crown
+	_add_box(root, Vector3(0, 1.95, -0.12), Vector3(0.55, 1.2, 0.45), iron_body, true, 0.5)
+	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(0.65, 0.08, 0.55), BRASS.darkened(0.12), false, 0.35)
+	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.7, 0.1, 0.55), iron_dark, false, 0.5)
 	# Hanging pan rail above range
 	_add_box(root, Vector3(0, 1.75, 0.35), Vector3(1.6, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
 	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.1, 0.08, COPPER, false, 0.35, true)
 	_add_cylinder(root, Vector3(0.35, 1.52, 0.38), 0.09, 0.07, COPPER.lightened(0.05), false, 0.35, true)
 	var fire := OmniLight3D.new()
-	fire.light_color = Color(1.0, 0.5, 0.18)
-	fire.light_energy = 1.5
-	fire.omni_range = 5.8
-	fire.position = Vector3(0, 0.55, 0.55)
+	fire.light_color = Color(1.0, 0.52, 0.2)
+	fire.light_energy = 1.85
+	fire.omni_range = 6.2
+	fire.position = Vector3(0, 0.5, 0.55)
 	root.add_child(fire)
 	# Copper kettle on hotplate
 	_add_cylinder(root, Vector3(-0.55, 1.45, 0.05), 0.13, 0.22, COPPER, false, 0.35, true)
 	_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.05, 0.1, COPPER, false, 0.35, true)
 	_add_box(root, Vector3(-0.35, 1.48, 0.05), Vector3(0.18, 0.03, 0.03), COPPER, false, 0.35)
-	# Iron skillet
-	_add_cylinder(root, Vector3(0.55, 1.36, 0.05), 0.16, 0.05, IRON.darkened(0.1), false, 0.4)
+	# Iron skillet with brass handle
+	_add_cylinder(root, Vector3(0.55, 1.36, 0.05), 0.16, 0.05, iron_dark, false, 0.4)
+	_add_box(root, Vector3(0.78, 1.36, 0.05), Vector3(0.22, 0.025, 0.04), BRASS.darkened(0.15), false, 0.35)
 	_add_contact_shadow(root, 1.2, 0.55)
 	return root
 

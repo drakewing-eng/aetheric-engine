@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~03:05 (overnight goal active)  
+**Updated:** 2026-07-29 ~03:25 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -19,9 +19,9 @@
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84+87** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85** door approach |
-| 13 | Gallery engine + morning densify | **ADVANCED 78+82** morning fill |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90** NW fill |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89** iron plates |
-| 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
+| 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90** S wall |
 | 16 | Gallery centre experiment density | **ADVANCED 81+89** chalk denser |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
 | 18 | Tea still-life + window room-side views | **ADVANCED 83** |
@@ -31,22 +31,24 @@
 | 22 | Rug border + hall south + dresser plates | **ADVANCED 87** |
 | 23 | Workshop south wall + open desk gallery | **ADVANCED 88** |
 | 24 | Material fix dark wood≠iron + iron paths | **DONE 89** |
+| 25 | Kitchen range hero + S wall + morning NW | **DONE 90** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
 | 67–87 | Core queue through rugs/hall/dresser |
-| 88 | **Workshop south wall:** tool racks, chalk, crates, scrap, oils, sconces. **Desk:** open pigeonhole gallery. |
-| 89 | **Material bugfix:** dark mahogany was classified as iron metal (black desks/chairs). True-grey iron only; lower metallic. **Iron floor_path:** riveted diamond-tread plates, curbs, brass rivets/finials (gallery+workshop). **Chalk denser** marks readable from room centre. |
+| 88 | Workshop south wall densify + open desk pigeonholes |
+| 89 | Mahogany≠iron material fix; riveted iron floor plates; denser chalk |
+| 90 | **Kitchen range hero:** mid-grey iron, brass trim/hinges/handles, grate + emissive flame layers, brass hotplate rings. **Kitchen south wall** shelves/art/crocks/lamps (from_south empty plaster). **Morning NW corner** side table, lamp, letters, low bookcase, fern. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Kitchen range still a dark mass (legit iron; could add more brass/fire detail)  
+- Conservatory exterior view still simplified green orbs  
 - Optional micro-polish only  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_89/`  
+- Shots: `auto_loop_67/` … `auto_loop_90/`  
