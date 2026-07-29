@@ -848,7 +848,7 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	var base := seed0 % 3
 	var dress := (seed0 / 3) % 4
 	if base == 0:
-		# Tripod pedestal (loop 117: turned column + carved feet)
+		# Tripod pedestal (loop 117/143: short warm feet — long dark bars read as rug L-junk)
 		_add_cylinder(root, Vector3(0, 0.64, 0), 0.3, 0.04, MAHOGANY, true)
 		_add_cylinder(root, Vector3(0, 0.67, 0), 0.32, 0.025, MAHOGANY_DARK, false)
 		_add_cylinder(root, Vector3(0, 0.61, 0), 0.28, 0.02, MAHOGANY.lightened(0.05), false)
@@ -857,12 +857,14 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0, 0.4, 0), 0.055, 0.16, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(0, 0.28, 0), 0.07, 0.1, MAHOGANY, true)
 		_add_cylinder(root, Vector3(0, 0.16, 0), 0.1, 0.08, MAHOGANY_DARK, true)
+		# Compact carved feet under column — not long free bars on the rug
+		_add_cylinder(root, Vector3(0, 0.06, 0), 0.12, 0.06, MAHOGANY, true, 0.48)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			var fx := cos(rad) * 0.18
-			var fz := sin(rad) * 0.18
-			_add_box(root, Vector3(fx, 0.05, fz), Vector3(0.24, 0.04, 0.07), MAHOGANY_DARK, true, 0.45)
-			_add_cylinder(root, Vector3(fx * 1.15, 0.03, fz * 1.15), 0.03, 0.04, MAHOGANY, true)
+			var fx := cos(rad) * 0.12
+			var fz := sin(rad) * 0.12
+			_add_box(root, Vector3(fx, 0.04, fz), Vector3(0.12, 0.035, 0.055), MAHOGANY, true, 0.48)
+			_add_cylinder(root, Vector3(fx * 1.2, 0.025, fz * 1.2), 0.028, 0.035, MAHOGANY.lightened(0.05), true)
 	elif base == 1:
 		# Square top + apron drawer + four turned legs (loop 117)
 		_add_box(root, Vector3(0, 0.64, 0), Vector3(0.55, 0.04, 0.55), MAHOGANY, true, 0.45)
@@ -3977,7 +3979,8 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		elif base == "armchair.png":
 			bulk_kind = "chair"
 	if bulk_kind != "" and bulk_kind != "none":
-		_add_billboard_mesh_bulk(root, bulk_kind, width, height)
+		# Loop 143: when cross_planes carry silhouette, seat-only bulk (no legs → rug L-junk)
+		_add_billboard_mesh_bulk(root, bulk_kind, width, height, cross_planes)
 
 	if solid:
 		# Prefer explicit col_size [w,h,d] for furniture cards so player cannot walk through
@@ -4001,9 +4004,10 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	return root
 
 
-static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, height: float) -> void:
+static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, height: float, cross_planes: bool = false) -> void:
 	## Low-poly solid volume *behind* the painted card (card faces +Z at z≈0).
 	## Keep all bulk z-max ≤ -0.04 so front hero art is never covered.
+	## Loop 143: with cross_planes, never add free-standing legs/stretchers (read as rug junk).
 	match bulk:
 		"sofa":
 			# Loop 138: tight bulk fully behind chesterfield card (no green slab above back)
@@ -4015,8 +4019,9 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			for sx in [-1.0, 1.0]:
 				_add_box(root, Vector3(sx * (sw * 0.38), 0.52, -0.32),
 					Vector3(0.14, 0.28, 0.28), Color(0.24, 0.32, 0.18), false, 0.88)
-				_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.18), 0.032, 0.12, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.4), 0.03, 0.12, MAHOGANY, false)
+				if not cross_planes:
+					_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.18), 0.032, 0.12, MAHOGANY, false)
+					_add_cylinder(root, Vector3(sx * (sw * 0.36), 0.08, -0.4), 0.03, 0.12, MAHOGANY, false)
 		"desk":
 			# Loop 138: pedestals tucked behind card
 			var dw: float = clampf(width * 0.75, 1.0, 1.45)
@@ -4026,28 +4031,29 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			# Loop 142: SEAT-ONLY bulk — cross_planes carry silhouette (no green slab tower)
-			var ww: float = clampf(width * 0.48, 0.48, 0.68)
-			var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
-			# Deep seat cushion + frame only (fully behind card z≤-0.28)
-			_add_box(root, Vector3(0, 0.38, -0.36), Vector3(ww, 0.12, 0.24), MAHOGANY_DARK, false, 0.45)
-			_add_box(root, Vector3(0, 0.48, -0.34), Vector3(ww * 0.82, 0.1, 0.2), fab, false, 0.9)
-			# Tiny rear spine only (not a full back slab)
-			_add_box(root, Vector3(0, 0.72, -0.44), Vector3(ww * 0.35, 0.28, 0.08), fab.darkened(0.15), false, 0.9)
-			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * ww * 0.28, 0.52, -0.32),
-					Vector3(0.08, 0.1, 0.16), fab, false, 0.88)
-				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.26), 0.026, 0.14, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.4), 0.024, 0.14, MAHOGANY, false)
+			# Loop 143: cross_planes = no mesh bulk at all (green side cubes killed)
+			if cross_planes:
+				pass
+			else:
+				var ww: float = clampf(width * 0.42, 0.42, 0.58)
+				var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
+				_add_box(root, Vector3(0, 0.4, -0.36), Vector3(ww * 0.9, 0.1, 0.22), MAHOGANY_DARK, false, 0.45)
+				_add_box(root, Vector3(0, 0.5, -0.34), Vector3(ww * 0.78, 0.1, 0.18), fab, false, 0.9)
+				_add_box(root, Vector3(0, 0.7, -0.44), Vector3(ww * 0.3, 0.22, 0.07), fab.darkened(0.15), false, 0.9)
+				for sx in [-1.0, 1.0]:
+					_add_cylinder(root, Vector3(sx * ww * 0.24, 0.1, -0.28), 0.024, 0.12, MAHOGANY, false)
 		"chair":
-			# Loop 137/142: seat-only bulk — warmer legs (not black L-junk on rugs)
-			var cw: float = clampf(width * 0.5, 0.38, 0.55)
-			_add_box(root, Vector3(0, 0.44, -0.3), Vector3(cw, 0.06, 0.26), MAHOGANY, false, 0.48)
-			_add_box(root, Vector3(0, 0.52, -0.28), Vector3(cw * 0.9, 0.1, 0.22), VELVET_GREEN, false, 0.9)
-			for sx in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.22), 0.02, 0.34, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.38), 0.018, 0.34, MAHOGANY.darkened(0.08), false)
-			_add_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.7, 0.03, 0.03), MAHOGANY, false, 0.5)
+			# Loop 143: cross_planes = no mesh bulk (legs were gallery rug L-junk)
+			if cross_planes:
+				pass
+			else:
+				var cw: float = clampf(width * 0.48, 0.36, 0.52)
+				_add_box(root, Vector3(0, 0.46, -0.32), Vector3(cw, 0.05, 0.22), MAHOGANY, false, 0.48)
+				_add_box(root, Vector3(0, 0.52, -0.3), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
+				for sx in [-1.0, 1.0]:
+					_add_cylinder(root, Vector3(sx * cw * 0.28, 0.2, -0.24), 0.018, 0.32, MAHOGANY, false)
+					_add_cylinder(root, Vector3(sx * cw * 0.28, 0.2, -0.36), 0.016, 0.32, MAHOGANY.darkened(0.06), false)
+				_add_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.6, 0.025, 0.025), MAHOGANY, false, 0.5)
 		_:
 			_add_box(root, Vector3(0, height * 0.35, -0.22),
 				Vector3(width * 0.7, height * 0.55, 0.28), MAHOGANY_DARK, false, 0.5)
