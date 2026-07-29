@@ -1493,40 +1493,36 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(w * 0.85, 0.035, 0.04), iron_paint, false, 0.45)
 		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(0.04, 0.035, 0.3), iron_paint, false, 0.45)
 	else:
-		# Teak garden settle (loop 100b) — solid back board + picket face (never empty frame)
-		var teak := Color(0.4, 0.26, 0.12)
-		var teak_d := Color(0.28, 0.16, 0.07)
-		var teak_l := Color(0.5, 0.34, 0.16)
-		# Solid seat
-		_add_box(root, Vector3(0, seat_y - 0.02, 0.02), Vector3(w * 0.96, 0.07, seat_d), teak, true, 0.55)
-		_add_box(root, Vector3(0, seat_y + 0.02, 0.02), Vector3(w * 0.94, 0.025, seat_d * 0.92), teak_l, false, 0.58)
-		_add_box(root, Vector3(0, seat_y + 0.01, 0.24), Vector3(w * 0.95, 0.04, 0.03), teak_d, false, 0.55)
-		# Frame uprights
-		for sx in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * w * 0.44, 0.78, -0.2), Vector3(0.09, 0.72, 0.09), teak_d, true, 0.52)
-		# Solid back panel (so rear never reads as empty window frame)
-		_add_box(root, Vector3(0, 0.82, -0.22), Vector3(w * 0.84, 0.58, 0.04), teak_d, true, 0.55)
-		# Mid rail + crest
-		_add_box(root, Vector3(0, 0.55, -0.18), Vector3(w * 0.86, 0.06, 0.06), teak, true, 0.55)
-		_add_box(root, Vector3(0, 0.82, -0.18), Vector3(w * 0.86, 0.05, 0.05), teak, false, 0.55)
-		_add_box(root, Vector3(0, 1.08, -0.18), Vector3(w * 0.9, 0.08, 0.07), teak_l, true, 0.52)
-		_add_box(root, Vector3(0, 1.14, -0.17), Vector3(w * 0.35, 0.04, 0.05), teak, false, 0.5)
-		# Front-facing pickets on the panel (depth, not holes)
-		var n_pick := 5
-		for i in n_pick:
-			var t := float(i) / float(n_pick - 1)
-			var x: float = -w * 0.34 + t * w * 0.68
-			_add_box(root, Vector3(x, 0.82, -0.15), Vector3(0.07, 0.48, 0.035), teak if i % 2 == 0 else teak_l, false, 0.55)
-		# Arms + legs
+		# Teak garden settle (loop 101) — solid high-back only (no picket/window grid)
+		var teak := Color(0.42, 0.28, 0.14)
+		var teak_d := Color(0.3, 0.18, 0.08)
+		var teak_l := Color(0.52, 0.36, 0.18)
+		# Solid seat plank
+		_add_box(root, Vector3(0, seat_y - 0.02, 0.02), Vector3(w * 0.96, 0.08, seat_d), teak, true, 0.55)
+		_add_box(root, Vector3(0, seat_y + 0.025, 0.02), Vector3(w * 0.93, 0.03, seat_d * 0.9), teak_l, false, 0.58)
+		_add_box(root, Vector3(0, seat_y + 0.01, 0.24), Vector3(w * 0.95, 0.04, 0.035), teak_d, false, 0.55)
+		# Full solid back slab (front + rear — never empty or grid)
+		_add_box(root, Vector3(0, 0.82, -0.2), Vector3(w * 0.9, 0.7, 0.07), teak_d, true, 0.52)
+		_add_box(root, Vector3(0, 0.82, -0.16), Vector3(w * 0.86, 0.64, 0.03), teak, false, 0.55)
+		# Three horizontal face rails only (settle language, not window panes)
+		_add_box(root, Vector3(0, 0.58, -0.14), Vector3(w * 0.84, 0.05, 0.04), teak_l, false, 0.5)
+		_add_box(root, Vector3(0, 0.85, -0.14), Vector3(w * 0.84, 0.04, 0.04), teak, false, 0.5)
+		_add_box(root, Vector3(0, 1.1, -0.14), Vector3(w * 0.88, 0.07, 0.05), teak_l, true, 0.5)
+		# Soft crest curve
+		_add_box(root, Vector3(0, 1.16, -0.13), Vector3(w * 0.4, 0.04, 0.04), teak, false, 0.5)
+		# Side uprights flush with back
 		for sx in [-1.0, 1.0]:
 			var ex: float = sx * w * 0.44
-			_add_box(root, Vector3(ex, 0.58, 0.02), Vector3(0.09, 0.12, 0.44), teak, true, 0.52)
-			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.1, 0.05, 0.46), teak_l, false, 0.5)
-			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
-			_add_box(root, Vector3(ex, 0.22, -0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.8, -0.18), Vector3(0.1, 0.72, 0.1), teak_d, true, 0.5)
+			# Arm + solid side panel
+			_add_box(root, Vector3(ex, 0.58, 0.02), Vector3(0.1, 0.14, 0.46), teak, true, 0.52)
+			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.11, 0.05, 0.48), teak_l, false, 0.5)
+			_add_box(root, Vector3(ex, 0.55, -0.02), Vector3(0.06, 0.35, 0.36), teak_d, false, 0.55)
+			# Legs
+			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.22, -0.16), Vector3(0.08, 0.4, 0.08), teak_d, true, 0.52)
 			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.1, 0.04, 0.12), teak, true, 0.52)
 			_add_box(root, Vector3(ex, 0.03, -0.16), Vector3(0.1, 0.04, 0.12), teak, true, 0.52)
-			_add_box(root, Vector3(ex, 0.48, -0.05), Vector3(0.05, 0.22, 0.28), teak_d, false, 0.55)
 		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(w * 0.82, 0.04, 0.05), teak_d, false, 0.55)
 		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(0.05, 0.04, 0.32), teak_d, false, 0.55)
 	_add_contact_shadow(root, w * 0.5, 0.38)
@@ -2461,14 +2457,14 @@ static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: 
 					false,
 					0.9
 				)
-	# Ring of mid-height side leaves for walk-around volume
-	for k in 6:
-		var kang := float(k) * TAU / 6.0 + 0.2
-		var kr := pw * 0.18
+	# Thin mid-height side blades only (loop 101: no blocky leaf cubes)
+	for k in 5:
+		var kang := float(k) * TAU / 5.0 + 0.25
+		var kr: float = pw * 0.16
 		_add_box(
 			root,
-			Vector3(cos(kang) * kr, pot_top + (crown - pot_top) * 0.4, sin(kang) * kr),
-			Vector3(0.04 * pw, 0.12 * ph, 0.08 * pw),
+			Vector3(cos(kang) * kr, pot_top + (crown - pot_top) * 0.45, sin(kang) * kr),
+			Vector3(0.018 * pw, 0.1 * ph, 0.06 * pw),
 			leaf_b if k % 2 == 0 else leaf_a,
 			false,
 			0.92
@@ -2562,25 +2558,47 @@ static func _make_umbrella_stand(prop: Dictionary) -> Node3D:
 # ─── Features ────────────────────────────────────────────────────────────────
 
 static func _make_chandelier(_prop: Dictionary) -> Node3D:
-	## Brass gasolier — warm glass shades (never black iron).
+	## Victorian brass gasolier (loop 101) — bowl, curved arms, inverted cone shades
+	## (not modern cylinder tubes).
 	var root := Node3D.new()
 	root.name = "Chandelier"
 	var hang: float = float(_prop.get("hang", 2.95))
-	_add_cylinder(root, Vector3(0, hang + 0.25, 0), 0.02, 0.5, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang, 0), 0.12, 0.06, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, hang - 0.08, 0), 0.22, 0.04, BRASS.darkened(0.08), false, 0.3, true)
-	for a in [0.0, 60.0, 120.0, 180.0, 240.0, 300.0]:
+	var glass := Color(0.9, 0.84, 0.65)
+	var glass_hi := Color(0.95, 0.9, 0.75)
+	# Ceiling rose + drop rod
+	_add_cylinder(root, Vector3(0, hang + 0.28, 0), 0.08, 0.04, BRASS.darkened(0.05), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang + 0.14, 0), 0.018, 0.32, BRASS, false, 0.28, true)
+	# Central font / reservoir bowl
+	_add_cylinder(root, Vector3(0, hang - 0.02, 0), 0.14, 0.08, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, hang - 0.1, 0), 0.2, 0.06, BRASS.darkened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang - 0.16, 0), 0.12, 0.05, BRASS.lightened(0.05), false, 0.28, true)
+	# Six curved arms + inverted cone shades + candle cups
+	for i in 6:
+		var a := float(i) * 60.0
 		var rad := deg_to_rad(a)
-		var ax := cos(rad) * 0.28
-		var az := sin(rad) * 0.28
-		_add_box(root, Vector3(ax * 0.5, hang - 0.02, az * 0.5), Vector3(0.28, 0.025, 0.025), BRASS, false, 0.3)
-		_add_cylinder(root, Vector3(ax, hang - 0.12, az), 0.04, 0.08, BRASS, false, 0.28, true)
-		# Frosted glass shade — solid warm cream (alpha glass read black under metal mat)
-		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.055, 0.12, Color(0.92, 0.86, 0.7), false, 0.55)
+		var ax: float = cos(rad) * 0.32
+		var az: float = sin(rad) * 0.32
+		# Arm (two segments for curve suggestion)
+		_add_box(root, Vector3(ax * 0.35, hang - 0.04, az * 0.35), Vector3(0.22, 0.03, 0.03), BRASS, false, 0.3)
+		_add_box(root, Vector3(ax * 0.75, hang - 0.08, az * 0.75), Vector3(0.16, 0.025, 0.025), BRASS.darkened(0.05), false, 0.3)
+		# Cup + collar
+		_add_cylinder(root, Vector3(ax, hang - 0.12, az), 0.04, 0.05, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(ax, hang - 0.16, az), 0.055, 0.03, BRASS.lightened(0.05), false, 0.28, true)
+		# Inverted cone shade (stacked taper — Victorian glass, not tube)
+		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.07, 0.06, glass, false, 0.4)
+		_add_cylinder(root, Vector3(ax, hang - 0.28, az), 0.05, 0.06, glass_hi, false, 0.38)
+		_add_cylinder(root, Vector3(ax, hang - 0.33, az), 0.03, 0.04, glass.darkened(0.05), false, 0.4)
+		# Flame tip
+		_add_sphere_blob(root, Vector3(ax, hang - 0.18, az), 0.02, Color(1.0, 0.82, 0.4))
+	# Small crystal-drop suggestion under bowl
+	for j in 4:
+		var ja := float(j) * 90.0 + 20.0
+		var jr := deg_to_rad(ja)
+		_add_box(root, Vector3(cos(jr) * 0.08, hang - 0.22, sin(jr) * 0.08), Vector3(0.02, 0.08, 0.02), Color(0.85, 0.88, 0.9), false, 0.35)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.88, 0.6)
-	light.light_energy = 0.95
-	light.omni_range = 7.0
+	light.light_energy = 1.0
+	light.omni_range = 7.2
 	light.position = Vector3(0, hang - 0.2, 0)
 	root.add_child(light)
 	return root

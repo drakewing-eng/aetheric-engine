@@ -269,6 +269,16 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [4.5, 0.0, 2.0], "yaw": -90.0, "height": 2.35},
 			{"kind": "oil_lamp", "pos": [2.5, 0.0, -2.0], "yaw": 20.0, "height": 1.05},
 			{"kind": "oil_lamp", "pos": [-2.5, 0.0, 1.2], "yaw": -15.0, "height": 1.0},
+			# Loop 101: spawn approach densify (entrance_hall_spawn empty flanks by drawing door)
+			{"kind": "plant", "pos": [-2.4, 0.0, -4.0], "scale": 0.65, "seed": 5,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.65},
+			{"kind": "plant", "pos": [2.5, 0.0, -4.0], "scale": 0.7, "seed": 6,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.6, "height": 0.85},
+			{"kind": "chair", "pos": [-2.0, 0.0, -3.4], "yaw": 25.0, "seed": 0,
+				"fabric": Color(0.28, 0.16, 0.12)},
+			{"kind": "oil_lamp", "pos": [-1.6, 0.0, -3.9], "yaw": 10.0, "height": 1.0},
+			{"kind": "wall_sconce", "pos": [-1.4, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
+			{"kind": "wall_sconce", "pos": [1.4, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 		],
 		"doors": [
 			{
