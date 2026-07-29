@@ -145,8 +145,8 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		blk.material_override = bmat
 		blk.position = corner
 		add_child(blk)
-	# Picture rail (period hang-line) + ceiling crown moulding
-	var crown_y := 2.55
+	# Picture rail (period hang-line) — loop 113: scale to room height (was fixed 2.55)
+	var crown_y := clampf(room_h * 0.72, 2.2, room_h - 0.55)
 	var rails := [
 		[Vector3(0, crown_y, -half_d), Vector3(w - 0.25, 0.045, 0.035)],
 		[Vector3(0, crown_y, half_d), Vector3(w - 0.25, 0.045, 0.035)],
@@ -617,6 +617,94 @@ func _add_ceiling(width: float, depth: float, height: float, tint: Color = Color
 	mi.material_override = mat
 	mi.position = Vector3(0, height, 0)
 	add_child(mi)
+	# Loop 113: ceiling rose / plaster medallion — breaks blank white expanse
+	_add_ceiling_rose(0.0, 0.0, height, minf(width, depth))
+	if width >= 12.0 or depth >= 11.0:
+		# Long rooms get a second rose toward one end
+		_add_ceiling_rose(0.0, depth * 0.22, height, minf(width, depth) * 0.85)
+
+
+func _add_ceiling_rose(x: float, z: float, height: float, room_span: float) -> void:
+	## Concentric plaster rings + bead under ceiling (period medallion).
+	var y := height - 0.06
+	var r_outer := clampf(room_span * 0.09, 0.55, 1.15)
+	var plaster := Color(0.88, 0.84, 0.76)
+	var plaster_d := Color(0.78, 0.72, 0.62)
+	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	# Outer disc
+	var outer := MeshInstance3D.new()
+	outer.name = "CeilingRoseOuter"
+	var om := CylinderMesh.new()
+	om.top_radius = r_outer
+	om.bottom_radius = r_outer
+	om.height = 0.03
+	outer.mesh = om
+	var omat := StandardMaterial3D.new()
+	omat.albedo_color = plaster
+	omat.roughness = 0.9
+	outer.material_override = omat
+	outer.position = Vector3(x, y, z)
+	add_child(outer)
+	# Mid ring (stepped)
+	var mid := MeshInstance3D.new()
+	mid.name = "CeilingRoseMid"
+	var mm := CylinderMesh.new()
+	mm.top_radius = r_outer * 0.68
+	mm.bottom_radius = r_outer * 0.72
+	mm.height = 0.04
+	mid.mesh = mm
+	var mmat := StandardMaterial3D.new()
+	mmat.albedo_color = plaster_d
+	mmat.roughness = 0.88
+	mid.material_override = mmat
+	mid.position = Vector3(x, y - 0.02, z)
+	add_child(mid)
+	# Inner boss
+	var inn := MeshInstance3D.new()
+	inn.name = "CeilingRoseBoss"
+	var im := CylinderMesh.new()
+	im.top_radius = r_outer * 0.28
+	im.bottom_radius = r_outer * 0.32
+	im.height = 0.05
+	inn.mesh = im
+	var imat := StandardMaterial3D.new()
+	imat.albedo_color = plaster.lightened(0.05)
+	imat.roughness = 0.85
+	inn.material_override = imat
+	inn.position = Vector3(x, y - 0.035, z)
+	add_child(inn)
+	# Petal beads around mid ring
+	for i in 8:
+		var ang := float(i) * (TAU / 8.0)
+		var bead := MeshInstance3D.new()
+		var bm := SphereMesh.new()
+		bm.radius = r_outer * 0.06
+		bm.height = r_outer * 0.1
+		bead.mesh = bm
+		var bmat := StandardMaterial3D.new()
+		bmat.albedo_color = plaster_d.darkened(0.05)
+		bmat.roughness = 0.88
+		bead.material_override = bmat
+		bead.position = Vector3(x + cos(ang) * r_outer * 0.55, y - 0.025, z + sin(ang) * r_outer * 0.55)
+		add_child(bead)
+	# Tiny brass centre stud (gasolier mount suggestion)
+	var stud := MeshInstance3D.new()
+	var sm := CylinderMesh.new()
+	sm.top_radius = 0.04
+	sm.bottom_radius = 0.05
+	sm.height = 0.03
+	stud.mesh = sm
+	var smat := StandardMaterial3D.new()
+	if wood:
+		smat.albedo_texture = wood
+		smat.albedo_color = Color(0.85, 0.7, 0.45)
+	else:
+		smat.albedo_color = Color(0.7, 0.55, 0.3)
+	smat.roughness = 0.4
+	smat.metallic = 0.35
+	stud.material_override = smat
+	stud.position = Vector3(x, y - 0.05, z)
+	add_child(stud)
 
 func _add_chair_rail(
 	wall_name: String,

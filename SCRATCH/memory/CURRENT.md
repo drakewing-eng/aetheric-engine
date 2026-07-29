@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~08:50 (overnight goal active)  
+**Updated:** 2026-07-29 ~09:05 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -14,7 +14,7 @@
 | 5 | Geometric / surface detail | **ADVANCED 72–110** floors/rugs |
 | 6 | Victorian wall art | **ADVANCED 69+96+97** hall |
 | 7 | Plant diversity / side volume | **ADVANCED 74–75+99–102** |
-| 8 | Side-view mesh furniture | **ADVANCED 70+89+97–106** chair |
+| 8 | Side-view mesh furniture | **ADVANCED 70–113** armchair |
 | 9 | Door transition safety | **ADVANCED 76+98** seat |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73–101+106** kitchen |
@@ -26,6 +26,7 @@
 | 45 | Conservatory/kitchen floors + workshop runners | **DONE 110** |
 | 46 | Painterly exterior window/glass views | **DONE 111** |
 | 47 | Baked chalk plates (room-length read) | **DONE 112** |
+| 48 | Armchair side bulk + ceiling roses | **DONE 113** |
 
 ## Loops
 
@@ -38,14 +39,15 @@
 | 109 | Persian + hall runner woven plates; chalk 0/2/3 denser |
 | 110 | Conservatory flags + kitchen quarry + workshop work runners |
 | 111 | Painterly exterior garden/street/night view plates |
-| 112 | **Chalk:** baked full-face plates (equations/engine/ledger/wave) replace thin mesh sticks — diagrams readable from room centre/spawn. |
+| 112 | Baked chalk plates (equations/engine/ledger/wave) |
+| 113 | **Armchair:** multi-layer back + balloon wings/seat (not paper-thin side). **Chair** seat bulk. **Ceiling roses** under plaster + picture rail scales to room height. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish (morning paper-thin side chairs; exteriors still stylized)  
+- Optional micro-polish (ceiling roses subtle under bright light; exteriors still stylized)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_112/`  
+- Shots: `auto_loop_67/` … `auto_loop_113/`  

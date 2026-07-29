@@ -268,20 +268,21 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	root.name = "Chair"
 	var seed0: int = int(prop.get("seed", 0))
 	var fabric: Color = prop.get("fabric", VELVET_GREEN if seed0 % 2 == 0 else VELVET_RED.darkened(0.15))
-	# Seat box + cushion (solid = walk-block)
-	_add_box(root, Vector3(0, 0.44, 0.02), Vector3(0.52, 0.07, 0.5), MAHOGANY, true, 0.48)
-	_add_box(root, Vector3(0, 0.5, 0.02), Vector3(0.48, 0.07, 0.46), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.55, 0.02), Vector3(0.44, 0.035, 0.42), fabric.darkened(0.1), false, 0.92)
+	# Seat box + cushion (loop 113: slightly thicker seat for side bulk)
+	_add_box(root, Vector3(0, 0.44, 0.02), Vector3(0.52, 0.07, 0.52), MAHOGANY, true, 0.48)
+	_add_box(root, Vector3(0, 0.5, 0.02), Vector3(0.48, 0.08, 0.48), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.56, 0.02), Vector3(0.44, 0.04, 0.44), fabric.darkened(0.1), false, 0.92)
+	_add_cylinder(root, Vector3(0, 0.52, 0.02), 0.2, 0.06, fabric.darkened(0.05), false, 0.9)
 	# Piping / welt edge (detail)
-	_add_box(root, Vector3(0, 0.53, 0.25), Vector3(0.46, 0.015, 0.02), fabric.darkened(0.2), false, 0.9)
+	_add_box(root, Vector3(0, 0.53, 0.26), Vector3(0.46, 0.015, 0.02), fabric.darkened(0.2), false, 0.9)
 	# Nailhead band
 	for i in 6:
 		var nx := -0.2 + i * 0.08
-		_add_cylinder(root, Vector3(nx, 0.47, 0.26), 0.01, 0.015, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(nx, 0.47, 0.27), 0.01, 0.015, BRASS, false, 0.3, true)
 	# Back frame OPEN (loop 98: no solid mahogany slab from behind)
 	# Side uprights + top crest + lower rail only; splat fills the void
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.23, 0.9, -0.2), Vector3(0.055, 0.78, 0.06), MAHOGANY, true, 0.48)
+		_add_box(root, Vector3(sx * 0.23, 0.9, -0.2), Vector3(0.06, 0.78, 0.08), MAHOGANY, true, 0.48)
 	# Top crest rail
 	_add_box(root, Vector3(0, 1.28, -0.19), Vector3(0.48, 0.1, 0.07), MAHOGANY, false, 0.45)
 	_add_box(root, Vector3(0, 1.34, -0.18), Vector3(0.36, 0.05, 0.05), MAHOGANY.lightened(0.05), false, 0.45)
@@ -327,8 +328,8 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair (loop 103): open side silhouette — seat rail + arm gap + rolled wing,
-	## not a solid green wall from extreme side.
+	## Wing chair (loop 103/113): open under-arm void + ballooned wings/back so extreme
+	## side views read as upholstered volume, not a paper-thin green slab.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -339,53 +340,53 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	# Wood seat rail (visible from side under cushions)
 	_add_box(root, Vector3(0, 0.3, 0.06), Vector3(0.92, 0.1, 0.86), MAHOGANY_DARK, true, 0.42)
 	_add_box(root, Vector3(0, 0.36, 0.06), Vector3(0.94, 0.04, 0.88), MAHOGANY, false, 0.45)
-	# Plush seat cushions (sit above rail — gap under arm reads open)
+	# Plush seat cushions (layered for bulk)
 	_add_box(root, Vector3(0, 0.46, 0.1), Vector3(0.82, 0.14, 0.72), fabric, true, 0.9)
 	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.72, 0.07, 0.62), fabric_d, false, 0.92)
+	_add_cylinder(root, Vector3(0, 0.52, 0.1), 0.34, 0.1, fabric_d, false, 0.9)  # seat pillow round
 	# Button tufts on seat
 	for bx in [-0.18, 0.0, 0.18]:
 		for bz in [-0.08, 0.1]:
 			_add_cylinder(root, Vector3(bx, 0.59, bz), 0.016, 0.018, fabric_dd, false, 0.95)
-	# High back (narrow depth so side isn't a slab)
-	_add_box(root, Vector3(0, 0.95, -0.32), Vector3(0.78, 0.9, 0.12), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.35, -0.3), Vector3(0.7, 0.12, 0.1), fabric_d, false, 0.9)
+	# Loop 113: multi-layer high back (depth ~0.28 so side is not a 12cm slab)
+	_add_box(root, Vector3(0, 0.95, -0.28), Vector3(0.78, 0.9, 0.22), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.98, -0.18), Vector3(0.7, 0.82, 0.1), fabric_d, false, 0.9)
+	_add_box(root, Vector3(0, 1.35, -0.26), Vector3(0.7, 0.14, 0.18), fabric_d, false, 0.9)
+	_add_cylinder(root, Vector3(0, 1.15, -0.16), 0.28, 0.55, fabric, false, 0.9)  # back balloon
 	# Thin wood crest bead
-	_add_box(root, Vector3(0, 1.44, -0.28), Vector3(0.62, 0.035, 0.06), MAHOGANY, false, 0.45)
-	# Button tufts on back
+	_add_box(root, Vector3(0, 1.46, -0.24), Vector3(0.62, 0.04, 0.1), MAHOGANY, false, 0.45)
+	# Button tufts on back (front of back cushion)
 	for by in [0.85, 1.05, 1.22]:
 		for bx in [-0.16, 0.0, 0.16]:
-			_add_cylinder(root, Vector3(bx, by, -0.24), 0.014, 0.016, fabric_dd, false, 0.95)
-	# Side uprights (wood posts — break fabric wall from side)
+			_add_cylinder(root, Vector3(bx, by, -0.12), 0.014, 0.016, fabric_dd, false, 0.95)
+	# Side uprights (wood posts)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 0.85, -0.3), Vector3(0.06, 0.9, 0.08), MAHOGANY_DARK, true, 0.45)
-	# Wings — C-curve rolls only at upper rear (not full-height side slabs)
+		_add_box(root, Vector3(sx * 0.4, 0.85, -0.28), Vector3(0.07, 0.9, 0.12), MAHOGANY_DARK, true, 0.45)
+	# Wings — thicker C-curve rolls (side silhouette bulk)
 	for sx in [-1.0, 1.0]:
-		# Main wing panel (rear-biased, leaves front side open)
-		_add_box(root, Vector3(sx * 0.4, 1.15, -0.18), Vector3(0.12, 0.5, 0.28), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.44, 1.2, -0.05), 0.07, 0.4, fabric_d, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.42, 1.35, -0.12), 0.06, 0.22, fabric, false, 0.9)
-		# Piping
-		_add_box(root, Vector3(sx * 0.48, 1.18, -0.1), Vector3(0.02, 0.4, 0.22), fabric_dd, false, 0.9)
-	# Arms — mid-height only with open under-arm void (key side read)
+		_add_box(root, Vector3(sx * 0.42, 1.12, -0.12), Vector3(0.16, 0.55, 0.38), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.46, 1.18, 0.0), 0.1, 0.48, fabric_d, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.44, 1.32, -0.08), 0.09, 0.28, fabric, false, 0.9)
+		_add_cylinder(root, Vector3(sx * 0.48, 1.05, -0.2), 0.08, 0.35, fabric_dd, false, 0.9)
+		# Piping edge
+		_add_box(root, Vector3(sx * 0.52, 1.15, -0.05), Vector3(0.025, 0.45, 0.28), fabric_dd, false, 0.9)
+	# Arms — mid-height with open under-arm void
 	for sx in [-1.0, 1.0]:
-		# Arm pad
-		_add_box(root, Vector3(sx * 0.4, 0.68, 0.08), Vector3(0.14, 0.1, 0.55), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.4, 0.72, 0.12), 0.07, 0.45, fabric_d, false, 0.88)
-		# Front scroll + wood support post (void under arm behind post)
-		_add_cylinder(root, Vector3(sx * 0.38, 0.52, 0.32), 0.055, 0.14, MAHOGANY, false, 0.45)
-		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
-		# Rear arm root into wing
-		_add_box(root, Vector3(sx * 0.4, 0.7, -0.15), Vector3(0.1, 0.12, 0.18), fabric_d, false, 0.88)
+		_add_box(root, Vector3(sx * 0.42, 0.68, 0.1), Vector3(0.16, 0.12, 0.58), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.42, 0.74, 0.14), 0.09, 0.5, fabric_d, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.54, 0.34), 0.06, 0.16, MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(sx * 0.42, 0.48, 0.3), Vector3(0.055, 0.3, 0.055), MAHOGANY_DARK, true, 0.45)
+		_add_box(root, Vector3(sx * 0.42, 0.72, -0.12), Vector3(0.12, 0.14, 0.22), fabric_d, false, 0.88)
 	# Legs + feet
 	for sx in [-1.0, 1.0]:
 		_add_cylinder(root, Vector3(sx * 0.34, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(sx * 0.34, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
 		_add_cylinder(root, Vector3(sx * 0.32, 0.14, -0.28), 0.038, 0.26, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(sx * 0.32, 0.02, -0.28), 0.05, 0.04, MAHOGANY, true)
-	# Front skirt only (sides open so legs/void read)
+	# Front/rear skirt (sides open)
 	_add_box(root, Vector3(0, 0.22, 0.35), Vector3(0.75, 0.06, 0.06), MAHOGANY_DARK, false, 0.42)
 	_add_box(root, Vector3(0, 0.22, -0.28), Vector3(0.7, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
-	_add_contact_shadow(root, 0.68, 0.62)
+	_add_contact_shadow(root, 0.7, 0.64)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
