@@ -183,15 +183,19 @@ const ROOMS := {
 				"size": [2.0, 9.0],
 				"texture": "res://assets/rooms/textures/hall_runner.jpg",
 			},
-			{"kind": "hall_table", "pos": [-4.0, 0.0, 1.2], "yaw": 10.0},
-			{"kind": "coat_stand", "pos": [-5.5, 0.0, -2.5], "yaw": 0.0},
-			{"kind": "umbrella_stand", "pos": [-5.2, 0.0, -3.3], "yaw": 10.0},
-			{"kind": "chair", "pos": [3.5, 0.0, 2.0], "yaw": -160.0, "fabric": Color(0.32, 0.2, 0.14)},
-			{"kind": "chair", "pos": [-3.2, 0.0, 2.2], "yaw": 40.0, "fabric": Color(0.3, 0.18, 0.12)},
+			# Loop 73: two consoles with distinct seeds (not one generic table)
+			{"kind": "hall_table", "pos": [-4.0, 0.0, 1.2], "yaw": 10.0, "seed": 0},
+			{"kind": "hall_table", "pos": [4.2, 0.0, -1.8], "yaw": -15.0, "seed": 4},
+			{"kind": "coat_stand", "pos": [-5.5, 0.0, -2.5], "yaw": 0.0, "seed": 0},
+			{"kind": "umbrella_stand", "pos": [-5.2, 0.0, -3.3], "yaw": 10.0, "seed": 1},
+			{"kind": "chair", "pos": [3.5, 0.0, 2.0], "yaw": -160.0, "seed": 3,
+				"fabric": Color(0.32, 0.2, 0.14)},
+			{"kind": "chair", "pos": [-3.2, 0.0, 2.2], "yaw": 40.0, "seed": 5,
+				"fabric": Color(0.3, 0.18, 0.12)},
 			{"kind": "plant", "pos": [5.2, 0.0, 3.0], "scale": 0.85, "seed": 3,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.8, "height": 0.9},
-			# Freestanding oil lamp (novel hall lamps) — hall_table also carries one
-			{"kind": "oil_lamp", "pos": [3.8, 0.0, -1.5], "yaw": -20.0, "height": 1.2},
+			# Freestanding oil lamp (second kit table uses candle/tray — not lamp clone)
+			{"kind": "oil_lamp", "pos": [0.8, 0.0, 3.2], "yaw": -20.0, "height": 1.15},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
@@ -586,8 +590,9 @@ const ROOMS := {
 			{"kind": "dresser", "pos": [-3.6, 0.0, 1.5], "yaw": 90.0, "seed": 1},
 			{"kind": "sink", "pos": [3.5, 0.0, 2.5], "yaw": -90.0},
 			# Loop 68: thin density — clear walk to range/sink/prep (no pot pile-ups)
+			# Loop 73: four prep kits available — use two distinct (0 flour, 2 veg)
 			{"kind": "prep_table", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "width": 2.2, "seed": 0},
-			{"kind": "prep_table", "pos": [2.9, 0.0, -1.2], "yaw": -90.0, "width": 1.45, "seed": 1},
+			{"kind": "prep_table", "pos": [2.9, 0.0, -1.2], "yaw": -90.0, "width": 1.45, "seed": 2},
 			{"kind": "stool", "pos": [-1.1, 0.0, -0.5], "yaw": 20.0, "seed": 23},
 			{"kind": "stool", "pos": [1.1, 0.0, -0.5], "yaw": -15.0, "seed": 24},
 			# Copper: spaced working stock, not a cluster

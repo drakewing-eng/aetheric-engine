@@ -173,6 +173,45 @@ func _init() -> void:
 		failed += 1
 	else:
 		print("OK hall coat_stand")
+	# Hall should have at least one hall_table (loop 73: two consoles)
+	var hall_tables := 0
+	for p in Rooms.get_room("entrance_hall").get("props", []):
+		if str(p.get("kind", "")) == "hall_table":
+			hall_tables += 1
+	if hall_tables < 1:
+		push_error("Hall missing hall_table")
+		failed += 1
+	else:
+		print("OK hall_table count=", hall_tables)
+
+	# Door spawn safety: every door spawn must land inside target room footprint
+	for rid in room_ids:
+		var room: Dictionary = Rooms.get_room(rid)
+		var size: Array = room.get("size", [8, 8, 3])
+		var half_w: float = float(size[0]) * 0.5 - 0.4
+		var half_d: float = float(size[1]) * 0.5 - 0.4
+		for door in room.get("doors", []):
+			var target: String = str(door.get("target", ""))
+			var troom: Dictionary = Rooms.get_room(target)
+			if troom.is_empty():
+				push_error("%s door target missing: %s" % [rid, target])
+				failed += 1
+				continue
+			var tsize: Array = troom.get("size", [8, 8, 3])
+			var thw: float = float(tsize[0]) * 0.5 - 0.35
+			var thd: float = float(tsize[1]) * 0.5 - 0.35
+			var sp: Array = door.get("spawn", [0, 0, 0])
+			var sx := float(sp[0]) if sp.size() > 0 else 0.0
+			var sz := float(sp[2]) if sp.size() > 2 else 0.0
+			# After inward nudge of 0.55, still must be on floor plane inside room
+			if absf(sx) > thw + 0.6 or absf(sz) > thd + 0.6:
+				push_error("%s→%s spawn far outside room: (%.2f, %.2f)" % [rid, target, sx, sz])
+				failed += 1
+			else:
+				print("OK door spawn ", rid, "→", target, " @(", sx, ",", sz, ")")
+			if not door.has("spawn_yaw") and not door.has("spawn"):
+				push_error("%s door missing spawn" % rid)
+				failed += 1
 
 	if failed > 0:
 		print("FAIL test_room_art_pass failed=", failed)

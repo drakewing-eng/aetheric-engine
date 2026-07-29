@@ -740,39 +740,101 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	_add_contact_shadow(root, 0.34, 0.34)
 	return root
 
-static func _make_hall_table(_prop: Dictionary) -> Node3D:
-	## Console table with oil lamp, card tray, gloves — entrance hall still-life.
+static func _make_hall_table(prop: Dictionary) -> Node3D:
+	## Hall console — seed forks base (turned / square / demi) + still-life kit.
 	var root := Node3D.new()
 	root.name = "HallTable"
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(1.4, 0.05, 0.5), MAHOGANY, true, 0.48)
-	_add_box(root, Vector3(0, 0.78, 0), Vector3(1.35, 0.04, 0.46), MAHOGANY_DARK, false, 0.45)
-	_add_box(root, Vector3(0, 0.4, 0), Vector3(1.15, 0.03, 0.4), MAHOGANY_DARK, false, 0.45)
-	for sx in [-1, 1]:
-		_add_cylinder(root, Vector3(sx * 0.52, 0.4, 0.12), 0.045, 0.78, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.52, 0.4, -0.12), 0.045, 0.78, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.52, 0.02, 0.12), 0.06, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.52, 0.02, -0.12), 0.06, 0.04, MAHOGANY, true)
-	# Calling-card tray + letters
-	_add_box(root, Vector3(-0.3, 0.88, 0.05), Vector3(0.38, 0.035, 0.24), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(-0.3, 0.91, 0.05), Vector3(0.3, 0.01, 0.18), PAPER, false)
-	_add_box(root, Vector3(-0.28, 0.925, 0.02), Vector3(0.22, 0.008, 0.12), PAPER.darkened(0.08), false)
-	# Gloves / handkerchief
-	_add_box(root, Vector3(0.15, 0.87, 0.1), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.1), false, 0.9)
-	# Argand oil lamp (solid frosted chimney — alpha glass reads black)
-	_add_cylinder(root, Vector3(0.4, 0.9, -0.05), 0.07, 0.05, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.4, 1.0, -0.05), 0.028, 0.18, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0.4, 1.15, -0.05), 0.04, 0.22, Color(0.88, 0.9, 0.85), false, 0.4)
-	_add_cylinder(root, Vector3(0.4, 1.28, -0.05), 0.025, 0.03, BRASS, false, 0.3, true)
-	_add_sphere_blob(root, Vector3(0.4, 1.08, -0.05), 0.025, Color(1.0, 0.8, 0.4))
-	# Small clock / vase
-	_add_cylinder(root, Vector3(-0.05, 0.95, -0.1), 0.05, 0.16, BRASS, false, 0.3, true)
-	_add_box(root, Vector3(-0.05, 1.05, -0.1), Vector3(0.08, 0.08, 0.04), Color(0.85, 0.82, 0.75), false, 0.5)
-	var lamp := OmniLight3D.new()
-	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.6
-	lamp.omni_range = 3.2
-	lamp.position = Vector3(0.4, 1.2, -0.05)
-	root.add_child(lamp)
+	var seed0: int = int(prop.get("seed", 0))
+	var base := seed0 % 3
+	var dress := (seed0 / 3) % 4
+	var top_y := 0.82
+	if base == 0:
+		# Classic turned-leg console
+		_add_box(root, Vector3(0, top_y, 0), Vector3(1.4, 0.05, 0.5), MAHOGANY, true, 0.48)
+		_add_box(root, Vector3(0, top_y - 0.04, 0), Vector3(1.35, 0.04, 0.46), MAHOGANY_DARK, false, 0.45)
+		_add_box(root, Vector3(0, 0.4, 0), Vector3(1.15, 0.03, 0.4), MAHOGANY_DARK, false, 0.45)
+		for sx in [-1.0, 1.0]:
+			for sz in [-0.12, 0.12]:
+				_add_cylinder(root, Vector3(sx * 0.52, 0.4, sz), 0.045, 0.78, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * 0.52, 0.02, sz), 0.06, 0.04, MAHOGANY, true)
+	elif base == 1:
+		# Square pedestal console (heavier, ebony feet)
+		_add_box(root, Vector3(0, top_y, 0), Vector3(1.35, 0.06, 0.48), MAHOGANY_DARK, true, 0.45)
+		_add_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.28, 0.02, 0.42), MAHOGANY, false, 0.42)
+		for sx in [-0.48, 0.48]:
+			_add_box(root, Vector3(sx, 0.4, 0), Vector3(0.14, 0.76, 0.38), Color(0.14, 0.1, 0.08), true, 0.5)
+			_add_box(root, Vector3(sx, 0.04, 0), Vector3(0.18, 0.08, 0.42), MAHOGANY_DARK, true, 0.48)
+		_add_box(root, Vector3(0, 0.22, 0), Vector3(0.9, 0.04, 0.32), MAHOGANY, false, 0.48)
+	else:
+		# Demi-lune against wall
+		_add_box(root, Vector3(0, top_y, 0.06), Vector3(1.25, 0.05, 0.38), MAHOGANY, true, 0.48)
+		_add_cylinder(root, Vector3(0, top_y, 0.06), 0.55, 0.05, MAHOGANY, true, 0.48)
+		_add_cylinder(root, Vector3(-0.4, 0.4, 0.1), 0.04, 0.78, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.4, 0.4, 0.1), 0.04, 0.78, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(0.0, 0.4, -0.05), 0.045, 0.78, MAHOGANY_DARK, true)
+		_add_box(root, Vector3(0, 0.35, 0.08), Vector3(0.7, 0.03, 0.15), MAHOGANY, false, 0.48)
+	var ty := top_y + 0.05
+	# Dressing kits — never clone the same still-life
+	if dress == 0:
+		# Calling cards + Argand lamp + clock
+		_add_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.36, 0.03, 0.22), MAHOGANY_DARK, false, 0.4)
+		_add_box(root, Vector3(-0.35, ty + 0.03, 0.05), Vector3(0.28, 0.01, 0.16), PAPER, false)
+		_add_box(root, Vector3(-0.32, ty + 0.045, 0.02), Vector3(0.2, 0.008, 0.11), PAPER.darkened(0.08), false)
+		_add_box(root, Vector3(0.05, ty, 0.08), Vector3(0.14, 0.02, 0.09), CREAM.darkened(0.12), false, 0.9)
+		_add_cylinder(root, Vector3(0.4, ty + 0.02, -0.05), 0.07, 0.05, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.12, -0.05), 0.028, 0.16, BRASS.darkened(0.05), false, 0.3, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.28, -0.05), 0.04, 0.2, Color(0.88, 0.9, 0.85), false, 0.4)
+		_add_sphere_blob(root, Vector3(0.4, ty + 0.2, -0.05), 0.025, Color(1.0, 0.8, 0.4))
+		_add_cylinder(root, Vector3(-0.05, ty + 0.1, -0.1), 0.05, 0.14, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(-0.05, ty + 0.2, -0.1), Vector3(0.08, 0.08, 0.04), Color(0.85, 0.82, 0.75), false, 0.5)
+		var lamp0 := OmniLight3D.new()
+		lamp0.light_color = Color(1.0, 0.85, 0.55)
+		lamp0.light_energy = 0.6
+		lamp0.omni_range = 3.2
+		lamp0.position = Vector3(0.4, ty + 0.32, -0.05)
+		root.add_child(lamp0)
+	elif dress == 1:
+		# Hat box + gloves + candlestick (no freestanding lamp clone)
+		_add_cylinder(root, Vector3(-0.35, ty + 0.1, 0), 0.14, 0.18, Color(0.55, 0.28, 0.18), false, 0.75)
+		_add_cylinder(root, Vector3(-0.35, ty + 0.2, 0), 0.15, 0.03, Color(0.48, 0.24, 0.14), false, 0.7)
+		_add_box(root, Vector3(0.1, ty, 0.08), Vector3(0.18, 0.025, 0.12), CREAM.darkened(0.15), false, 0.9)
+		_add_box(root, Vector3(0.12, ty + 0.02, 0.05), Vector3(0.12, 0.015, 0.08), CREAM.darkened(0.2), false, 0.9)
+		_add_cylinder(root, Vector3(0.4, ty + 0.02, 0), 0.06, 0.04, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0.4, ty + 0.14, 0), 0.02, 0.2, CANDLE, false, 0.55)
+		_add_sphere_blob(root, Vector3(0.4, ty + 0.28, 0), 0.03, Color(1.0, 0.78, 0.4))
+		_add_box(root, Vector3(0.0, ty, -0.1), Vector3(0.22, 0.04, 0.14), MAHOGANY_DARK, false, 0.5)
+		var lamp1 := OmniLight3D.new()
+		lamp1.light_color = Color(1.0, 0.82, 0.5)
+		lamp1.light_energy = 0.4
+		lamp1.omni_range = 2.4
+		lamp1.position = Vector3(0.4, ty + 0.32, 0)
+		root.add_child(lamp1)
+	elif dress == 2:
+		# Flower vase + calling cards + ink tray
+		_add_cylinder(root, Vector3(0.35, ty + 0.1, 0), 0.06, 0.18, CREAM.darkened(0.05), false, 0.7)
+		_add_sphere_blob(root, Vector3(0.35, ty + 0.28, 0.02), 0.05, Color(0.65, 0.25, 0.28))
+		_add_sphere_blob(root, Vector3(0.32, ty + 0.26, -0.03), 0.04, Color(0.75, 0.7, 0.35))
+		_add_sphere_blob(root, Vector3(0.4, ty + 0.25, 0.0), 0.035, Color(0.5, 0.55, 0.3))
+		_add_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.3, 0.02, 0.18), PAPER, false)
+		_add_box(root, Vector3(-0.32, ty + 0.015, 0.02), Vector3(0.22, 0.008, 0.12), PAPER.darkened(0.06), false)
+		_add_box(root, Vector3(0.0, ty, -0.08), Vector3(0.16, 0.03, 0.1), MAHOGANY_DARK, false, 0.45)
+		_add_cylinder(root, Vector3(0.02, ty + 0.05, -0.08), 0.015, 0.08, INK, false, 0.5)
+	else:
+		# Silver tray + correspondence + small oil font
+		_add_box(root, Vector3(0.0, ty, 0.0), Vector3(0.55, 0.02, 0.32), BRASS.darkened(0.15), false, 0.3)
+		_add_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), BRASS.lightened(0.05), false, 0.28)
+		_add_box(root, Vector3(-0.1, ty + 0.03, 0.02), Vector3(0.2, 0.01, 0.14), PAPER, false)
+		_add_box(root, Vector3(-0.08, ty + 0.04, 0.0), Vector3(0.16, 0.008, 0.1), PAPER.darkened(0.05), false)
+		_add_cylinder(root, Vector3(0.15, ty + 0.06, -0.05), 0.04, 0.08, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0.15, ty + 0.16, -0.05), 0.025, 0.12, Color(0.9, 0.92, 0.86), false, 0.4)
+		_add_sphere_blob(root, Vector3(0.15, ty + 0.12, -0.05), 0.02, Color(1.0, 0.8, 0.4))
+		_add_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
+		var lamp3 := OmniLight3D.new()
+		lamp3.light_color = Color(1.0, 0.85, 0.55)
+		lamp3.light_energy = 0.45
+		lamp3.omni_range = 2.6
+		lamp3.position = Vector3(0.15, ty + 0.2, -0.05)
+		root.add_child(lamp3)
 	_add_contact_shadow(root, 0.78, 0.38)
 	return root
 
@@ -900,40 +962,65 @@ static func _make_sink(_prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_prep_table(prop: Dictionary) -> Node3D:
-	## Scrubbed kitchen prep table — not a lab workbench. seed varies still-life.
+	## Scrubbed kitchen prep table — not a lab workbench. 4 still-life kits by seed.
 	var root := Node3D.new()
 	root.name = "PrepTable"
 	var width: float = prop.get("width", 1.8)
 	var seed0: int = int(prop.get("seed", 0))
+	var kit := seed0 % 4
 	# Scrubbed pale work-top (reads as board, not mahogany furniture)
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), Color(0.72, 0.62, 0.42), true, 0.72)
+	var top_col := Color(0.72, 0.62, 0.42) if kit != 2 else Color(0.68, 0.58, 0.4)
+	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), top_col, true, 0.72)
 	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), Color(0.55, 0.42, 0.28), false, 0.55)
+	# Edge board detail
+	_add_box(root, Vector3(0, 0.86, 0.42), Vector3(width * 0.98, 0.025, 0.03), top_col.darkened(0.08), false, 0.7)
 	for lx in [-width * 0.4, width * 0.4]:
 		for lz in [-0.32, 0.32]:
 			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), Color(0.38, 0.26, 0.14), true, 0.55)
-	# Stretchers
 	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
-	# Varied still-life — avoid clone white cylinders
-	if seed0 % 2 == 0:
-		_add_cylinder(root, Vector3(-0.45, 0.98, 0.12), 0.13, 0.24, CREAM.darkened(0.1), false, 0.92)
-		_add_cylinder(root, Vector3(-0.45, 1.12, 0.12), 0.09, 0.05, CREAM.darkened(0.18), false, 0.9)
-		_add_box(root, Vector3(0.1, 0.88, -0.12), Vector3(0.28, 0.05, 0.2), CREAM.darkened(0.05), false, 0.8)
-		_add_box(root, Vector3(0.42, 0.875, 0.12), Vector3(0.32, 0.02, 0.2), MAHOGANY, false, 0.55)
-		_add_box(root, Vector3(0.5, 0.89, 0.12), Vector3(0.22, 0.015, 0.04), IRON, false, 0.4)
-		_add_cylinder(root, Vector3(-0.12, 0.95, 0.22), 0.1, 0.18, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(0.32, 0.9, -0.22), 0.025, 0.3, MAHOGANY_DARK, false, 0.55)
-		_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.2, 0.9, -0.2), 0.04, 0.06, Color(0.55, 0.35, 0.15), false, 0.8)
-	else:
-		# Bread board, pie dish, tall crock, copper ladle
-		_add_box(root, Vector3(-0.4, 0.875, 0.1), Vector3(0.45, 0.025, 0.28), OAK.lightened(0.2), false, 0.65)
-		_add_cylinder(root, Vector3(-0.35, 0.92, 0.1), 0.12, 0.06, CREAM.darkened(0.12), false, 0.85)
-		_add_cylinder(root, Vector3(0.15, 1.0, 0.05), 0.09, 0.28, CLAY, false, 0.8)
-		_add_cylinder(root, Vector3(0.15, 1.16, 0.05), 0.07, 0.04, CLAY.darkened(0.1), false, 0.8)
-		_add_cylinder(root, Vector3(0.45, 0.95, -0.1), 0.11, 0.14, COPPER.lightened(0.05), false, 0.35, true)
-		_add_box(root, Vector3(0.55, 0.95, 0.05), Vector3(0.03, 0.2, 0.03), IRON, false, 0.4)
-		_add_cylinder(root, Vector3(-0.1, 0.9, -0.2), 0.05, 0.08, Color(0.6, 0.4, 0.2), false, 0.8)
-		_add_box(root, Vector3(0.3, 0.88, 0.2), Vector3(0.2, 0.03, 0.14), CREAM, false, 0.75)
+	# Lower shelf with seed-unique storage
+	if kit % 2 == 0:
+		_add_box(root, Vector3(0, 0.28, 0), Vector3(width * 0.7, 0.03, 0.55), OAK.lightened(0.05), false, 0.6)
+		_add_cylinder(root, Vector3(-width * 0.2, 0.4, 0.1), 0.08, 0.16, CLAY, false, 0.8)
+		_add_cylinder(root, Vector3(width * 0.15, 0.38, -0.05), 0.1, 0.12, COPPER.darkened(0.1), false, 0.35, true)
+	match kit:
+		0:
+			# Flour crock + board + knife + copper bowl
+			_add_cylinder(root, Vector3(-0.45, 0.98, 0.12), 0.13, 0.24, CREAM.darkened(0.1), false, 0.92)
+			_add_cylinder(root, Vector3(-0.45, 1.12, 0.12), 0.09, 0.05, CREAM.darkened(0.18), false, 0.9)
+			_add_box(root, Vector3(0.1, 0.88, -0.12), Vector3(0.28, 0.05, 0.2), CREAM.darkened(0.05), false, 0.8)
+			_add_box(root, Vector3(0.42, 0.875, 0.12), Vector3(0.32, 0.02, 0.2), MAHOGANY, false, 0.55)
+			_add_box(root, Vector3(0.5, 0.89, 0.12), Vector3(0.22, 0.015, 0.04), IRON, false, 0.4)
+			_add_cylinder(root, Vector3(-0.12, 0.95, 0.22), 0.1, 0.18, COPPER, false, 0.35, true)
+			_add_cylinder(root, Vector3(0.55, 0.95, 0.0), 0.08, 0.16, COPPER.darkened(0.08), false, 0.35, true)
+		1:
+			# Bread board, pie dish, tall crock, ladle
+			_add_box(root, Vector3(-0.4, 0.875, 0.1), Vector3(0.45, 0.025, 0.28), OAK.lightened(0.2), false, 0.65)
+			_add_cylinder(root, Vector3(-0.35, 0.92, 0.1), 0.12, 0.06, CREAM.darkened(0.12), false, 0.85)
+			_add_cylinder(root, Vector3(0.15, 1.0, 0.05), 0.09, 0.28, CLAY, false, 0.8)
+			_add_cylinder(root, Vector3(0.15, 1.16, 0.05), 0.07, 0.04, CLAY.darkened(0.1), false, 0.8)
+			_add_cylinder(root, Vector3(0.45, 0.95, -0.1), 0.11, 0.14, COPPER.lightened(0.05), false, 0.35, true)
+			_add_box(root, Vector3(0.55, 0.95, 0.05), Vector3(0.03, 0.2, 0.03), IRON, false, 0.4)
+			_add_box(root, Vector3(0.3, 0.88, 0.2), Vector3(0.2, 0.03, 0.14), CREAM, false, 0.75)
+		2:
+			# Veg prep: basket, carrots, chopping block, salt
+			_add_box(root, Vector3(-0.35, 0.9, 0.05), Vector3(0.28, 0.12, 0.22), Color(0.45, 0.32, 0.18), false, 0.7)
+			_add_box(root, Vector3(-0.35, 0.98, 0.05), Vector3(0.24, 0.04, 0.18), Color(0.35, 0.45, 0.22), false, 0.85)
+			_add_cylinder(root, Vector3(0.05, 0.9, 0.15), 0.03, 0.12, Color(0.85, 0.45, 0.15), false, 0.7)
+			_add_cylinder(root, Vector3(0.1, 0.9, 0.1), 0.028, 0.14, Color(0.9, 0.5, 0.18), false, 0.7)
+			_add_box(root, Vector3(0.35, 0.875, -0.1), Vector3(0.35, 0.04, 0.25), OAK.lightened(0.15), false, 0.65)
+			_add_box(root, Vector3(0.4, 0.9, -0.05), Vector3(0.18, 0.02, 0.04), IRON, false, 0.4)
+			_add_cylinder(root, Vector3(0.5, 0.95, 0.15), 0.05, 0.12, CREAM.darkened(0.08), false, 0.85)
+		_:
+			# Pastry: rolling pin, flour dust, butter crock, bowl
+			_add_cylinder(root, Vector3(-0.3, 0.9, 0.0), 0.035, 0.4, OAK.lightened(0.1), false, 0.6)
+			_add_cylinder(root, Vector3(-0.5, 0.9, 0.0), 0.045, 0.06, MAHOGANY, false, 0.55)
+			_add_cylinder(root, Vector3(-0.1, 0.9, 0.0), 0.045, 0.06, MAHOGANY, false, 0.55)
+			_add_box(root, Vector3(0.15, 0.875, 0.1), Vector3(0.3, 0.02, 0.25), CREAM.lightened(0.05), false, 0.9)
+			_add_cylinder(root, Vector3(0.4, 0.95, -0.1), 0.1, 0.12, CREAM.darkened(0.15), false, 0.85)
+			_add_cylinder(root, Vector3(0.45, 1.05, -0.1), 0.06, 0.06, CREAM.darkened(0.2), false, 0.85)
+			_add_cylinder(root, Vector3(0.15, 0.95, -0.2), 0.12, 0.08, CLAY.lightened(0.05), false, 0.8)
+			_add_cylinder(root, Vector3(-0.15, 0.95, 0.2), 0.07, 0.1, COPPER, false, 0.35, true)
 	_add_contact_shadow(root, width * 0.5, 0.5)
 	return root
 
@@ -1558,44 +1645,61 @@ static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color:
 	mi.position = pos
 	parent.add_child(mi)
 
-static func _make_coat_stand(_prop: Dictionary) -> Node3D:
-	## Turned hall tree with brass hooks — 1850s entrance hall staple.
+static func _make_coat_stand(prop: Dictionary) -> Node3D:
+	## Turned hall tree — seed forks coats / hats (uniqueness).
 	var root := Node3D.new()
 	root.name = "CoatStand"
-	_add_cylinder(root, Vector3(0, 0.95, 0), 0.045, 1.85, MAHOGANY, true, 0.45)
-	_add_cylinder(root, Vector3(0, 0.35, 0), 0.07, 0.25, MAHOGANY_DARK, true, 0.45)
-	_add_cylinder(root, Vector3(0, 0.05, 0), 0.28, 0.08, MAHOGANY, true, 0.45)
-	# Turned rings
+	var seed0: int = int(prop.get("seed", 0))
+	var wood := MAHOGANY if seed0 % 2 == 0 else MAHOGANY_DARK
+	_add_cylinder(root, Vector3(0, 0.95, 0), 0.045, 1.85, wood, true, 0.45)
+	_add_cylinder(root, Vector3(0, 0.35, 0), 0.07, 0.25, wood.darkened(0.1), true, 0.45)
+	_add_cylinder(root, Vector3(0, 0.05, 0), 0.28, 0.08, wood, true, 0.45)
 	for y in [0.55, 0.85, 1.25, 1.55]:
-		_add_cylinder(root, Vector3(0, y, 0), 0.06, 0.04, MAHOGANY_DARK, false, 0.4)
-	# Brass hat hooks
+		_add_cylinder(root, Vector3(0, y, 0), 0.06, 0.04, wood.darkened(0.08), false, 0.4)
 	for a in [0.0, 72.0, 144.0, 216.0, 288.0]:
-		var rad := deg_to_rad(a)
+		var rad := deg_to_rad(a + float(seed0) * 8.0)
 		_add_box(root, Vector3(cos(rad) * 0.16, 1.62, sin(rad) * 0.16), Vector3(0.16, 0.025, 0.025), BRASS, false, 0.3)
 		_add_cylinder(root, Vector3(cos(rad) * 0.22, 1.62, sin(rad) * 0.22), 0.02, 0.04, BRASS, false, 0.28, true)
-	# Hanging coat / cloak suggestion (draped wool)
-	_add_box(root, Vector3(0.14, 1.15, 0.06), Vector3(0.22, 0.85, 0.1), Color(0.18, 0.14, 0.12), false, 0.88)
-	_add_box(root, Vector3(-0.1, 1.05, -0.08), Vector3(0.18, 0.55, 0.08), Color(0.22, 0.12, 0.1), false, 0.88)
-	# Top hat on stand
-	_add_cylinder(root, Vector3(0.05, 1.85, 0.05), 0.1, 0.04, Color(0.08, 0.08, 0.09), false, 0.7)
-	_add_cylinder(root, Vector3(0.05, 1.95, 0.05), 0.07, 0.16, Color(0.1, 0.1, 0.11), false, 0.7)
+	# Coat colours / count by seed
+	var coat_a := Color(0.18, 0.14, 0.12) if seed0 % 3 != 1 else Color(0.12, 0.16, 0.22)
+	var coat_b := Color(0.22, 0.12, 0.1) if seed0 % 3 != 2 else Color(0.28, 0.22, 0.14)
+	_add_box(root, Vector3(0.14, 1.15, 0.06), Vector3(0.22, 0.85, 0.1), coat_a, false, 0.88)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(-0.1, 1.05, -0.08), Vector3(0.18, 0.55, 0.08), coat_b, false, 0.88)
+	# Hat: top hat vs bowler vs none
+	if seed0 % 3 == 0:
+		_add_cylinder(root, Vector3(0.05, 1.85, 0.05), 0.1, 0.04, Color(0.08, 0.08, 0.09), false, 0.7)
+		_add_cylinder(root, Vector3(0.05, 1.95, 0.05), 0.07, 0.16, Color(0.1, 0.1, 0.11), false, 0.7)
+	elif seed0 % 3 == 1:
+		_add_cylinder(root, Vector3(-0.05, 1.88, -0.05), 0.09, 0.05, Color(0.12, 0.1, 0.08), false, 0.7)
+		_add_cylinder(root, Vector3(-0.05, 1.95, -0.05), 0.07, 0.08, Color(0.14, 0.11, 0.09), false, 0.7)
 	_add_contact_shadow(root, 0.32, 0.32)
 	return root
 
-static func _make_umbrella_stand(_prop: Dictionary) -> Node3D:
-	## Ceramic/mahogany stick stand with brass rim (wet-day hall piece).
+static func _make_umbrella_stand(prop: Dictionary) -> Node3D:
+	## Stick stand — seed forks ceramic / wood body + stick count.
 	var root := Node3D.new()
 	root.name = "UmbrellaStand"
-	_add_cylinder(root, Vector3(0, 0.32, 0), 0.15, 0.6, MAHOGANY_DARK, true, 0.45)
-	_add_cylinder(root, Vector3(0, 0.62, 0), 0.17, 0.04, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0, 0.05, 0), 0.18, 0.06, MAHOGANY, true, 0.45)
-	# Walking sticks / umbrella shafts
-	_add_cylinder(root, Vector3(0.05, 0.95, 0.02), 0.018, 0.7, Color(0.2, 0.12, 0.08), false, 0.55)
-	_add_cylinder(root, Vector3(-0.04, 0.88, -0.03), 0.016, 0.58, Color(0.12, 0.1, 0.1), false, 0.5)
-	_add_cylinder(root, Vector3(0.02, 0.82, -0.05), 0.015, 0.5, Color(0.35, 0.22, 0.12), false, 0.55)
-	_add_cylinder(root, Vector3(-0.06, 0.9, 0.04), 0.014, 0.55, Color(0.15, 0.12, 0.1), false, 0.5)
-	# Crook handle
-	_add_box(root, Vector3(0.05, 1.32, 0.02), Vector3(0.1, 0.03, 0.03), Color(0.2, 0.12, 0.08), false, 0.55)
+	var seed0: int = int(prop.get("seed", 0))
+	if seed0 % 2 == 0:
+		_add_cylinder(root, Vector3(0, 0.32, 0), 0.15, 0.6, MAHOGANY_DARK, true, 0.45)
+		_add_cylinder(root, Vector3(0, 0.62, 0), 0.17, 0.04, BRASS, false, 0.3, true)
+		_add_cylinder(root, Vector3(0, 0.05, 0), 0.18, 0.06, MAHOGANY, true, 0.45)
+	else:
+		# Ceramic pot stand
+		_add_cylinder(root, Vector3(0, 0.3, 0), 0.16, 0.55, CREAM.darkened(0.12), true, 0.75)
+		_add_cylinder(root, Vector3(0, 0.58, 0), 0.18, 0.04, CREAM.darkened(0.05), false, 0.7)
+		_add_cylinder(root, Vector3(0, 0.05, 0), 0.17, 0.05, CLAY, true, 0.8)
+		_add_box(root, Vector3(0, 0.35, 0.16), Vector3(0.12, 0.08, 0.02), Color(0.45, 0.2, 0.15), false, 0.7)
+	var n := 3 + seed0 % 2
+	for i in n:
+		var ang := float(i) * 0.9 + float(seed0) * 0.2
+		var ox := cos(ang) * 0.05
+		var oz := sin(ang) * 0.04
+		var h := 0.5 + float((i + seed0) % 3) * 0.08
+		var col := Color(0.2, 0.12, 0.08) if i % 2 == 0 else Color(0.12, 0.1, 0.1)
+		_add_cylinder(root, Vector3(ox, 0.55 + h * 0.5, oz), 0.015 + float(i) * 0.002, h, col, false, 0.55)
+	_add_box(root, Vector3(0.05, 1.28, 0.02), Vector3(0.1, 0.03, 0.03), Color(0.2, 0.12, 0.08), false, 0.55)
 	_add_contact_shadow(root, 0.2, 0.2)
 	return root
 
