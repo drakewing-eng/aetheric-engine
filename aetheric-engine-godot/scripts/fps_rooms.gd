@@ -374,12 +374,22 @@ const ROOMS := {
 				"art": "landscape", "seed": 1, "frame": 0},
 		],
 		"props": [
+			# Loop 78: denser morning corner — rug, letters, tea, oil lamp
+			{
+				"kind": "rug",
+				"pos": [0.2, 0.0, -0.4],
+				"size": [3.2, 2.6],
+				"texture": "res://assets/rooms/textures/rug_persian.jpg",
+			},
 			{"kind": "desk", "pos": [2.2, 0.0, -2.0], "yaw": -90.0},
-			{"kind": "chair", "pos": [1.4, 0.0, -2.0], "yaw": 90.0, "seed": 0,
-				"fabric": Color(0.4, 0.28, 0.18)},
-			{"kind": "side_table", "pos": [-2.0, 0.0, 1.2], "yaw": 15.0, "seed": 1},
+			{"kind": "chair", "pos": [1.4, 0.0, -2.0], "yaw": 90.0, "seed": 1,
+				"fabric": Color(0.32, 0.38, 0.48)},
+			{"kind": "letter_stack", "pos": [2.1, 0.78, -1.75], "yaw": -20.0, "seed": 2},
+			{"kind": "side_table", "pos": [-2.0, 0.0, 1.2], "yaw": 15.0, "seed": 5},
+			{"kind": "tea_tray", "pos": [-2.0, 0.68, 1.2], "yaw": 10.0, "seed": 1},
 			{"kind": "armchair", "pos": [-1.8, 0.0, -1.0], "yaw": 40.0,
-				"fabric": Color(0.35, 0.4, 0.3)},
+				"fabric": Color(0.28, 0.36, 0.32)},
+			{"kind": "oil_lamp", "pos": [-1.5, 0.0, 1.5], "height": 1.05},
 			{"kind": "plant", "pos": [3.0, 0.0, 2.5], "scale": 0.95, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.2},
 			{"kind": "plant", "pos": [-2.8, 0.0, -2.8], "scale": 0.6, "seed": 2,
@@ -388,8 +398,7 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -0.5], "yaw": 90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
-			# Soft morning sun spill from east windows
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.9},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.9, "seed": 2},
 		],
 		"doors": [
 			{
