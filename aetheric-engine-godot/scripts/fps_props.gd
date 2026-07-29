@@ -938,15 +938,20 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root
 
-static func _make_sink(_prop: Dictionary) -> Node3D:
+static func _make_sink(prop: Dictionary) -> Node3D:
+	## Scullery sink — oak cabinet + stone basin + pump; seed forks still-life.
 	var root := Node3D.new()
 	root.name = "Sink"
-	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.1, 0.85, 0.55), OAK, true, 0.5)
-	# Cupboard doors
-	_add_box(root, Vector3(-0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), OAK.darkened(0.08), false, 0.5)
-	_add_box(root, Vector3(0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), OAK.darkened(0.08), false, 0.5)
+	var seed0: int = int(prop.get("seed", 0))
+	var wood := OAK if seed0 % 2 == 0 else Color(0.48, 0.34, 0.2)
+	_add_box(root, Vector3(0, 0.45, 0), Vector3(1.1, 0.85, 0.55), wood, true, 0.5)
+	_add_box(root, Vector3(-0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), wood.darkened(0.08), false, 0.5)
+	_add_box(root, Vector3(0.25, 0.4, 0.26), Vector3(0.48, 0.7, 0.04), wood.darkened(0.08), false, 0.5)
 	_add_cylinder(root, Vector3(-0.15, 0.4, 0.3), 0.015, 0.05, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(0.15, 0.4, 0.3), 0.015, 0.05, BRASS, false, 0.3, true)
+	# Fielded panel lines on doors
+	_add_box(root, Vector3(-0.25, 0.4, 0.28), Vector3(0.36, 0.5, 0.01), wood.darkened(0.12), false, 0.55)
+	_add_box(root, Vector3(0.25, 0.4, 0.28), Vector3(0.36, 0.5, 0.01), wood.darkened(0.12), false, 0.55)
 	# Stoneware basin
 	_add_box(root, Vector3(0, 0.92, 0.05), Vector3(0.85, 0.12, 0.42), STONE, false, 0.4)
 	_add_box(root, Vector3(0, 0.88, 0.05), Vector3(0.7, 0.08, 0.3), Color(0.35, 0.4, 0.45), false, 0.25)
@@ -954,10 +959,15 @@ static func _make_sink(_prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0.25, 1.15, -0.1), 0.03, 0.35, BRASS, false, 0.3, true)
 	_add_box(root, Vector3(0.1, 1.28, 0.0), Vector3(0.35, 0.04, 0.04), BRASS, false, 0.3)
 	_add_cylinder(root, Vector3(-0.05, 1.25, 0.05), 0.025, 0.08, BRASS, false, 0.3, true)
-	# Soap dish + cloth + jug
-	_add_box(root, Vector3(-0.3, 0.98, 0.12), Vector3(0.14, 0.04, 0.1), CREAM, false)
-	_add_box(root, Vector3(-0.15, 0.95, 0.18), Vector3(0.2, 0.02, 0.12), Color(0.7, 0.75, 0.8), false)
-	_add_cylinder(root, Vector3(0.35, 1.0, 0.12), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
+	# Still-life fork
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(-0.3, 0.98, 0.12), Vector3(0.14, 0.04, 0.1), CREAM, false)
+		_add_box(root, Vector3(-0.15, 0.95, 0.18), Vector3(0.2, 0.02, 0.12), Color(0.7, 0.75, 0.8), false)
+		_add_cylinder(root, Vector3(0.35, 1.0, 0.12), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
+	else:
+		_add_cylinder(root, Vector3(-0.28, 1.0, 0.1), 0.06, 0.14, COPPER, false, 0.35, true)
+		_add_box(root, Vector3(0.3, 0.96, 0.14), Vector3(0.18, 0.02, 0.12), CREAM.darkened(0.05), false)
+		_add_cylinder(root, Vector3(0.32, 1.0, 0.1), 0.04, 0.08, CLAY, false, 0.8)
 	_add_contact_shadow(root, 0.6, 0.35)
 	return root
 
@@ -1542,21 +1552,44 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	_add_contact_shadow(root, 0.9, 0.9)
 	return root
 
-static func _make_chalk_board(_prop: Dictionary) -> Node3D:
+static func _make_chalk_board(prop: Dictionary) -> Node3D:
+	## Workshop / gallery slate — seed forks diagram marks (not identical boards).
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
-	_add_box(root, Vector3(0, 1.2, 0), Vector3(1.4, 1.0, 0.06), MAHOGANY_DARK, true, 0.45)
-	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(1.25, 0.85, 0.02), CHALK, false, 0.85)
-	# Chalk marks / diagrams
-	_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.55, 0.015, 0.01), Color(0.92, 0.92, 0.9), false, 0.95)
-	_add_box(root, Vector3(0.15, 1.25, 0.05), Vector3(0.4, 0.012, 0.01), Color(0.9, 0.9, 0.88), false, 0.95)
-	_add_box(root, Vector3(-0.1, 1.1, 0.05), Vector3(0.7, 0.01, 0.01), Color(0.88, 0.88, 0.85), false, 0.95)
-	_add_cylinder(root, Vector3(0.25, 1.05, 0.05), 0.12, 0.01, Color(0.9, 0.9, 0.88), false, 0.95)
-	# Chalk tray + sticks
-	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(1.3, 0.05, 0.1), MAHOGANY, false, 0.5)
+	var seed0: int = int(prop.get("seed", 0))
+	var w := 1.35 + float(seed0 % 3) * 0.08
+	var h := 0.95 + float(seed0 % 2) * 0.08
+	_add_box(root, Vector3(0, 1.2, 0), Vector3(w, h, 0.06), MAHOGANY_DARK, true, 0.45)
+	_add_box(root, Vector3(0, 1.2, 0.03), Vector3(w - 0.15, h - 0.15, 0.02), CHALK, false, 0.85)
+	# Diagram style by seed: equations / circle plot / grid
+	var chalk := Color(0.92, 0.92, 0.9)
+	match seed0 % 3:
+		0:
+			_add_box(root, Vector3(-0.2, 1.35, 0.05), Vector3(0.55, 0.015, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.15, 1.25, 0.05), Vector3(0.4, 0.012, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.1, 1.1, 0.05), Vector3(0.7, 0.01, 0.01), chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.25, 1.05, 0.05), 0.12, 0.01, chalk, false, 0.95)
+		1:
+			# Circle + radii (engine notes)
+			_add_cylinder(root, Vector3(0.0, 1.2, 0.05), 0.22, 0.01, chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.2, 0.05), Vector3(0.4, 0.01, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.2, 0.05), Vector3(0.01, 0.4, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.35, 1.4, 0.05), Vector3(0.3, 0.012, 0.01), chalk, false, 0.95)
+		_:
+			# Grid / ledger lines
+			for i in 4:
+				var yy := 1.0 + float(i) * 0.12
+				_add_box(root, Vector3(0.0, yy, 0.05), Vector3(0.9, 0.008, 0.01), chalk.darkened(0.05), false, 0.95)
+			_add_box(root, Vector3(-0.25, 1.35, 0.05), Vector3(0.01, 0.45, 0.01), chalk, false, 0.95)
+			_add_box(root, Vector3(0.2, 1.15, 0.05), Vector3(0.35, 0.012, 0.01), chalk, false, 0.95)
+	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
 	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
 	_add_cylinder(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, CREAM.darkened(0.1), false)
-	_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.4, 0.55, 0.7), false)
+	if seed0 % 2 == 0:
+		_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.4, 0.55, 0.7), false)
+	else:
+		_add_cylinder(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, Color(0.55, 0.35, 0.25), false)
+		_add_cylinder(root, Vector3(0.3, 0.76, 0.05), 0.01, 0.06, CREAM, false)
 	return root
 
 # ─── Conservatory / hall ─────────────────────────────────────────────────────
@@ -1622,53 +1655,48 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 
 
 static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
-	## Side-volume foliage mass that does not duplicate the pot card.
-	## Stems + fronds sit mid/upper so edge-on views aren't paper-thin.
-	var pot_top := ph * 0.32
-	var crown := ph * 0.78
-	var leaf_a := Color(0.18, 0.38, 0.12)
-	var leaf_b := Color(0.14, 0.32, 0.1)
-	var leaf_c := Color(0.22, 0.42, 0.14)
-	var stem_c := Color(0.28, 0.22, 0.1)
-	var n_stems := 5 if is_fern else 4
+	## Soft side-volume only — thin stems + slender leaves (loop 75: no dark blob crowns).
+	## Keep mass subtle so the painted card stays the hero from the front.
+	var pot_top := ph * 0.34
+	var crown := ph * 0.72
+	var leaf_a := Color(0.22, 0.42, 0.16)
+	var leaf_b := Color(0.18, 0.38, 0.14)
+	var stem_c := Color(0.32, 0.28, 0.14)
+	var n_stems := 4 if is_fern else 3
 	for i in n_stems:
-		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.35
-		var r := pw * (0.08 + float(i % 3) * 0.03)
+		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.4
+		var r := pw * (0.06 + float(i % 2) * 0.025)
 		var sx := cos(ang) * r
 		var sz := sin(ang) * r
-		var sh := (crown - pot_top) * (0.55 + float((i + seed0) % 3) * 0.12)
-		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.012 * pw + 0.008, sh, stem_c, false, 0.85)
-		# Frond planes / lobes at tip — radial so any yaw has green mass
+		var sh := (crown - pot_top) * (0.5 + float((i + seed0) % 2) * 0.1)
+		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.008 * pw + 0.005, sh, stem_c, false, 0.88)
 		var tip_y := pot_top + sh
 		if is_fern:
-			for j in 3:
-				var fang := ang + float(j - 1) * 0.45
-				var fl := pw * (0.18 + float(j) * 0.04)
+			for j in 2:
+				var fang := ang + float(j - 0.5) * 0.5
+				var fl := pw * (0.14 + float(j) * 0.03)
 				_add_box(
 					root,
-					Vector3(sx + cos(fang) * fl * 0.35, tip_y - float(j) * 0.04 * ph, sz + sin(fang) * fl * 0.35),
-					Vector3(0.04 * pw, 0.02, fl),
+					Vector3(sx + cos(fang) * fl * 0.3, tip_y - float(j) * 0.03 * ph, sz + sin(fang) * fl * 0.3),
+					Vector3(0.025 * pw, 0.012, fl * 0.85),
 					leaf_a if j % 2 == 0 else leaf_b,
+					false,
+					0.92
+				)
+		else:
+			for j in 3:
+				var pang := ang + float(j) * 0.4 - 0.4
+				var bl := pw * (0.14 + float(j % 2) * 0.04)
+				_add_box(
+					root,
+					Vector3(sx + cos(pang) * bl * 0.35, tip_y + 0.01 * ph, sz + sin(pang) * bl * 0.35),
+					Vector3(0.022 * pw, bl * 0.45, 0.02 * pw),
+					leaf_b if j % 2 == 0 else leaf_a,
 					false,
 					0.9
 				)
-		else:
-			# Palm: fan blades
-			for j in 4:
-				var pang := ang + float(j) * 0.35 - 0.5
-				var bl := pw * (0.2 + float(j % 2) * 0.06)
-				_add_box(
-					root,
-					Vector3(sx + cos(pang) * bl * 0.4, tip_y + 0.02 * ph, sz + sin(pang) * bl * 0.4),
-					Vector3(0.035 * pw, bl * 0.55, 0.03 * pw),
-					leaf_c if j % 2 == 0 else leaf_a,
-					false,
-					0.88
-				)
-	# Soft crown spheres (read as mass from distance)
-	_add_sphere_blob(root, Vector3(0, crown, 0), pw * 0.12, leaf_b)
-	_add_sphere_blob(root, Vector3(pw * 0.08, crown - 0.05 * ph, pw * 0.05), pw * 0.09, leaf_a)
-	_add_sphere_blob(root, Vector3(-pw * 0.07, crown - 0.04 * ph, -pw * 0.06), pw * 0.08, leaf_c)
+	# One soft mid-canopy blob only (was three heavy dark spheres)
+	_add_sphere_blob(root, Vector3(0.0, crown * 0.95, 0.0), pw * 0.06, leaf_a)
 
 
 static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color: Color) -> void:
@@ -1773,24 +1801,49 @@ static func _make_chandelier(_prop: Dictionary) -> Node3D:
 	return root
 
 
-static func _make_fireplace(_prop: Dictionary) -> Node3D:
-	## Marble surround + dark firebox + logs — not a white Minecraft slab.
+static func _make_fireplace(prop: Dictionary) -> Node3D:
+	## Marble surround + firebox + seed mantel kit (clock / urns / candlesticks).
 	var root := Node3D.new()
 	root.name = "Fireplace"
-	# Outer surround
+	var seed0: int = int(prop.get("seed", 0))
+	# Outer surround + moulded lintel
 	_add_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), MARBLE, true, 0.35)
+	_add_box(root, Vector3(0, 1.35, 0.08), Vector3(1.55, 0.08, 0.12), MARBLE.darkened(0.05), false, 0.32)
 	# Inner dark firebox recess
 	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), Color(0.06, 0.05, 0.05), false, 0.9)
-	# Mantel shelf + ornaments
+	# Mantel shelf
 	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
-	_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
-	_add_box(root, Vector3(0, 1.55, 0.08), Vector3(0.2, 0.12, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
-	# Columns / pilasters
+	_add_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), MARBLE.lightened(0.05), false, 0.3)
+	# Mantel ornaments by seed
+	match seed0 % 3:
+		0:
+			_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
+			_add_cylinder(root, Vector3(0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
+			_add_box(root, Vector3(0, 1.55, 0.08), Vector3(0.2, 0.12, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
+			_add_box(root, Vector3(0, 1.65, 0.08), Vector3(0.14, 0.1, 0.06), Color(0.85, 0.82, 0.75), false, 0.45)
+		1:
+			# Twin urns + centre candlesticks
+			_add_cylinder(root, Vector3(-0.5, 1.6, 0.05), 0.07, 0.2, CREAM.darkened(0.08), false, 0.7)
+			_add_cylinder(root, Vector3(0.5, 1.6, 0.05), 0.07, 0.2, CREAM.darkened(0.08), false, 0.7)
+			_add_cylinder(root, Vector3(-0.15, 1.55, 0.08), 0.025, 0.14, CANDLE, false, 0.55)
+			_add_cylinder(root, Vector3(0.15, 1.55, 0.08), 0.025, 0.14, CANDLE, false, 0.55)
+			_add_sphere_blob(root, Vector3(-0.15, 1.65, 0.08), 0.02, Color(1.0, 0.75, 0.35))
+			_add_sphere_blob(root, Vector3(0.15, 1.65, 0.08), 0.02, Color(1.0, 0.75, 0.35))
+		_:
+			# Carriage clock + small vases
+			_add_box(root, Vector3(0.0, 1.58, 0.06), Vector3(0.18, 0.22, 0.1), BRASS.darkened(0.1), false, 0.32)
+			_add_box(root, Vector3(0.0, 1.62, 0.1), Vector3(0.12, 0.1, 0.02), Color(0.9, 0.88, 0.8), false, 0.5)
+			_add_cylinder(root, Vector3(-0.5, 1.56, 0.05), 0.05, 0.14, Color(0.35, 0.2, 0.15), false, 0.7)
+			_add_cylinder(root, Vector3(0.5, 1.56, 0.05), 0.05, 0.14, Color(0.35, 0.2, 0.15), false, 0.7)
+	# Columns / pilasters with capital
 	_add_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
 	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
-	# Hearth slab
+	_add_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
+	_add_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
+	# Hearth + fire dogs
 	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.5, 0.08, 0.55), STONE, true, 0.55)
+	_add_box(root, Vector3(-0.28, 0.12, 0.28), Vector3(0.06, 0.14, 0.18), IRON, false, 0.4)
+	_add_box(root, Vector3(0.28, 0.12, 0.28), Vector3(0.06, 0.14, 0.18), IRON, false, 0.4)
 	# Logs + glow
 	_add_box(root, Vector3(-0.12, 0.22, 0.18), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
 	_add_box(root, Vector3(0.15, 0.28, 0.2), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
@@ -1801,7 +1854,6 @@ static func _make_fireplace(_prop: Dictionary) -> Node3D:
 	fire.omni_range = 5.5
 	fire.position = Vector3(0, 0.48, 0.35)
 	root.add_child(fire)
-	# Warm emissive card in firebox
 	var em := MeshInstance3D.new()
 	var em_mesh := BoxMesh.new()
 	em_mesh.size = Vector3(0.7, 0.35, 0.04)

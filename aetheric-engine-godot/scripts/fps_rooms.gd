@@ -71,7 +71,7 @@ const ROOMS := {
 				"fabric": Color(0.32, 0.38, 0.2)},
 			{"kind": "side_table", "pos": [-1.75, 0.0, -3.35], "yaw": 12.0, "seed": 0},
 			{"kind": "side_table", "pos": [1.75, 0.0, -3.35], "yaw": -12.0, "seed": 4},
-			{"kind": "fireplace", "pos": [2.55, 0.0, -4.62], "yaw": 0.0},
+			{"kind": "fireplace", "pos": [2.55, 0.0, -4.62], "yaw": 0.0, "seed": 0},
 			# West: library only (no chairs clipping bookshelves)
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, -1.8], "yaw": 90.0, "width": 1.7, "height": 2.5, "seed": 3},
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, 1.3], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 11},
@@ -277,8 +277,8 @@ const ROOMS := {
 				"art": "landscape", "seed": 3, "frame": 2},
 		],
 		"props": [
-			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0},
-			{"kind": "chalk_board", "pos": [7.6, 0.0, -1.5], "yaw": -90.0},
+			{"kind": "chalk_board", "pos": [-7.6, 0.0, -2.5], "yaw": 90.0, "seed": 0},
+			{"kind": "chalk_board", "pos": [7.6, 0.0, -1.5], "yaw": -90.0, "seed": 1},
 			# Engine where the great table once stood — centre-north, clear approach
 			{"kind": "aetheric_machine", "pos": [0.0, 0.0, -3.2], "yaw": 0.0, "height": 2.95},
 			# One secondary apparatus only (not a forest of machines)
@@ -443,8 +443,8 @@ const ROOMS := {
 				"art": "still_life", "seed": 1, "frame": 3},
 		],
 		"props": [
-			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0},
-			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0},
+			{"kind": "chalk_board", "pos": [4.3, 0.0, -1.5], "yaw": -90.0, "seed": 1},
+			{"kind": "chalk_board", "pos": [-2.0, 0.0, -4.1], "yaw": 0.0, "seed": 2},
 			# Novel: particular bench, tools, copper, crates, drawings — ordered craft
 			{"kind": "workbench", "pos": [-2.2, 0.0, -2.6], "yaw": 0.0, "width": 2.9, "seed": 0},
 			{"kind": "workbench", "pos": [2.0, 0.0, -2.4], "yaw": -15.0, "width": 2.2, "seed": 1},
@@ -588,7 +588,7 @@ const ROOMS := {
 			# Signature kitchen read — NEVER lab workbench
 			{"kind": "kitchen_range", "pos": [0.0, 0.0, 3.4], "yaw": 180.0},
 			{"kind": "dresser", "pos": [-3.6, 0.0, 1.5], "yaw": 90.0, "seed": 1},
-			{"kind": "sink", "pos": [3.5, 0.0, 2.5], "yaw": -90.0},
+			{"kind": "sink", "pos": [3.5, 0.0, 2.5], "yaw": -90.0, "seed": 0},
 			# Loop 68: thin density — clear walk to range/sink/prep (no pot pile-ups)
 			# Loop 73: four prep kits available — use two distinct (0 flour, 2 veg)
 			{"kind": "prep_table", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "width": 2.2, "seed": 0},
