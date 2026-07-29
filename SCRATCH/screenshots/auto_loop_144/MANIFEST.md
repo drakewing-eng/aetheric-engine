@@ -1,8 +1,9 @@
 # auto_loop_144
 
-**Focus:** Fireplace polish + hall console legs + plant/chair spacing
+**Focus:** Fireplace hero (overmantel/fender/tools) + sofa bulk + hall tables
 
-- Fireplace: chimney-glass overmantel, iron fender rail, fire tools (poker/shovel/tongs), coal scuttle, taller mantel ornaments, pilaster plinths
-- Hall tables: turned-profile legs + warmer pedestal (not pipe/ebony blocks)
-- Hall plants/chairs: clearance from seat clip
-- Drawing still-life painting shifted clear of overmantel
+- Fireplace: chimney-glass overmantel (mirror plate), iron fender, poker/shovel/tongs, coal scuttle, taller mantel ornaments
+- Sofa bulk: lower/darker (no green crest peek)
+- Hall tables: turned-profile legs (not fat pipe cylinders)
+- Hall/drawing layout: clearance for overmantel + chairs
+- Tests PASS
