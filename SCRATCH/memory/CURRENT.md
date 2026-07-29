@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~00:40 (overnight goal active)  
+**Updated:** 2026-07-29 ~00:55 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -21,6 +21,7 @@
 | 12 | Conservatory garden identity | **ADVANCED 77** |
 | 13 | Gallery engine + morning densify | **ADVANCED 78** |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79** |
+| 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
 
 ## Loops
 
@@ -28,14 +29,15 @@
 |------|------|
 | 67–77 | Core visual queue through conservatory |
 | 78 | Gallery engine polish; morning rug/tea/letters |
-| 79 | **Entrance hall arrival:** remove stone path on runner; 3 consoles in spawn FOV; chairs flank runner; dual coat/umbrella stands; plants; south sconces. **Workshop:** `copper_scrap` (coil/plate/tube kits), oil lamps, iron-plate walkway. **Floor path** surface modes stone/iron/wood. Coat stand scarf/cane. |
+| 79 | Hall arrival + workshop scrap/iron path |
+| 80 | **Bookshelf:** thin leather spines, multi gilt bands, ridge/headcap, bookends, richer palette. **Kitchen:** sink identity (basin/rim/drain board/pump/backsplash); pot rack ladles; side-wall plate rails; floor copper/crate; oil lamp. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish only (drawing bookshelf spines; kitchen side-volume; lighting balance)  
+- Optional micro-polish (gallery centre density; lighting balance; crock plate detail)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_79/`  
+- Shots: `auto_loop_67/` … `auto_loop_80/`  

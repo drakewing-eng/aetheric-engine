@@ -653,6 +653,14 @@ const ROOMS := {
 			{"kind": "crock_shelf", "pos": [3.5, 0.0, -2.6], "yaw": -90.0, "width": 1.15, "height": 1.55, "seed": 7},
 			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.3, "shelf_y": 2.55, "seed": 7},
 			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.3, "shelf_y": 2.55, "seed": 8},
+			# Loop 80: side-wall plate rails fill empty cream plaster from doorway
+			{"kind": "wall_shelf", "pos": [4.2, 0.0, -0.8], "yaw": -90.0, "width": 1.5, "shelf_y": 1.75, "seed": 3},
+			{"kind": "wall_shelf", "pos": [4.2, 0.0, 1.6], "yaw": -90.0, "width": 1.2, "shelf_y": 2.2, "seed": 5},
+			{"kind": "wall_shelf", "pos": [-4.2, 0.0, 0.2], "yaw": 90.0, "width": 1.4, "shelf_y": 1.85, "seed": 6},
+			# Flour sack / spare copper on floor near dresser (side volume, not walk path)
+			{"kind": "crate", "pos": [-3.4, 0.0, 0.2], "scale": 0.65, "seed": 11},
+			{"kind": "copper_pot", "pos": [3.4, 0.0, 0.4], "scale": 0.7, "seed": 5},
+			{"kind": "oil_lamp", "pos": [-2.4, 0.0, -2.0], "yaw": 30.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-3.8, 0.0, 2.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [3.8, 0.0, 1.5], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
