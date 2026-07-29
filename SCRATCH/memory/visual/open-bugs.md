@@ -64,3 +64,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 ## Status update 2026-07-28 (loop 76)
 
 - §1 Door: teleport always uses **into-room yaw** (spawn_yaw often faced the leaf). Deeper/wider door triggers; `_door_busy` blocks double-E; post-load floor re-snap. Unique `DoorPortal_<target>` names. Automated `test_door_transitions.gd` PASS (graph, nudge footprint, face-in, triggers, floors). Human playtest still recommended.  
+
+## Status update 2026-07-29 (loop 89)
+
+- **Material bug:** dark mahogany (`MAHOGANY` / `MAHOGANY_DARK`) matched iron classifier → black metal desks/chairs. Fixed: iron requires true greys (r≈g≈b); metallic lowered.  
+- Iron `floor_path`: riveted diamond-tread plates + curbs (gallery/workshop no longer Minecraft black slabs).  
+- Chalk boards denser for distance read.  
+
