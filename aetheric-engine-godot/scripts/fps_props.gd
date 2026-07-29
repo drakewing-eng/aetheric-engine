@@ -171,6 +171,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_chalk_board(prop)
 		"garden_bench":
 			node = _make_garden_bench(prop)
+		"dust_motes":
+			node = _make_dust_motes(prop)
 		"urn":
 			node = _make_urn(prop)
 		"watering_can":
@@ -3320,6 +3322,51 @@ static func _add_fire_sparks(parent: Node3D, at: Vector3, amount: int = 12) -> v
 	parts.emitting = true
 	parent.add_child(parts)
 
+static func _make_dust_motes(prop: Dictionary) -> Node3D:
+	## Soft floating dust in sunbeams (loop 136) — low-count, unshaded pale motes.
+	var root := Node3D.new()
+	root.name = "DustMotes"
+	var amount: int = int(prop.get("amount", 28))
+	var parts := GPUParticles3D.new()
+	parts.amount = amount
+	parts.lifetime = 8.0
+	parts.preprocess = 4.0
+	parts.explosiveness = 0.0
+	parts.randomness = 0.9
+	parts.visibility_aabb = AABB(Vector3(-3, 0, -3), Vector3(6, 4, 6))
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.008
+	mesh.height = 0.016
+	mesh.radial_segments = 4
+	mesh.rings = 2
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.95, 0.92, 0.82, 0.55)
+	mat.emission_enabled = true
+	mat.emission = Color(0.9, 0.88, 0.78)
+	mat.emission_energy_multiplier = 0.35
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mesh.material = mat
+	parts.draw_pass_1 = mesh
+	var proc := ParticleProcessMaterial.new()
+	proc.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	proc.emission_box_extents = Vector3(2.2, 1.2, 2.2)
+	proc.direction = Vector3(0.1, 0.2, 0.05)
+	proc.spread = 180.0
+	proc.initial_velocity_min = 0.02
+	proc.initial_velocity_max = 0.08
+	proc.gravity = Vector3(0, 0.02, 0)
+	proc.damping_min = 0.1
+	proc.damping_max = 0.4
+	proc.scale_min = 0.3
+	proc.scale_max = 1.1
+	proc.color = Color(1.0, 0.97, 0.9, 0.45)
+	parts.process_material = proc
+	parts.emitting = true
+	parts.position = Vector3(0, 1.4, 0)
+	root.add_child(parts)
+	return root
+
 static func _make_window(feat: Dictionary) -> Node3D:
 	## Sash-style window with OUTSIDE view through a hollow aperture.
 	## CRITICAL: never fill the aperture with a solid box — that reads as black/void.
@@ -3846,7 +3893,7 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	root.add_child(mi)
 
 	if cross_planes:
-		# Second card at 90° — reads as a plant from any walk-around angle
+		# Second card at 90° — volume from every walk-around angle (plants + side chairs)
 		var mi_x := MeshInstance3D.new()
 		mi_x.mesh = mesh
 		mi_x.material_override = mat
@@ -3861,21 +3908,20 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		mi_b.position = Vector3(0, y_off, -0.05)
 		mi_b.rotation_degrees.y = 180.0
 		root.add_child(mi_b)
-		# Loop 70: solid mesh bulk so edge-on walk-bys aren't paper-thin cards
-		var bulk_kind: String = str(prop.get("mesh_bulk", ""))
-		if bulk_kind == "" and solid:
-			# Infer from texture filename (CONTENT swap: desk.png=chesterfield, sofa.png=writing desk)
-			var base := tex_path.get_file()
-			if base == "desk.png":
-				bulk_kind = "sofa"
-			elif base == "sofa.png":
-				bulk_kind = "desk"
-			elif base == "chair.png":
-				bulk_kind = "wing"
-			elif base == "armchair.png":
-				bulk_kind = "chair"
-		if bulk_kind != "" and bulk_kind != "none":
-			_add_billboard_mesh_bulk(root, bulk_kind, width, height)
+	# Loop 70/136: mesh bulk for furniture (also with cross_planes so edge-on isn't empty)
+	var bulk_kind: String = str(prop.get("mesh_bulk", ""))
+	if bulk_kind == "" and solid and not face_camera and not cross_planes:
+		var base := tex_path.get_file()
+		if base == "desk.png":
+			bulk_kind = "sofa"
+		elif base == "sofa.png":
+			bulk_kind = "desk"
+		elif base == "chair.png":
+			bulk_kind = "wing"
+		elif base == "armchair.png":
+			bulk_kind = "chair"
+	if bulk_kind != "" and bulk_kind != "none":
+		_add_billboard_mesh_bulk(root, bulk_kind, width, height)
 
 	if solid:
 		# Prefer explicit col_size [w,h,d] for furniture cards so player cannot walk through
