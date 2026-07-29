@@ -532,24 +532,26 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 		# button row
 		for j in 2:
 			_add_cylinder(root, Vector3(cx + (j - 0.5) * 0.12, 0.61, 0.05 + j * 0.15), 0.02, 0.02, fabric.darkened(0.22), false, 0.95)
-	# Back with button grid (loop 99: fabric crown — no mahogany blotch like loop 97 armchair)
-	_add_box(root, Vector3(0, 0.85, -0.3), Vector3(width, 0.78, 0.18), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.22, -0.28), Vector3(width - 0.12, 0.14, 0.14), fabric.darkened(0.05), false, 0.9)
-	_add_box(root, Vector3(0, 1.3, -0.26), Vector3(width - 0.2, 0.04, 0.08), MAHOGANY, false, 0.45)
+	# Loop 128 back: deeper padded mass + crown roll (not flat green slab from rear)
+	_add_box(root, Vector3(0, 0.85, -0.32), Vector3(width, 0.8, 0.24), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.9, -0.2), Vector3(width - 0.1, 0.7, 0.12), fabric.darkened(0.06), false, 0.9)
+	_add_cylinder(root, Vector3(0, 1.05, -0.18), width * 0.28, 0.55, fabric.darkened(0.04), false, 0.9)
+	_add_box(root, Vector3(0, 1.25, -0.28), Vector3(width - 0.1, 0.16, 0.18), fabric.darkened(0.05), false, 0.9)
+	_add_box(root, Vector3(0, 1.34, -0.26), Vector3(width - 0.18, 0.05, 0.1), MAHOGANY, false, 0.45)
 	for i in 5:
 		for j in 3:
 			var bx := (i - 2) * (width * 0.16)
 			var by := 0.7 + j * 0.18
-			_add_cylinder(root, Vector3(bx, by, -0.2), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
-	# Rolled arms — side bulk + roll so side view isn't a flat green wall
+			_add_cylinder(root, Vector3(bx, by, -0.16), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
+	# Rolled arms — extra outer cylinders for side volume
 	for sx in [-1.0, 1.0]:
 		var ax: float = sx * (width * 0.5 - 0.12)
-		_add_box(root, Vector3(ax, 0.6, 0.06), Vector3(0.22, 0.48, 0.86), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(ax, 0.82, 0.2), 0.11, 0.35, fabric.darkened(0.05), false, 0.9)
-		# Outer roll contour (reads volume from side)
-		_add_cylinder(root, Vector3(ax + sx * 0.08, 0.72, 0.05), 0.09, 0.55, fabric.darkened(0.08), false, 0.88)
-		_add_box(root, Vector3(ax + sx * 0.06, 0.95, -0.05), Vector3(0.1, 0.35, 0.5), fabric.darkened(0.04), false, 0.9)
-		_add_cylinder(root, Vector3(ax, 0.55, 0.38), 0.07, 0.14, MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(ax, 0.6, 0.06), Vector3(0.24, 0.5, 0.88), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(ax, 0.82, 0.2), 0.12, 0.4, fabric.darkened(0.05), false, 0.9)
+		_add_cylinder(root, Vector3(ax + sx * 0.1, 0.72, 0.05), 0.1, 0.6, fabric.darkened(0.08), false, 0.88)
+		_add_sphere_blob(root, Vector3(ax + sx * 0.08, 0.95, 0.15), 0.12, fabric.lightened(0.03))
+		_add_box(root, Vector3(ax + sx * 0.08, 0.95, -0.05), Vector3(0.12, 0.4, 0.55), fabric.darkened(0.04), false, 0.9)
+		_add_cylinder(root, Vector3(ax, 0.55, 0.4), 0.075, 0.16, MAHOGANY, false, 0.45)
 	# Turned legs
 	for x in range(-2, 3):
 		var lx := x * (width * 0.2)
@@ -2820,62 +2822,64 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 
 
 static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
-	## Side-volume fronds (loop 100: denser crown fans mask painted green-ball centres).
-	## No sphere blobs — only stems + flat leaves.
-	var pot_top := ph * 0.34
-	var crown := ph * 0.78
+	## Loop 128: denser radial fronds + soft canopy so extreme side views aren't paper-thin.
+	var pot_top := ph * 0.32
+	var crown := ph * 0.82
 	var leaf_a := Color(0.22, 0.42, 0.16)
 	var leaf_b := Color(0.18, 0.38, 0.14)
 	var leaf_c := Color(0.28, 0.48, 0.2)
 	var stem_c := Color(0.32, 0.28, 0.14)
-	var n_stems := 5 if is_fern else 4
+	var n_stems := 7 if is_fern else 6
 	for i in n_stems:
-		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.4
-		var r := pw * (0.07 + float(i % 2) * 0.03)
+		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.37
+		var r := pw * (0.08 + float(i % 3) * 0.025)
 		var sx: float = cos(ang) * r
 		var sz: float = sin(ang) * r
-		var sh: float = (crown - pot_top) * (0.55 + float((i + seed0) % 2) * 0.12)
-		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.008 * pw + 0.005, sh, stem_c, false, 0.88)
+		var sh: float = (crown - pot_top) * (0.5 + float((i + seed0) % 3) * 0.12)
+		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.01 * pw + 0.006, sh, stem_c, false, 0.88)
 		var tip_y: float = pot_top + sh
 		if is_fern:
-			for j in 3:
-				var fang := ang + float(j - 1) * 0.45
-				var fl := pw * (0.16 + float(j) * 0.03)
+			for j in 4:
+				var fang := ang + float(j - 1.5) * 0.4
+				var fl := pw * (0.14 + float(j) * 0.035)
 				_add_box(
 					root,
-					Vector3(sx + cos(fang) * fl * 0.35, tip_y - float(j) * 0.025 * ph, sz + sin(fang) * fl * 0.35),
-					Vector3(0.03 * pw, 0.014, fl * 0.9),
+					Vector3(sx + cos(fang) * fl * 0.4, tip_y - float(j) * 0.03 * ph, sz + sin(fang) * fl * 0.4),
+					Vector3(0.035 * pw, 0.016, fl),
 					leaf_a if j % 2 == 0 else leaf_b,
 					false,
 					0.92
 				)
 		else:
-			# Palm-ish radiating blades from tip (hides card crown blob from sides)
-			for j in 4:
-				var pang := ang + float(j) * 0.55 - 0.8
-				var bl := pw * (0.16 + float(j % 2) * 0.05)
+			for j in 5:
+				var pang := ang + float(j) * 0.5 - 1.0
+				var bl := pw * (0.15 + float(j % 3) * 0.04)
 				_add_box(
 					root,
-					Vector3(sx + cos(pang) * bl * 0.4, tip_y + 0.02 * ph, sz + sin(pang) * bl * 0.4),
-					Vector3(0.028 * pw, bl * 0.55, 0.022 * pw),
+					Vector3(sx + cos(pang) * bl * 0.45, tip_y + 0.015 * ph, sz + sin(pang) * bl * 0.45),
+					Vector3(0.03 * pw, bl * 0.6, 0.025 * pw),
 					leaf_c if j % 2 == 0 else leaf_a,
 					false,
 					0.9
 				)
-	# Thin mid-height side blades only (loop 101: no blocky leaf cubes)
-	for k in 5:
-		var kang := float(k) * TAU / 5.0 + 0.25
-		var kr: float = pw * 0.16
+	# Mid-height ring of side blades (walk-around volume)
+	for k in 8:
+		var kang := float(k) * TAU / 8.0 + 0.2
+		var kr: float = pw * (0.18 + float(k % 2) * 0.04)
+		var ky: float = pot_top + (crown - pot_top) * (0.35 + float(k % 3) * 0.12)
 		_add_box(
 			root,
-			Vector3(cos(kang) * kr, pot_top + (crown - pot_top) * 0.45, sin(kang) * kr),
-			Vector3(0.018 * pw, 0.1 * ph, 0.06 * pw),
+			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
+			Vector3(0.022 * pw, 0.12 * ph, 0.08 * pw),
 			leaf_b if k % 2 == 0 else leaf_a,
 			false,
 			0.92
 		)
-	# One soft mid-canopy blob only (was three heavy dark spheres)
-	_add_sphere_blob(root, Vector3(0.0, crown * 0.95, 0.0), pw * 0.06, leaf_a)
+	# Soft canopy mass (multiple blobs — masks billboard edge from sides)
+	_add_sphere_blob(root, Vector3(0.0, crown * 0.92, 0.0), pw * 0.1, leaf_a)
+	_add_sphere_blob(root, Vector3(pw * 0.08, crown * 0.88, pw * 0.05), pw * 0.08, leaf_c)
+	_add_sphere_blob(root, Vector3(-pw * 0.07, crown * 0.9, -pw * 0.04), pw * 0.075, leaf_b)
+	_add_sphere_blob(root, Vector3(pw * 0.04, crown * 0.78, -pw * 0.08), pw * 0.07, leaf_a)
 
 
 static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color: Color) -> void:
@@ -3479,7 +3483,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
 			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.09, 0.09, 0.04), BRASS.lightened(0.05), false, 0.3)
-	# Silver plate (texture mid-tone silver + silhouette; boost if missing)
+	# Loop 128 silver plate — warm mid-tone + stronger sheen so it reads as looking-glass
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
 	gm.size = Vector2(w - 0.18, h - 0.18)
@@ -3488,24 +3492,24 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		# Loop 114: warm silver lift (was cool blue-white that read as empty sky glass)
-		gmat.albedo_color = Color(1.12, 1.1, 1.05)
+		gmat.albedo_color = Color(1.15, 1.12, 1.06)
 	else:
-		gmat.albedo_color = Color(0.58, 0.58, 0.56)
+		gmat.albedo_color = Color(0.62, 0.62, 0.58)
 	gmat.roughness = 1.0
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, 0, 0.105)
 	root.add_child(glass)
-	# Soft diagonal sheen strips (warm silver catch — not cool blue bars)
-	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.08, 0.112), Vector3(0.04, h * 0.55, 0.003), Color(0.78, 0.76, 0.72))
-	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.05, 0.112), Vector3(0.025, h * 0.35, 0.003), Color(0.68, 0.66, 0.62))
-	# Soft warm catch light
+	# Diagonal sheen strips + soft room-silhouette blocks (reads as reflection)
+	_add_unshaded_plate(root, Vector3(-w * 0.15, h * 0.1, 0.112), Vector3(0.045, h * 0.6, 0.003), Color(0.82, 0.8, 0.75))
+	_add_unshaded_plate(root, Vector3(w * 0.2, -h * 0.08, 0.112), Vector3(0.03, h * 0.4, 0.003), Color(0.72, 0.7, 0.65))
+	_add_unshaded_plate(root, Vector3(-w * 0.05, -h * 0.15, 0.113), Vector3(w * 0.25, h * 0.18, 0.002), Color(0.35, 0.32, 0.28))
+	_add_unshaded_plate(root, Vector3(w * 0.12, h * 0.05, 0.113), Vector3(w * 0.12, h * 0.35, 0.002), Color(0.42, 0.4, 0.36))
 	var catch_l := OmniLight3D.new()
 	catch_l.light_color = Color(1.0, 0.95, 0.88)
-	catch_l.light_energy = 0.32
-	catch_l.omni_range = 1.8
+	catch_l.light_energy = 0.4
+	catch_l.omni_range = 2.0
 	catch_l.position = Vector3(0.12, 0.1, 0.4)
 	root.add_child(catch_l)
 	return root
