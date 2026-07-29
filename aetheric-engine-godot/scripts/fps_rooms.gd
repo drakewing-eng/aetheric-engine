@@ -67,7 +67,8 @@ const ROOMS := {
 				"col_size": [2.2, 0.95, 0.85],
 				"mesh_bulk": "sofa",
 			},
-			{"kind": "ottoman", "pos": [0.0, 0.0, -2.35], "yaw": 0.0, "seed": 0,
+			# Loop 77: clear gap from sofa face (was tight at -2.35 under bulk)
+			{"kind": "ottoman", "pos": [0.0, 0.0, -2.05], "yaw": 0.0, "seed": 0,
 				"fabric": Color(0.32, 0.38, 0.2)},
 			{"kind": "side_table", "pos": [-1.75, 0.0, -3.35], "yaw": 12.0, "seed": 0},
 			{"kind": "side_table", "pos": [1.75, 0.0, -3.35], "yaw": -12.0, "seed": 4},
@@ -526,8 +527,7 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [0.0, 1.2, 3.85], "yaw": 180.0, "width": 1.5, "height": 2.3},
 		],
 		"props": [
-			# Warm still — plants along edges; clear centre for Rooke pacing
-			# Conservatory: mix palm / fern + size tiers (item 7)
+			# Loop 77: garden room identity — plants + bench + urns, clear centre path
 			{"kind": "plant", "pos": [2.8, 0.0, -2.4], "scale": 1.15, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 1.05, "height": 1.45},
 			{"kind": "plant", "pos": [-2.8, 0.0, -2.4], "scale": 1.0, "seed": 1,
@@ -540,11 +540,18 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.6},
 			{"kind": "plant", "pos": [-2.5, 0.0, 2.5], "scale": 0.85, "seed": 5,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 1.05},
-			{"kind": "side_table", "pos": [0.0, 0.0, -2.6], "yaw": 0.0, "seed": 3},
-			{"kind": "stool", "pos": [1.2, 0.0, -2.2], "yaw": -20.0, "seed": 2},
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "length": 5.5, "width": 1.3},
+			# Iron garden bench (not salon stool) + teak mate
+			{"kind": "garden_bench", "pos": [-1.4, 0.0, -2.5], "yaw": 15.0, "seed": 0, "width": 1.4},
+			{"kind": "garden_bench", "pos": [1.6, 0.0, 2.0], "yaw": -155.0, "seed": 1, "width": 1.25},
+			{"kind": "side_table", "pos": [0.0, 0.0, -2.55], "yaw": 0.0, "seed": 3},
+			{"kind": "urn", "pos": [3.4, 0.0, -1.0], "scale": 1.05, "seed": 0},
+			{"kind": "urn", "pos": [-3.4, 0.0, -0.8], "scale": 0.9, "seed": 1},
+			{"kind": "watering_can", "pos": [0.55, 0.0, -2.2], "scale": 1.0, "yaw": 40.0},
+			{"kind": "stool", "pos": [1.0, 0.0, -1.6], "yaw": -20.0, "seed": 2},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "length": 5.5, "width": 1.3, "seed": 1},
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 3.5], "yaw": -90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, 3.5], "yaw": 90.0, "height": 2.2},
+			{"kind": "oil_lamp", "pos": [0.0, 0.0, -2.0], "height": 0.95},
 		],
 		"doors": [
 			{

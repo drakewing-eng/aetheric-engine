@@ -166,6 +166,12 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_chandelier(prop)
 		"chalk_board":
 			node = _make_chalk_board(prop)
+		"garden_bench":
+			node = _make_garden_bench(prop)
+		"urn":
+			node = _make_urn(prop)
+		"watering_can":
+			node = _make_watering_can(prop)
 		"billboard_prop":
 			node = _make_billboard_prop(prop)
 		_:
@@ -1041,11 +1047,81 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
 	var width: float = float(prop.get("width", 0.9))
+	var seed0: int = int(prop.get("seed", 0))
 	var n := int(clampf(length / 0.55, 3.0, 12.0))
 	for i in n:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
-		var ox := 0.03 * float((i % 3) - 1)
-		_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.85 + float(i % 2) * 0.1), 0.04, 0.48), STONE, false, 0.7)
+		var ox := 0.04 * float(((i + seed0) % 3) - 1)
+		var col := STONE if (i + seed0) % 2 == 0 else STONE.darkened(0.08)
+		_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.82 + float(i % 2) * 0.12), 0.045, 0.48), col, false, 0.72)
+		# Mortar edge cue
+		_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.75, 0.01, 0.02), Color(0.45, 0.42, 0.38), false, 0.85)
+	return root
+
+
+static func _make_garden_bench(prop: Dictionary) -> Node3D:
+	## Cast-iron / wood conservatory bench — seed forks iron vs teak.
+	var root := Node3D.new()
+	root.name = "GardenBench"
+	var seed0: int = int(prop.get("seed", 0))
+	var w: float = float(prop.get("width", 1.35))
+	if seed0 % 2 == 0:
+		# Iron frame + wood slats
+		_add_box(root, Vector3(0, 0.42, 0), Vector3(w, 0.05, 0.42), IRON, true, 0.4)
+		for i in 5:
+			var x := -w * 0.4 + float(i) * (w * 0.8 / 4.0)
+			_add_box(root, Vector3(x, 0.46, 0), Vector3(0.06, 0.03, 0.4), OAK.lightened(0.1), false, 0.55)
+		_add_box(root, Vector3(0, 0.72, -0.18), Vector3(w, 0.45, 0.05), IRON, true, 0.4)
+		for i in 4:
+			var x2 := -w * 0.35 + float(i) * (w * 0.7 / 3.0)
+			_add_box(root, Vector3(x2, 0.72, -0.15), Vector3(0.05, 0.38, 0.03), OAK.lightened(0.08), false, 0.55)
+		for sx in [-1.0, 1.0]:
+			_add_box(root, Vector3(sx * w * 0.45, 0.22, 0.12), Vector3(0.05, 0.4, 0.05), IRON, true, 0.4)
+			_add_box(root, Vector3(sx * w * 0.45, 0.22, -0.15), Vector3(0.05, 0.4, 0.05), IRON, true, 0.4)
+			_add_box(root, Vector3(sx * w * 0.45, 0.55, -0.02), Vector3(0.04, 0.08, 0.35), IRON, false, 0.4)
+	else:
+		# Teak garden settle
+		_add_box(root, Vector3(0, 0.42, 0.02), Vector3(w, 0.06, 0.45), OAK, true, 0.55)
+		_add_box(root, Vector3(0, 0.75, -0.16), Vector3(w, 0.5, 0.06), OAK.darkened(0.05), true, 0.55)
+		for sx in [-1.0, 1.0]:
+			_add_box(root, Vector3(sx * w * 0.42, 0.55, 0.0), Vector3(0.08, 0.2, 0.42), OAK.darkened(0.08), true, 0.55)
+			_add_box(root, Vector3(sx * w * 0.4, 0.2, 0.15), Vector3(0.06, 0.38, 0.06), OAK.darkened(0.1), true, 0.55)
+			_add_box(root, Vector3(sx * w * 0.4, 0.2, -0.15), Vector3(0.06, 0.38, 0.06), OAK.darkened(0.1), true, 0.55)
+		_add_box(root, Vector3(0, 0.18, 0), Vector3(w * 0.85, 0.04, 0.35), OAK.darkened(0.12), false, 0.55)
+	_add_contact_shadow(root, w * 0.5, 0.35)
+	return root
+
+
+static func _make_urn(prop: Dictionary) -> Node3D:
+	## Stone / terracotta pedestal urn for conservatory corners.
+	var root := Node3D.new()
+	root.name = "Urn"
+	var seed0: int = int(prop.get("seed", 0))
+	var scale: float = float(prop.get("scale", 1.0))
+	var body := STONE if seed0 % 2 == 0 else CLAY
+	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.22 * scale, 0.2 * scale, body.darkened(0.05), true, 0.7)
+	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.12 * scale, 0.28 * scale, body, true, 0.7)
+	_add_cylinder(root, Vector3(0, 0.55 * scale, 0), 0.2 * scale, 0.12 * scale, body.lightened(0.05), false, 0.7)
+	_add_cylinder(root, Vector3(0, 0.62 * scale, 0), 0.16 * scale, 0.05 * scale, body.darkened(0.08), false, 0.7)
+	# Soil + small foliage crown
+	_add_cylinder(root, Vector3(0, 0.64 * scale, 0), 0.14 * scale, 0.04 * scale, Color(0.18, 0.12, 0.08), false, 0.9)
+	_add_sphere_blob(root, Vector3(0, 0.78 * scale, 0), 0.12 * scale, Color(0.2, 0.4, 0.14))
+	_add_sphere_blob(root, Vector3(0.06 * scale, 0.82 * scale, 0.04 * scale), 0.08 * scale, Color(0.16, 0.36, 0.12))
+	_add_contact_shadow(root, 0.25 * scale, 0.25 * scale)
+	return root
+
+
+static func _make_watering_can(prop: Dictionary) -> Node3D:
+	## Copper watering can — conservatory service prop.
+	var root := Node3D.new()
+	root.name = "WateringCan"
+	var scale: float = float(prop.get("scale", 1.0))
+	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.1 * scale, 0.2 * scale, COPPER, true, 0.35, true)
+	_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.11 * scale, 0.04 * scale, COPPER.lightened(0.08), false, 0.32, true)
+	_add_box(root, Vector3(0.14 * scale, 0.16 * scale, 0), Vector3(0.16 * scale, 0.04 * scale, 0.04 * scale), COPPER, false, 0.35)
+	_add_cylinder(root, Vector3(0.22 * scale, 0.14 * scale, 0), 0.03 * scale, 0.06 * scale, COPPER.darkened(0.05), false, 0.35, true)
+	_add_box(root, Vector3(-0.02 * scale, 0.28 * scale, 0), Vector3(0.04 * scale, 0.12 * scale, 0.03 * scale), COPPER.darkened(0.08), false, 0.35)
+	_add_contact_shadow(root, 0.14 * scale, 0.12 * scale)
 	return root
 
 

@@ -708,8 +708,10 @@ func _make_mat(tex_path: String, fallback: Color, plane_size: Vector2, tiled: bo
 		if tex:
 			mat.albedo_texture = tex
 			if tiled:
-				# Smaller scale = less aggressive tiling / fewer obvious vertical seams
-				mat.uv1_scale = Vector3(plane_size.x * 0.22, plane_size.y * 0.22, 1.0)
+				# Damask papers: slightly denser repeat so pattern reads at walk distance
+				# (loop 77 drawing-room polish). Service papers stay coarser via asset scale.
+				var dens := 0.28 if tex_path.find("wallpaper_drawing") >= 0 or tex_path.find("wallpaper_gallery") >= 0 else 0.22
+				mat.uv1_scale = Vector3(plane_size.x * dens, plane_size.y * dens, 1.0)
 			return mat
 	mat.albedo_color = fallback
 	return mat

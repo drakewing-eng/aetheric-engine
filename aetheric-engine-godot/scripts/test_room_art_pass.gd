@@ -90,13 +90,18 @@ func _init() -> void:
 	else:
 		print("OK gallery aetheric_machine")
 
-	# Conservatory plants + glass
+	# Conservatory plants + glass + garden furniture (loop 77)
 	var cprops: Array = prop_kinds_by_room.get("conservatory", [])
 	if "plant" not in cprops:
 		push_error("Conservatory missing plants")
 		failed += 1
 	else:
 		print("OK conservatory plants")
+	if "garden_bench" not in cprops:
+		push_error("Conservatory missing garden_bench (empty glass room)")
+		failed += 1
+	else:
+		print("OK conservatory garden_bench")
 	var crooms: Dictionary = Rooms.get_room("conservatory")
 	var has_glass := false
 	for f in crooms.get("features", []):
@@ -107,6 +112,7 @@ func _init() -> void:
 		failed += 1
 	else:
 		print("OK conservatory glass_wall")
+
 
 	# Drawing room hybrid: cutout billboards + at least one mesh armchair
 	var dprops: Array = prop_kinds_by_room.get("drawing_room", [])
