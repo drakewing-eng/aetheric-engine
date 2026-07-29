@@ -241,21 +241,25 @@ static func _make_desk(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(-0.4, top_y + 0.14, -0.28), Vector3(0.12, 0.08, 0.08), PAPER.darkened(0.05), false)
 	_add_box(root, Vector3(0.0, top_y + 0.14, -0.28), Vector3(0.1, 0.06, 0.08), PAPER, false)
 	_add_box(root, Vector3(0.4, top_y + 0.14, -0.28), Vector3(0.08, 0.1, 0.08), Color(0.35, 0.18, 0.1), false, 0.6)
-	# Still life on writing surface
+	# Loop 126 still-life: papers + ink + proper candlestick (not brass disc + stick)
 	_add_box(root, Vector3(0.28, top_y + 0.04, 0.12), Vector3(0.34, 0.012, 0.24), PAPER, false)
 	_add_box(root, Vector3(0.32, top_y + 0.05, 0.08), Vector3(0.22, 0.01, 0.16), PAPER.darkened(0.05), false)
 	_add_box(root, Vector3(-0.25, top_y + 0.04, -0.05), Vector3(0.28, 0.01, 0.2), PAPER, false)
 	_add_box(root, Vector3(0.05, top_y + 0.06, -0.12), Vector3(0.055, 0.05, 0.055), INK, false)
 	_add_cylinder(root, Vector3(0.12, top_y + 0.09, -0.08), 0.012, 0.14, MAHOGANY, false)
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.03, 0.18, CANDLE, false)
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.01, 0.15), 0.05, 0.04, BRASS, false, 0.3, true)
+	# Candlestick: wood base + drip pan + cream taper
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.02, 0.15), 0.055, 0.035, MAHOGANY_DARK, false, 0.5)
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.028, 0.09, MAHOGANY, false, 0.48)
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.13, 0.15), 0.045, 0.02, BRASS.darkened(0.2), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.35, top_y + 0.26, 0.15), 0.02, 0.22, CANDLE, false, 0.6)
+	_add_sphere_blob(root, Vector3(-0.35, top_y + 0.38, 0.15), 0.028, Color(1.0, 0.78, 0.4))
 	_add_box(root, Vector3(0.45, top_y + 0.05, -0.15), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
 	_add_contact_shadow(root, 0.9, 0.55)
 	var flame := OmniLight3D.new()
 	flame.light_color = Color(1.0, 0.78, 0.42)
 	flame.light_energy = 0.45
 	flame.omni_range = 2.6
-	flame.position = Vector3(-0.35, top_y + 0.28, 0.15)
+	flame.position = Vector3(-0.35, top_y + 0.36, 0.15)
 	root.add_child(flame)
 	return root
 
@@ -892,51 +896,58 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
 		_add_cylinder(root, Vector3(0.0, 0.02, -0.06), 0.04, 0.04, MAHOGANY, true)
 		_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.42, 0.03, 0.14), MAHOGANY, false, 0.48)
-	# Top dressing — skip when bare (tea tray / hero still-life placed separately)
+	# Loop 126 top dressing — candlestick / Argand / books / letters (never brass coin tower)
 	var top_y := 0.69
 	if prop.get("bare", false):
 		_add_contact_shadow(root, 0.34, 0.34)
 		return root
 	if dress == 0:
-		# Mini Argand on table (loop 102: short caged chimney, not white stick)
-		_add_cylinder(root, Vector3(0, top_y, 0), 0.08, 0.05, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.07, 0.08, BRASS.darkened(0.05), false, 0.28, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.05, 0.03, BRASS, false, 0.28, true)
-		var glass_t := Color(0.72, 0.58, 0.32)
-		_add_cylinder(root, Vector3(0, top_y + 0.22, 0), 0.038, 0.12, glass_t, false, 0.4)
-		for ri in 3:
-			var ra := float(ri) * TAU / 3.0
-			_add_box(root, Vector3(cos(ra) * 0.04, top_y + 0.22, sin(ra) * 0.04), Vector3(0.01, 0.11, 0.01), BRASS, false, 0.3)
-		_add_cylinder(root, Vector3(0, top_y + 0.29, 0), 0.032, 0.025, BRASS, false, 0.28, true)
-		_add_sphere_blob(root, Vector3(0, top_y + 0.2, 0), 0.022, Color(1.0, 0.8, 0.4))
-		_add_box(root, Vector3(0.12, top_y - 0.01, 0.08), Vector3(0.12, 0.14, 0.09), _book_color(2 + seed0), false)
+		# Mini Argand: dark wood base + fat font + short amber glass (loop 121 language)
+		_add_cylinder(root, Vector3(0, top_y + 0.02, 0), 0.07, 0.04, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.085, 0.1, Color(0.5, 0.36, 0.18), false, 0.4, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.055, 0.025, BRASS.darkened(0.2), false, 0.35, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.24, 0), 0.04, 0.14, Color(0.85, 0.62, 0.28), false, 0.35)
+		_add_sphere_blob(root, Vector3(0, top_y + 0.22, 0), 0.025, Color(1.0, 0.8, 0.4))
+		_add_box(root, Vector3(0.14, top_y + 0.05, 0.06), Vector3(0.1, 0.12, 0.08), _book_color(2 + seed0), false)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 0.55
 		lamp.omni_range = 2.6
-		lamp.position = Vector3(0, top_y + 0.22, 0)
+		lamp.position = Vector3(0, top_y + 0.24, 0)
 		root.add_child(lamp)
 	elif dress == 1:
+		# Book stack + cream crock (no metal tower)
 		_add_box(root, Vector3(-0.05, top_y + 0.01, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
 		_add_box(root, Vector3(0.02, top_y + 0.06, 0.0), Vector3(0.12, 0.04, 0.16), _book_color(seed0 + 3), false)
 		_add_box(root, Vector3(0.08, top_y + 0.11, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.03, 0.1), 0.04, 0.12, CREAM.darkened(0.1), false, 0.75)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.1), 0.04, 0.1, CREAM.darkened(0.1), false, 0.75)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.12, 0.1), 0.03, 0.03, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Porcelain vase + restrained bloom (not Minecraft fruit blobs)
-		_add_cylinder(root, Vector3(0, top_y + 0.04, 0), 0.055, 0.1, CREAM.darkened(0.05), false, 0.7)
-		_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.04, 0.08, CREAM, false, 0.7)
-		_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.05, 0.03, CREAM.darkened(0.08), false, 0.7)
+		# Porcelain vase + restrained bloom
+		_add_cylinder(root, Vector3(0, top_y + 0.03, 0), 0.045, 0.04, CREAM.darkened(0.12), false, 0.7)
+		_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.06, 0.12, CREAM.darkened(0.05), false, 0.7)
+		_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.045, 0.04, CREAM, false, 0.7)
 		_add_cylinder(root, Vector3(0.01, top_y + 0.26, 0.01), 0.012, 0.12, Color(0.22, 0.35, 0.16), false, 0.8)
 		_add_sphere_blob(root, Vector3(0.03, top_y + 0.32, 0.02), 0.028, Color(0.62, 0.22, 0.22))
 		_add_sphere_blob(root, Vector3(-0.02, top_y + 0.3, -0.01), 0.022, Color(0.72, 0.55, 0.28))
 		_add_sphere_blob(root, Vector3(0.0, top_y + 0.34, -0.02), 0.02, Color(0.55, 0.2, 0.25))
 	else:
-		# Letters + pen tray (drawing-room identity)
-		_add_box(root, Vector3(-0.04, top_y, 0.02), Vector3(0.16, 0.01, 0.11), PAPER, false)
-		_add_box(root, Vector3(0.0, top_y + 0.012, 0.0), Vector3(0.14, 0.008, 0.1), PAPER.darkened(0.06), false)
-		_add_cylinder(root, Vector3(0.06, top_y + 0.02, 0.04), 0.015, 0.006, Color(0.55, 0.12, 0.1), false, 0.6)
-		_add_box(root, Vector3(0.12, top_y + 0.01, -0.05), Vector3(0.1, 0.02, 0.04), MAHOGANY_DARK, false, 0.45)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.03, -0.05), 0.006, 0.1, INK, false, 0.5)
+		# Candlestick + letters (drawing-room identity)
+		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(-0.08, top_y + 0.08, 0.0), 0.025, 0.08, MAHOGANY, false, 0.48)
+		_add_cylinder(root, Vector3(-0.08, top_y + 0.13, 0.0), 0.04, 0.02, BRASS.darkened(0.2), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.08, top_y + 0.26, 0.0), 0.018, 0.22, CANDLE, false, 0.6)
+		_add_sphere_blob(root, Vector3(-0.08, top_y + 0.38, 0.0), 0.025, Color(1.0, 0.78, 0.35))
+		_add_box(root, Vector3(0.08, top_y, 0.02), Vector3(0.16, 0.01, 0.11), PAPER, false)
+		_add_box(root, Vector3(0.1, top_y + 0.012, 0.0), Vector3(0.14, 0.008, 0.1), PAPER.darkened(0.06), false)
+		_add_box(root, Vector3(0.12, top_y + 0.01, -0.08), Vector3(0.08, 0.02, 0.04), MAHOGANY_DARK, false, 0.45)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.03, -0.08), 0.006, 0.1, INK, false, 0.5)
+		var candle_l := OmniLight3D.new()
+		candle_l.light_color = Color(1.0, 0.82, 0.5)
+		candle_l.light_energy = 0.4
+		candle_l.omni_range = 2.2
+		candle_l.position = Vector3(-0.08, top_y + 0.36, 0.0)
+		root.add_child(candle_l)
 	_add_contact_shadow(root, 0.34, 0.34)
 	return root
 
@@ -3030,21 +3041,28 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	# Mantel shelf
 	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
 	_add_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), MARBLE.lightened(0.05), false, 0.3)
-	# Mantel ornaments by seed
+	# Loop 126 mantel ornaments — candlesticks / urns / clock (not brass cylinders)
 	match seed0 % 3:
 		0:
-			_add_cylinder(root, Vector3(-0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
-			_add_cylinder(root, Vector3(0.55, 1.58, 0.05), 0.06, 0.18, BRASS, false, 0.3, true)
-			_add_box(root, Vector3(0, 1.55, 0.08), Vector3(0.2, 0.12, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
-			_add_box(root, Vector3(0, 1.65, 0.08), Vector3(0.14, 0.1, 0.06), Color(0.85, 0.82, 0.75), false, 0.45)
+			# Twin candlesticks + carriage clock
+			for sx in [-0.55, 0.55]:
+				_add_cylinder(root, Vector3(sx, 1.54, 0.05), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
+				_add_cylinder(root, Vector3(sx, 1.6, 0.05), 0.025, 0.1, MAHOGANY, false, 0.48)
+				_add_cylinder(root, Vector3(sx, 1.66, 0.05), 0.04, 0.02, BRASS.darkened(0.2), false, 0.35, true)
+				_add_cylinder(root, Vector3(sx, 1.78, 0.05), 0.018, 0.2, CANDLE, false, 0.6)
+				_add_sphere_blob(root, Vector3(sx, 1.9, 0.05), 0.025, Color(1.0, 0.75, 0.35))
+			_add_box(root, Vector3(0, 1.58, 0.08), Vector3(0.18, 0.14, 0.1), Color(0.12, 0.1, 0.1), false, 0.4)
+			_add_box(root, Vector3(0, 1.68, 0.08), Vector3(0.12, 0.1, 0.06), Color(0.85, 0.82, 0.75), false, 0.45)
 		1:
-			# Twin urns + centre candlesticks
-			_add_cylinder(root, Vector3(-0.5, 1.6, 0.05), 0.07, 0.2, CREAM.darkened(0.08), false, 0.7)
-			_add_cylinder(root, Vector3(0.5, 1.6, 0.05), 0.07, 0.2, CREAM.darkened(0.08), false, 0.7)
-			_add_cylinder(root, Vector3(-0.15, 1.55, 0.08), 0.025, 0.14, CANDLE, false, 0.55)
-			_add_cylinder(root, Vector3(0.15, 1.55, 0.08), 0.025, 0.14, CANDLE, false, 0.55)
-			_add_sphere_blob(root, Vector3(-0.15, 1.65, 0.08), 0.02, Color(1.0, 0.75, 0.35))
-			_add_sphere_blob(root, Vector3(0.15, 1.65, 0.08), 0.02, Color(1.0, 0.75, 0.35))
+			# Twin urns + centre candlesticks with bases
+			_add_cylinder(root, Vector3(-0.5, 1.56, 0.05), 0.05, 0.04, CREAM.darkened(0.15), false, 0.7)
+			_add_cylinder(root, Vector3(-0.5, 1.64, 0.05), 0.07, 0.16, CREAM.darkened(0.08), false, 0.7)
+			_add_cylinder(root, Vector3(0.5, 1.56, 0.05), 0.05, 0.04, CREAM.darkened(0.15), false, 0.7)
+			_add_cylinder(root, Vector3(0.5, 1.64, 0.05), 0.07, 0.16, CREAM.darkened(0.08), false, 0.7)
+			for sx2 in [-0.15, 0.15]:
+				_add_cylinder(root, Vector3(sx2, 1.54, 0.08), 0.035, 0.025, MAHOGANY_DARK, false, 0.5)
+				_add_cylinder(root, Vector3(sx2, 1.62, 0.08), 0.02, 0.16, CANDLE, false, 0.55)
+				_add_sphere_blob(root, Vector3(sx2, 1.72, 0.08), 0.022, Color(1.0, 0.75, 0.35))
 		_:
 			# Carriage clock + small vases
 			_add_box(root, Vector3(0.0, 1.58, 0.06), Vector3(0.18, 0.22, 0.1), BRASS.darkened(0.1), false, 0.32)
