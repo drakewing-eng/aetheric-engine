@@ -322,59 +322,65 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair: deep seat, buttoned back suggestion, scrolled arms, claw feet.
+	## Wing chair (loop 103): open side silhouette — seat rail + arm gap + rolled wing,
+	## not a solid green wall from extreme side.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	# Seat base + plush cushion
-	_add_box(root, Vector3(0, 0.32, 0.06), Vector3(0.95, 0.18, 0.88), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.46, 0.08), Vector3(0.88, 0.16, 0.78), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.56, 0.1), Vector3(0.78, 0.08, 0.68), fabric.darkened(0.12), false, 0.92)
+	var fabric_d := fabric.darkened(0.1)
+	var fabric_dd := fabric.darkened(0.18)
+	# Wood seat rail (visible from side under cushions)
+	_add_box(root, Vector3(0, 0.3, 0.06), Vector3(0.92, 0.1, 0.86), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.36, 0.06), Vector3(0.94, 0.04, 0.88), MAHOGANY, false, 0.45)
+	# Plush seat cushions (sit above rail — gap under arm reads open)
+	_add_box(root, Vector3(0, 0.46, 0.1), Vector3(0.82, 0.14, 0.72), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.72, 0.07, 0.62), fabric_d, false, 0.92)
 	# Button tufts on seat
-	for bx in [-0.2, 0.0, 0.2]:
-		for bz in [-0.1, 0.12]:
-			_add_cylinder(root, Vector3(bx, 0.6, bz), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
-	# High back + wings (loop 97: no thick mahogany crown blotch — fabric top rail + thin wood bead)
-	_add_box(root, Vector3(0, 0.95, -0.3), Vector3(0.9, 0.95, 0.16), fabric, true, 0.9)
-	# Soft padded top of back (same fabric — never a brown slab from side)
-	_add_box(root, Vector3(0, 1.38, -0.28), Vector3(0.78, 0.12, 0.14), fabric.darkened(0.05), false, 0.9)
-	# Thin carved wood bead only (period crest line, not a blotch)
-	_add_box(root, Vector3(0, 1.46, -0.27), Vector3(0.7, 0.04, 0.08), MAHOGANY, false, 0.45)
-	_add_box(root, Vector3(0, 1.48, -0.26), Vector3(0.2, 0.05, 0.05), MAHOGANY.lightened(0.05), false, 0.45)
+	for bx in [-0.18, 0.0, 0.18]:
+		for bz in [-0.08, 0.1]:
+			_add_cylinder(root, Vector3(bx, 0.59, bz), 0.016, 0.018, fabric_dd, false, 0.95)
+	# High back (narrow depth so side isn't a slab)
+	_add_box(root, Vector3(0, 0.95, -0.32), Vector3(0.78, 0.9, 0.12), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 1.35, -0.3), Vector3(0.7, 0.12, 0.1), fabric_d, false, 0.9)
+	# Thin wood crest bead
+	_add_box(root, Vector3(0, 1.44, -0.28), Vector3(0.62, 0.035, 0.06), MAHOGANY, false, 0.45)
 	# Button tufts on back
-	for by in [0.85, 1.05, 1.2]:
-		for bx in [-0.18, 0.0, 0.18]:
-			_add_cylinder(root, Vector3(bx, by, -0.2), 0.016, 0.018, fabric.darkened(0.22), false, 0.95)
-	# Wings — deep layered rolls (loop 100: extreme side still reads as wing chair, not green wall)
+	for by in [0.85, 1.05, 1.22]:
+		for bx in [-0.16, 0.0, 0.16]:
+			_add_cylinder(root, Vector3(bx, by, -0.24), 0.014, 0.016, fabric_dd, false, 0.95)
+	# Side uprights (wood posts — break fabric wall from side)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.42, 1.05, -0.12), Vector3(0.14, 0.7, 0.45), fabric, true, 0.88)
-		_add_box(root, Vector3(sx * 0.48, 1.08, -0.08), Vector3(0.08, 0.55, 0.38), fabric.darkened(0.08), false, 0.9)
-		_add_box(root, Vector3(sx * 0.52, 1.1, 0.0), Vector3(0.06, 0.45, 0.32), fabric.darkened(0.12), false, 0.9)
-		_add_box(root, Vector3(sx * 0.42, 1.35, -0.1), Vector3(0.12, 0.1, 0.35), fabric.darkened(0.06), false, 0.9)
-		# Soft wing edge roll + front wing curl
-		_add_cylinder(root, Vector3(sx * 0.5, 1.15, -0.05), 0.06, 0.5, fabric.darkened(0.1), false, 0.9)
-		_add_cylinder(root, Vector3(sx * 0.48, 1.0, 0.12), 0.08, 0.35, fabric.darkened(0.05), false, 0.88)
-		# Piping line along wing edge
-		_add_box(root, Vector3(sx * 0.55, 1.1, -0.05), Vector3(0.02, 0.5, 0.35), fabric.darkened(0.18), false, 0.9)
-	# Arms
+		_add_box(root, Vector3(sx * 0.4, 0.85, -0.3), Vector3(0.06, 0.9, 0.08), MAHOGANY_DARK, true, 0.45)
+	# Wings — C-curve rolls only at upper rear (not full-height side slabs)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.42, 0.62, 0.08), Vector3(0.16, 0.22, 0.72), fabric, true, 0.88)
-		_add_box(root, Vector3(sx * 0.42, 0.74, 0.18), Vector3(0.14, 0.1, 0.45), fabric.darkened(0.08), false, 0.9)
-		_add_cylinder(root, Vector3(sx * 0.48, 0.7, 0.1), 0.07, 0.4, fabric.darkened(0.06), false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.4, 0.55, 0.35), 0.06, 0.12, MAHOGANY, false, 0.45)
-		# Arm side bolster
-		_add_box(root, Vector3(sx * 0.52, 0.68, 0.05), Vector3(0.08, 0.14, 0.5), fabric.darkened(0.1), false, 0.88)
+		# Main wing panel (rear-biased, leaves front side open)
+		_add_box(root, Vector3(sx * 0.4, 1.15, -0.18), Vector3(0.12, 0.5, 0.28), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.44, 1.2, -0.05), 0.07, 0.4, fabric_d, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.42, 1.35, -0.12), 0.06, 0.22, fabric, false, 0.9)
+		# Piping
+		_add_box(root, Vector3(sx * 0.48, 1.18, -0.1), Vector3(0.02, 0.4, 0.22), fabric_dd, false, 0.9)
+	# Arms — mid-height only with open under-arm void (key side read)
+	for sx in [-1.0, 1.0]:
+		# Arm pad
+		_add_box(root, Vector3(sx * 0.4, 0.68, 0.08), Vector3(0.14, 0.1, 0.55), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.4, 0.72, 0.12), 0.07, 0.45, fabric_d, false, 0.88)
+		# Front scroll + wood support post (void under arm behind post)
+		_add_cylinder(root, Vector3(sx * 0.38, 0.52, 0.32), 0.055, 0.14, MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
+		# Rear arm root into wing
+		_add_box(root, Vector3(sx * 0.4, 0.7, -0.15), Vector3(0.1, 0.12, 0.18), fabric_d, false, 0.88)
 	# Legs + feet
 	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.36, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.36, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.34, 0.14, -0.3), 0.038, 0.26, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.34, 0.02, -0.3), 0.05, 0.04, MAHOGANY, true)
-	# Skirt
-	_add_box(root, Vector3(0, 0.2, 0.08), Vector3(0.88, 0.08, 0.82), MAHOGANY_DARK, false, 0.42)
-	_add_contact_shadow(root, 0.72, 0.68)
+		_add_cylinder(root, Vector3(sx * 0.34, 0.14, 0.3), 0.04, 0.26, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.34, 0.02, 0.3), 0.055, 0.04, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.14, -0.28), 0.038, 0.26, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.32, 0.02, -0.28), 0.05, 0.04, MAHOGANY, true)
+	# Front skirt only (sides open so legs/void read)
+	_add_box(root, Vector3(0, 0.22, 0.35), Vector3(0.75, 0.06, 0.06), MAHOGANY_DARK, false, 0.42)
+	_add_box(root, Vector3(0, 0.22, -0.28), Vector3(0.7, 0.05, 0.05), MAHOGANY_DARK, false, 0.42)
+	_add_contact_shadow(root, 0.68, 0.62)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
@@ -446,55 +452,53 @@ static func _make_letter_stack(prop: Dictionary) -> Node3D:
 
 
 static func _make_tea_tray(prop: Dictionary) -> Node3D:
-	## Tea at four — silvered tray, period china (loop 94: blue willow / cream gilt,
-	## not pure white modern blockware).
+	## Tea at four — silvered tray, period china (loop 103: cream ivory only,
+	## never pure white plastic blockware).
 	var root := Node3D.new()
 	root.name = "TeaTray"
 	var seed0: int = int(prop.get("seed", 0))
-	# Period china: cream with blue transfer, or ivory with gilt
 	var china: Color
 	var trim: Color
 	var pattern: Color
 	match seed0 % 3:
 		0:  # cream + gilt
-			china = Color(0.92, 0.88, 0.78)
-			trim = BRASS.darkened(0.05)
-			pattern = Color(0.7, 0.55, 0.3)
-		1:  # blue willow-ish
-			china = Color(0.9, 0.9, 0.88)
-			trim = Color(0.2, 0.32, 0.55)
-			pattern = Color(0.25, 0.4, 0.62)
+			china = Color(0.86, 0.8, 0.68)
+			trim = BRASS.darkened(0.08)
+			pattern = Color(0.62, 0.48, 0.28)
+		1:  # blue willow on ivory
+			china = Color(0.84, 0.82, 0.74)
+			trim = Color(0.22, 0.34, 0.52)
+			pattern = Color(0.28, 0.4, 0.58)
 		_:  # soft rose band
-			china = Color(0.93, 0.88, 0.84)
-			trim = Color(0.55, 0.22, 0.22)
-			pattern = Color(0.65, 0.35, 0.35)
+			china = Color(0.88, 0.8, 0.74)
+			trim = Color(0.5, 0.22, 0.22)
+			pattern = Color(0.58, 0.32, 0.32)
 	# Oval silver tray with rim
-	_add_box(root, Vector3(0, 0.015, 0), Vector3(0.48, 0.018, 0.32), BRASS.darkened(0.18), false, 0.28)
-	_add_box(root, Vector3(0, 0.028, 0), Vector3(0.44, 0.01, 0.28), BRASS.lightened(0.08), false, 0.25)
-	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.4, 0.006, 0.24), Color(0.72, 0.7, 0.66), false, 0.4)
+	_add_box(root, Vector3(0, 0.015, 0), Vector3(0.5, 0.016, 0.34), BRASS.darkened(0.22), false, 0.28)
+	_add_box(root, Vector3(0, 0.026, 0), Vector3(0.46, 0.01, 0.3), BRASS.darkened(0.05), false, 0.25)
+	_add_box(root, Vector3(0, 0.032, 0), Vector3(0.42, 0.006, 0.26), Color(0.55, 0.52, 0.46), false, 0.4)
 	# Handles
-	_add_box(root, Vector3(-0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
-	_add_box(root, Vector3(0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
-	# Teapot body + lid + spout + handle
-	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.065, 0.12, china, false, 0.55)
-	_add_cylinder(root, Vector3(-0.08, 0.17, 0.02), 0.05, 0.03, china.darkened(0.04), false, 0.55)
-	_add_cylinder(root, Vector3(-0.08, 0.2, 0.02), 0.025, 0.035, trim, false, 0.4)
-	_add_box(root, Vector3(0.0, 0.1, 0.02), Vector3(0.1, 0.025, 0.03), china.darkened(0.06), false, 0.55)
-	_add_box(root, Vector3(-0.15, 0.11, 0.02), Vector3(0.03, 0.08, 0.04), china.darkened(0.08), false, 0.55)
-	# Pattern band on pot
-	_add_cylinder(root, Vector3(-0.08, 0.12, 0.02), 0.068, 0.012, trim, false, 0.35)
-	_add_cylinder(root, Vector3(-0.08, 0.09, 0.02), 0.067, 0.008, pattern, false, 0.45)
-	# Cups + saucers with pattern lip
+	_add_box(root, Vector3(-0.25, 0.038, 0), Vector3(0.04, 0.03, 0.1), BRASS.darkened(0.1), false, 0.28)
+	_add_box(root, Vector3(0.25, 0.038, 0), Vector3(0.04, 0.03, 0.1), BRASS.darkened(0.1), false, 0.28)
+	# Teapot — bulbous body, clear lid knop, spout, handle
+	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.07, 0.11, china, false, 0.6)
+	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.072, 0.025, pattern, false, 0.5)
+	_add_cylinder(root, Vector3(-0.08, 0.16, 0.02), 0.055, 0.03, china.darkened(0.05), false, 0.58)
+	_add_cylinder(root, Vector3(-0.08, 0.185, 0.02), 0.022, 0.03, trim, false, 0.4)
+	_add_box(root, Vector3(0.02, 0.1, 0.02), Vector3(0.1, 0.022, 0.028), china.darkened(0.08), false, 0.58)
+	_add_box(root, Vector3(-0.16, 0.11, 0.02), Vector3(0.028, 0.07, 0.035), china.darkened(0.1), false, 0.58)
+	_add_cylinder(root, Vector3(-0.08, 0.13, 0.02), 0.073, 0.01, trim, false, 0.4)
+	# Cups + saucers
 	for i in 2:
 		var cx := 0.1 + float(i) * 0.1
 		var cz := 0.04 - float(i) * 0.07
-		_add_cylinder(root, Vector3(cx, 0.045, cz), 0.04, 0.01, china.darkened(0.05), false, 0.55)
-		_add_cylinder(root, Vector3(cx, 0.07, cz), 0.028, 0.045, china, false, 0.55)
-		_add_cylinder(root, Vector3(cx, 0.085, cz), 0.03, 0.008, trim, false, 0.4)
-		_add_box(root, Vector3(cx + 0.03, 0.07, cz), Vector3(0.02, 0.03, 0.015), china.darkened(0.06), false, 0.55)
+		_add_cylinder(root, Vector3(cx, 0.042, cz), 0.042, 0.01, china.darkened(0.06), false, 0.58)
+		_add_cylinder(root, Vector3(cx, 0.065, cz), 0.028, 0.04, china, false, 0.58)
+		_add_cylinder(root, Vector3(cx, 0.08, cz), 0.03, 0.008, trim, false, 0.4)
+		_add_box(root, Vector3(cx + 0.028, 0.065, cz), Vector3(0.018, 0.028, 0.014), china.darkened(0.08), false, 0.58)
 	# Cream jug
-	_add_cylinder(root, Vector3(0.02, 0.075, -0.08), 0.025, 0.055, china, false, 0.55)
-	_add_cylinder(root, Vector3(0.02, 0.09, -0.08), 0.027, 0.008, pattern, false, 0.45)
+	_add_cylinder(root, Vector3(0.02, 0.07, -0.08), 0.024, 0.05, china, false, 0.58)
+	_add_cylinder(root, Vector3(0.02, 0.085, -0.08), 0.026, 0.008, pattern, false, 0.48)
 	_add_box(root, Vector3(0.05, 0.08, -0.08), Vector3(0.03, 0.02, 0.02), china.darkened(0.06), false, 0.55)
 	# Sugar bowl + lid
 	_add_cylinder(root, Vector3(-0.02, 0.07, -0.05), 0.032, 0.04, china, false, 0.55)
