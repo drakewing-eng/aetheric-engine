@@ -1,28 +1,39 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-28  
-**Primary goal:** `goal:aetheric_deveraux_interior_plan`  
-**Plan:** `visual-deveraux-house-plan-interior-design.md`  
-**Uniqueness:** `SCRATCH/memory/visual/uniqueness-rule.md`  
-**Loop protocol:** `IMPLEMENT_8H_LOOP_PROTOCOL.md`  
-**HEAD:** `6a74840` (visual implement 66)  
-**10m unattended scheduler:** OFF  
+**Updated:** 2026-07-29 (overnight goal)  
+**Primary goal:** Deveraux visual + interaction overhaul (7-item ordered list)  
+**Plan bible:** `visual-deveraux-house-plan-interior-design.md`  
+**Uniqueness:** `visual/uniqueness-rule.md`  
+**10m density scheduler:** OFF  
 
-## Implement progress
+## Ordered work list status
+
+| # | Item | Status |
+|---|------|--------|
+| 1 | Furniture spacing / overlap | **DONE loop 67** — drawing room re-laid: no stacked chairs/desks; clear walk rings |
+| 2 | Furniture collision | **DONE loop 67** — billboard `col_size` hulls; solid seats/benches; workbench solid tops/legs |
+| 3 | Walking not skating | **DONE loop 67** — ACCEL/FRICTION walk model, slower WALK_SPEED |
+| 4 | Unique Victorian objects (esp tools) | **IN PROGRESS** — tool_rack seed tool types; workbench seed dressing; more remaining |
+| 5 | Geometric / surface detail | **IN PROGRESS** — chair piping/splat variants; painting corner ornaments; workbench banding |
+| 6 | Victorian wall art | **PARTIAL** — gilt multi-step frames; content still procedural landscapes (period-subject OK, style still simplified) |
+| 7 | Plant diversity | **DONE loop 67** — palm/fern mix + size tiers; mesh pots; conservatory/hall/drawing diversified |
+
+## Loop log
 
 | Loop | Work |
 |------|------|
-| 61–65 | Gallery machine, windows green/sky, oil lamps, door structural (see prior) |
-| **66** | **Uniqueness / design quality:** ottoman styles (square/round/long); side_table base+dressing forks (tripod/square/demi-lune × 4 dressings); bookshelf wood/case/book mix by seed + crown dressing; door wood tones by seed (mahog/dark/oak); drawing: no cloned side_table billboards; letter_stack + tea_tray (novel MUST/SHOULD); tool_shelf peg rail + wrench language; hall door seeds. Art pass PASS. Shots `auto_loop_66`. |
+| 66 | Uniqueness pass (prior session) |
+| **67** | Spacing layout + collision hulls + walk accel + unique tool racks + plant kinds/sizes + chair/frame detail |
 
-## Open residual
+## Remaining high-value
 
-1. Painting peek-through vs west bookshelves (QA — may still need reposition)  
-2. Plant FIXED_Y crown float (asset P2)  
-3. Human E-door playtest  
+1. Deeper prop uniqueness (kitchen still-lifes, more tool variety on benches)  
+2. Richer period art plates if assets available (or further frame/canvas polish)  
+3. Mesh sofa alternative where billboards thin from side  
+4. Human E-door playtest  
+5. Scan other rooms for residual overlap (gallery stools, kitchen)  
 
 ## Paths
 
-- Plan: `SCRATCH/memory/visual-deveraux-house-plan-interior-design.md`  
-- Uniqueness: `SCRATCH/memory/visual/uniqueness-rule.md`  
-- Shots: `SCRATCH/screenshots/auto_loop_66/`  
+- Shots: `SCRATCH/screenshots/auto_loop_67/`  
+- Code: `fps_rooms.gd`, `fps_props.gd`, `fps_player.gd`  

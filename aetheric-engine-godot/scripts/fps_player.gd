@@ -1,6 +1,9 @@
 extends CharacterBody3D
 
-const WALK_SPEED := 3.2
+## Walk (not skate): accelerate/decelerate instead of snapping to full speed.
+const WALK_SPEED := 2.55
+const ACCEL := 11.0
+const FRICTION := 14.0
 const MOUSE_SENS := 0.0016
 
 ## Diorama mode: turn left/right only — no looking up at the ceiling or down at the floor.
@@ -72,11 +75,13 @@ func _physics_process(delta: float) -> void:
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var direction := (head.transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)).normalized()
 	if direction.length_squared() > 0.0:
-		velocity.x = direction.x * WALK_SPEED
-		velocity.z = direction.z * WALK_SPEED
+		# Ramp up to walk speed — avoids ice-skate / instant full velocity
+		velocity.x = move_toward(velocity.x, direction.x * WALK_SPEED, ACCEL * delta)
+		velocity.z = move_toward(velocity.z, direction.z * WALK_SPEED, ACCEL * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, WALK_SPEED)
-		velocity.z = move_toward(velocity.z, 0.0, WALK_SPEED)
+		# Ground friction when releasing keys
+		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
+		velocity.z = move_toward(velocity.z, 0.0, FRICTION * delta)
 
 	move_and_slide()
 
