@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~01:15 (overnight goal active)  
+**Updated:** 2026-07-29 ~01:35 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -18,28 +18,27 @@
 | 9 | Door transition safety | **ADVANCED 76** suite PASS |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79** hall arrival |
-| 12 | Conservatory garden identity | **ADVANCED 77** |
-| 13 | Gallery engine + morning densify | **ADVANCED 78** |
+| 12 | Conservatory garden identity | **ADVANCED 77+82** glass void fix |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82** morning fill |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79** |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
 | 16 | Gallery centre experiment density | **ADVANCED 81** |
+| 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
 | 67–77 | Core visual queue through conservatory |
-| 78 | Gallery engine polish; morning rug/tea/letters |
-| 79 | Hall arrival + workshop scrap/iron path |
-| 80 | Bookshelf spines + kitchen side volume/sink |
-| 81 | **Gallery experiment densify:** N-wall chalk diagrams (4 styles), 2nd machine, instrument shelves, note tables + letter stacks, copper scrap, iron plate aisle, more oil lamps/sconces; denser chalk rail; crock plate stacks. |
+| 78–81 | Gallery/hall/workshop/bookshelf/kitchen polish |
+| 82 | **Fix conservatory black glass void:** unshaded garden view plate room-side of wall + hedge blobs; denser palms/ferns/urns. **Morning room:** second chair, tea nook, ottoman, corner plants, larger rug — fill empty centre. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish (morning empty corner; lighting balance; conservatory palm density)  
+- Optional micro-polish (lighting balance; glass garden textures richer; window black panes in some rooms)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_81/`  
+- Shots: `auto_loop_67/` … `auto_loop_82/`  
