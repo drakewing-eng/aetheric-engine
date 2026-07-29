@@ -407,27 +407,43 @@ static func _make_letter_stack(prop: Dictionary) -> Node3D:
 
 
 static func _make_tea_tray(prop: Dictionary) -> Node3D:
-	## Tea tray at four — silver tray + pot + cups (drawing-room SHOULD).
+	## Tea at four — silvered tray, china pot, cups, cream jug (loop 83 identity).
 	var root := Node3D.new()
 	root.name = "TeaTray"
 	var seed0: int = int(prop.get("seed", 0))
-	# Oval tray
-	_add_box(root, Vector3(0, 0.02, 0), Vector3(0.42, 0.02, 0.28), BRASS.darkened(0.2), false, 0.35)
-	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.38, 0.01, 0.24), BRASS.lightened(0.05), false, 0.3)
+	var china := CREAM.lightened(0.04) if seed0 % 2 == 0 else Color(0.88, 0.86, 0.8)
+	var trim := Color(0.55, 0.18, 0.16) if seed0 % 3 != 1 else BRASS.darkened(0.05)
+	# Oval silver tray with rim
+	_add_box(root, Vector3(0, 0.015, 0), Vector3(0.48, 0.018, 0.32), BRASS.darkened(0.18), false, 0.28)
+	_add_box(root, Vector3(0, 0.028, 0), Vector3(0.44, 0.01, 0.28), BRASS.lightened(0.08), false, 0.25)
+	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.4, 0.006, 0.24), Color(0.78, 0.76, 0.72), false, 0.4)
 	# Handles
-	_add_box(root, Vector3(-0.2, 0.04, 0), Vector3(0.04, 0.03, 0.08), BRASS, false, 0.28)
-	_add_box(root, Vector3(0.2, 0.04, 0), Vector3(0.04, 0.03, 0.08), BRASS, false, 0.28)
-	# Teapot
-	_add_cylinder(root, Vector3(-0.06, 0.1, 0), 0.055, 0.1, CREAM if seed0 % 2 == 0 else BRASS.lightened(0.15), false, 0.55)
-	_add_cylinder(root, Vector3(-0.06, 0.16, 0), 0.03, 0.04, CREAM.darkened(0.05), false, 0.55)
-	_add_box(root, Vector3(0.02, 0.1, 0), Vector3(0.08, 0.02, 0.02), CREAM.darkened(0.1), false, 0.55)
-	# Cups
+	_add_box(root, Vector3(-0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
+	_add_box(root, Vector3(0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
+	# Teapot body + lid + spout + handle
+	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.065, 0.12, china, false, 0.55)
+	_add_cylinder(root, Vector3(-0.08, 0.17, 0.02), 0.05, 0.03, china.darkened(0.05), false, 0.55)
+	_add_cylinder(root, Vector3(-0.08, 0.2, 0.02), 0.025, 0.035, trim, false, 0.4)
+	_add_box(root, Vector3(0.0, 0.1, 0.02), Vector3(0.1, 0.025, 0.03), china.darkened(0.08), false, 0.55)
+	_add_box(root, Vector3(-0.15, 0.11, 0.02), Vector3(0.03, 0.08, 0.04), china.darkened(0.1), false, 0.55)
+	# Gold band on pot
+	_add_cylinder(root, Vector3(-0.08, 0.12, 0.02), 0.068, 0.012, trim, false, 0.35)
+	# Cups + saucers
 	for i in 2:
-		var cx := 0.08 + float(i) * 0.1
-		_add_cylinder(root, Vector3(cx, 0.07, 0.04 - float(i) * 0.06), 0.028, 0.04, CREAM.lightened(0.05), false, 0.6)
-		_add_cylinder(root, Vector3(cx, 0.05, 0.04 - float(i) * 0.06), 0.032, 0.01, CREAM.darkened(0.08), false, 0.6)
-	# Sugar bowl
-	_add_cylinder(root, Vector3(0.0, 0.08, -0.06), 0.03, 0.05, CREAM, false, 0.55)
+		var cx := 0.1 + float(i) * 0.1
+		var cz := 0.04 - float(i) * 0.07
+		_add_cylinder(root, Vector3(cx, 0.045, cz), 0.04, 0.01, china.darkened(0.06), false, 0.55)
+		_add_cylinder(root, Vector3(cx, 0.07, cz), 0.028, 0.045, china, false, 0.55)
+		_add_cylinder(root, Vector3(cx, 0.08, cz), 0.03, 0.008, trim, false, 0.4)
+		_add_box(root, Vector3(cx + 0.03, 0.07, cz), Vector3(0.02, 0.03, 0.015), china.darkened(0.08), false, 0.55)
+	# Cream jug
+	_add_cylinder(root, Vector3(0.02, 0.075, -0.08), 0.025, 0.055, china, false, 0.55)
+	_add_box(root, Vector3(0.05, 0.08, -0.08), Vector3(0.03, 0.02, 0.02), china.darkened(0.08), false, 0.55)
+	# Sugar bowl + lid
+	_add_cylinder(root, Vector3(-0.02, 0.07, -0.05), 0.032, 0.04, china, false, 0.55)
+	_add_cylinder(root, Vector3(-0.02, 0.095, -0.05), 0.02, 0.02, trim, false, 0.4)
+	# Spoon rest
+	_add_box(root, Vector3(0.14, 0.04, -0.02), Vector3(0.08, 0.008, 0.02), BRASS.darkened(0.1), false, 0.3)
 	return root
 
 
@@ -743,8 +759,11 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.22, 0.32, 0.08), 0.028, 0.6, MAHOGANY_DARK, true)
 		_add_cylinder(root, Vector3(0.0, 0.32, -0.05), 0.03, 0.6, MAHOGANY_DARK, true)
 		_add_box(root, Vector3(0, 0.3, 0.05), Vector3(0.4, 0.025, 0.12), MAHOGANY, false, 0.48)
-	# Top dressing — never clone the same still-life
+	# Top dressing — skip when bare (tea tray / hero still-life placed separately)
 	var top_y := 0.69
+	if prop.get("bare", false):
+		_add_contact_shadow(root, 0.34, 0.34)
+		return root
 	if dress == 0:
 		_add_cylinder(root, Vector3(0, top_y, 0), 0.09, 0.06, BRASS, false, 0.28, true)
 		_add_cylinder(root, Vector3(0, top_y + 0.11, 0), 0.028, 0.18, BRASS, false, 0.3, true)
@@ -764,10 +783,14 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0.08, top_y + 0.11, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
 		_add_cylinder(root, Vector3(0.12, top_y + 0.03, 0.1), 0.04, 0.12, CREAM.darkened(0.1), false, 0.75)
 	elif dress == 2:
-		_add_cylinder(root, Vector3(0, top_y + 0.03, 0), 0.07, 0.12, CLAY, false, 0.75)
-		_add_cylinder(root, Vector3(0, top_y + 0.16, 0), 0.05, 0.14, CLAY.lightened(0.08), false, 0.75)
-		_add_sphere_blob(root, Vector3(0.02, top_y + 0.29, 0.02), 0.05, Color(0.55, 0.2, 0.2))
-		_add_sphere_blob(root, Vector3(-0.03, top_y + 0.26, -0.02), 0.04, Color(0.7, 0.65, 0.3))
+		# Porcelain vase + restrained bloom (not Minecraft fruit blobs)
+		_add_cylinder(root, Vector3(0, top_y + 0.04, 0), 0.055, 0.1, CREAM.darkened(0.05), false, 0.7)
+		_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.04, 0.08, CREAM, false, 0.7)
+		_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.05, 0.03, CREAM.darkened(0.08), false, 0.7)
+		_add_cylinder(root, Vector3(0.01, top_y + 0.26, 0.01), 0.012, 0.12, Color(0.22, 0.35, 0.16), false, 0.8)
+		_add_sphere_blob(root, Vector3(0.03, top_y + 0.32, 0.02), 0.028, Color(0.62, 0.22, 0.22))
+		_add_sphere_blob(root, Vector3(-0.02, top_y + 0.3, -0.01), 0.022, Color(0.72, 0.55, 0.28))
+		_add_sphere_blob(root, Vector3(0.0, top_y + 0.34, -0.02), 0.02, Color(0.55, 0.2, 0.25))
 	else:
 		# Letters + pen tray (drawing-room identity)
 		_add_box(root, Vector3(-0.04, top_y, 0.02), Vector3(0.16, 0.01, 0.11), PAPER, false)
@@ -2157,12 +2180,15 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	view_mi.material_override = vmat
-	# Slightly toward exterior so wall coplanar z-fight loses; both faces still visible
-	view_mi.position = Vector3(0, h * 0.5, -0.04)
+	# Loop 83: view plate on room side of wall (+Z) so facade never occludes to black
+	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
+	# Soft sky/lawn bands if texture is dull
+	_add_box(root, Vector3(0, h * 0.78, 0.03), Vector3(w - stile * 2.0, h * 0.22, 0.015), Color(0.55, 0.72, 0.88), false, 0.98)
+	_add_box(root, Vector3(0, h * 0.18, 0.03), Vector3(w - stile * 2.0, h * 0.16, 0.015), Color(0.32, 0.48, 0.22), false, 0.92)
 	# Very thin cool glass (alpha low) — never solid black
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.82, 0.92, 0.98, 0.08)
+	gmat.albedo_color = Color(0.82, 0.92, 0.98, 0.1)
 	gmat.metallic = 0.05
 	gmat.roughness = 0.05
 	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -2174,14 +2200,14 @@ static func _make_window(feat: Dictionary) -> Node3D:
 			pm.size = Vector3((w - stile * 2.2) * 0.42, (h - stile * 2.2) * 0.42, 0.008)
 			pane.mesh = pm
 			pane.material_override = gmat
-			pane.position = Vector3(ox * w * 0.2, h * oy, 0.05)
+			pane.position = Vector3(ox * w * 0.2, h * oy, 0.06)
 			root.add_child(pane)
 	# Soft outdoor fill (daylight through sash)
 	var fill := OmniLight3D.new()
-	fill.light_color = Color(0.82, 0.9, 1.0)
-	fill.light_energy = 0.55
-	fill.omni_range = 4.0
-	fill.position = Vector3(0, h * 0.55, 0.4)
+	fill.light_color = Color(0.85, 0.92, 1.0)
+	fill.light_energy = 0.65
+	fill.omni_range = 4.2
+	fill.position = Vector3(0, h * 0.55, 0.45)
 	root.add_child(fill)
 	return root
 

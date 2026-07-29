@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~01:35 (overnight goal active)  
+**Updated:** 2026-07-29 ~01:55 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -24,21 +24,22 @@
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80** |
 | 16 | Gallery centre experiment density | **ADVANCED 81** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82** |
+| 18 | Tea still-life + window room-side views | **ADVANCED 83** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
 | 67–77 | Core visual queue through conservatory |
-| 78–81 | Gallery/hall/workshop/bookshelf/kitchen polish |
-| 82 | **Fix conservatory black glass void:** unshaded garden view plate room-side of wall + hedge blobs; denser palms/ferns/urns. **Morning room:** second chair, tea nook, ottoman, corner plants, larger rug — fill empty centre. |
+| 78–82 | Gallery/hall/workshop/kitchen/glass/morning polish |
+| 83 | **Tea identity:** china pot/cups/jug tray (not block stack); `bare` side_table under trays (drawing + morning); refined vase dress; **windows:** view plate room-side + sky/lawn bands (no black panes). |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish (lighting balance; glass garden textures richer; window black panes in some rooms)  
+- Optional micro-polish (prep-table still-life; lighting balance)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_82/`  
+- Shots: `auto_loop_67/` … `auto_loop_83/`  

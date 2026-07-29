@@ -88,8 +88,8 @@ const ROOMS := {
 			# East-center: solid side chair
 			{"kind": "chair", "pos": [3.2, 0.0, 2.8], "yaw": -140.0, "seed": 2,
 				"fabric": Color(0.28, 0.38, 0.26)},
-			# Centre: tea table only (tea tray on it) — walk ring around
-			{"kind": "side_table", "pos": [0.0, 0.0, 0.35], "yaw": 0.0, "seed": 8},
+			# Centre: bare tea table + tray only (loop 83 — no vase stack under tray)
+			{"kind": "side_table", "pos": [0.0, 0.0, 0.35], "yaw": 0.0, "seed": 1, "bare": true},
 			{"kind": "tea_tray", "pos": [0.0, 0.68, 0.35], "yaw": 15.0, "seed": 0},
 			# Plants: different kind + size (loop 67 / item 7)
 			{"kind": "plant", "pos": [3.85, 0.0, -3.5], "scale": 1.0, "seed": 0,
@@ -423,7 +423,7 @@ const ROOMS := {
 			# Armchair reading nook + tea table (west)
 			{"kind": "armchair", "pos": [-2.0, 0.0, -0.6], "yaw": 55.0,
 				"fabric": Color(0.28, 0.36, 0.32)},
-			{"kind": "side_table", "pos": [-1.1, 0.0, -0.2], "yaw": 20.0, "seed": 5},
+			{"kind": "side_table", "pos": [-1.1, 0.0, -0.2], "yaw": 20.0, "seed": 5, "bare": true},
 			{"kind": "tea_tray", "pos": [-1.1, 0.68, -0.2], "yaw": 15.0, "seed": 1},
 			{"kind": "oil_lamp", "pos": [-1.0, 0.0, 0.5], "height": 1.05},
 			# Second soft chair + table fill empty SE/centre floor
