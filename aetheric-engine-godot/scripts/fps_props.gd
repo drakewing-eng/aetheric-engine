@@ -488,29 +488,51 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_rug(prop: Dictionary) -> Node3D:
+	## Loop 87: textured field + raised border/fringe so rugs read as woven carpets.
 	var root := Node3D.new()
 	root.name = "Rug"
 	var size: Array = prop.get("size", [4.6, 3.4])
+	var sw: float = float(size[0])
+	var sd: float = float(size[1])
 	var tex_path: String = prop.get("texture", "")
 	var body := Node3D.new()
 	var mesh := PlaneMesh.new()
 	mesh.orientation = PlaneMesh.FACE_Y
-	mesh.size = Vector2(size[0], size[1])
+	mesh.size = Vector2(sw, sd)
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
+	var has_tex := false
 	if tex_path != "":
 		var tex: Texture2D = _load_tex(tex_path)
 		if tex:
 			mat.albedo_texture = tex
-			mat.uv1_scale = Vector3(size[0] * 0.35, size[1] * 0.35, 1.0)
+			mat.uv1_scale = Vector3(sw * 0.35, sd * 0.35, 1.0)
+			has_tex = true
+	if not has_tex:
+		# Fallback Persian-ish field (deep red) if texture missing
+		mat.albedo_color = Color(0.55, 0.14, 0.12)
 	mat.roughness = 0.95
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mi.material_override = mat
 	body.add_child(mi)
-	# Lift rug off floor to stop z-fight shimmer when walking
 	body.position = Vector3(0, 0.035, 0)
 	root.add_child(body)
+	# Raised border (darker) + corner medallion for volume
+	var border := Color(0.22, 0.1, 0.08)
+	var gold := Color(0.55, 0.4, 0.2)
+	var bw := 0.08
+	_add_box(root, Vector3(0, 0.04, sd * 0.5 - bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
+	_add_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
+	_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
+	_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
+	# Inner gold rail
+	_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.012, 0.03), gold, false, 0.7)
+	_add_box(root, Vector3(0, 0.042, 0), Vector3(0.03, 0.012, sd * 0.88), gold, false, 0.7)
+	# Centre medallion only on broad carpets (not thin hall runners)
+	if sw > 2.5 and sd > 2.0:
+		_add_box(root, Vector3(0, 0.045, 0), Vector3(sw * 0.28, 0.015, sd * 0.22), gold.darkened(0.15), false, 0.75)
+		_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.08, 0.012, Color(0.45, 0.18, 0.12), false, 0.85)
 	return root
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
@@ -976,26 +998,42 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
 	_add_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), OAK.darkened(0.15), false, 0.55)
-	# Plates / crocks / copper mixed by seed
+	# Loop 87: plate stacks with rims + crocks/jugs (clear kitchen, never book spines)
 	for i in 5:
 		var px := -0.6 + i * 0.3
-		var kind := (i + seed0) % 3
+		var kind := (i + seed0) % 4
 		if kind == 0:
-			_add_cylinder(root, Vector3(px, 1.62, 0.02), 0.09, 0.03, CREAM if i % 2 == 0 else CREAM.darkened(0.08), false)
+			# Plate stack
+			_add_cylinder(root, Vector3(px, 1.6, 0.04), 0.1, 0.025, CREAM, false, 0.75)
+			_add_cylinder(root, Vector3(px, 1.625, 0.04), 0.09, 0.02, CREAM.darkened(0.06), false, 0.75)
+			_add_cylinder(root, Vector3(px, 1.645, 0.04), 0.08, 0.018, CREAM.lightened(0.04), false, 0.75)
 		elif kind == 1:
-			_add_cylinder(root, Vector3(px, 1.7, 0.02), 0.06, 0.14, CLAY, false, 0.8)
+			# Crock with lid
+			_add_cylinder(root, Vector3(px, 1.7, 0.04), 0.065, 0.16, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
+			_add_cylinder(root, Vector3(px, 1.8, 0.04), 0.055, 0.035, CLAY.darkened(0.1), false, 0.8)
+		elif kind == 2:
+			# Copper bowl
+			_add_cylinder(root, Vector3(px, 1.66, 0.04), 0.08, 0.1, COPPER, false, 0.35, true)
+			_add_cylinder(root, Vector3(px, 1.72, 0.04), 0.09, 0.02, COPPER.lightened(0.08), false, 0.32, true)
 		else:
-			_add_cylinder(root, Vector3(px, 1.68, 0.02), 0.07, 0.1, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(px + 0.05, 2.08, 0.02), 0.08 + float(i % 2) * 0.015, 0.03, CREAM.darkened(0.05 * float((i + seed0) % 3)), false)
+			# Jug
+			_add_cylinder(root, Vector3(px, 1.68, 0.04), 0.05, 0.14, CREAM.darkened(0.08), false, 0.75)
+			_add_box(root, Vector3(px + 0.05, 1.7, 0.04), Vector3(0.035, 0.08, 0.03), CREAM.darkened(0.12), false, 0.75)
+		# Mid shelf: plate / bowl row
+		_add_cylinder(root, Vector3(px + 0.02, 2.06, 0.04), 0.085, 0.025, CREAM.darkened(0.04 * float((i + seed0) % 3)), false, 0.75)
 		if (i + seed0) % 2 == 0:
-			_add_cylinder(root, Vector3(px, 2.48, 0.0), 0.08, 0.025, CREAM.darkened(0.1), false)
+			_add_cylinder(root, Vector3(px, 2.46, 0.02), 0.09, 0.022, CREAM.darkened(0.08), false, 0.75)
+			_add_cylinder(root, Vector3(px, 2.48, 0.02), 0.08, 0.018, CREAM, false, 0.75)
 		else:
-			_add_cylinder(root, Vector3(px, 2.52, 0.0), 0.05, 0.1, CLAY.lightened(0.05), false, 0.8)
-	# Jars + copper base
-	_add_cylinder(root, Vector3(0.5, 1.2, 0.05), 0.07, 0.18, CLAY if seed0 % 2 == 0 else CLAY.darkened(0.08), false)
-	_add_cylinder(root, Vector3(0.65, 1.15, 0.0), 0.06, 0.14, CLAY.lightened(0.1), false)
-	_add_cylinder(root, Vector3(-0.5, 1.18, 0.05), 0.08, 0.16, COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.3, 1.16, 0.0), 0.06, 0.12, COPPER.darkened(0.08), false, 0.35, true)
+			_add_cylinder(root, Vector3(px, 2.52, 0.02), 0.055, 0.12, CLAY.lightened(0.05), false, 0.8)
+			_add_cylinder(root, Vector3(px, 2.6, 0.02), 0.04, 0.03, CLAY.darkened(0.08), false, 0.8)
+	# Work-top: jars + copper (base cupboard top)
+	_add_cylinder(root, Vector3(0.5, 1.18, 0.08), 0.07, 0.18, CLAY if seed0 % 2 == 0 else CLAY.darkened(0.08), false, 0.8)
+	_add_cylinder(root, Vector3(0.5, 1.28, 0.08), 0.05, 0.04, CLAY.darkened(0.1), false, 0.8)
+	_add_cylinder(root, Vector3(0.65, 1.14, 0.02), 0.06, 0.14, CLAY.lightened(0.1), false, 0.8)
+	_add_cylinder(root, Vector3(-0.5, 1.16, 0.08), 0.08, 0.16, COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1), false, 0.35, true)
+	_add_cylinder(root, Vector3(-0.28, 1.14, 0.02), 0.06, 0.12, COPPER.darkened(0.08), false, 0.35, true)
+	_add_box(root, Vector3(0.1, 1.1, 0.1), Vector3(0.2, 0.03, 0.14), CREAM.darkened(0.05), false, 0.85)
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root
 

@@ -176,6 +176,11 @@ const ROOMS := {
 				"art": "landscape", "seed": 5, "frame": 2},
 			{"kind": "painting", "pos": [-5.2, 2.0, 2.5], "yaw": 90.0, "width": 0.65, "height": 0.8,
 				"art": "still_life", "seed": 0, "frame": 1},
+			# Loop 87: south wall oils flanking kitchen door (from_north identity)
+			{"kind": "painting", "pos": [3.2, 2.0, 4.7], "yaw": 180.0, "width": 0.7, "height": 0.85,
+				"art": "landscape", "seed": 2, "frame": 1},
+			{"kind": "painting", "pos": [-3.0, 2.0, 4.7], "yaw": 180.0, "width": 0.65, "height": 0.8,
+				"art": "still_life", "seed": 1, "frame": 2},
 		],
 		"props": [
 			# Loop 79: arrival identity — runner only (no stone path on runner), consoles
@@ -214,6 +219,14 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-6.5, 0.0, -1.0], "yaw": 90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [-2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
+			# Loop 87: kitchen/south approach densify (from_north read)
+			{"kind": "plant", "pos": [2.8, 0.0, 3.8], "scale": 0.7, "seed": 2,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
+			{"kind": "plant", "pos": [-2.8, 0.0, 3.8], "scale": 0.8, "seed": 0,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 0.95},
+			{"kind": "chair", "pos": [-2.4, 0.0, 3.2], "yaw": 160.0, "seed": 2,
+				"fabric": Color(0.28, 0.16, 0.12)},
+			{"kind": "oil_lamp", "pos": [0.6, 0.0, 3.5], "yaw": -10.0, "height": 1.1},
 		],
 		"doors": [
 			{
