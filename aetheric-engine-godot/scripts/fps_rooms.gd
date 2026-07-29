@@ -640,18 +640,17 @@ const ROOMS := {
 			{"kind": "window", "pos": [-4.85, 1.9, 2.2], "yaw": 90.0, "width": 1.1, "height": 1.6, "seed": 7,
 				"view": "res://assets/rooms/textures/views/view_yard.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.2, -4.3], "yaw": 0.0, "width": 1.5, "height": 2.3},
-			# Loop 85: wall art above dado — diagrams / still-life (not empty plaster)
+			# Loop 131: workshop wall oils = landscape/ruin (readable at distance; not dark still-life blobs)
 			{"kind": "painting", "pos": [3.2, 2.15, -4.15], "yaw": 0.0, "width": 0.6, "height": 0.55,
-				"art": "still_life", "seed": 1, "frame": 3},
+				"art": "landscape", "seed": 2, "frame": 3},
 			{"kind": "painting", "pos": [-3.5, 2.2, -4.15], "yaw": 0.0, "width": 0.55, "height": 0.5,
-				"art": "still_life", "seed": 0, "frame": 3},
+				"art": "landscape", "seed": 4, "frame": 3},
 			{"kind": "painting", "pos": [4.55, 2.25, 2.5], "yaw": -90.0, "width": 0.5, "height": 0.45,
-				"art": "still_life", "seed": 1, "frame": 2},
-			# Loop 88: south wall still-life (from_north dead-end fix)
+				"art": "landscape", "seed": 1, "frame": 2},
 			{"kind": "painting", "pos": [-3.0, 2.2, 4.2], "yaw": 180.0, "width": 0.55, "height": 0.5,
-				"art": "still_life", "seed": 0, "frame": 3},
+				"art": "landscape", "seed": 3, "frame": 3},
 			{"kind": "painting", "pos": [3.0, 2.2, 4.2], "yaw": 180.0, "width": 0.55, "height": 0.5,
-				"art": "still_life", "seed": 1, "frame": 2},
+				"art": "landscape", "seed": 5, "frame": 2},
 		],
 		"props": [
 			# Loop 85: wall densify — chalks visible from spawn, more shelves/scrap
