@@ -3108,22 +3108,23 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		gmat.albedo_color = Color(1.15, 1.18, 1.22)  # lift silver so plate reads at room distance
+		# Loop 114: warm silver lift (was cool blue-white that read as empty sky glass)
+		gmat.albedo_color = Color(1.12, 1.1, 1.05)
 	else:
-		gmat.albedo_color = Color(0.55, 0.6, 0.65)
+		gmat.albedo_color = Color(0.58, 0.58, 0.56)
 	gmat.roughness = 1.0
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, 0, 0.105)
 	root.add_child(glass)
-	# Soft diagonal sheen strip (gilt catch light — not abstract bars)
-	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.08, 0.112), Vector3(0.04, h * 0.55, 0.003), Color(0.72, 0.76, 0.8))
-	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.05, 0.112), Vector3(0.025, h * 0.35, 0.003), Color(0.62, 0.66, 0.7))
-	# Soft catch light
+	# Soft diagonal sheen strips (warm silver catch — not cool blue bars)
+	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.08, 0.112), Vector3(0.04, h * 0.55, 0.003), Color(0.78, 0.76, 0.72))
+	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.05, 0.112), Vector3(0.025, h * 0.35, 0.003), Color(0.68, 0.66, 0.62))
+	# Soft warm catch light
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(0.92, 0.94, 1.0)
-	catch_l.light_energy = 0.28
+	catch_l.light_color = Color(1.0, 0.95, 0.88)
+	catch_l.light_energy = 0.32
 	catch_l.omni_range = 1.8
 	catch_l.position = Vector3(0.12, 0.1, 0.4)
 	root.add_child(catch_l)

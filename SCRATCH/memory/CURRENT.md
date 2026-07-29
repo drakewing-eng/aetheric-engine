@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~09:05 (overnight goal active)  
+**Updated:** 2026-07-29 ~09:20 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -16,10 +16,10 @@
 | 7 | Plant diversity / side volume | **ADVANCED 74–75+99–102** |
 | 8 | Side-view mesh furniture | **ADVANCED 70–113** armchair |
 | 9 | Door transition safety | **ADVANCED 76+98** seat |
-| 10 | Wallpaper contrast | **ADVANCED 72+77** |
+| 10 | Wallpaper contrast | **ADVANCED 72+114** hall |
 | 11 | Hall / prep still-life | **ADVANCED 73–101+106** kitchen |
 | 12–23 | Conservatory / gallery / workshop densify | **ADVANCED** |
-| 24–32 | Material/mirrors/engines/paths/china/armchair | **DONE 89–97** |
+| 24–32 | Material/mirrors/engines/paths/china/armchair | **DONE 89–114** |
 | 33–42 | Door…fire/floors | **DONE 98–107** |
 | 43 | Wood floor grain plates + denser chalk | **DONE 108** |
 | 44 | Woven carpet plates + chalk densify 0/2/3 | **DONE 109** |
@@ -27,6 +27,7 @@
 | 46 | Painterly exterior window/glass views | **DONE 111** |
 | 47 | Baked chalk plates (room-length read) | **DONE 112** |
 | 48 | Armchair side bulk + ceiling roses | **DONE 113** |
+| 49 | Looking-glass plate + hall paper + plaster | **DONE 114** |
 
 ## Loops
 
@@ -40,14 +41,15 @@
 | 110 | Conservatory flags + kitchen quarry + workshop work runners |
 | 111 | Painterly exterior garden/street/night view plates |
 | 112 | Baked chalk plates (equations/engine/ledger/wave) |
-| 113 | **Armchair:** multi-layer back + balloon wings/seat (not paper-thin side). **Chair** seat bulk. **Ceiling roses** under plaster + picture rail scales to room height. |
+| 113 | Armchair side bulk + ceiling roses + picture rail height |
+| 114 | **Looking-glass:** warm silver plate with soft furniture silhouettes (not blue void). **Hall paper:** richer sage stripes + diamond ghosts. **Ceiling plaster:** mottled grit/cracks. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Optional micro-polish (ceiling roses subtle under bright light; exteriors still stylized)  
+- Optional micro-polish only  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_113/`  
+- Shots: `auto_loop_67/` … `auto_loop_114/`  
