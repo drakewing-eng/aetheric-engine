@@ -2099,38 +2099,49 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			)
 	var top_y: float = 0.4 + col_h * 0.9
 	_add_cylinder(root, Vector3(0, top_y, 0), 0.32, 0.08, BRASS.lightened(0.05), false, 0.3, true)
-	# Frosted glass chimney + emissive core
-	var glass := MeshInstance3D.new()
-	var gm := CylinderMesh.new()
-	gm.top_radius = 0.1
-	gm.bottom_radius = 0.14
-	gm.height = 0.28
-	glass.mesh = gm
-	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.7, 0.88, 0.95, 0.5)
-	gmat.emission_enabled = true
-	gmat.emission = Color(0.4, 0.7, 0.9)
-	gmat.emission_energy_multiplier = 0.8
-	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	glass.material_override = gmat
-	glass.position = Vector3(0, top_y + 0.2, 0)
-	root.add_child(glass)
+	# Loop 104: short bulbous scientific chamber — solid frosted teal glass + brass cage
+	# (alpha glass reads as pale toilet-paper tube under filmic tonemap)
+	var glass_c := Color(0.35, 0.55, 0.58)
+	var glass_hi := Color(0.45, 0.68, 0.72)
+	_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.16, 0.16, glass_c, false, 0.35)
+	_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.12, 0.1, glass_hi, false, 0.32)
+	_add_cylinder(root, Vector3(0, top_y + 0.28, 0), 0.08, 0.06, glass_c.darkened(0.05), false, 0.35)
+	# Brass cage ribs + gallery
+	for ri in 4:
+		var ra := float(ri) * TAU / 4.0
+		_add_box(root, Vector3(cos(ra) * 0.15, top_y + 0.16, sin(ra) * 0.15), Vector3(0.02, 0.18, 0.02), BRASS, false, 0.28)
+	_add_cylinder(root, Vector3(0, top_y + 0.06, 0), 0.18, 0.03, BRASS.darkened(0.05), false, 0.28, true)
+	_add_cylinder(root, Vector3(0, top_y + 0.3, 0), 0.1, 0.03, BRASS, false, 0.28, true)
+	# Emissive core (unshaded) — short, bright, not a tall white column
 	var core := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.05
-	cm.bottom_radius = 0.05
-	cm.height = 0.2
+	cm.top_radius = 0.04
+	cm.bottom_radius = 0.04
+	cm.height = 0.12
 	core.mesh = cm
 	var cmat := StandardMaterial3D.new()
-	cmat.albedo_color = Color(0.5, 0.85, 1.0)
+	cmat.albedo_color = Color(0.45, 0.85, 0.95)
 	cmat.emission_enabled = true
-	cmat.emission = Color(0.4, 0.8, 1.0)
-	cmat.emission_energy_multiplier = 2.6
+	cmat.emission = Color(0.35, 0.75, 0.95)
+	cmat.emission_energy_multiplier = 2.8
 	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	core.material_override = cmat
-	core.position = Vector3(0, top_y + 0.18, 0)
+	core.position = Vector3(0, top_y + 0.16, 0)
 	root.add_child(core)
+	var glow_s := MeshInstance3D.new()
+	var gsm := SphereMesh.new()
+	gsm.radius = 0.055
+	gsm.height = 0.11
+	glow_s.mesh = gsm
+	var gsmat := StandardMaterial3D.new()
+	gsmat.albedo_color = Color(0.5, 0.9, 1.0)
+	gsmat.emission_enabled = true
+	gsmat.emission = Color(0.4, 0.85, 1.0)
+	gsmat.emission_energy_multiplier = 2.0
+	gsmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glow_s.material_override = gsmat
+	glow_s.position = Vector3(0, top_y + 0.2, 0)
+	root.add_child(glow_s)
 	# Side instruments + pipes (seed forks layout)
 	if seed0 % 2 == 0:
 		_add_box(root, Vector3(0.48, 0.55, 0.12), Vector3(0.26, 0.42, 0.3), oak_d, true, 0.48)
@@ -2211,58 +2222,66 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(bx, by, bz), Vector3(0.055, 0.035, 0.09), bar_c, false, 0.28)
 		var side := 1.0 if i % 2 == 0 else -1.0
 		_add_box(root, Vector3(side * r * 0.97, y, 0), Vector3(0.08, ch + 0.04, 0.11), BRASS, false, 0.28)
-	# Central spine + frosted glass chamber + emissive core
+	# Central spine + brass collar
 	_add_cylinder(root, Vector3(0, height * 0.48, 0), 0.09, height * 0.65, BRASS, true, 0.28, true)
-	_add_cylinder(root, Vector3(0, height * 0.78, 0), 0.2, 0.08, BRASS.lightened(0.08), false, 0.28, true)
-	# Frosted glass dome (warm unshaded so never black)
-	var glass := MeshInstance3D.new()
-	var gm := CylinderMesh.new()
-	gm.top_radius = 0.2
-	gm.bottom_radius = 0.24
-	gm.height = height * 0.24
-	glass.mesh = gm
-	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.72, 0.88, 0.95, 0.55)
-	gmat.emission_enabled = true
-	gmat.emission = Color(0.4, 0.7, 0.9)
-	gmat.emission_energy_multiplier = 0.6
-	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	gmat.roughness = 0.15
-	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	glass.material_override = gmat
-	glass.position = Vector3(0, height * 0.72, 0)
-	root.add_child(glass)
-	# Emissive aether core (reads alive)
+	_add_cylinder(root, Vector3(0, height * 0.78, 0), 0.22, 0.08, BRASS.lightened(0.08), false, 0.28, true)
+	# Loop 104: solid teal scientific dome + brass cage (not tall pale alpha tube)
+	var glass_c := Color(0.32, 0.52, 0.55)
+	var glass_hi := Color(0.42, 0.65, 0.7)
+	var dome_y: float = height * 0.82
+	_add_cylinder(root, Vector3(0, dome_y - 0.08, 0), 0.26, 0.14, glass_c, false, 0.32)
+	_add_cylinder(root, Vector3(0, dome_y + 0.02, 0), 0.2, 0.12, glass_hi, false, 0.3)
+	# Dome cap sphere (reads as glass chamber, not chimney)
+	var dome := MeshInstance3D.new()
+	var dm := SphereMesh.new()
+	dm.radius = 0.18
+	dm.height = 0.28
+	dome.mesh = dm
+	var dmat := StandardMaterial3D.new()
+	dmat.albedo_color = Color(0.38, 0.6, 0.65)
+	dmat.emission_enabled = true
+	dmat.emission = Color(0.25, 0.55, 0.7)
+	dmat.emission_energy_multiplier = 0.9
+	dmat.roughness = 0.25
+	dmat.metallic = 0.05
+	dome.material_override = dmat
+	dome.position = Vector3(0, dome_y + 0.12, 0)
+	root.add_child(dome)
+	# Brass cage ribs + top gallery
+	for ri in 6:
+		var ra := float(ri) * TAU / 6.0
+		_add_box(root, Vector3(cos(ra) * 0.24, dome_y, sin(ra) * 0.24), Vector3(0.025, 0.28, 0.025), BRASS, false, 0.28)
+	_add_cylinder(root, Vector3(0, dome_y - 0.14, 0), 0.28, 0.04, BRASS.darkened(0.05), false, 0.28, true)
+	_add_cylinder(root, Vector3(0, dome_y + 0.18, 0), 0.12, 0.035, BRASS, false, 0.28, true)
+	# Compact emissive aether core (inside dome)
 	var core := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.09
-	cm.bottom_radius = 0.09
-	cm.height = height * 0.2
+	cm.top_radius = 0.07
+	cm.bottom_radius = 0.07
+	cm.height = 0.16
 	core.mesh = cm
 	var cmat := StandardMaterial3D.new()
-	cmat.albedo_color = Color(0.55, 0.9, 1.0)
+	cmat.albedo_color = Color(0.5, 0.9, 1.0)
 	cmat.emission_enabled = true
-	cmat.emission = Color(0.4, 0.8, 1.0)
-	cmat.emission_energy_multiplier = 3.4
+	cmat.emission = Color(0.4, 0.85, 1.0)
+	cmat.emission_energy_multiplier = 3.2
 	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	cmat.roughness = 0.2
 	core.material_override = cmat
-	core.position = Vector3(0, height * 0.72, 0)
+	core.position = Vector3(0, dome_y, 0)
 	root.add_child(core)
-	# Core glow sphere
 	var glow := MeshInstance3D.new()
 	var sm := SphereMesh.new()
-	sm.radius = 0.12
-	sm.height = 0.24
+	sm.radius = 0.1
+	sm.height = 0.2
 	glow.mesh = sm
 	var smat := StandardMaterial3D.new()
-	smat.albedo_color = Color(0.6, 0.92, 1.0)
+	smat.albedo_color = Color(0.55, 0.92, 1.0)
 	smat.emission_enabled = true
-	smat.emission = Color(0.5, 0.85, 1.0)
-	smat.emission_energy_multiplier = 2.2
+	smat.emission = Color(0.45, 0.85, 1.0)
+	smat.emission_energy_multiplier = 2.4
 	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	glow.material_override = smat
-	glow.position = Vector3(0, height * 0.78, 0)
+	glow.position = Vector3(0, dome_y + 0.06, 0)
 	root.add_child(glow)
 	# Cable runs (copper) down posts
 	for sx in [-1.0, 1.0]:
