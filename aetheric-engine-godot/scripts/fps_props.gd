@@ -2155,37 +2155,50 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
 	_add_cylinder(root, Vector3(-width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
-	# Seed-unique top dressing (loop 96: denser still-life on each bench)
+	# Seed-unique top dressing (loop 123: vessels + tools, not copper coin stacks)
 	var iron_mid := Color(0.36, 0.36, 0.38)
 	var dress := seed0 % 3
 	if dress == 0:
-		# Measuring plate + ruler + calipers + oil can
+		# Measuring plate + ruler + calipers + oil can + copper bowl
 		_add_box(root, Vector3(-0.4, 0.93, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
 		_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), iron_mid, false, 0.45)
 		_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), iron_mid.lightened(0.1), false, 0.45)
-		_add_cylinder(root, Vector3(0.6, 0.97, 0.1), 0.06, 0.18, BRASS, false, 0.3, true)
+		# Oil can: belly + spout (not tall brass cylinder)
+		_add_cylinder(root, Vector3(0.6, 0.95, 0.1), 0.05, 0.04, BRASS.darkened(0.1), false, 0.32, true)
+		_add_cylinder(root, Vector3(0.6, 1.0, 0.1), 0.07, 0.1, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.7, 1.02, 0.1), Vector3(0.1, 0.025, 0.03), BRASS.darkened(0.05), false, 0.3)
 		_add_box(root, Vector3(0.35, 0.93, -0.15), Vector3(0.28, 0.02, 0.18), PAPER, false)
-		_add_cylinder(root, Vector3(-0.7, 0.98, -0.2), 0.045, 0.12, COPPER, false, 0.35, true)
-		_add_box(root, Vector3(0.15, 0.94, 0.05), Vector3(0.12, 0.03, 0.04), iron_mid, false, 0.4)  # bit
+		# Copper bowl with rim + handle
+		_add_cylinder(root, Vector3(-0.7, 0.94, -0.2), 0.05, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.7, 0.98, -0.2), 0.065, 0.08, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.7, 1.03, -0.2), 0.07, 0.02, COPPER.lightened(0.08), false, 0.32, true)
+		_add_box(root, Vector3(-0.6, 0.98, -0.2), Vector3(0.06, 0.03, 0.03), COPPER, false, 0.35)
+		_add_box(root, Vector3(0.15, 0.94, 0.05), Vector3(0.12, 0.03, 0.04), iron_mid, false, 0.4)
 	elif dress == 1:
-		# Plans + wrench + copper stock + chalk
+		# Plans + wrench + copper stock coil on arbor + chalk
 		_add_box(root, Vector3(0.3, 0.92, -0.1), Vector3(0.45, 0.03, 0.32), PAPER, false)
 		_add_box(root, Vector3(0.35, 0.94, -0.08), Vector3(0.3, 0.01, 0.22), PAPER.darkened(0.08), false)
 		_add_box(root, Vector3(0.32, 0.95, -0.05), Vector3(0.18, 0.008, 0.12), PAPER.darkened(0.12), false)
-		_add_box(root, Vector3(-0.5, 0.94, 0.1), Vector3(0.5, 0.03, 0.08), iron_mid, false, 0.45)  # wrench
+		_add_box(root, Vector3(-0.5, 0.94, 0.1), Vector3(0.5, 0.03, 0.08), iron_mid, false, 0.45)
 		_add_box(root, Vector3(-0.2, 0.95, 0.15), Vector3(0.08, 0.05, 0.14), iron_mid.lightened(0.08), false, 0.45)
-		_add_cylinder(root, Vector3(0.7, 0.98, 0.15), 0.05, 0.16, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.75, 0.97, -0.15), 0.04, 0.1, CREAM, false)  # chalk
+		# Short copper tube stock (lying), not upright stack
+		_add_cylinder(root, Vector3(0.7, 0.96, 0.15), 0.025, 0.28, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(0.55, 0.96, 0.22), 0.02, 0.18, COPPER.darkened(0.08), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.75, 0.97, -0.15), 0.04, 0.1, CREAM, false)
 		_add_box(root, Vector3(0.05, 0.93, 0.25), Vector3(0.2, 0.025, 0.12), OAK, false, 0.55)
 	else:
-		# Vice + wood block + copper + rule + scrap
-		_add_box(root, Vector3(0.75, 0.98, -0.15), Vector3(0.22, 0.14, 0.16), iron_mid, false, 0.45)  # vice
+		# Vice + wood block + copper pot + rule + scrap plate
+		_add_box(root, Vector3(0.75, 0.98, -0.15), Vector3(0.22, 0.14, 0.16), iron_mid, false, 0.45)
 		_add_cylinder(root, Vector3(0.75, 1.1, -0.15), 0.035, 0.12, iron_mid.lightened(0.1), false, 0.45)
 		_add_cylinder(root, Vector3(0.75, 1.12, -0.05), 0.02, 0.08, BRASS, false, 0.3, true)
 		_add_box(root, Vector3(-0.55, 0.95, 0.0), Vector3(0.28, 0.03, 0.2), Color(0.22, 0.14, 0.1), false, 0.6)
-		_add_cylinder(root, Vector3(-0.2, 0.98, 0.2), 0.05, 0.12, COPPER, false, 0.35, true)
+		# Small copper stockpot with lid knob
+		_add_cylinder(root, Vector3(-0.2, 0.94, 0.2), 0.045, 0.02, COPPER.darkened(0.1), false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.2, 0.99, 0.2), 0.055, 0.1, COPPER, false, 0.35, true)
+		_add_cylinder(root, Vector3(-0.2, 1.05, 0.2), 0.06, 0.02, COPPER.lightened(0.06), false, 0.32, true)
+		_add_cylinder(root, Vector3(-0.2, 1.08, 0.2), 0.025, 0.03, BRASS, false, 0.3, true)
 		_add_box(root, Vector3(0.2, 0.93, 0.2), Vector3(0.35, 0.04, 0.2), BRASS.darkened(0.1), false, 0.3)
-		_add_box(root, Vector3(0.0, 0.93, -0.25), Vector3(0.4, 0.02, 0.06), iron_mid, false, 0.45)  # rule
+		_add_box(root, Vector3(0.0, 0.93, -0.25), Vector3(0.4, 0.02, 0.06), iron_mid, false, 0.45)
 		_add_box(root, Vector3(-0.75, 0.94, 0.2), Vector3(0.12, 0.05, 0.1), COPPER.darkened(0.1), false, 0.35)
 	_add_contact_shadow(root, width * 0.5, 0.55)
 	return root
@@ -2932,50 +2945,83 @@ static func _make_umbrella_stand(prop: Dictionary) -> Node3D:
 # ─── Features ────────────────────────────────────────────────────────────────
 
 static func _make_chandelier(_prop: Dictionary) -> Node3D:
-	## Victorian brass gasolier (loop 101) — bowl, curved arms, inverted cone shades
-	## (not modern cylinder tubes).
+	## Loop 123 Victorian gasolier: brass rose + bowl + true tapered frosted shades
+	## (not stacked white tube lamps).
 	var root := Node3D.new()
 	root.name = "Chandelier"
 	var hang: float = float(_prop.get("hang", 2.95))
-	var glass := Color(0.9, 0.84, 0.65)
-	var glass_hi := Color(0.95, 0.9, 0.75)
-	# Ceiling rose + drop rod
-	_add_cylinder(root, Vector3(0, hang + 0.28, 0), 0.08, 0.04, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang + 0.14, 0), 0.018, 0.32, BRASS, false, 0.28, true)
-	# Central font / reservoir bowl
-	_add_cylinder(root, Vector3(0, hang - 0.02, 0), 0.14, 0.08, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, hang - 0.1, 0), 0.2, 0.06, BRASS.darkened(0.08), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang - 0.16, 0), 0.12, 0.05, BRASS.lightened(0.05), false, 0.28, true)
-	# Six curved arms + inverted cone shades + candle cups
+	var glass := Color(0.82, 0.72, 0.48)  # frosted amber, not pure white
+	var glass_hi := Color(0.92, 0.84, 0.58)
+	var iron_mid := Color(0.3, 0.3, 0.32)
+	# Ceiling rose (plaster disc) + brass drop
+	_add_cylinder(root, Vector3(0, hang + 0.32, 0), 0.18, 0.05, Color(0.88, 0.84, 0.76), false, 0.75)
+	_add_cylinder(root, Vector3(0, hang + 0.28, 0), 0.1, 0.04, BRASS.darkened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang + 0.12, 0), 0.02, 0.28, BRASS.darkened(0.05), false, 0.28, true)
+	# Central font / reservoir (brass-heavy mass, not glass stack)
+	_add_cylinder(root, Vector3(0, hang - 0.02, 0), 0.12, 0.06, BRASS.darkened(0.1), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang - 0.1, 0), 0.18, 0.1, BRASS, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, hang - 0.18, 0), 0.14, 0.05, BRASS.darkened(0.08), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, hang - 0.22, 0), 0.08, 0.04, BRASS.lightened(0.05), false, 0.28, true)
+	# Six arms + inverted frosted cone shades
 	for i in 6:
 		var a := float(i) * 60.0
 		var rad := deg_to_rad(a)
-		var ax: float = cos(rad) * 0.32
-		var az: float = sin(rad) * 0.32
-		# Arm (two segments for curve suggestion)
-		_add_box(root, Vector3(ax * 0.35, hang - 0.04, az * 0.35), Vector3(0.22, 0.03, 0.03), BRASS, false, 0.3)
-		_add_box(root, Vector3(ax * 0.75, hang - 0.08, az * 0.75), Vector3(0.16, 0.025, 0.025), BRASS.darkened(0.05), false, 0.3)
-		# Cup + collar
-		_add_cylinder(root, Vector3(ax, hang - 0.12, az), 0.04, 0.05, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(ax, hang - 0.16, az), 0.055, 0.03, BRASS.lightened(0.05), false, 0.28, true)
-		# Inverted cone shade (stacked taper — Victorian glass, not tube)
-		_add_cylinder(root, Vector3(ax, hang - 0.22, az), 0.07, 0.06, glass, false, 0.4)
-		_add_cylinder(root, Vector3(ax, hang - 0.28, az), 0.05, 0.06, glass_hi, false, 0.38)
-		_add_cylinder(root, Vector3(ax, hang - 0.33, az), 0.03, 0.04, glass.darkened(0.05), false, 0.4)
-		# Flame tip
-		_add_sphere_blob(root, Vector3(ax, hang - 0.18, az), 0.02, Color(1.0, 0.82, 0.4))
-	# Small crystal-drop suggestion under bowl
-	for j in 4:
-		var ja := float(j) * 90.0 + 20.0
+		var ax: float = cos(rad) * 0.38
+		var az: float = sin(rad) * 0.38
+		# Curved brass arm (outer segment lower)
+		_add_box(root, Vector3(ax * 0.3, hang - 0.05, az * 0.3), Vector3(0.2, 0.035, 0.035), BRASS, false, 0.3)
+		_add_box(root, Vector3(ax * 0.65, hang - 0.1, az * 0.65), Vector3(0.18, 0.03, 0.03), BRASS.darkened(0.06), false, 0.3)
+		# Gas jet cup
+		_add_cylinder(root, Vector3(ax, hang - 0.14, az), 0.045, 0.05, BRASS, false, 0.28, true)
+		_add_cylinder(root, Vector3(ax, hang - 0.18, az), 0.06, 0.025, BRASS.darkened(0.1), false, 0.3, true)
+		# True inverted cone shade (wide bottom, narrow top) via tapered mesh
+		_add_tapered_cylinder(root, Vector3(ax, hang - 0.28, az), 0.035, 0.1, 0.16, glass, 0.42)
+		_add_tapered_cylinder(root, Vector3(ax, hang - 0.26, az), 0.025, 0.07, 0.1, glass_hi, 0.4)
+		# Dark iron gallery ring under shade
+		_add_cylinder(root, Vector3(ax, hang - 0.36, az), 0.095, 0.02, iron_mid, false, 0.45)
+		# Warm flame
+		_add_sphere_blob(root, Vector3(ax, hang - 0.22, az), 0.028, Color(1.0, 0.78, 0.35))
+	# Crystal drops under central bowl
+	for j in 5:
+		var ja := float(j) * 72.0 + 15.0
 		var jr := deg_to_rad(ja)
-		_add_box(root, Vector3(cos(jr) * 0.08, hang - 0.22, sin(jr) * 0.08), Vector3(0.02, 0.08, 0.02), Color(0.85, 0.88, 0.9), false, 0.35)
+		_add_box(root, Vector3(cos(jr) * 0.1, hang - 0.28, sin(jr) * 0.1), Vector3(0.018, 0.1, 0.018), Color(0.78, 0.8, 0.82), false, 0.35)
 	var light := OmniLight3D.new()
-	light.light_color = Color(1.0, 0.88, 0.6)
-	light.light_energy = 1.0
-	light.omni_range = 7.2
-	light.position = Vector3(0, hang - 0.2, 0)
+	light.light_color = Color(1.0, 0.86, 0.58)
+	light.light_energy = 1.15
+	light.omni_range = 7.5
+	light.position = Vector3(0, hang - 0.22, 0)
 	root.add_child(light)
 	return root
+
+
+static func _add_tapered_cylinder(
+	parent: Node3D,
+	pos: Vector3,
+	top_r: float,
+	bot_r: float,
+	height: float,
+	color: Color,
+	roughness: float = 0.5,
+) -> void:
+	## Cone / inverted-cone glass or metal (top_radius != bottom_radius).
+	var mi := MeshInstance3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = top_r
+	mesh.bottom_radius = bot_r
+	mesh.height = height
+	mesh.radial_segments = 12
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = roughness
+	mat.metallic = 0.05 if color.v > 0.7 else 0.35
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	if color.a < 0.98:
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mi.material_override = mat
+	mi.position = pos
+	parent.add_child(mi)
 
 
 static func _make_fireplace(prop: Dictionary) -> Node3D:
