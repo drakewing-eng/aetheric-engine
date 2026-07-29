@@ -947,6 +947,16 @@ const ROOMS := {
 			{"kind": "wall_shelf", "pos": [-1.0, 0.0, 3.55], "yaw": 180.0, "width": 1.0, "shelf_y": 2.15, "seed": 13},
 			{"kind": "copper_pot", "pos": [0.8, 0.0, 3.2], "scale": 0.7, "seed": 11},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "height": 2.35},
+			# Loop 115: south door wall mid-band densify (from_south empty cream flanks)
+			{"kind": "wall_shelf", "pos": [-1.5, 0.0, -3.7], "yaw": 0.0, "width": 1.0, "shelf_y": 2.25, "seed": 14},
+			{"kind": "wall_shelf", "pos": [1.5, 0.0, -3.7], "yaw": 0.0, "width": 1.0, "shelf_y": 2.25, "seed": 15},
+			{"kind": "wall_sconce", "pos": [-1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
+			{"kind": "wall_sconce", "pos": [1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
+			{"kind": "copper_pot", "pos": [-2.8, 0.0, -3.0], "scale": 0.7, "seed": 12},
+			{"kind": "copper_pot", "pos": [2.9, 0.0, -2.7], "scale": 0.65, "seed": 13},
+			{"kind": "crate", "pos": [-1.6, 0.0, -3.1], "scale": 0.55, "seed": 14},
+			{"kind": "oil_lamp", "pos": [1.7, 0.0, -3.15], "yaw": -5.0, "height": 0.95},
+			{"kind": "stool", "pos": [0.9, 0.0, -2.4], "yaw": -15.0, "seed": 6},
 		],
 		"doors": [
 			{
