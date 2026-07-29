@@ -1871,77 +1871,116 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
-	## Novel-true Aetheric Engine (gallery long room) — loop 78 richer apparatus:
-	## oak+copper base, iron/brass frame (not plain timber), denser coils, glass
-	## chamber with emissive core, gauges, cable runs, south hand-bracket.
+	## Novel-true Aetheric Engine — loop 93: mid-grey iron posts (not black), denser
+	## counter-wound coil turns, frosted glass dome, brighter aether core, more brass.
 	var root := Node3D.new()
 	root.name = "AethericMachine"
 	var height: float = float(prop.get("height", 2.95))
 	var oak := Color(0.42, 0.28, 0.14)
 	var oak_d := Color(0.26, 0.16, 0.09)
-	var iron_frame := Color(0.18, 0.18, 0.2)
-	# Square oak base with copper inlay plate
+	# Mid-grey iron (pure dark metal → black under filmic tonemap)
+	var iron_frame := Color(0.34, 0.34, 0.36)
+	var iron_dark := Color(0.26, 0.26, 0.28)
+	# Square oak base with copper inlay plate + brass edge
 	_add_box(root, Vector3(0, 0.1, 0), Vector3(1.65, 0.2, 1.65), oak_d, true, 0.5)
 	_add_box(root, Vector3(0, 0.24, 0), Vector3(1.48, 0.1, 1.48), oak, true, 0.52)
 	_add_box(root, Vector3(0, 0.32, 0), Vector3(1.32, 0.06, 1.32), COPPER.darkened(0.12), false, 0.35)
-	# Corner iron footings
+	_add_box(root, Vector3(0, 0.35, 0), Vector3(1.38, 0.02, 1.38), BRASS.darkened(0.15), false, 0.32)
+	# Corner iron footings + brass bolts
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * 0.72, 0.06, sz * 0.72), Vector3(0.16, 0.12, 0.16), IRON, true, 0.4)
-	# Frame posts — iron clad with brass caps (reads apparatus, not furniture)
+			_add_box(root, Vector3(sx * 0.72, 0.06, sz * 0.72), Vector3(0.16, 0.12, 0.16), iron_dark, true, 0.45)
+			_add_cylinder(root, Vector3(sx * 0.72, 0.14, sz * 0.72), 0.03, 0.03, BRASS, false, 0.3, true)
+	# Frame posts — iron clad with brass caps + mid collars
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * 0.5, height * 0.45, sz * 0.5), Vector3(0.1, height * 0.78, 0.1), iron_frame, true, 0.4)
+			_add_box(root, Vector3(sx * 0.5, height * 0.45, sz * 0.5), Vector3(0.1, height * 0.78, 0.1), iron_frame, true, 0.45)
 			_add_box(root, Vector3(sx * 0.5, height * 0.45, sz * 0.5), Vector3(0.06, height * 0.72, 0.06), oak_d, false, 0.5)
 			_add_cylinder(root, Vector3(sx * 0.5, height * 0.86, sz * 0.5), 0.07, 0.06, BRASS, false, 0.28, true)
+			_add_cylinder(root, Vector3(sx * 0.5, height * 0.5, sz * 0.5), 0.065, 0.04, BRASS.darkened(0.1), false, 0.3, true)
 	# Top ring beams (brass-capped oak)
 	_add_box(root, Vector3(0, height * 0.9, 0), Vector3(1.2, 0.08, 1.2), oak_d, false, 0.48)
 	_add_box(root, Vector3(0, height * 0.94, 0), Vector3(1.1, 0.04, 1.1), BRASS.darkened(0.1), false, 0.3)
-	# FOUR copper coils denser (loop 78)
-	var coil_ys := [0.48, 0.95, 1.42, 1.88]
-	var coil_rs := [0.7, 0.55, 0.42, 0.3]
-	var coil_hs := [0.14, 0.13, 0.12, 0.1]
-	for i in 4:
+	_add_box(root, Vector3(0, height * 0.97, 0), Vector3(0.95, 0.03, 0.95), BRASS.lightened(0.05), false, 0.28)
+	# FIVE copper coils denser with counter-wound turns (loop 93)
+	var coil_ys := [0.45, 0.85, 1.25, 1.65, 2.0]
+	var coil_rs := [0.72, 0.58, 0.46, 0.36, 0.26]
+	var coil_hs := [0.13, 0.12, 0.11, 0.1, 0.09]
+	for i in 5:
 		var y: float = coil_ys[i]
 		var r: float = coil_rs[i]
 		var ch: float = coil_hs[i]
-		var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.1)
+		var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.08)
 		_add_cylinder(root, Vector3(0, y, 0), r, ch, copper_col, false, 0.3, true)
-		_add_cylinder(root, Vector3(0, y + ch * 0.4, 0), r * 0.88, ch * 0.25, copper_col.lightened(0.1), false, 0.28, true)
+		_add_cylinder(root, Vector3(0, y + ch * 0.35, 0), r * 0.9, ch * 0.22, copper_col.lightened(0.08), false, 0.28, true)
 		var wind := 1.0 if i % 2 == 0 else -1.0
-		for s in 10:
-			var ang: float = float(s) * (TAU / 10.0) * wind
-			var bx: float = cos(ang) * r * 0.93
-			var bz: float = sin(ang) * r * 0.93
-			var by: float = y + (float(s) / 10.0 - 0.5) * ch * 0.95 * wind
-			var bar_c: Color = copper_col.lightened(0.05) if s % 2 == 0 else copper_col.darkened(0.05)
-			_add_box(root, Vector3(bx, by, bz), Vector3(0.06, 0.04, 0.1), bar_c, false, 0.28)
+		for s in 12:
+			var ang: float = float(s) * (TAU / 12.0) * wind
+			var bx: float = cos(ang) * r * 0.94
+			var bz: float = sin(ang) * r * 0.94
+			var by: float = y + (float(s) / 12.0 - 0.5) * ch * 0.95 * wind
+			var bar_c: Color = copper_col.lightened(0.06) if s % 2 == 0 else copper_col.darkened(0.04)
+			_add_box(root, Vector3(bx, by, bz), Vector3(0.055, 0.035, 0.09), bar_c, false, 0.28)
 		var side := 1.0 if i % 2 == 0 else -1.0
-		_add_box(root, Vector3(side * r * 0.96, y, 0), Vector3(0.09, ch + 0.05, 0.12), BRASS, false, 0.28)
-	# Central spine + glass chamber + emissive core
+		_add_box(root, Vector3(side * r * 0.97, y, 0), Vector3(0.08, ch + 0.04, 0.11), BRASS, false, 0.28)
+	# Central spine + frosted glass chamber + emissive core
 	_add_cylinder(root, Vector3(0, height * 0.48, 0), 0.09, height * 0.65, BRASS, true, 0.28, true)
-	_add_cylinder(root, Vector3(0, height * 0.78, 0), 0.18, 0.08, BRASS.lightened(0.08), false, 0.28, true)
-	_add_cylinder(root, Vector3(0, height * 0.7, 0), 0.22, height * 0.22, Color(0.5, 0.78, 0.9), false, 0.2, true)
+	_add_cylinder(root, Vector3(0, height * 0.78, 0), 0.2, 0.08, BRASS.lightened(0.08), false, 0.28, true)
+	# Frosted glass dome (warm unshaded so never black)
+	var glass := MeshInstance3D.new()
+	var gm := CylinderMesh.new()
+	gm.top_radius = 0.2
+	gm.bottom_radius = 0.24
+	gm.height = height * 0.24
+	glass.mesh = gm
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(0.72, 0.88, 0.95, 0.55)
+	gmat.emission_enabled = true
+	gmat.emission = Color(0.4, 0.7, 0.9)
+	gmat.emission_energy_multiplier = 0.6
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	gmat.roughness = 0.15
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	glass.material_override = gmat
+	glass.position = Vector3(0, height * 0.72, 0)
+	root.add_child(glass)
 	# Emissive aether core (reads alive)
 	var core := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.08
-	cm.bottom_radius = 0.08
-	cm.height = height * 0.18
+	cm.top_radius = 0.09
+	cm.bottom_radius = 0.09
+	cm.height = height * 0.2
 	core.mesh = cm
 	var cmat := StandardMaterial3D.new()
-	cmat.albedo_color = Color(0.45, 0.85, 1.0)
+	cmat.albedo_color = Color(0.55, 0.9, 1.0)
 	cmat.emission_enabled = true
-	cmat.emission = Color(0.35, 0.75, 1.0)
-	cmat.emission_energy_multiplier = 2.8
-	cmat.roughness = 0.25
+	cmat.emission = Color(0.4, 0.8, 1.0)
+	cmat.emission_energy_multiplier = 3.4
+	cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	cmat.roughness = 0.2
 	core.material_override = cmat
-	core.position = Vector3(0, height * 0.7, 0)
+	core.position = Vector3(0, height * 0.72, 0)
 	root.add_child(core)
+	# Core glow sphere
+	var glow := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.12
+	sm.height = 0.24
+	glow.mesh = sm
+	var smat := StandardMaterial3D.new()
+	smat.albedo_color = Color(0.6, 0.92, 1.0)
+	smat.emission_enabled = true
+	smat.emission = Color(0.5, 0.85, 1.0)
+	smat.emission_energy_multiplier = 2.2
+	smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	glow.material_override = smat
+	glow.position = Vector3(0, height * 0.78, 0)
+	root.add_child(glow)
 	# Cable runs (copper) down posts
 	for sx in [-1.0, 1.0]:
 		_add_cylinder(root, Vector3(sx * 0.55, 1.0, 0.35), 0.02, 1.4, COPPER.darkened(0.15), false, 0.35, true)
 		_add_box(root, Vector3(sx * 0.55, 0.35, 0.2), Vector3(0.06, 0.06, 0.35), COPPER.darkened(0.1), false, 0.35)
+		_add_cylinder(root, Vector3(sx * 0.55, 0.55, 0.35), 0.035, 0.04, BRASS, false, 0.3, true)
 	# South hand-bracket (Rooke adjusts)
 	_add_box(root, Vector3(0.0, 1.05, 0.82), Vector3(0.48, 0.14, 0.24), BRASS, true, 0.28)
 	_add_box(root, Vector3(0.0, 0.78, 0.92), Vector3(0.1, 0.6, 0.1), BRASS.darkened(0.12), true, 0.3)
@@ -1958,18 +1997,21 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0.95, 0.95, 0.0), 0.12, 0.04, BRASS, false, 0.28, true)
 	_add_box(root, Vector3(0.95, 0.95, 0.0), Vector3(0.22, 0.03, 0.03), BRASS.lightened(0.05), false, 0.28)
 	_add_box(root, Vector3(0.95, 0.95, 0.0), Vector3(0.03, 0.03, 0.22), BRASS.lightened(0.05), false, 0.28)
-	# Floor ring rail
-	_add_cylinder(root, Vector3(0, 0.38, 0), 0.85, 0.04, IRON, false, 0.4)
+	# Floor ring rail + brass studs
+	_add_cylinder(root, Vector3(0, 0.38, 0), 0.85, 0.04, iron_frame, false, 0.45)
+	for si in 8:
+		var sang := float(si) * (TAU / 8.0)
+		_add_cylinder(root, Vector3(cos(sang) * 0.82, 0.42, sin(sang) * 0.82), 0.025, 0.03, BRASS, false, 0.3, true)
 	# Lights
 	var warm := OmniLight3D.new()
 	warm.light_color = Color(1.0, 0.78, 0.45)
-	warm.light_energy = 0.85
-	warm.omni_range = 5.0
+	warm.light_energy = 0.95
+	warm.omni_range = 5.2
 	warm.position = Vector3(0.3, 1.1, 0.35)
 	root.add_child(warm)
 	var cool := OmniLight3D.new()
 	cool.light_color = Color(0.55, 0.85, 1.0)
-	cool.light_energy = 0.75
+	cool.light_energy = 1.05
 	cool.omni_range = 4.0
 	cool.position = Vector3(0, height * 0.72, 0)
 	root.add_child(cool)

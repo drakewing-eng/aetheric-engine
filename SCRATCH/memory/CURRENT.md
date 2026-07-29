@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~04:00 (overnight goal active)  
+**Updated:** 2026-07-29 ~04:20 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -19,10 +19,10 @@
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84+87+92** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85+91** exterior plates |
-| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92** aisle |
-| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89** iron plates |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92+93** engine |
+| 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89+93** mid |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90** S wall |
-| 16 | Gallery centre experiment density | **ADVANCED 81+89+92** |
+| 16 | Gallery centre experiment density | **ADVANCED 81+89+92+93** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82+91** |
 | 18 | Tea still-life + window room-side views | **ADVANCED 83+91** views |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
@@ -34,6 +34,7 @@
 | 25 | Kitchen range hero + S wall + morning NW | **DONE 90** |
 | 26 | Conservatory exterior plates (no green orbs) | **DONE 91** |
 | 27 | Looking-glass plate rewrite (no blue/white) | **DONE 92** |
+| 28 | Drawing S door + workshop mid + engine hero | **DONE 93** |
 
 ## Loops
 
@@ -44,7 +45,8 @@
 | 89 | Mahogany≠iron material fix; riveted iron floor plates; denser chalk |
 | 90 | Kitchen range brass/fire hero; kitchen S wall; morning NW fill |
 | 91 | Exterior garden/yard plates; glass wall no orb overlay |
-| 92 | **Looking-glass rewrite:** dark silver `mirror_plate.jpg` (dim room silhouettes + sheen) — not light-blue void + white bars. Larger frames hall/drawing/morning. Gallery side-aisle densify. Hall lamp/sconce by mirror. |
+| 92 | Looking-glass plate rewrite; gallery side-aisle densify |
+| 93 | **Drawing south door wall** oils/sconces/chair/plant/table (from_north empty damask). **Workshop mid-floor** crates/scrap/stools along iron path. **Aetheric engine hero:** 5 coils, frosted glass dome, brighter core glow, mid-grey posts + brass studs. |
 
 ## Still high-value if continuing
 
@@ -54,4 +56,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_92/`  
+- Shots: `auto_loop_67/` … `auto_loop_93/`  

@@ -41,6 +41,11 @@ const ROOMS := {
 			{"kind": "painting", "pos": [3.2, 2.1, -4.7], "yaw": 0.0, "width": 0.85, "height": 0.8,
 				"art": "still_life", "seed": 1, "frame": 0},
 			{"kind": "door_frame", "pos": [0.0, 1.2, 4.42], "yaw": 180.0, "width": 1.55, "height": 2.4, "seed": 0},
+			# Loop 93: south door wall densify (from_north empty damask around hall door)
+			{"kind": "painting", "pos": [-2.5, 2.05, 4.55], "yaw": 180.0, "width": 0.75, "height": 0.9,
+				"art": "landscape", "seed": 2, "frame": 1},
+			{"kind": "painting", "pos": [2.5, 2.05, 4.55], "yaw": 180.0, "width": 0.7, "height": 0.85,
+				"art": "still_life", "seed": 0, "frame": 2},
 		],
 		"props": [
 			# ── Loop 67: clear circulation paths — no stacked chairs/desks ──
@@ -104,6 +109,16 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [4.2, 0.0, 1.5], "yaw": -90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [-1.5, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [1.5, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
+			# Loop 93: door approach still-life (from_north) — keep centre walk clear
+			{"kind": "wall_sconce", "pos": [-1.8, 0.0, 4.55], "yaw": 180.0, "height": 2.25},
+			{"kind": "wall_sconce", "pos": [1.8, 0.0, 4.55], "yaw": 180.0, "height": 2.25},
+			{"kind": "side_table", "pos": [-2.2, 0.0, 3.5], "yaw": 10.0, "seed": 6},
+			{"kind": "letter_stack", "pos": [-2.15, 0.68, 3.45], "yaw": -10.0, "seed": 3},
+			{"kind": "oil_lamp", "pos": [-2.1, 0.0, 3.55], "height": 1.0},
+			{"kind": "plant", "pos": [2.3, 0.0, 3.6], "scale": 0.65, "seed": 4,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.6, "height": 0.7},
+			{"kind": "chair", "pos": [1.6, 0.0, 3.4], "yaw": -160.0, "seed": 0,
+				"fabric": Color(0.35, 0.22, 0.16)},
 		],
 		"doors": [
 			{
@@ -595,6 +610,15 @@ const ROOMS := {
 			{"kind": "oil_lamp", "pos": [0.0, 0.0, 3.2], "yaw": 0.0, "height": 1.0},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
 				"surface": "iron", "seed": 3},
+			# Loop 93: mid-floor densify (from_north empty path flanks)
+			{"kind": "crate", "pos": [-1.6, 0.0, 1.2], "scale": 0.7, "seed": 6},
+			{"kind": "crate", "pos": [1.7, 0.0, 1.4], "scale": 0.65, "seed": 7},
+			{"kind": "copper_scrap", "pos": [-1.4, 0.0, 0.2], "scale": 0.8, "seed": 5},
+			{"kind": "copper_scrap", "pos": [1.5, 0.0, 0.4], "scale": 0.7, "seed": 6},
+			{"kind": "stool", "pos": [-1.3, 0.0, 2.2], "yaw": 30.0, "seed": 3},
+			{"kind": "stool", "pos": [1.4, 0.0, 2.0], "yaw": -25.0, "seed": 4},
+			{"kind": "copper_pot", "pos": [-1.8, 0.0, 2.8], "scale": 0.7, "seed": 5},
+			{"kind": "oil_lamp", "pos": [1.2, 0.0, 1.0], "yaw": 15.0, "height": 0.95},
 		],
 		"doors": [
 			{
