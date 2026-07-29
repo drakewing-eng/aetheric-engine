@@ -77,3 +77,7 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Hall polish:** console turned-profile legs + warmer pedestal (not pipe/ebony blocks); plant/chair spacing for NW corner.  
 - Residual: hall chair cutout cross-planes can still flash green scrap (accepted paper-thin tradeoff).  
 
+## Status update 2026-07-29 (loop 145)
+
+- **Kitchen prep still-life:** doorway read was stacked barrel/copper cylinders. Rewrote kits — flour sack as cloth box, wide dough board + loaf, cold apples (novel cue), knife, shallow copper basin; baking/veg/herb variants; lower shelf boxes not towers.  
+
