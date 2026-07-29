@@ -347,14 +347,18 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	for by in [0.85, 1.05, 1.2]:
 		for bx in [-0.18, 0.0, 0.18]:
 			_add_cylinder(root, Vector3(bx, by, -0.2), 0.016, 0.018, fabric.darkened(0.22), false, 0.95)
-	# Wings
+	# Wings — layered so side view has depth (not a single green slab)
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.42, 1.05, -0.12), Vector3(0.14, 0.7, 0.45), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.48, 1.08, -0.08), Vector3(0.08, 0.55, 0.38), fabric.darkened(0.08), false, 0.9)
 		_add_box(root, Vector3(sx * 0.42, 1.35, -0.1), Vector3(0.12, 0.1, 0.35), fabric.darkened(0.06), false, 0.9)
+		# Soft wing edge roll
+		_add_cylinder(root, Vector3(sx * 0.5, 1.15, -0.05), 0.06, 0.5, fabric.darkened(0.1), false, 0.9)
 	# Arms
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.42, 0.62, 0.08), Vector3(0.16, 0.22, 0.72), fabric, true, 0.88)
 		_add_box(root, Vector3(sx * 0.42, 0.74, 0.18), Vector3(0.14, 0.1, 0.45), fabric.darkened(0.08), false, 0.9)
+		_add_cylinder(root, Vector3(sx * 0.48, 0.7, 0.1), 0.07, 0.4, fabric.darkened(0.06), false, 0.88)
 		_add_cylinder(root, Vector3(sx * 0.4, 0.55, 0.35), 0.06, 0.12, MAHOGANY, false, 0.45)
 	# Legs + feet
 	for sx in [-1.0, 1.0]:
@@ -512,19 +516,24 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 		# button row
 		for j in 2:
 			_add_cylinder(root, Vector3(cx + (j - 0.5) * 0.12, 0.61, 0.05 + j * 0.15), 0.02, 0.02, fabric.darkened(0.22), false, 0.95)
-	# Back with button grid
+	# Back with button grid (loop 99: fabric crown — no mahogany blotch like loop 97 armchair)
 	_add_box(root, Vector3(0, 0.85, -0.3), Vector3(width, 0.78, 0.18), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.18, -0.28), Vector3(width - 0.1, 0.12, 0.1), MAHOGANY, false, 0.42)
+	_add_box(root, Vector3(0, 1.22, -0.28), Vector3(width - 0.12, 0.14, 0.14), fabric.darkened(0.05), false, 0.9)
+	_add_box(root, Vector3(0, 1.3, -0.26), Vector3(width - 0.2, 0.04, 0.08), MAHOGANY, false, 0.45)
 	for i in 5:
 		for j in 3:
 			var bx := (i - 2) * (width * 0.16)
 			var by := 0.7 + j * 0.18
 			_add_cylinder(root, Vector3(bx, by, -0.2), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
-	# Rolled arms
+	# Rolled arms — side bulk + roll so side view isn't a flat green wall
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * (width * 0.5 - 0.12), 0.6, 0.06), Vector3(0.22, 0.48, 0.86), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(sx * (width * 0.5 - 0.12), 0.82, 0.2), 0.11, 0.35, fabric.darkened(0.05), false, 0.9)
-		_add_cylinder(root, Vector3(sx * (width * 0.5 - 0.12), 0.55, 0.38), 0.07, 0.14, MAHOGANY, false, 0.45)
+		var ax: float = sx * (width * 0.5 - 0.12)
+		_add_box(root, Vector3(ax, 0.6, 0.06), Vector3(0.22, 0.48, 0.86), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(ax, 0.82, 0.2), 0.11, 0.35, fabric.darkened(0.05), false, 0.9)
+		# Outer roll contour (reads volume from side)
+		_add_cylinder(root, Vector3(ax + sx * 0.08, 0.72, 0.05), 0.09, 0.55, fabric.darkened(0.08), false, 0.88)
+		_add_box(root, Vector3(ax + sx * 0.06, 0.95, -0.05), Vector3(0.1, 0.35, 0.5), fabric.darkened(0.04), false, 0.9)
+		_add_cylinder(root, Vector3(ax, 0.55, 0.38), 0.07, 0.14, MAHOGANY, false, 0.45)
 	# Turned legs
 	for x in range(-2, 3):
 		var lx := x * (width * 0.2)
@@ -1402,40 +1411,106 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 
 
 static func _make_garden_bench(prop: Dictionary) -> Node3D:
-	## Cast-iron / wood conservatory bench — seed forks iron vs teak.
+	## Victorian conservatory / park bench (loop 99).
+	## seed 0: cast-iron ends + oak horizontal slats (not Minecraft vertical bars).
+	## seed 1: teak garden settle with open back rails + scrolled arms.
 	var root := Node3D.new()
 	root.name = "GardenBench"
 	var seed0: int = int(prop.get("seed", 0))
 	var w: float = float(prop.get("width", 1.35))
+	var seat_y := 0.44
+	var seat_d := 0.48
 	if seed0 % 2 == 0:
-		# Iron frame + wood slats
-		_add_box(root, Vector3(0, 0.42, 0), Vector3(w, 0.05, 0.42), IRON, true, 0.4)
-		for i in 5:
-			var x := -w * 0.4 + float(i) * (w * 0.8 / 4.0)
-			_add_box(root, Vector3(x, 0.46, 0), Vector3(0.06, 0.03, 0.4), OAK.lightened(0.1), false, 0.55)
-		_add_box(root, Vector3(0, 0.72, -0.18), Vector3(w, 0.45, 0.05), IRON, true, 0.4)
-		for i in 4:
-			var x2 := -w * 0.35 + float(i) * (w * 0.7 / 3.0)
-			_add_box(root, Vector3(x2, 0.72, -0.15), Vector3(0.05, 0.38, 0.03), OAK.lightened(0.08), false, 0.55)
+		# Painted cast-iron (black-green) + weathered oak slats — park-bench language
+		var iron_paint := Color(0.14, 0.16, 0.14)
+		var iron_hi := Color(0.22, 0.24, 0.2)
+		var oak_slat := Color(0.48, 0.34, 0.18)
+		var oak_edge := Color(0.38, 0.24, 0.12)
+		# Seat frame rails (front/back under slats)
+		_add_box(root, Vector3(0, seat_y - 0.04, 0.16), Vector3(w * 0.92, 0.04, 0.05), iron_paint, true, 0.45)
+		_add_box(root, Vector3(0, seat_y - 0.04, -0.16), Vector3(w * 0.92, 0.04, 0.05), iron_paint, true, 0.45)
+		# Horizontal seat slats (gaps between — reads as real bench, not solid block)
+		var n_seat := 5
+		for i in n_seat:
+			var t := float(i) / float(n_seat - 1)
+			var z := -0.18 + t * 0.38
+			_add_box(root, Vector3(0, seat_y, z), Vector3(w * 0.9, 0.035, 0.055), oak_slat, true, 0.62)
+		# Front nosing strip
+		_add_box(root, Vector3(0, seat_y + 0.01, 0.22), Vector3(w * 0.92, 0.04, 0.03), oak_edge, false, 0.55)
+		# Back: open horizontal slats in cast frame (not a solid iron slab + vertical bars)
+		_add_box(root, Vector3(0, 0.58, -0.22), Vector3(w * 0.94, 0.05, 0.04), iron_paint, true, 0.42)
+		_add_box(root, Vector3(0, 0.98, -0.22), Vector3(w * 0.94, 0.06, 0.05), iron_hi, true, 0.4)
+		# Crest rail curve suggestion (thicker centre)
+		_add_box(root, Vector3(0, 1.05, -0.21), Vector3(w * 0.7, 0.05, 0.04), iron_paint, false, 0.4)
+		_add_box(root, Vector3(0, 1.1, -0.2), Vector3(w * 0.28, 0.04, 0.035), iron_hi, false, 0.38)
+		var n_back := 4
+		for i in n_back:
+			var by := 0.66 + float(i) * 0.08
+			_add_box(root, Vector3(0, by, -0.2), Vector3(w * 0.86, 0.03, 0.035), oak_slat.darkened(0.05), false, 0.6)
+		# Cast-iron end standards (scrolled silhouette via stacked shapes)
 		for sx in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * w * 0.45, 0.22, 0.12), Vector3(0.05, 0.4, 0.05), IRON, true, 0.4)
-			_add_box(root, Vector3(sx * w * 0.45, 0.22, -0.15), Vector3(0.05, 0.4, 0.05), IRON, true, 0.4)
-			_add_box(root, Vector3(sx * w * 0.45, 0.55, -0.02), Vector3(0.04, 0.08, 0.35), IRON, false, 0.4)
+			var ex: float = sx * w * 0.48
+			# Leg posts
+			_add_box(root, Vector3(ex, 0.22, 0.14), Vector3(0.06, 0.42, 0.06), iron_paint, true, 0.4)
+			_add_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.06, 0.42, 0.06), iron_paint, true, 0.4)
+			# Scroll feet
+			_add_box(root, Vector3(ex, 0.03, 0.18), Vector3(0.08, 0.05, 0.14), iron_hi, true, 0.4)
+			_add_box(root, Vector3(ex, 0.03, -0.22), Vector3(0.08, 0.05, 0.14), iron_hi, true, 0.4)
+			_add_cylinder(root, Vector3(ex, 0.04, 0.26), 0.04, 0.04, iron_paint, false, 0.4, true)
+			_add_cylinder(root, Vector3(ex, 0.04, -0.28), 0.04, 0.04, iron_paint, false, 0.4, true)
+			# Side panel / arm upright with decorative voids suggested by rails
+			_add_box(root, Vector3(ex, 0.72, -0.02), Vector3(0.05, 0.55, 0.06), iron_paint, true, 0.4)
+			_add_box(root, Vector3(ex, 0.55, 0.0), Vector3(0.04, 0.06, 0.38), iron_hi, false, 0.4)
+			# Armrest
+			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.07, 0.05, 0.42), iron_paint, false, 0.38)
+			_add_cylinder(root, Vector3(ex, 0.68, 0.22), 0.035, 0.06, iron_hi, false, 0.35, true)
+			# Decorative medallion on end
+			_add_cylinder(root, Vector3(ex + sx * 0.01, 0.82, -0.02), 0.05, 0.03, iron_hi, false, 0.35, true)
+			_add_cylinder(root, Vector3(ex + sx * 0.01, 0.82, -0.02), 0.025, 0.035, BRASS.darkened(0.2), false, 0.35, true)
+		# Centre stretcher under seat
+		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(w * 0.85, 0.035, 0.04), iron_paint, false, 0.45)
+		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(0.04, 0.035, 0.3), iron_paint, false, 0.45)
 	else:
-		# Teak garden settle
-		_add_box(root, Vector3(0, 0.42, 0.02), Vector3(w, 0.06, 0.45), OAK, true, 0.55)
-		_add_box(root, Vector3(0, 0.75, -0.16), Vector3(w, 0.5, 0.06), OAK.darkened(0.05), true, 0.55)
+		# Teak garden settle — open back, horizontal rails, carved-ish arms
+		var teak := Color(0.4, 0.26, 0.12)
+		var teak_d := Color(0.28, 0.16, 0.07)
+		var teak_l := Color(0.5, 0.34, 0.16)
+		# Seat planks (3 wide boards with shadow gaps)
+		_add_box(root, Vector3(0, seat_y - 0.05, 0.02), Vector3(w * 0.96, 0.05, seat_d), teak_d, true, 0.55)
+		for i in 3:
+			var z := -0.14 + float(i) * 0.15
+			_add_box(root, Vector3(0, seat_y, z), Vector3(w * 0.92, 0.04, 0.12), teak_l if i != 1 else teak, true, 0.58)
+		# Open back: uprights + horizontal rails (not solid slab)
 		for sx in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * w * 0.42, 0.55, 0.0), Vector3(0.08, 0.2, 0.42), OAK.darkened(0.08), true, 0.55)
-			_add_box(root, Vector3(sx * w * 0.4, 0.2, 0.15), Vector3(0.06, 0.38, 0.06), OAK.darkened(0.1), true, 0.55)
-			_add_box(root, Vector3(sx * w * 0.4, 0.2, -0.15), Vector3(0.06, 0.38, 0.06), OAK.darkened(0.1), true, 0.55)
-		_add_box(root, Vector3(0, 0.18, 0), Vector3(w * 0.85, 0.04, 0.35), OAK.darkened(0.12), false, 0.55)
-	_add_contact_shadow(root, w * 0.5, 0.35)
+			_add_box(root, Vector3(sx * w * 0.44, 0.78, -0.2), Vector3(0.07, 0.7, 0.07), teak_d, true, 0.52)
+		_add_box(root, Vector3(0, 0.55, -0.2), Vector3(w * 0.86, 0.05, 0.05), teak, false, 0.55)
+		_add_box(root, Vector3(0, 0.78, -0.2), Vector3(w * 0.86, 0.04, 0.05), teak, false, 0.55)
+		_add_box(root, Vector3(0, 1.05, -0.19), Vector3(w * 0.9, 0.07, 0.06), teak_l, true, 0.52)
+		# Crest
+		_add_box(root, Vector3(0, 1.12, -0.18), Vector3(w * 0.4, 0.05, 0.05), teak, false, 0.5)
+		# Vertical mid splats (open settle, not solid)
+		for i in 3:
+			var x := (float(i) - 1.0) * w * 0.22
+			_add_box(root, Vector3(x, 0.8, -0.19), Vector3(0.04, 0.45, 0.04), teak_d, false, 0.55)
+		# Arms + legs
+		for sx in [-1.0, 1.0]:
+			var ex: float = sx * w * 0.44
+			_add_box(root, Vector3(ex, 0.62, 0.02), Vector3(0.08, 0.08, 0.44), teak, true, 0.52)
+			_add_box(root, Vector3(ex, 0.68, 0.18), Vector3(0.1, 0.06, 0.16), teak_l, false, 0.5)
+			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.22, -0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
+			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
+			_add_box(root, Vector3(ex, 0.03, -0.16), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
+		# Under-seat stretcher
+		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(w * 0.82, 0.04, 0.05), teak_d, false, 0.55)
+		_add_box(root, Vector3(0, 0.16, 0.0), Vector3(0.05, 0.04, 0.32), teak_d, false, 0.55)
+	_add_contact_shadow(root, w * 0.5, 0.38)
 	return root
 
 
 static func _make_urn(prop: Dictionary) -> Node3D:
 	## Stone / terracotta pedestal urn for conservatory corners.
+	## Loop 99: leaf sprays instead of lollipop green orbs.
 	var root := Node3D.new()
 	root.name = "Urn"
 	var seed0: int = int(prop.get("seed", 0))
@@ -1445,10 +1520,19 @@ static func _make_urn(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.12 * scale, 0.28 * scale, body, true, 0.7)
 	_add_cylinder(root, Vector3(0, 0.55 * scale, 0), 0.2 * scale, 0.12 * scale, body.lightened(0.05), false, 0.7)
 	_add_cylinder(root, Vector3(0, 0.62 * scale, 0), 0.16 * scale, 0.05 * scale, body.darkened(0.08), false, 0.7)
-	# Soil + small foliage crown
+	# Soil + trailing / spray foliage (not single green sphere)
 	_add_cylinder(root, Vector3(0, 0.64 * scale, 0), 0.14 * scale, 0.04 * scale, Color(0.18, 0.12, 0.08), false, 0.9)
-	_add_sphere_blob(root, Vector3(0, 0.78 * scale, 0), 0.12 * scale, Color(0.2, 0.4, 0.14))
-	_add_sphere_blob(root, Vector3(0.06 * scale, 0.82 * scale, 0.04 * scale), 0.08 * scale, Color(0.16, 0.36, 0.12))
+	var leaf_a := Color(0.2, 0.42, 0.16)
+	var leaf_b := Color(0.14, 0.34, 0.12)
+	# Central crown mass (slightly flattened)
+	_add_sphere_blob(root, Vector3(0, 0.76 * scale, 0), 0.1 * scale, leaf_a)
+	# Radial leaf sprays
+	for i in 5:
+		var ang := float(i) * TAU / 5.0 + float(seed0) * 0.3
+		var lx := cos(ang) * 0.1 * scale
+		var lz := sin(ang) * 0.1 * scale
+		_add_box(root, Vector3(lx, 0.8 * scale, lz), Vector3(0.04 * scale, 0.14 * scale, 0.08 * scale), leaf_b if i % 2 == 0 else leaf_a, false, 0.92)
+		_add_box(root, Vector3(lx * 1.3, 0.72 * scale, lz * 1.3), Vector3(0.1 * scale, 0.03 * scale, 0.05 * scale), leaf_a.lightened(0.05), false, 0.92)
 	_add_contact_shadow(root, 0.25 * scale, 0.25 * scale)
 	return root
 

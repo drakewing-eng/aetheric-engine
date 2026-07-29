@@ -515,7 +515,12 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [1.4, 0.0, 1.6], "yaw": -20.0, "seed": 8},
 			{"kind": "letter_stack", "pos": [1.35, 0.68, 1.55], "yaw": 10.0, "seed": 0},
 			{"kind": "ottoman", "pos": [-1.2, 0.0, -1.5], "yaw": 20.0, "seed": 1,
-				"fabric": Color(0.35, 0.32, 0.28)},
+				"fabric": Color(0.42, 0.28, 0.22)},
+			# Loop 99: mid-floor sewing/work corner (center shot still sparse)
+			{"kind": "side_table", "pos": [0.2, 0.0, -1.6], "yaw": -10.0, "seed": 9, "bare": true},
+			{"kind": "letter_stack", "pos": [0.15, 0.68, -1.55], "yaw": 25.0, "seed": 3},
+			{"kind": "chair", "pos": [0.9, 0.0, -1.9], "yaw": -40.0, "seed": 2,
+				"fabric": Color(0.45, 0.36, 0.28)},
 			# Plants at corners + window
 			{"kind": "plant", "pos": [3.15, 0.0, 2.4], "scale": 0.95, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.2},
@@ -785,6 +790,12 @@ const ROOMS := {
 			{"kind": "plant", "pos": [1.8, 0.0, 0.3], "scale": 0.55, "seed": 11,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
 			{"kind": "oil_lamp", "pos": [1.5, 0.0, 1.6], "height": 0.95},
+			# Loop 99: path-side still-life + plant near south glass (bench was the only read)
+			{"kind": "plant", "pos": [-0.6, 0.0, -2.0], "scale": 0.5, "seed": 12,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.45, "height": 0.55},
+			{"kind": "crate", "pos": [1.3, 0.0, -1.2], "yaw": 15.0, "seed": 2, "scale": 0.7},
+			{"kind": "watering_can", "pos": [1.7, 0.0, -0.9], "scale": 0.75, "yaw": 70.0},
+			{"kind": "side_table", "pos": [-2.4, 0.0, -1.6], "yaw": -25.0, "seed": 4},
 		],
 		"doors": [
 			{
