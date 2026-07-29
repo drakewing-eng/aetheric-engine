@@ -150,6 +150,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_stool(prop)
 		"copper_pot":
 			node = _make_copper_pot(prop)
+		"copper_scrap":
+			node = _make_copper_scrap(prop)
 		"pot_rack":
 			node = _make_pot_rack(prop)
 		"wall_shelf":
@@ -1042,20 +1044,36 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 
 static func _make_floor_path(prop: Dictionary) -> Node3D:
-	## Stone flag path — breaks plain floors (conservatory / hall).
+	## Walk path — surface: stone (conservatory), iron (workshop), wood (service).
+	## Never stamp pale stone on a finished hall runner (hall uses rug alone).
 	var root := Node3D.new()
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
 	var width: float = float(prop.get("width", 0.9))
 	var seed0: int = int(prop.get("seed", 0))
+	var surface: String = str(prop.get("surface", "stone"))
 	var n := int(clampf(length / 0.55, 3.0, 12.0))
 	for i in n:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
 		var ox := 0.04 * float(((i + seed0) % 3) - 1)
-		var col := STONE if (i + seed0) % 2 == 0 else STONE.darkened(0.08)
-		_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.82 + float(i % 2) * 0.12), 0.045, 0.48), col, false, 0.72)
-		# Mortar edge cue
-		_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.75, 0.01, 0.02), Color(0.45, 0.42, 0.38), false, 0.85)
+		if surface == "iron":
+			# Dark iron floor plates — coach-house / workshop walkway
+			var icol := IRON.lightened(0.04) if (i + seed0) % 2 == 0 else IRON.darkened(0.06)
+			_add_box(root, Vector3(ox, 0.018, z), Vector3(width * (0.88 + float(i % 2) * 0.06), 0.03, 0.5), icol, false, 0.4)
+			# Bolt corners
+			_add_cylinder(root, Vector3(ox - width * 0.32, 0.035, z - 0.15), 0.015, 0.02, IRON.lightened(0.12), false, 0.35)
+			_add_cylinder(root, Vector3(ox + width * 0.32, 0.035, z + 0.15), 0.015, 0.02, IRON.lightened(0.12), false, 0.35)
+			# Seam line
+			_add_box(root, Vector3(ox, 0.02, z + 0.24), Vector3(width * 0.82, 0.008, 0.015), IRON.darkened(0.12), false, 0.45)
+		elif surface == "wood":
+			var wcol := OAK.darkened(0.05) if (i + seed0) % 2 == 0 else OAK.darkened(0.12)
+			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
+			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), OAK.darkened(0.18), false, 0.55)
+		else:
+			# Stone flags (conservatory / garden)
+			var col := STONE if (i + seed0) % 2 == 0 else STONE.darkened(0.08)
+			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * (0.82 + float(i % 2) * 0.12), 0.045, 0.48), col, false, 0.72)
+			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.75, 0.01, 0.02), Color(0.45, 0.42, 0.38), false, 0.85)
 	return root
 
 
@@ -1336,6 +1354,46 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0.1 * scale, 0.14 * scale, 0.1 * scale), Vector3(0.06 * scale, 0.04 * scale, 0.06 * scale), Color(0.12, 0.1, 0.1), false, 0.8)
 	_add_contact_shadow(root, 0.18 * scale, 0.18 * scale)
 	return root
+
+
+static func _make_copper_scrap(prop: Dictionary) -> Node3D:
+	## Rooke scrap heap — seed forks coil / plate / tube piles (uniqueness, not pot clones).
+	var root := Node3D.new()
+	root.name = "CopperScrap"
+	var s: float = float(prop.get("scale", 1.0))
+	var seed0: int = int(prop.get("seed", 0))
+	var style := seed0 % 3
+	# Low wood tray / board under scrap
+	_add_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.55 * s, 0.05 * s, 0.4 * s), OAK.darkened(0.12), true, 0.65)
+	if style == 0:
+		# Nested coil rings + filings
+		for i in 4:
+			var r := (0.08 + float(i) * 0.035) * s
+			var y := (0.08 + float(i) * 0.04) * s
+			_add_cylinder(root, Vector3(-0.05 * s, y, 0.02 * s), r, 0.035 * s, COPPER.darkened(float(i) * 0.03), false, 0.35, true)
+		_add_box(root, Vector3(0.14 * s, 0.08 * s, -0.05 * s), Vector3(0.18 * s, 0.03 * s, 0.12 * s), COPPER.lightened(0.05), false, 0.35)
+		_add_box(root, Vector3(0.12 * s, 0.11 * s, 0.05 * s), Vector3(0.1 * s, 0.025 * s, 0.08 * s), BRASS.darkened(0.1), false, 0.3)
+		for j in 5:
+			var fx := (-0.15 + float(j) * 0.07) * s
+			_add_sphere_blob(root, Vector3(fx, 0.07 * s, 0.12 * s), 0.02 * s, COPPER.lightened(0.08))
+	elif style == 1:
+		# Flattened plate stack + bent tube
+		for i in 3:
+			_add_box(root, Vector3(-0.08 * s, (0.07 + float(i) * 0.025) * s, 0.0), Vector3(0.28 * s, 0.02 * s, 0.22 * s), COPPER.darkened(float(i) * 0.04), false, 0.35)
+		_add_cylinder(root, Vector3(0.16 * s, 0.12 * s, 0.05 * s), 0.025 * s, 0.28 * s, COPPER.lightened(0.04), false, 0.35, true)
+		_add_cylinder(root, Vector3(0.12 * s, 0.1 * s, -0.1 * s), 0.02 * s, 0.18 * s, BRASS.darkened(0.08), false, 0.3, true)
+		_add_box(root, Vector3(0.0, 0.14 * s, 0.1 * s), Vector3(0.12 * s, 0.04 * s, 0.08 * s), IRON.lightened(0.1), false, 0.4)
+	else:
+		# Tube bundle + scrap nugget + iron clamp
+		for i in 5:
+			var ox := (-0.12 + float(i) * 0.06) * s
+			_add_cylinder(root, Vector3(ox, 0.1 * s, 0.0), 0.018 * s, 0.32 * s, COPPER.darkened(float(i % 3) * 0.04), false, 0.35, true)
+		_add_box(root, Vector3(0.0, 0.18 * s, 0.0), Vector3(0.35 * s, 0.03 * s, 0.06 * s), IRON, false, 0.4)
+		_add_sphere_blob(root, Vector3(0.15 * s, 0.1 * s, 0.1 * s), 0.05 * s, COPPER.darkened(0.06))
+		_add_box(root, Vector3(-0.15 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), BRASS.darkened(0.12), false, 0.3)
+	_add_contact_shadow(root, 0.32 * s, 0.24 * s)
+	return root
+
 
 # ─── Workshop ────────────────────────────────────────────────────────────────
 
@@ -1849,6 +1907,13 @@ static func _make_coat_stand(prop: Dictionary) -> Node3D:
 	elif seed0 % 3 == 1:
 		_add_cylinder(root, Vector3(-0.05, 1.88, -0.05), 0.09, 0.05, Color(0.12, 0.1, 0.08), false, 0.7)
 		_add_cylinder(root, Vector3(-0.05, 1.95, -0.05), 0.07, 0.08, Color(0.14, 0.11, 0.09), false, 0.7)
+	# Scarf drape / cane (seed-forked detail so stands read from doorway)
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(0.08, 1.35, -0.1), Vector3(0.12, 0.45, 0.04), Color(0.35, 0.12, 0.12), false, 0.85)
+		_add_box(root, Vector3(0.1, 1.12, -0.12), Vector3(0.1, 0.08, 0.05), Color(0.4, 0.15, 0.14), false, 0.85)
+	else:
+		_add_cylinder(root, Vector3(-0.18, 0.85, 0.05), 0.015, 1.4, Color(0.22, 0.14, 0.08), false, 0.55)
+		_add_sphere_blob(root, Vector3(-0.18, 1.55, 0.05), 0.03, Color(0.18, 0.12, 0.08))
 	_add_contact_shadow(root, 0.32, 0.32)
 	return root
 

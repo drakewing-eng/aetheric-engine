@@ -178,31 +178,42 @@ const ROOMS := {
 				"art": "still_life", "seed": 0, "frame": 1},
 		],
 		"props": [
+			# Loop 79: arrival identity — runner only (no stone path on runner), consoles
+			# and chairs in spawn FOV, second coat near kitchen approach, card-table by drawing.
 			{
 				"kind": "rug",
 				"pos": [0.0, 0.0, 0.0],
-				"size": [2.0, 9.0],
+				"size": [2.15, 9.2],
 				"texture": "res://assets/rooms/textures/hall_runner.jpg",
 			},
-			# Loop 73: two consoles with distinct seeds (not one generic table)
-			{"kind": "hall_table", "pos": [-4.0, 0.0, 1.2], "yaw": 10.0, "seed": 0},
-			{"kind": "hall_table", "pos": [4.2, 0.0, -1.8], "yaw": -15.0, "seed": 4},
-			{"kind": "coat_stand", "pos": [-5.5, 0.0, -2.5], "yaw": 0.0, "seed": 0},
-			{"kind": "umbrella_stand", "pos": [-5.2, 0.0, -3.3], "yaw": 10.0, "seed": 1},
-			{"kind": "chair", "pos": [3.5, 0.0, 2.0], "yaw": -160.0, "seed": 3,
+			# Consoles closer to runner so center/spawn reads as a finished hall
+			{"kind": "hall_table", "pos": [-2.65, 0.0, -0.8], "yaw": 8.0, "seed": 0},
+			{"kind": "hall_table", "pos": [2.7, 0.0, 0.9], "yaw": -12.0, "seed": 4},
+			# Calling-card demi-lune by drawing-room door (seed 7 → dress kit variety)
+			{"kind": "hall_table", "pos": [2.4, 0.0, -3.55], "yaw": -5.0, "seed": 7},
+			{"kind": "coat_stand", "pos": [-5.4, 0.0, -2.4], "yaw": 0.0, "seed": 0},
+			{"kind": "umbrella_stand", "pos": [-5.15, 0.0, -3.2], "yaw": 10.0, "seed": 1},
+			# Second stand near kitchen/south — visitors leave coats by service door
+			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
+			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
+			# Hall chairs flank runner (visible from spawn looking north)
+			{"kind": "chair", "pos": [1.85, 0.0, -1.4], "yaw": -100.0, "seed": 3,
 				"fabric": Color(0.32, 0.2, 0.14)},
-			{"kind": "chair", "pos": [-3.2, 0.0, 2.2], "yaw": 40.0, "seed": 5,
+			{"kind": "chair", "pos": [-1.9, 0.0, 1.5], "yaw": 80.0, "seed": 5,
 				"fabric": Color(0.3, 0.18, 0.12)},
-			{"kind": "plant", "pos": [5.2, 0.0, 3.0], "scale": 0.85, "seed": 3,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.8, "height": 0.9},
-			# Freestanding oil lamp (second kit table uses candle/tray — not lamp clone)
-			{"kind": "oil_lamp", "pos": [0.8, 0.0, 3.2], "yaw": -20.0, "height": 1.15},
+			{"kind": "plant", "pos": [5.5, 0.0, -0.4], "scale": 0.9, "seed": 3,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.85, "height": 0.95},
+			{"kind": "plant", "pos": [-5.5, 0.0, 1.8], "scale": 0.75, "seed": 1,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 0.95},
+			# Freestanding oil lamp south of center (table kits already carry their own lights)
+			{"kind": "oil_lamp", "pos": [-0.55, 0.0, 2.6], "yaw": 15.0, "height": 1.15},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [6.5, 0.0, 1.5], "yaw": -90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [-6.5, 0.0, -1.0], "yaw": 90.0, "height": 2.2},
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 7.0, "width": 1.1},
+			{"kind": "wall_sconce", "pos": [2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [-2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
 		],
 		"doors": [
 			{
@@ -398,7 +409,8 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -0.5], "yaw": 90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.9, "seed": 2},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.9,
+				"surface": "wood", "seed": 2},
 		],
 		"doors": [
 			{
@@ -472,10 +484,17 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [3.0, 0.0, -1.5], "scale": 1.0, "seed": 2},
 			{"kind": "copper_pot", "pos": [-2.5, 0.0, -2.2], "scale": 0.75, "seed": 3},
 			{"kind": "copper_pot", "pos": [1.5, 0.0, -2.3], "scale": 0.6, "seed": 4},
+			# Loop 79: copper scrap piles + oil lamps (work light story) + iron plate walkway
+			{"kind": "copper_scrap", "pos": [-3.6, 0.0, 1.6], "scale": 1.0, "seed": 0},
+			{"kind": "copper_scrap", "pos": [3.5, 0.0, 2.2], "scale": 0.85, "seed": 2},
+			{"kind": "copper_scrap", "pos": [0.4, 0.0, -3.5], "scale": 0.7, "seed": 4},
+			{"kind": "oil_lamp", "pos": [-0.6, 0.0, -1.2], "yaw": 25.0, "height": 1.05},
+			{"kind": "oil_lamp", "pos": [2.6, 0.0, -1.5], "yaw": -30.0, "height": 0.98},
 			{"kind": "wall_sconce", "pos": [-4.3, 0.0, 1.5], "yaw": 90.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [4.3, 0.0, 0.5], "yaw": -90.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -4.15], "yaw": 0.0, "height": 2.3},
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.1},
+			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
+				"surface": "iron", "seed": 3},
 		],
 		"doors": [
 			{
