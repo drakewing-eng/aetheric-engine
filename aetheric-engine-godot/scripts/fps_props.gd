@@ -3968,34 +3968,34 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.9, 0.28, 0.06), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			var ww: float = clampf(width * 0.75, 0.7, 1.0)
-			var fab: Color = VELVET_GREEN_DEEP if bulk == "wing_green" else VELVET_RED
-			var fab_d: Color = fab.darkened(0.08)
-			_add_box(root, Vector3(0, 0.32, -0.24), Vector3(ww, 0.18, 0.42), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.5, -0.2), Vector3(ww * 0.9, 0.18, 0.38), fab, false, 0.9)
-			# Continuous back shell + wings (behind card)
-			_add_box(root, Vector3(0, 1.0, -0.38), Vector3(ww * 0.9, 0.95, 0.16), fab, false, 0.9)
-			_add_box(root, Vector3(0, 1.05, -0.28), Vector3(ww * 0.75, 0.85, 0.1), fab_d, false, 0.9)
+			# Loop 137: tight bulk ONLY behind card (z≤-0.22) — no side slabs past silhouette
+			var ww: float = clampf(width * 0.55, 0.55, 0.78)
+			var fab: Color = Color(0.42, 0.48, 0.38) if bulk == "wing_green" else Color(0.42, 0.14, 0.14)
+			var fab_d: Color = fab.darkened(0.12)
+			# Seat mass deep behind
+			_add_box(root, Vector3(0, 0.42, -0.32), Vector3(ww, 0.16, 0.28), MAHOGANY_DARK, false, 0.45)
+			_add_box(root, Vector3(0, 0.52, -0.3), Vector3(ww * 0.88, 0.14, 0.24), fab, false, 0.9)
+			# Single back mass (no wide wing boxes that poke past card edges)
+			_add_box(root, Vector3(0, 1.0, -0.4), Vector3(ww * 0.85, 0.9, 0.14), fab_d, false, 0.9)
+			_add_box(root, Vector3(0, 1.05, -0.34), Vector3(ww * 0.65, 0.75, 0.08), fab, false, 0.9)
+			# Slim side fill tucked under card width
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * ww * 0.38, 1.0, -0.2),
-					Vector3(0.16, 0.75, 0.35), fab_d, false, 0.88)
-				_add_box(root, Vector3(sx * ww * 0.38, 0.62, -0.1),
-					Vector3(0.15, 0.16, 0.4), fab, false, 0.88)
-				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.1), 0.035, 0.16, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * ww * 0.35, 0.1, -0.38), 0.032, 0.16, MAHOGANY, false)
+				_add_box(root, Vector3(sx * ww * 0.32, 0.95, -0.36),
+					Vector3(0.1, 0.7, 0.18), fab_d, false, 0.88)
+				_add_box(root, Vector3(sx * ww * 0.28, 0.6, -0.28),
+					Vector3(0.1, 0.12, 0.2), fab, false, 0.88)
+				_add_cylinder(root, Vector3(sx * ww * 0.28, 0.1, -0.22), 0.03, 0.14, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * ww * 0.28, 0.1, -0.4), 0.028, 0.14, MAHOGANY, false)
 		"chair":
-			# Loop 135: deeper bulk for edge-on walk-by (card faces +Z; bulk in -Z)
-			var cw: float = clampf(width * 0.72, 0.45, 0.7)
-			_add_box(root, Vector3(0, 0.44, -0.2), Vector3(cw, 0.08, 0.42), MAHOGANY, false, 0.48)
-			_add_box(root, Vector3(0, 0.52, -0.18), Vector3(cw * 0.9, 0.1, 0.36), VELVET_GREEN, false, 0.9)
-			_add_box(root, Vector3(0, 0.58, -0.16), Vector3(cw * 0.8, 0.04, 0.3), VELVET_GREEN.darkened(0.1), false, 0.9)
-			# Back shell volume + open uprights
-			_add_box(root, Vector3(0, 0.95, -0.38), Vector3(cw * 0.85, 0.85, 0.1), MAHOGANY, false, 0.48)
+			# Loop 137: seat-only bulk when cross-planes carry the silhouette —
+			# no tall dark back slabs that stick out beside painted cards.
+			var cw: float = clampf(width * 0.5, 0.38, 0.55)
+			_add_box(root, Vector3(0, 0.44, -0.3), Vector3(cw, 0.06, 0.26), MAHOGANY, false, 0.48)
+			_add_box(root, Vector3(0, 0.52, -0.28), Vector3(cw * 0.9, 0.1, 0.22), VELVET_GREEN, false, 0.9)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * cw * 0.34, 0.95, -0.28), Vector3(0.05, 0.85, 0.22), MAHOGANY_DARK, false, 0.48)
-				_add_cylinder(root, Vector3(sx * cw * 0.32, 0.2, -0.02), 0.026, 0.38, MAHOGANY_DARK, false)
-				_add_cylinder(root, Vector3(sx * cw * 0.32, 0.2, -0.36), 0.024, 0.38, MAHOGANY_DARK, false)
-			_add_box(root, Vector3(0, 1.32, -0.32), Vector3(cw * 0.75, 0.07, 0.12), MAHOGANY, false, 0.45)
+				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.2), 0.022, 0.36, MAHOGANY_DARK, false)
+				_add_cylinder(root, Vector3(sx * cw * 0.3, 0.2, -0.38), 0.02, 0.36, MAHOGANY_DARK, false)
+			_add_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.7, 0.03, 0.03), MAHOGANY, false, 0.5)
 		_:
 			_add_box(root, Vector3(0, height * 0.35, -0.22),
 				Vector3(width * 0.7, height * 0.55, 0.28), MAHOGANY_DARK, false, 0.5)
