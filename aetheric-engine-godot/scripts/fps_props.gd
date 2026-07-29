@@ -2061,6 +2061,21 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 		mi_b.position = Vector3(0, y_off, -0.05)
 		mi_b.rotation_degrees.y = 180.0
 		root.add_child(mi_b)
+		# Loop 70: solid mesh bulk so edge-on walk-bys aren't paper-thin cards
+		var bulk_kind: String = str(prop.get("mesh_bulk", ""))
+		if bulk_kind == "" and solid:
+			# Infer from texture filename (CONTENT swap: desk.png=chesterfield, sofa.png=writing desk)
+			var base := tex_path.get_file()
+			if base == "desk.png":
+				bulk_kind = "sofa"
+			elif base == "sofa.png":
+				bulk_kind = "desk"
+			elif base == "chair.png":
+				bulk_kind = "wing"
+			elif base == "armchair.png":
+				bulk_kind = "chair"
+		if bulk_kind != "" and bulk_kind != "none":
+			_add_billboard_mesh_bulk(root, bulk_kind, width, height)
 
 	if solid:
 		# Prefer explicit col_size [w,h,d] for furniture cards so player cannot walk through
@@ -2082,6 +2097,52 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 
 	_add_contact_shadow(root, width * 0.4, 0.32)
 	return root
+
+
+static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, height: float) -> void:
+	## Low-poly solid volume *behind* the painted card (card faces +Z at z≈0).
+	## Keep all bulk z-max ≤ -0.04 so front hero art is never covered.
+	match bulk:
+		"sofa":
+			# Chesterfield depth behind card: seat/back/arms/legs only in -Z half
+			var sw: float = clampf(width * 0.88, 1.6, 2.4)
+			_add_box(root, Vector3(0, 0.2, -0.28), Vector3(sw, 0.16, 0.42), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.4, -0.26), Vector3(sw * 0.9, 0.2, 0.38), VELVET_GREEN_DEEP, false, 0.88)
+			_add_box(root, Vector3(0, 0.78, -0.42), Vector3(sw * 0.94, 0.58, 0.16), VELVET_GREEN, false, 0.9)
+			for sx in [-1.0, 1.0]:
+				_add_box(root, Vector3(sx * (sw * 0.42), 0.55, -0.28),
+					Vector3(0.16, 0.38, 0.38), VELVET_GREEN_DEEP, false, 0.88)
+				_add_cylinder(root, Vector3(sx * (sw * 0.4), 0.08, -0.12), 0.035, 0.14, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * (sw * 0.4), 0.08, -0.4), 0.035, 0.14, MAHOGANY, false)
+		"desk":
+			var dw: float = clampf(width * 0.85, 1.1, 1.6)
+			_add_box(root, Vector3(0, 0.78, -0.22), Vector3(dw, 0.05, 0.42), MAHOGANY, false, 0.45)
+			_add_box(root, Vector3(0, 0.81, -0.22), Vector3(dw * 0.9, 0.012, 0.36), Color(0.1, 0.16, 0.1), false, 0.72)
+			_add_box(root, Vector3(-0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0.42, 0.38, -0.22), Vector3(0.38, 0.7, 0.4), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.9, 0.28, 0.06), MAHOGANY, false, 0.45)
+		"wing":
+			var ww: float = clampf(width * 0.75, 0.7, 1.0)
+			_add_box(root, Vector3(0, 0.35, -0.22), Vector3(ww, 0.2, 0.4), MAHOGANY_DARK, false, 0.42)
+			_add_box(root, Vector3(0, 0.5, -0.18), Vector3(ww * 0.9, 0.14, 0.36), VELVET_RED.darkened(0.05), false, 0.9)
+			_add_box(root, Vector3(0, 0.95, -0.36), Vector3(ww * 0.92, 0.85, 0.14), VELVET_RED, false, 0.9)
+			for sx in [-1.0, 1.0]:
+				_add_box(root, Vector3(sx * ww * 0.4, 1.0, -0.22),
+					Vector3(0.12, 0.6, 0.28), VELVET_RED.darkened(0.08), false, 0.88)
+				_add_box(root, Vector3(sx * ww * 0.4, 0.6, -0.12),
+					Vector3(0.12, 0.18, 0.35), VELVET_RED.darkened(0.05), false, 0.88)
+		"chair":
+			var cw: float = clampf(width * 0.7, 0.45, 0.65)
+			_add_box(root, Vector3(0, 0.46, -0.12), Vector3(cw, 0.08, 0.28), MAHOGANY, false, 0.48)
+			_add_box(root, Vector3(0, 0.52, -0.12), Vector3(cw * 0.9, 0.06, 0.24), VELVET_GREEN, false, 0.9)
+			_add_box(root, Vector3(0, 0.95, -0.28), Vector3(cw * 0.95, 0.75, 0.06), MAHOGANY, false, 0.45)
+			for sx in [-1.0, 1.0]:
+				_add_cylinder(root, Vector3(sx * cw * 0.35, 0.22, -0.02), 0.028, 0.4, MAHOGANY_DARK, false)
+				_add_cylinder(root, Vector3(sx * cw * 0.35, 0.22, -0.24), 0.025, 0.4, MAHOGANY_DARK, false)
+		_:
+			_add_box(root, Vector3(0, height * 0.35, -0.22),
+				Vector3(width * 0.7, height * 0.55, 0.28), MAHOGANY_DARK, false, 0.5)
+
 
 # ─── Materials / primitives ──────────────────────────────────────────────────
 

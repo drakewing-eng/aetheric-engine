@@ -53,7 +53,8 @@ const ROOMS := {
 			# NOTE: on-disk filenames swapped by CONTENT:
 			#   desk.png = olive chesterfield · sofa.png = writing desk
 			#   chair.png = red wing · armchair.png = green side chair
-			# North: sofa suite alone (no mesh armchairs stacked on it)
+			# Loop 70: mesh bulk / solid mesh where billboards went paper-thin edge-on
+			# North: painted chesterfield + sofa mesh_bulk for side volume
 			{
 				"kind": "billboard_prop",
 				"pos": [0.0, 0.0, -3.65],
@@ -64,6 +65,7 @@ const ROOMS := {
 				"sink": 0.16,
 				"solid": true,
 				"col_size": [2.2, 0.95, 0.85],
+				"mesh_bulk": "sofa",
 			},
 			{"kind": "ottoman", "pos": [0.0, 0.0, -2.35], "yaw": 0.0, "seed": 0,
 				"fabric": Color(0.32, 0.38, 0.2)},
@@ -73,45 +75,18 @@ const ROOMS := {
 			# West: library only (no chairs clipping bookshelves)
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, -1.8], "yaw": 90.0, "width": 1.7, "height": 2.5, "seed": 3},
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, 1.3], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 11},
-			# SE: writing desk + ONE desk chair (no second chair on top)
-			{
-				"kind": "billboard_prop",
-				"pos": [3.35, 0.0, 0.8],
-				"yaw": -90.0,
-				"texture": PROP_DIR + "sofa.png",
-				"width": 1.55,
-				"height": 1.15,
-				"sink": 0.14,
-				"solid": true,
-				"col_size": [0.9, 1.0, 1.5],
-			},
-			{"kind": "chair", "pos": [2.35, 0.0, 0.8], "yaw": 90.0, "fabric": Color(0.38, 0.2, 0.14)},
+			# SE: solid partner desk (was paper-thin writing-desk card edge-on)
+			{"kind": "desk", "pos": [3.35, 0.0, 0.8], "yaw": -90.0},
+			{"kind": "chair", "pos": [2.35, 0.0, 0.8], "yaw": 90.0, "seed": 1,
+				"fabric": Color(0.38, 0.2, 0.14)},
 			{"kind": "letter_stack", "pos": [3.2, 0.78, 0.55], "yaw": -15.0, "seed": 1},
-			# SW conversation: single wing chair (billboard only — no mesh twin)
-			{
-				"kind": "billboard_prop",
-				"pos": [-2.9, 0.0, 2.0],
-				"yaw": 40.0,
-				"texture": PROP_DIR + "chair.png",
-				"width": 1.05,
-				"height": 1.32,
-				"sink": 0.14,
-				"solid": true,
-				"col_size": [0.85, 1.1, 0.85],
-			},
+			# SW conversation: solid wing chair (was thin billboard)
+			{"kind": "armchair", "pos": [-2.9, 0.0, 2.0], "yaw": 40.0,
+				"fabric": Color(0.48, 0.14, 0.14)},
 			{"kind": "side_table", "pos": [-1.7, 0.0, 2.35], "yaw": -20.0, "seed": 1},
-			# East-center: one green side chair, clear of desk and sofa
-			{
-				"kind": "billboard_prop",
-				"pos": [3.2, 0.0, 2.8],
-				"yaw": -140.0,
-				"texture": PROP_DIR + "armchair.png",
-				"width": 0.72,
-				"height": 1.12,
-				"sink": 0.12,
-				"solid": true,
-				"col_size": [0.55, 0.95, 0.55],
-			},
+			# East-center: solid side chair
+			{"kind": "chair", "pos": [3.2, 0.0, 2.8], "yaw": -140.0, "seed": 2,
+				"fabric": Color(0.28, 0.38, 0.26)},
 			# Centre: tea table only (tea tray on it) — walk ring around
 			{"kind": "side_table", "pos": [0.0, 0.0, 0.35], "yaw": 0.0, "seed": 8},
 			{"kind": "tea_tray", "pos": [0.0, 0.68, 0.35], "yaw": 15.0, "seed": 0},
@@ -373,12 +348,14 @@ const ROOMS := {
 		"wainscot_height": 1.35,
 		"floor_texture": TEX + "floor_morning.jpg",
 		"floor_color": Color(0.38, 0.28, 0.18),
-		"light_energy": 1.15,
-		"light_color": Color(0.98, 0.92, 0.78),
-		"ceiling_color": Color(0.88, 0.86, 0.8),
+		# Loop 70: morning light — brighter, cooler-east sun wash (not evening gold)
+		"light_energy": 1.38,
+		"light_color": Color(1.0, 0.95, 0.86),
+		"ceiling_color": Color(0.92, 0.9, 0.84),
 		"walls": {},
 		"features": [
-			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0, "seed": 4, "view": "res://assets/rooms/textures/views/view_night.jpg"},
+			# Daytime garden views only (was night plate — wrong for morning room)
+			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 			{"kind": "window", "pos": [3.85, 1.85, -2.0], "yaw": -90.0, "width": 1.1, "height": 1.9, "seed": 5, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.15, 3.85], "yaw": 180.0, "width": 1.45, "height": 2.3},
 			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0},
@@ -391,9 +368,11 @@ const ROOMS := {
 		],
 		"props": [
 			{"kind": "desk", "pos": [2.2, 0.0, -2.0], "yaw": -90.0},
-			{"kind": "chair", "pos": [1.4, 0.0, -2.0], "yaw": 90.0, "fabric": Color(0.4, 0.28, 0.18)},
+			{"kind": "chair", "pos": [1.4, 0.0, -2.0], "yaw": 90.0, "seed": 0,
+				"fabric": Color(0.4, 0.28, 0.18)},
 			{"kind": "side_table", "pos": [-2.0, 0.0, 1.2], "yaw": 15.0, "seed": 1},
-			{"kind": "armchair", "pos": [-1.8, 0.0, -1.0], "yaw": 40.0, "fabric": Color(0.35, 0.4, 0.3)},
+			{"kind": "armchair", "pos": [-1.8, 0.0, -1.0], "yaw": 40.0,
+				"fabric": Color(0.35, 0.4, 0.3)},
 			{"kind": "plant", "pos": [3.0, 0.0, 2.5], "scale": 0.95, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.2},
 			{"kind": "plant", "pos": [-2.8, 0.0, -2.8], "scale": 0.6, "seed": 2,
@@ -402,6 +381,7 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -0.5], "yaw": 90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
+			# Soft morning sun spill from east windows
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.5], "yaw": 90.0, "length": 4.0, "width": 0.9},
 		],
 		"doors": [
