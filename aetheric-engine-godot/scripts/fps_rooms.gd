@@ -26,8 +26,12 @@ const ROOMS := {
 		"ceiling_color": Color(0.86, 0.82, 0.74),
 		"walls": {},
 		"features": [
-			{"kind": "window", "pos": [4.42, 1.85, -2.0], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 0, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
-			{"kind": "window", "pos": [4.42, 1.85, 1.8], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 1, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+			{"kind": "window", "pos": [4.42, 1.85, -2.0], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 0,
+				"view": "res://assets/rooms/textures/views/view_garden.jpg", "curtains": true,
+				"curtain_color": Color(0.32, 0.22, 0.18)},
+			{"kind": "window", "pos": [4.42, 1.85, 1.8], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 1,
+				"view": "res://assets/rooms/textures/views/view_garden2.jpg", "curtains": true,
+				"curtain_color": Color(0.32, 0.22, 0.18)},
 			# Loop 92: chimney-glass scale looking-glass (dark silver, not blue void)
 			{"kind": "mirror", "pos": [4.38, 1.75, 0.0], "yaw": -90.0, "width": 1.2, "height": 1.65},
 			# West wall free of bookshelves (shelves at z≈-1.6 / 1.5) — paintings clear
@@ -344,9 +348,16 @@ const ROOMS := {
 		"features": [
 			{"kind": "door_frame", "pos": [-7.85, 1.35, 0.0], "yaw": 90.0, "width": 1.6, "height": 2.5},
 			# South wall windows (novel: south light) — inset from wall so hollow sash + view plate read
-			{"kind": "window", "pos": [0.0, 1.55, 5.72], "yaw": 180.0, "width": 1.55, "height": 2.05, "seed": 2, "view": "res://assets/rooms/textures/views/view_yard.jpg"},
-			{"kind": "window", "pos": [3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 3, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
-			{"kind": "window", "pos": [-3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
+			# Loop 106: soft drapery (novel: curtains hold sound/odor lore)
+			{"kind": "window", "pos": [0.0, 1.55, 5.72], "yaw": 180.0, "width": 1.55, "height": 2.05, "seed": 2,
+				"view": "res://assets/rooms/textures/views/view_yard.jpg", "curtains": true,
+				"curtain_color": Color(0.28, 0.26, 0.32)},
+			{"kind": "window", "pos": [3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 3,
+				"view": "res://assets/rooms/textures/views/view_garden.jpg", "curtains": true,
+				"curtain_color": Color(0.28, 0.26, 0.32)},
+			{"kind": "window", "pos": [-3.6, 1.55, 5.72], "yaw": 180.0, "width": 1.4, "height": 1.95, "seed": 4,
+				"view": "res://assets/rooms/textures/views/view_garden2.jpg", "curtains": true,
+				"curtain_color": Color(0.28, 0.26, 0.32)},
 			# Gallery: two austere oils only (use-not-display — not a museum hang)
 			{"kind": "painting", "pos": [7.6, 2.2, 2.5], "yaw": -90.0, "width": 0.8, "height": 0.95,
 				"art": "landscape", "seed": 5, "frame": 2},
@@ -485,8 +496,12 @@ const ROOMS := {
 		"walls": {},
 		"features": [
 			# Daytime garden views only (was night plate — wrong for morning room)
-			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
-			{"kind": "window", "pos": [3.85, 1.85, -2.0], "yaw": -90.0, "width": 1.1, "height": 1.9, "seed": 5, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
+			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0, "seed": 4,
+				"view": "res://assets/rooms/textures/views/view_garden2.jpg", "curtains": true,
+				"curtain_color": Color(0.45, 0.42, 0.38)},
+			{"kind": "window", "pos": [3.85, 1.85, -2.0], "yaw": -90.0, "width": 1.1, "height": 1.9, "seed": 5,
+				"view": "res://assets/rooms/textures/views/view_garden.jpg", "curtains": true,
+				"curtain_color": Color(0.45, 0.42, 0.38)},
 			{"kind": "door_frame", "pos": [0.0, 1.15, 3.85], "yaw": 180.0, "width": 1.45, "height": 2.3},
 			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0, "width": 0.95, "height": 1.35},
 			{"kind": "painting", "pos": [-3.7, 1.8, -1.8], "yaw": 90.0, "width": 0.75, "height": 0.95,
@@ -918,6 +933,11 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [2.4, 0.0, 2.9], "scale": 0.8, "seed": 10},
 			{"kind": "crate", "pos": [2.8, 0.0, 1.8], "scale": 0.6, "seed": 12},
 			{"kind": "oil_lamp", "pos": [2.6, 0.0, 2.2], "height": 0.95},
+			# Loop 106: mid north cream plaster (kitchen_center empty strip above dado)
+			{"kind": "wall_shelf", "pos": [1.8, 0.0, 3.55], "yaw": 180.0, "width": 1.2, "shelf_y": 1.85, "seed": 12},
+			{"kind": "wall_shelf", "pos": [-1.0, 0.0, 3.55], "yaw": 180.0, "width": 1.0, "shelf_y": 2.15, "seed": 13},
+			{"kind": "copper_pot", "pos": [0.8, 0.0, 3.2], "scale": 0.7, "seed": 11},
+			{"kind": "wall_sconce", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "height": 2.35},
 		],
 		"doors": [
 			{

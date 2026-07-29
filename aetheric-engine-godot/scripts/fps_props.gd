@@ -296,11 +296,16 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(-0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
 		_add_box(root, Vector3(0.12, 0.95, -0.18), Vector3(0.04, 0.5, 0.035), MAHOGANY, false, 0.5)
 	elif seed0 % 3 == 1:
-		# Balloon back padded (open frame around fabric oval)
-		_add_box(root, Vector3(0, 1.0, -0.17), Vector3(0.38, 0.5, 0.05), fabric, false, 0.88)
-		_add_box(root, Vector3(0, 1.18, -0.16), Vector3(0.32, 0.12, 0.04), fabric.darkened(0.1), false, 0.9)
+		# Balloon back (loop 106): wood oval rim + thin padded insert — never solid plywood board
+		var pad := fabric
+		# Force darker padded read if fabric is pale (avoids beige slab)
+		if pad.r + pad.g + pad.b > 1.2:
+			pad = Color(0.35, 0.22, 0.18)
+		_add_box(root, Vector3(0, 1.0, -0.18), Vector3(0.36, 0.48, 0.04), MAHOGANY, false, 0.48)
+		_add_box(root, Vector3(0, 1.0, -0.16), Vector3(0.28, 0.38, 0.03), pad, false, 0.88)
+		_add_box(root, Vector3(0, 1.16, -0.15), Vector3(0.22, 0.1, 0.03), pad.darkened(0.08), false, 0.9)
 		for bi in 3:
-			_add_cylinder(root, Vector3((float(bi) - 1.0) * 0.1, 1.05, -0.14), 0.015, 0.02, fabric.darkened(0.2), false, 0.9)
+			_add_cylinder(root, Vector3((float(bi) - 1.0) * 0.08, 1.02, -0.13), 0.012, 0.016, pad.darkened(0.18), false, 0.9)
 	else:
 		# Lyre-ish central splat
 		_add_box(root, Vector3(0, 0.95, -0.18), Vector3(0.08, 0.55, 0.04), MAHOGANY_DARK, false, 0.5)
@@ -2848,6 +2853,27 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	fill.omni_range = 4.2
 	fill.position = Vector3(0, h * 0.55, 0.45)
 	root.add_child(fill)
+	# Loop 106: period drapery (drawing/morning/gallery) — soft panels, not modern blinds
+	if bool(feat.get("curtains", false)):
+		var drape: Color = feat.get("curtain_color", Color(0.38, 0.28, 0.22))
+		var drape_d := drape.darkened(0.12)
+		var drape_l := drape.lightened(0.08)
+		# Pelmet / cornice box
+		_add_box(root, Vector3(0, h + 0.02, 0.14), Vector3(w + 0.28, 0.1, 0.12), MAHOGANY_DARK, false, 0.45)
+		_add_box(root, Vector3(0, h - 0.02, 0.16), Vector3(w + 0.22, 0.04, 0.08), drape_d, false, 0.85)
+		# Side panels (parted, revealing view)
+		for sx in [-1.0, 1.0]:
+			var px: float = sx * (w * 0.38)
+			_add_box(root, Vector3(px, h * 0.48, 0.12), Vector3(w * 0.22, h * 0.88, 0.06), drape, false, 0.88)
+			# Soft fold ridges
+			_add_box(root, Vector3(px + sx * 0.04, h * 0.48, 0.14), Vector3(0.03, h * 0.82, 0.04), drape_d, false, 0.9)
+			_add_box(root, Vector3(px - sx * 0.05, h * 0.45, 0.14), Vector3(0.025, h * 0.75, 0.035), drape_l, false, 0.9)
+			# Tie-back / rope
+			_add_cylinder(root, Vector3(px, h * 0.35, 0.18), 0.02, 0.08, BRASS.darkened(0.15), false, 0.4, true)
+			_add_box(root, Vector3(px + sx * 0.06, h * 0.35, 0.16), Vector3(0.1, 0.025, 0.03), drape_d, false, 0.85)
+		# Pool / puddle of fabric on sill
+		_add_box(root, Vector3(-w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), drape_d, false, 0.88)
+		_add_box(root, Vector3(w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), drape_d, false, 0.88)
 	return root
 
 static func _make_glass_wall(feat: Dictionary) -> Node3D:
