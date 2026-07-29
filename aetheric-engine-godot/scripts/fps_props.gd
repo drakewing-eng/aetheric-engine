@@ -2808,7 +2808,7 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
 	# Dark slate recess behind plate
 	_add_box(root, Vector3(0, 1.2, 0.02), Vector3(w - 0.1, h - 0.1, 0.015), Color(0.08, 0.09, 0.08), false, 0.95)
-	# Full-face chalk plate (equations / engine / ledger / wave)
+	# Full-face chalk plate — loop 139: 4 unique dense plates (no clone equations/engine)
 	var plate_paths := [
 		"res://assets/rooms/textures/chalk/chalk_equations.jpg",
 		"res://assets/rooms/textures/chalk/chalk_engine.jpg",
@@ -2825,12 +2825,12 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	if plate_tex:
 		slate_mat.albedo_texture = plate_tex
 		slate_mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
-		# Loop 138: stronger unshaded lift so chalk reads across the room
-		slate_mat.albedo_color = Color(1.2, 1.2, 1.15)
+		# Loop 139: denser unique plates + strong room-length read
+		slate_mat.albedo_color = Color(1.25, 1.25, 1.18)
 		slate_mat.emission_enabled = true
 		slate_mat.emission_texture = plate_tex
-		slate_mat.emission = Color(0.75, 0.75, 0.7)
-		slate_mat.emission_energy_multiplier = 0.55
+		slate_mat.emission = Color(0.82, 0.82, 0.76)
+		slate_mat.emission_energy_multiplier = 0.62
 		slate_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	else:
 		slate_mat.albedo_color = CHALK
@@ -3660,7 +3660,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
 			_add_box(root, Vector3(sx * (w * 0.5), sy * (h * 0.5), 0.07), Vector3(0.1, 0.1, 0.045), BRASS.lightened(0.05), false, 0.3)
-	# Silvered plate — painterly interior reflection (loop 133)
+	# Silvered plate — painterly interior reflection (loop 133/139: brighter, no white streak)
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
 	gm.size = Vector2(w - 0.16, h - 0.16)
@@ -3669,22 +3669,28 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		gmat.albedo_color = Color(1.05, 1.04, 1.02)
+		gmat.albedo_color = Color(1.18, 1.15, 1.1)
+		gmat.emission_enabled = true
+		gmat.emission_texture = plate_tex
+		gmat.emission = Color(0.55, 0.52, 0.48)
+		gmat.emission_energy_multiplier = 0.28
 	else:
-		gmat.albedo_color = Color(0.55, 0.55, 0.52)
-	gmat.roughness = 1.0
+		gmat.albedo_color = Color(0.62, 0.62, 0.58)
+	gmat.roughness = 0.35
+	gmat.metallic = 0.55
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, 0, 0.108)
 	root.add_child(glass)
-	# Thin glass catch only (no silhouette blocks — plate already has reflection)
-	_add_unshaded_plate(root, Vector3(-w * 0.12, h * 0.12, 0.115), Vector3(0.028, h * 0.4, 0.002), Color(0.88, 0.86, 0.82))
+	# Soft specular catch — thin short glints (not a full-height white bar)
+	_add_unshaded_plate(root, Vector3(-w * 0.18, h * 0.18, 0.112), Vector3(0.014, h * 0.18, 0.002), Color(0.78, 0.76, 0.72))
+	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.08, 0.112), Vector3(0.01, h * 0.1, 0.002), Color(0.7, 0.68, 0.64))
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(1.0, 0.95, 0.88)
-	catch_l.light_energy = 0.35
-	catch_l.omni_range = 1.8
-	catch_l.position = Vector3(0.1, 0.08, 0.35)
+	catch_l.light_color = Color(1.0, 0.96, 0.9)
+	catch_l.light_energy = 0.42
+	catch_l.omni_range = 2.0
+	catch_l.position = Vector3(0.12, 0.1, 0.4)
 	root.add_child(catch_l)
 	return root
 
@@ -3967,24 +3973,24 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			# Loop 137: tight bulk ONLY behind card (z≤-0.22) — no side slabs past silhouette
-			var ww: float = clampf(width * 0.55, 0.55, 0.78)
+			# Loop 139: lower/narrower bulk — morning still showed green slab above crest
+			var ww: float = clampf(width * 0.5, 0.5, 0.7)
 			var fab: Color = Color(0.42, 0.48, 0.38) if bulk == "wing_green" else Color(0.42, 0.14, 0.14)
 			var fab_d: Color = fab.darkened(0.12)
-			# Seat mass deep behind
-			_add_box(root, Vector3(0, 0.42, -0.32), Vector3(ww, 0.16, 0.28), MAHOGANY_DARK, false, 0.45)
-			_add_box(root, Vector3(0, 0.52, -0.3), Vector3(ww * 0.88, 0.14, 0.24), fab, false, 0.9)
-			# Single back mass (no wide wing boxes that poke past card edges)
-			_add_box(root, Vector3(0, 1.0, -0.4), Vector3(ww * 0.85, 0.9, 0.14), fab_d, false, 0.9)
-			_add_box(root, Vector3(0, 1.05, -0.34), Vector3(ww * 0.65, 0.75, 0.08), fab, false, 0.9)
-			# Slim side fill tucked under card width
+			# Seat mass deep behind card only
+			_add_box(root, Vector3(0, 0.4, -0.34), Vector3(ww, 0.14, 0.26), MAHOGANY_DARK, false, 0.45)
+			_add_box(root, Vector3(0, 0.5, -0.32), Vector3(ww * 0.85, 0.12, 0.22), fab, false, 0.9)
+			# Back mass capped below painted crest (y top ≈ 1.15, not 1.45)
+			_add_box(root, Vector3(0, 0.88, -0.42), Vector3(ww * 0.72, 0.58, 0.12), fab_d, false, 0.9)
+			_add_box(root, Vector3(0, 0.9, -0.36), Vector3(ww * 0.55, 0.48, 0.07), fab, false, 0.9)
+			# Slim side fill fully behind silhouette (no high wing boxes)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * ww * 0.32, 0.95, -0.36),
-					Vector3(0.1, 0.7, 0.18), fab_d, false, 0.88)
-				_add_box(root, Vector3(sx * ww * 0.28, 0.6, -0.28),
-					Vector3(0.1, 0.12, 0.2), fab, false, 0.88)
-				_add_cylinder(root, Vector3(sx * ww * 0.28, 0.1, -0.22), 0.03, 0.14, MAHOGANY, false)
-				_add_cylinder(root, Vector3(sx * ww * 0.28, 0.1, -0.4), 0.028, 0.14, MAHOGANY, false)
+				_add_box(root, Vector3(sx * ww * 0.28, 0.82, -0.38),
+					Vector3(0.08, 0.48, 0.14), fab_d, false, 0.88)
+				_add_box(root, Vector3(sx * ww * 0.24, 0.56, -0.3),
+					Vector3(0.08, 0.1, 0.18), fab, false, 0.88)
+				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.24), 0.028, 0.14, MAHOGANY, false)
+				_add_cylinder(root, Vector3(sx * ww * 0.26, 0.1, -0.4), 0.026, 0.14, MAHOGANY, false)
 		"chair":
 			# Loop 137: seat-only bulk when cross-planes carry the silhouette —
 			# no tall dark back slabs that stick out beside painted cards.
