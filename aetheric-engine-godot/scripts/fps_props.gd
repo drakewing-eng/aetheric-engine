@@ -2378,19 +2378,22 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(-0.35, 1.0, 0.05), Vector3(0.35, 0.02, 0.014), chalk, false, 0.95)
 			_add_box(root, Vector3(-0.4, 1.35, 0.05), Vector3(0.1, 0.1, 0.012), chalk, false, 0.95)
 		1:
-			# Concentric coils + radii (engine notes) — thicker for room-length read
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.3, 0.016, chalk, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.2, 0.014, chalk_dim, false, 0.95)
-			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.1, 0.012, chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.6, 0.02, 0.012), chalk, false, 0.95)
-			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.02, 0.6, 0.012), chalk, false, 0.95)
-			# Spiral arc ticks + label bars
-			for di in 6:
-				var ang := float(di) * 0.55
-				_add_box(root, Vector3(cos(ang) * 0.22, 1.22 + sin(ang) * 0.22, 0.05), Vector3(0.2, 0.016, 0.012), chalk_dim, false, 0.95)
-			_add_box(root, Vector3(-0.35, 1.5, 0.05), Vector3(0.45, 0.022, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(0.3, 0.96, 0.05), Vector3(0.4, 0.02, 0.014), chalk, false, 0.95)
-			_add_box(root, Vector3(-0.35, 0.96, 0.05), Vector3(0.3, 0.018, 0.014), chalk, false, 0.95)
+			# Loop 108: denser engine diagram — multi-ring + formula bars (reads at hallway length)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.32, 0.018, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.24, 0.016, chalk_dim, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.16, 0.015, chalk, false, 0.95)
+			_add_cylinder(root, Vector3(0.0, 1.22, 0.05), 0.08, 0.014, chalk_dim, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.65, 0.022, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(0.0, 1.22, 0.05), Vector3(0.022, 0.65, 0.014), chalk, false, 0.95)
+			for di in 8:
+				var ang := float(di) * 0.7
+				_add_box(root, Vector3(cos(ang) * 0.24, 1.22 + sin(ang) * 0.24, 0.05), Vector3(0.22, 0.018, 0.014), chalk_dim, false, 0.95)
+			# Title + annotation lines
+			_add_box(root, Vector3(-0.3, 1.52, 0.05), Vector3(0.55, 0.025, 0.015), chalk, false, 0.95)
+			_add_box(root, Vector3(0.25, 0.95, 0.05), Vector3(0.5, 0.022, 0.014), chalk, false, 0.95)
+			_add_box(root, Vector3(-0.3, 0.95, 0.05), Vector3(0.4, 0.02, 0.014), chalk, false, 0.95)
+			for li in 4:
+				_add_box(root, Vector3(0.35, 1.4 - float(li) * 0.08, 0.05), Vector3(0.28, 0.016, 0.012), chalk_dim, false, 0.95)
 		2:
 			# Dense grid / ledger + bold annotations
 			for i in 7:
