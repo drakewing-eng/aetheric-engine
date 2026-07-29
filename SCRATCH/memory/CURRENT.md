@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~04:20 (overnight goal active)  
+**Updated:** 2026-07-29 ~04:40 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -10,7 +10,7 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–77** |
+| 4 | Unique Victorian objects | **ADVANCED 71–77+94** tea china |
 | 5 | Geometric / surface detail | **ADVANCED 72+75+89** iron path |
 | 6 | Victorian wall art | **ADVANCED 69** |
 | 7 | Plant diversity / side volume | **ADVANCED 74–75** |
@@ -19,12 +19,12 @@
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
 | 11 | Hall / prep still-life | **ADVANCED 73+79+84+87+92** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85+91** exterior plates |
-| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92+93** engine |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92–94** |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89+93** mid |
-| 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90** S wall |
-| 16 | Gallery centre experiment density | **ADVANCED 81+89+92+93** |
-| 17 | Conservatory glass void + morning fill | **ADVANCED 82+91** |
-| 18 | Tea still-life + window room-side views | **ADVANCED 83+91** views |
+| 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90+94** door path |
+| 16 | Gallery centre experiment density | **ADVANCED 81+89+92–94** S end |
+| 17 | Conservatory glass void + morning fill | **ADVANCED 82+91+94** door |
+| 18 | Tea still-life + window room-side views | **ADVANCED 83+91+94** china |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
 | 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
 | 21 | Mirror silver plate + fireplace fire | **ADVANCED 86+92** looking-glass |
@@ -35,6 +35,7 @@
 | 26 | Conservatory exterior plates (no green orbs) | **DONE 91** |
 | 27 | Looking-glass plate rewrite (no blue/white) | **DONE 92** |
 | 28 | Drawing S door + workshop mid + engine hero | **DONE 93** |
+| 29 | Morning/kitchen door + gallery S + tea china | **DONE 94** |
 
 ## Loops
 
@@ -46,7 +47,8 @@
 | 90 | Kitchen range brass/fire hero; kitchen S wall; morning NW fill |
 | 91 | Exterior garden/yard plates; glass wall no orb overlay |
 | 92 | Looking-glass plate rewrite; gallery side-aisle densify |
-| 93 | **Drawing south door wall** oils/sconces/chair/plant/table (from_north empty damask). **Workshop mid-floor** crates/scrap/stools along iron path. **Aetheric engine hero:** 5 coils, frosted glass dome, brighter core glow, mid-grey posts + brass studs. |
+| 93 | Drawing south door wall; workshop mid path; aetheric engine hero |
+| 94 | **Morning door wall** oils/sconces/table/plant/chair. **Kitchen door path** stool/crate/pot/lamp. **Gallery south window-end** tables/lamps/crates/stools/sconces. **Tea tray** period china (cream gilt / blue willow / rose). |
 
 ## Still high-value if continuing
 
@@ -56,4 +58,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_93/`  
+- Shots: `auto_loop_67/` … `auto_loop_94/`  

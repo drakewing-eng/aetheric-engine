@@ -417,38 +417,56 @@ static func _make_letter_stack(prop: Dictionary) -> Node3D:
 
 
 static func _make_tea_tray(prop: Dictionary) -> Node3D:
-	## Tea at four — silvered tray, china pot, cups, cream jug (loop 83 identity).
+	## Tea at four — silvered tray, period china (loop 94: blue willow / cream gilt,
+	## not pure white modern blockware).
 	var root := Node3D.new()
 	root.name = "TeaTray"
 	var seed0: int = int(prop.get("seed", 0))
-	var china := CREAM.lightened(0.04) if seed0 % 2 == 0 else Color(0.88, 0.86, 0.8)
-	var trim := Color(0.55, 0.18, 0.16) if seed0 % 3 != 1 else BRASS.darkened(0.05)
+	# Period china: cream with blue transfer, or ivory with gilt
+	var china: Color
+	var trim: Color
+	var pattern: Color
+	match seed0 % 3:
+		0:  # cream + gilt
+			china = Color(0.92, 0.88, 0.78)
+			trim = BRASS.darkened(0.05)
+			pattern = Color(0.7, 0.55, 0.3)
+		1:  # blue willow-ish
+			china = Color(0.9, 0.9, 0.88)
+			trim = Color(0.2, 0.32, 0.55)
+			pattern = Color(0.25, 0.4, 0.62)
+		_:  # soft rose band
+			china = Color(0.93, 0.88, 0.84)
+			trim = Color(0.55, 0.22, 0.22)
+			pattern = Color(0.65, 0.35, 0.35)
 	# Oval silver tray with rim
 	_add_box(root, Vector3(0, 0.015, 0), Vector3(0.48, 0.018, 0.32), BRASS.darkened(0.18), false, 0.28)
 	_add_box(root, Vector3(0, 0.028, 0), Vector3(0.44, 0.01, 0.28), BRASS.lightened(0.08), false, 0.25)
-	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.4, 0.006, 0.24), Color(0.78, 0.76, 0.72), false, 0.4)
+	_add_box(root, Vector3(0, 0.035, 0), Vector3(0.4, 0.006, 0.24), Color(0.72, 0.7, 0.66), false, 0.4)
 	# Handles
 	_add_box(root, Vector3(-0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
 	_add_box(root, Vector3(0.24, 0.04, 0), Vector3(0.04, 0.035, 0.1), BRASS, false, 0.28)
 	# Teapot body + lid + spout + handle
 	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.065, 0.12, china, false, 0.55)
-	_add_cylinder(root, Vector3(-0.08, 0.17, 0.02), 0.05, 0.03, china.darkened(0.05), false, 0.55)
+	_add_cylinder(root, Vector3(-0.08, 0.17, 0.02), 0.05, 0.03, china.darkened(0.04), false, 0.55)
 	_add_cylinder(root, Vector3(-0.08, 0.2, 0.02), 0.025, 0.035, trim, false, 0.4)
-	_add_box(root, Vector3(0.0, 0.1, 0.02), Vector3(0.1, 0.025, 0.03), china.darkened(0.08), false, 0.55)
-	_add_box(root, Vector3(-0.15, 0.11, 0.02), Vector3(0.03, 0.08, 0.04), china.darkened(0.1), false, 0.55)
-	# Gold band on pot
+	_add_box(root, Vector3(0.0, 0.1, 0.02), Vector3(0.1, 0.025, 0.03), china.darkened(0.06), false, 0.55)
+	_add_box(root, Vector3(-0.15, 0.11, 0.02), Vector3(0.03, 0.08, 0.04), china.darkened(0.08), false, 0.55)
+	# Pattern band on pot
 	_add_cylinder(root, Vector3(-0.08, 0.12, 0.02), 0.068, 0.012, trim, false, 0.35)
-	# Cups + saucers
+	_add_cylinder(root, Vector3(-0.08, 0.09, 0.02), 0.067, 0.008, pattern, false, 0.45)
+	# Cups + saucers with pattern lip
 	for i in 2:
 		var cx := 0.1 + float(i) * 0.1
 		var cz := 0.04 - float(i) * 0.07
-		_add_cylinder(root, Vector3(cx, 0.045, cz), 0.04, 0.01, china.darkened(0.06), false, 0.55)
+		_add_cylinder(root, Vector3(cx, 0.045, cz), 0.04, 0.01, china.darkened(0.05), false, 0.55)
 		_add_cylinder(root, Vector3(cx, 0.07, cz), 0.028, 0.045, china, false, 0.55)
-		_add_cylinder(root, Vector3(cx, 0.08, cz), 0.03, 0.008, trim, false, 0.4)
-		_add_box(root, Vector3(cx + 0.03, 0.07, cz), Vector3(0.02, 0.03, 0.015), china.darkened(0.08), false, 0.55)
+		_add_cylinder(root, Vector3(cx, 0.085, cz), 0.03, 0.008, trim, false, 0.4)
+		_add_box(root, Vector3(cx + 0.03, 0.07, cz), Vector3(0.02, 0.03, 0.015), china.darkened(0.06), false, 0.55)
 	# Cream jug
 	_add_cylinder(root, Vector3(0.02, 0.075, -0.08), 0.025, 0.055, china, false, 0.55)
-	_add_box(root, Vector3(0.05, 0.08, -0.08), Vector3(0.03, 0.02, 0.02), china.darkened(0.08), false, 0.55)
+	_add_cylinder(root, Vector3(0.02, 0.09, -0.08), 0.027, 0.008, pattern, false, 0.45)
+	_add_box(root, Vector3(0.05, 0.08, -0.08), Vector3(0.03, 0.02, 0.02), china.darkened(0.06), false, 0.55)
 	# Sugar bowl + lid
 	_add_cylinder(root, Vector3(-0.02, 0.07, -0.05), 0.032, 0.04, china, false, 0.55)
 	_add_cylinder(root, Vector3(-0.02, 0.095, -0.05), 0.02, 0.02, trim, false, 0.4)

@@ -390,6 +390,21 @@ const ROOMS := {
 			{"kind": "stool", "pos": [-3.5, 0.0, 1.2], "yaw": 25.0, "seed": 4},
 			{"kind": "side_table", "pos": [-3.8, 0.0, -2.0], "yaw": 10.0, "seed": 9, "bare": true},
 			{"kind": "letter_stack", "pos": [-3.75, 0.68, -1.95], "yaw": -5.0, "seed": 5},
+			# Loop 94: south window-end densify (from_north looking south was empty)
+			{"kind": "side_table", "pos": [-2.0, 0.0, 4.4], "yaw": 5.0, "seed": 6},
+			{"kind": "oil_lamp", "pos": [-1.9, 0.0, 4.3], "height": 0.95},
+			{"kind": "letter_stack", "pos": [-1.85, 0.68, 4.25], "yaw": -8.0, "seed": 7},
+			{"kind": "side_table", "pos": [2.2, 0.0, 4.5], "yaw": -10.0, "seed": 7, "bare": true},
+			{"kind": "oil_lamp", "pos": [2.1, 0.0, 4.4], "height": 1.0},
+			{"kind": "crate", "pos": [4.0, 0.0, 4.6], "scale": 0.75, "seed": 3},
+			{"kind": "crate", "pos": [-4.2, 0.0, 4.5], "scale": 0.7, "seed": 8},
+			{"kind": "stool", "pos": [1.0, 0.0, 3.6], "yaw": 20.0, "seed": 5},
+			{"kind": "stool", "pos": [-1.2, 0.0, 3.5], "yaw": -15.0, "seed": 6},
+			{"kind": "copper_scrap", "pos": [3.2, 0.0, 4.0], "scale": 0.7, "seed": 5},
+			{"kind": "wall_sconce", "pos": [-5.5, 0.0, 5.4], "yaw": 180.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [5.5, 0.0, 5.4], "yaw": 180.0, "height": 2.35},
+			{"kind": "wall_sconce", "pos": [-1.8, 0.0, 5.55], "yaw": 180.0, "height": 2.3},
+			{"kind": "wall_sconce", "pos": [1.8, 0.0, 5.55], "yaw": 180.0, "height": 2.3},
 		],
 		"doors": [
 			{
@@ -448,6 +463,11 @@ const ROOMS := {
 				"art": "botanical", "seed": 0, "frame": 1},
 			{"kind": "painting", "pos": [2.2, 1.95, -3.7], "yaw": 0.0, "width": 0.65, "height": 0.75,
 				"art": "landscape", "seed": 1, "frame": 0},
+			# Loop 94: south door wall oils (from_north empty stripe paper)
+			{"kind": "painting", "pos": [-2.2, 2.0, 3.75], "yaw": 180.0, "width": 0.7, "height": 0.8,
+				"art": "botanical", "seed": 1, "frame": 1},
+			{"kind": "painting", "pos": [2.2, 2.0, 3.75], "yaw": 180.0, "width": 0.65, "height": 0.75,
+				"art": "landscape", "seed": 4, "frame": 0},
 		],
 		"props": [
 			# Loop 82: fill empty centre — lesson corner, tea, plants, second chair
@@ -496,6 +516,16 @@ const ROOMS := {
 			{"kind": "plant", "pos": [-0.4, 0.0, -2.8], "scale": 0.5, "seed": 4,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.55},
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -2.8], "yaw": 90.0, "height": 2.15},
+			# Loop 94: door approach densify (from_north empty floor + wall)
+			{"kind": "wall_sconce", "pos": [-1.6, 0.0, 3.75], "yaw": 180.0, "height": 2.15},
+			{"kind": "wall_sconce", "pos": [1.6, 0.0, 3.75], "yaw": 180.0, "height": 2.15},
+			{"kind": "side_table", "pos": [-1.9, 0.0, 2.8], "yaw": 5.0, "seed": 7, "bare": true},
+			{"kind": "oil_lamp", "pos": [-1.85, 0.0, 2.75], "height": 0.95},
+			{"kind": "letter_stack", "pos": [-1.8, 0.68, 2.7], "yaw": 12.0, "seed": 6},
+			{"kind": "plant", "pos": [2.0, 0.0, 2.9], "scale": 0.55, "seed": 5,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
+			{"kind": "chair", "pos": [1.5, 0.0, 2.6], "yaw": -170.0, "seed": 3,
+				"fabric": Color(0.38, 0.34, 0.28)},
 		],
 		"doors": [
 			{
@@ -831,6 +861,11 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [2.4, 0.0, -3.0], "scale": 0.75, "seed": 8},
 			{"kind": "crate", "pos": [3.3, 0.0, -3.1], "scale": 0.7, "seed": 4},
 			{"kind": "oil_lamp", "pos": [-1.4, 0.0, -3.0], "yaw": -10.0, "height": 0.95},
+			# Loop 94: door-approach floor densify (mid path was bare tile)
+			{"kind": "stool", "pos": [-1.3, 0.0, -1.8], "yaw": 20.0, "seed": 5},
+			{"kind": "crate", "pos": [1.5, 0.0, -2.2], "scale": 0.6, "seed": 8},
+			{"kind": "copper_pot", "pos": [-2.0, 0.0, -2.6], "scale": 0.65, "seed": 9},
+			{"kind": "oil_lamp", "pos": [1.2, 0.0, -2.8], "yaw": 10.0, "height": 0.95},
 		],
 		"doors": [
 			{
