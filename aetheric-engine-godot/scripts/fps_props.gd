@@ -1303,18 +1303,21 @@ static func _make_oil_lamp(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0, 0.04, 0), Vector3(0.18, 0.08, 0.18), Color(0.1, 0.08, 0.07), true, 0.55)
 		_add_box(root, Vector3(0, 0.12, 0), Vector3(0.12, 0.06, 0.12), Color(0.14, 0.1, 0.08), true, 0.5)
 		_add_cylinder(root, Vector3(0, h * 0.35, 0), 0.032, h * 0.4, COPPER, true, 0.35, true)
-	# Oil font + chimney (shared)
+	# Oil font + frosted chimney (loop 86: warmer glass, brass collar, not chalk stick)
 	var font_c := BRASS.darkened(0.05) if style != 2 else COPPER.darkened(0.05)
-	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.09, 0.1, font_c, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, h * 0.62, 0), 0.07, 0.06, font_c.lightened(0.08), false, 0.28, true)
-	_add_cylinder(root, Vector3(0, h * 0.78, 0), 0.045, h * 0.28, Color(0.9, 0.92, 0.86), false, 0.35)
-	_add_cylinder(root, Vector3(0, h * 0.95, 0), 0.03, 0.04, BRASS, false, 0.3, true)
-	_add_sphere_blob(root, Vector3(0, h * 0.7, 0), 0.03, Color(1.0, 0.82, 0.4))
+	_add_cylinder(root, Vector3(0, h * 0.55, 0), 0.1, 0.12, font_c, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, h * 0.63, 0), 0.08, 0.05, font_c.lightened(0.08), false, 0.28, true)
+	_add_cylinder(root, Vector3(0, h * 0.68, 0), 0.055, 0.04, BRASS, false, 0.3, true)
+	# Frosted chimney — cream glass with soft rim
+	_add_cylinder(root, Vector3(0, h * 0.82, 0), 0.05, h * 0.26, Color(0.92, 0.9, 0.8), false, 0.4)
+	_add_cylinder(root, Vector3(0, h * 0.7, 0), 0.052, 0.03, Color(0.88, 0.86, 0.76), false, 0.45)
+	_add_cylinder(root, Vector3(0, h * 0.96, 0), 0.035, 0.05, BRASS, false, 0.3, true)
+	_add_sphere_blob(root, Vector3(0, h * 0.72, 0), 0.035, Color(1.0, 0.85, 0.45))
 	var light := OmniLight3D.new()
-	light.light_color = Color(1.0, 0.82, 0.5)
-	light.light_energy = 0.7 + float(style) * 0.08
-	light.omni_range = 3.8 + float(style) * 0.25
-	light.position = Vector3(0, h * 0.72, 0)
+	light.light_color = Color(1.0, 0.84, 0.52)
+	light.light_energy = 0.85 + float(style) * 0.08
+	light.omni_range = 4.0 + float(style) * 0.3
+	light.position = Vector3(0, h * 0.75, 0)
 	root.add_child(light)
 	_add_contact_shadow(root, 0.14, 0.14)
 	return root
@@ -2137,32 +2140,48 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
 	_add_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
 	_add_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.2, 0.08, 0.24), MARBLE.darkened(0.04), false, 0.32)
-	# Hearth + fire dogs
+	# Hearth + fire dogs (loop 86 richer grate)
 	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.5, 0.08, 0.55), STONE, true, 0.55)
-	_add_box(root, Vector3(-0.28, 0.12, 0.28), Vector3(0.06, 0.14, 0.18), IRON, false, 0.4)
-	_add_box(root, Vector3(0.28, 0.12, 0.28), Vector3(0.06, 0.14, 0.18), IRON, false, 0.4)
-	# Logs + glow
-	_add_box(root, Vector3(-0.12, 0.22, 0.18), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
-	_add_box(root, Vector3(0.15, 0.28, 0.2), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
-	_add_box(root, Vector3(0.0, 0.34, 0.16), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
+	_add_box(root, Vector3(0, 0.08, 0.38), Vector3(1.2, 0.03, 0.4), STONE.darkened(0.1), false, 0.6)
+	# Andirons
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), IRON, false, 0.4)
+		_add_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), IRON.lightened(0.1), false, 0.4)
+		_add_cylinder(root, Vector3(sx * 0.3, 0.1, 0.42), 0.03, 0.08, IRON.darkened(0.05), false, 0.4)
+	# Grate bars
+	for i in 5:
+		var gx := -0.32 + float(i) * 0.16
+		_add_box(root, Vector3(gx, 0.2, 0.22), Vector3(0.025, 0.22, 0.04), IRON.darkened(0.08), false, 0.4)
+	# Logs
+	_add_box(root, Vector3(-0.12, 0.24, 0.2), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
+	_add_box(root, Vector3(0.15, 0.3, 0.22), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
+	_add_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
+	# Ash bed
+	_add_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), Color(0.22, 0.18, 0.14), false, 0.85)
+	# Layered emissive flame (not single black hole)
+	for fi in 3:
+		var em := MeshInstance3D.new()
+		var em_mesh := BoxMesh.new()
+		var fw := 0.55 - float(fi) * 0.12
+		var fh := 0.22 + float(fi) * 0.1
+		em_mesh.size = Vector3(fw, fh, 0.04)
+		em.mesh = em_mesh
+		var emat := StandardMaterial3D.new()
+		var warm := Color(1.0, 0.45 - float(fi) * 0.08, 0.1 + float(fi) * 0.05)
+		emat.albedo_color = warm
+		emat.emission_enabled = true
+		emat.emission = warm
+		emat.emission_energy_multiplier = 2.8 - float(fi) * 0.4
+		emat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		em.material_override = emat
+		em.position = Vector3(float(fi - 1) * 0.06, 0.38 + float(fi) * 0.08, 0.26 + float(fi) * 0.02)
+		root.add_child(em)
 	var fire := OmniLight3D.new()
-	fire.light_color = Color(1.0, 0.5, 0.2)
-	fire.light_energy = 1.25
-	fire.omni_range = 5.5
-	fire.position = Vector3(0, 0.48, 0.35)
+	fire.light_color = Color(1.0, 0.52, 0.22)
+	fire.light_energy = 1.55
+	fire.omni_range = 6.0
+	fire.position = Vector3(0, 0.52, 0.4)
 	root.add_child(fire)
-	var em := MeshInstance3D.new()
-	var em_mesh := BoxMesh.new()
-	em_mesh.size = Vector3(0.7, 0.35, 0.04)
-	em.mesh = em_mesh
-	var emat := StandardMaterial3D.new()
-	emat.albedo_color = Color(1.0, 0.45, 0.12)
-	emat.emission_enabled = true
-	emat.emission = Color(1.0, 0.4, 0.08)
-	emat.emission_energy_multiplier = 2.4
-	em.material_override = emat
-	em.position = Vector3(0, 0.42, 0.22)
-	root.add_child(em)
 	_add_contact_shadow(root, 0.95, 0.55)
 	return root
 
@@ -2409,8 +2428,9 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
-	## Victorian overmantel / wall mirror: gilt frame + silvered glass that
-	## *reads as reflective* (metallic + env) — not a room photo in a frame.
+	## Victorian wall mirror — gilt frame + silver plate that never reads black.
+	## Loop 86: pure metallic without env probe looks black; use unshaded silver
+	## plate + soft highlight bands (period “looking-glass” read, not void).
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -2418,32 +2438,39 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = float(feat.get("width", 1.05))
 	var h: float = float(feat.get("height", 1.45))
-	# Ornate gilt frame + dark liner
-	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.08, h + 0.08, 0.1), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.03), Vector3(w - 0.02, h - 0.02, 0.04), BRASS.darkened(0.15), false, 0.35)
-	_add_box(root, Vector3(0, 0, 0.04), Vector3(w - 0.12, h - 0.12, 0.03), Color(0.18, 0.12, 0.08), false, 0.55)
-	# Crest
-	_add_box(root, Vector3(0, h * 0.5 + 0.06, 0.02), Vector3(0.18, 0.1, 0.05), BRASS.lightened(0.08), false, 0.3)
-	# Silvered plate — high metal, low roughness so room lights/env reflect
+	# Ornate gilt frame + dark liner (into room so wall never occludes)
+	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.1, h + 0.1, 0.08), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.02, h + 0.02, 0.04), BRASS.darkened(0.12), false, 0.35)
+	_add_box(root, Vector3(0, 0, 0.08), Vector3(w - 0.1, h - 0.1, 0.03), Color(0.2, 0.14, 0.1), false, 0.55)
+	# Crest + corner bosses
+	_add_box(root, Vector3(0, h * 0.5 + 0.07, 0.06), Vector3(0.22, 0.12, 0.05), BRASS.lightened(0.1), false, 0.3)
+	_add_box(root, Vector3(0, h * 0.5 + 0.12, 0.06), Vector3(0.1, 0.06, 0.04), BRASS, false, 0.3)
+	for sx in [-1.0, 1.0]:
+		for sy in [-1.0, 1.0]:
+			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.08, 0.08, 0.04), BRASS.lightened(0.05), false, 0.3)
+	# Silvered plate — UNSHADED so always visible without env maps
 	var glass := MeshInstance3D.new()
 	var gm := BoxMesh.new()
-	gm.size = Vector3(w - 0.18, h - 0.18, 0.015)
+	gm.size = Vector3(w - 0.16, h - 0.16, 0.012)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.55, 0.62, 0.68)
-	gmat.metallic = 0.95
-	gmat.roughness = 0.06
-	gmat.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
-	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	gmat.albedo_color = Color(0.62, 0.7, 0.76)
+	gmat.roughness = 1.0
+	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
-	glass.position = Vector3(0, 0, 0.055)
+	glass.position = Vector3(0, 0, 0.1)
 	root.add_child(glass)
-	# Soft catch-light so glass never reads as a black painting hole
+	# Soft vertical “reflection” bands (warm room light suggestion)
+	_add_box(root, Vector3(-w * 0.12, h * 0.08, 0.11), Vector3(w * 0.18, h * 0.55, 0.008), Color(0.78, 0.82, 0.86), false, 0.98)
+	_add_box(root, Vector3(w * 0.18, -h * 0.05, 0.11), Vector3(w * 0.12, h * 0.4, 0.008), Color(0.72, 0.76, 0.8), false, 0.98)
+	_add_box(root, Vector3(0.0, h * 0.28, 0.11), Vector3(w * 0.35, h * 0.12, 0.008), Color(0.85, 0.82, 0.72), false, 0.98)
+	# Catch lights
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(0.9, 0.92, 1.0)
-	catch_l.light_energy = 0.25
-	catch_l.omni_range = 1.6
-	catch_l.position = Vector3(0.15, 0.2, 0.35)
+	catch_l.light_color = Color(0.95, 0.94, 1.0)
+	catch_l.light_energy = 0.45
+	catch_l.omni_range = 2.0
+	catch_l.position = Vector3(0.12, 0.15, 0.4)
 	root.add_child(catch_l)
 	return root
 

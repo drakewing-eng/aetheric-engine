@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~02:35 (overnight goal active)  
+**Updated:** 2026-07-29 ~02:55 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -27,13 +27,14 @@
 | 18 | Tea still-life + window room-side views | **ADVANCED 83** |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
 | 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
+| 21 | Mirror silver plate + fireplace fire | **ADVANCED 86** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 67–84 | Core queue through prep still-life / light |
-| 85 | **Workshop walls:** 2nd window, dual N chalk boards, more tool racks/shelves, scrap, still-life oils, sconces. **Conservatory door approach:** flanking benches, urns, plants, sconces. |
+| 67–85 | Core queue through workshop/conservatory densify |
+| 86 | **Mirror:** unshaded silver plate + highlight bands (no black metallic void). **Fireplace:** grate, andirons, ash, layered emissive flame. **Oil lamp:** warmer frosted chimney + brass collar. |
 
 ## Still high-value if continuing
 
@@ -43,4 +44,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_85/`  
+- Shots: `auto_loop_67/` … `auto_loop_86/`  
