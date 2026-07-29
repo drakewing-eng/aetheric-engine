@@ -161,14 +161,15 @@ func _go_through_door(door: Dictionary) -> void:
 	var sz := float(spawn[2]) if spawn.size() > 2 else 0.0
 	# Nudge spawn toward room centre so feet never land on threshold/void.
 	var nudged := _nudge_spawn_inward(sx, sz, 0.65)
+	# Vector2 stores XZ as (x, y) — use nudged.y for world Z (loop 125 parse fix)
 	# Always face *into* the room from the landed spawn (loop 76).
 	# Door dict spawn_yaw was often facing the leaf (looked like closet re-entry).
-	var yaw: float = _facing_into_room_yaw([nudged.x, 0.0, nudged.z])
+	var yaw: float = _facing_into_room_yaw([nudged.x, 0.0, nudged.y])
 	var target_id := str(door["target"])
-	await _load_room(target_id, [nudged.x, 0.0, nudged.z], yaw)
+	await _load_room(target_id, [nudged.x, 0.0, nudged.y], yaw)
 	# Hard floor re-snap after rebuild (CharacterBody can settle mid-frame)
 	if player:
-		player.teleport_to(Vector3(nudged.x, 0.0, nudged.z), yaw)
+		player.teleport_to(Vector3(nudged.x, 0.0, nudged.y), yaw)
 		player.set_movement_enabled(true)
 	_door_busy = false
 	_near_door = {}

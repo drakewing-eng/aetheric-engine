@@ -3408,16 +3408,21 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 		var uy: float = mid_rail_y + (leaf_h - mid_rail_y) * 0.52
 		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.5)
 		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
-	# Brass mortice-lock furniture (reads clearly on closed leaf)
-	var knob_x := leaf_w - 0.18
-	var knob_y := mid_rail_y + 0.08
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.04), Vector3(0.08, 0.14, 0.02), BRASS.darkened(0.15), false, 0.3)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.06), 0.045, 0.02, BRASS, false, 0.28, true)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.1), 0.035, 0.05, BRASS.lightened(0.1), false, 0.25, true)
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.1, 0.055), Vector3(0.05, 0.09, 0.016), BRASS, false, 0.28)
+	# Loop 125: brass mortice set — plate + round knob + keyhole escutcheon (reads at distance)
+	var knob_x := leaf_w - 0.16
+	var knob_y := mid_rail_y + 0.1
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.04), Vector3(0.1, 0.18, 0.02), BRASS.darkened(0.18), false, 0.3)
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.05), Vector3(0.08, 0.14, 0.012), BRASS.darkened(0.08), false, 0.28)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.06), 0.05, 0.02, BRASS, false, 0.28, true)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.09), 0.04, 0.06, BRASS.lightened(0.08), false, 0.25, true)
+	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.13), 0.025, 0.03, BRASS.darkened(0.1), false, 0.28, true)
+	# Keyhole plate below knob
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.055), Vector3(0.055, 0.1, 0.018), BRASS, false, 0.28)
+	_add_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.065), Vector3(0.02, 0.05, 0.01), Color(0.12, 0.1, 0.08), false, 0.6)
 	# Three butt hinges on hinge stile
-	for hy in [0.32, leaf_h * 0.5, leaf_h - 0.38]:
-		_add_box(leaf, Vector3(0.04, hy, 0.045), Vector3(0.05, 0.16, 0.04), BRASS, false, 0.32)
+	for hy in [0.28, leaf_h * 0.5, leaf_h - 0.32]:
+		_add_box(leaf, Vector3(0.035, hy, 0.045), Vector3(0.06, 0.18, 0.04), BRASS.darkened(0.05), false, 0.32)
+		_add_box(leaf, Vector3(0.035, hy, 0.06), Vector3(0.03, 0.12, 0.02), BRASS.lightened(0.05), false, 0.3)
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
