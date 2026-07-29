@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~03:40 (overnight goal active)  
+**Updated:** 2026-07-29 ~04:00 (overnight goal active)  
 **HEAD:** see latest commit  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -17,22 +17,23 @@
 | 8 | Side-view mesh furniture | **ADVANCED 70+89** wood not iron |
 | 9 | Door transition safety | **ADVANCED 76** suite PASS |
 | 10 | Wallpaper contrast | **ADVANCED 72+77** |
-| 11 | Hall / prep still-life | **ADVANCED 73+79+84+87** |
+| 11 | Hall / prep still-life | **ADVANCED 73+79+84+87+92** |
 | 12 | Conservatory garden identity | **ADVANCED 77+82+85+91** exterior plates |
-| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90** NW fill |
+| 13 | Gallery engine + morning densify | **ADVANCED 78+82+90+92** aisle |
 | 14 | Hall arrival + workshop scrap/path | **ADVANCED 79+85+88+89** iron plates |
 | 15 | Bookshelf spines + kitchen side volume | **ADVANCED 80+90** S wall |
-| 16 | Gallery centre experiment density | **ADVANCED 81+89** chalk denser |
+| 16 | Gallery centre experiment density | **ADVANCED 81+89+92** |
 | 17 | Conservatory glass void + morning fill | **ADVANCED 82+91** |
 | 18 | Tea still-life + window room-side views | **ADVANCED 83+91** views |
 | 19 | Prep-table kits + kitchen/gallery light | **ADVANCED 84** |
 | 20 | Workshop wall densify + conservatory door | **ADVANCED 85** |
-| 21 | Mirror silver plate + fireplace fire | **ADVANCED 86** |
+| 21 | Mirror silver plate + fireplace fire | **ADVANCED 86+92** looking-glass |
 | 22 | Rug border + hall south + dresser plates | **ADVANCED 87** |
 | 23 | Workshop south wall + open desk gallery | **ADVANCED 88** |
 | 24 | Material fix dark wood≠iron + iron paths | **DONE 89** |
 | 25 | Kitchen range hero + S wall + morning NW | **DONE 90** |
 | 26 | Conservatory exterior plates (no green orbs) | **DONE 91** |
+| 27 | Looking-glass plate rewrite (no blue/white) | **DONE 92** |
 
 ## Loops
 
@@ -42,15 +43,15 @@
 | 88 | Workshop south wall densify + open desk pigeonholes |
 | 89 | Mahogany≠iron material fix; riveted iron floor plates; denser chalk |
 | 90 | Kitchen range brass/fire hero; kitchen S wall; morning NW fill |
-| 91 | **Exterior views:** regenerated garden/orchard/yard/street plates (path, trunks, hedge, flowers, brick wall + gate — not flat green orbs). Glass wall no longer paints sphere-blob hedge over plate. South glass = lawn path hero. Window sky/lawn wash removed. Conservatory mid-floor props. |
+| 91 | Exterior garden/yard plates; glass wall no orb overlay |
+| 92 | **Looking-glass rewrite:** dark silver `mirror_plate.jpg` (dim room silhouettes + sheen) — not light-blue void + white bars. Larger frames hall/drawing/morning. Gallery side-aisle densify. Hall lamp/sconce by mirror. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation  
-- Exterior views still stylized illustration (not photo) — optional further polish  
 - Optional micro-polish only  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_91/`  
+- Shots: `auto_loop_67/` … `auto_loop_92/`  

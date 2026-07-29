@@ -2594,9 +2594,9 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
-	## Victorian wall mirror — gilt frame + silver plate that never reads black.
-	## Loop 86: pure metallic without env probe looks black; use unshaded silver
-	## plate + soft highlight bands (period “looking-glass” read, not void).
+	## Victorian looking-glass — gilt frame + dark silver plate.
+	## Loop 92: never light-blue + white placeholder bars (read as broken art).
+	## Dark plate + muted room silhouette + soft sheen; unshaded so no black void.
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -2605,40 +2605,62 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var w: float = float(feat.get("width", 1.05))
 	var h: float = float(feat.get("height", 1.45))
 	# Ornate gilt frame + dark liner (into room so wall never occludes)
-	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.1, h + 0.1, 0.08), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.02, h + 0.02, 0.04), BRASS.darkened(0.12), false, 0.35)
-	_add_box(root, Vector3(0, 0, 0.08), Vector3(w - 0.1, h - 0.1, 0.03), Color(0.2, 0.14, 0.1), false, 0.55)
+	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.12, h + 0.12, 0.09), BRASS, true, 0.32)
+	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.04, h + 0.04, 0.04), BRASS.darkened(0.1), false, 0.35)
+	_add_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.08, h - 0.08, 0.03), Color(0.18, 0.12, 0.08), false, 0.55)
+	# Inner gold bead
+	_add_box(root, Vector3(0, 0, 0.09), Vector3(w - 0.12, h - 0.12, 0.012), BRASS.lightened(0.08), false, 0.3)
 	# Crest + corner bosses
-	_add_box(root, Vector3(0, h * 0.5 + 0.07, 0.06), Vector3(0.22, 0.12, 0.05), BRASS.lightened(0.1), false, 0.3)
-	_add_box(root, Vector3(0, h * 0.5 + 0.12, 0.06), Vector3(0.1, 0.06, 0.04), BRASS, false, 0.3)
+	_add_box(root, Vector3(0, h * 0.5 + 0.08, 0.06), Vector3(0.28, 0.14, 0.05), BRASS.lightened(0.1), false, 0.3)
+	_add_box(root, Vector3(0, h * 0.5 + 0.14, 0.06), Vector3(0.12, 0.07, 0.04), BRASS, false, 0.3)
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.08, 0.08, 0.04), BRASS.lightened(0.05), false, 0.3)
-	# Silvered plate — UNSHADED so always visible without env maps
+			_add_box(root, Vector3(sx * (w * 0.48), sy * (h * 0.48), 0.07), Vector3(0.09, 0.09, 0.04), BRASS.lightened(0.05), false, 0.3)
+	# Looking-glass plate — painted silver plate texture (unshaded; never black metal void
+	# and never light-blue + white bars from loop 86).
 	var glass := MeshInstance3D.new()
-	var gm := BoxMesh.new()
-	gm.size = Vector3(w - 0.16, h - 0.16, 0.012)
+	var gm := QuadMesh.new()
+	gm.size = Vector2(w - 0.18, h - 0.18)
 	glass.mesh = gm
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(0.62, 0.7, 0.76)
+	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
+	if plate_tex:
+		gmat.albedo_texture = plate_tex
+		gmat.albedo_color = Color(1.05, 1.05, 1.08)
+	else:
+		gmat.albedo_color = Color(0.28, 0.34, 0.38)
 	gmat.roughness = 1.0
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
-	glass.position = Vector3(0, 0, 0.1)
+	glass.position = Vector3(0, 0, 0.105)
 	root.add_child(glass)
-	# Soft vertical “reflection” bands (warm room light suggestion)
-	_add_box(root, Vector3(-w * 0.12, h * 0.08, 0.11), Vector3(w * 0.18, h * 0.55, 0.008), Color(0.78, 0.82, 0.86), false, 0.98)
-	_add_box(root, Vector3(w * 0.18, -h * 0.05, 0.11), Vector3(w * 0.12, h * 0.4, 0.008), Color(0.72, 0.76, 0.8), false, 0.98)
-	_add_box(root, Vector3(0.0, h * 0.28, 0.11), Vector3(w * 0.35, h * 0.12, 0.008), Color(0.85, 0.82, 0.72), false, 0.98)
-	# Catch lights
+	# Very soft highlight edge (gilt catch) — thin, not abstract bars
+	_add_unshaded_plate(root, Vector3(-w * 0.28, h * 0.12, 0.112), Vector3(0.03, h * 0.45, 0.004), Color(0.55, 0.58, 0.6))
+	# Catch light (soft)
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(0.95, 0.94, 1.0)
-	catch_l.light_energy = 0.45
-	catch_l.omni_range = 2.0
-	catch_l.position = Vector3(0.12, 0.15, 0.4)
+	catch_l.light_color = Color(0.9, 0.92, 1.0)
+	catch_l.light_energy = 0.22
+	catch_l.omni_range = 1.6
+	catch_l.position = Vector3(0.1, 0.12, 0.35)
 	root.add_child(catch_l)
 	return root
+
+
+static func _add_unshaded_plate(parent: Node3D, pos: Vector3, size: Vector3, color: Color) -> void:
+	## Flat unshaded panel for mirror reflection paint (bypasses wood/metal auto-tex).
+	var mi := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 1.0
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mi.material_override = mat
+	mi.position = pos
+	parent.add_child(mi)
 
 static func _make_painting(feat: Dictionary) -> Node3D:
 	## Gilt/wood-frame oil: landscape / still life / botanical / portrait —

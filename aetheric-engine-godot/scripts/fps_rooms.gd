@@ -28,7 +28,8 @@ const ROOMS := {
 		"features": [
 			{"kind": "window", "pos": [4.42, 1.85, -2.0], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 0, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
 			{"kind": "window", "pos": [4.42, 1.85, 1.8], "yaw": -90.0, "width": 1.15, "height": 1.9, "seed": 1, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
-			{"kind": "mirror", "pos": [4.38, 1.75, 0.0], "yaw": -90.0},
+			# Loop 92: chimney-glass scale looking-glass (dark silver, not blue void)
+			{"kind": "mirror", "pos": [4.38, 1.75, 0.0], "yaw": -90.0, "width": 1.2, "height": 1.65},
 			# West wall free of bookshelves (shelves at z≈-1.6 / 1.5) — paintings clear
 			# Loop 69: mixed subjects + frame styles (not four identical pastoral clones)
 			{"kind": "painting", "pos": [-4.3, 1.95, -3.5], "yaw": 90.0, "width": 0.9, "height": 1.1,
@@ -168,7 +169,8 @@ const ROOMS := {
 			{"kind": "door_frame", "pos": [0.0, 1.2, 4.85], "yaw": 180.0, "width": 1.8, "height": 2.5, "seed": 2},
 			{"kind": "door_frame", "pos": [-4.5, 1.2, 4.85], "yaw": 180.0, "width": 1.4, "height": 2.3, "seed": 1},
 			{"kind": "door_frame", "pos": [-6.85, 1.2, 0.0], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 2},
-			{"kind": "mirror", "pos": [-6.5, 1.7, -2.2], "yaw": 90.0},
+			# Loop 92: larger hall looking-glass (was reading as broken blue plate)
+			{"kind": "mirror", "pos": [-6.5, 1.7, -2.2], "yaw": 90.0, "width": 1.15, "height": 1.55},
 			# Hall: one grand storm over north door + side oils (identity, not gallery clutter)
 			{"kind": "painting", "pos": [0.0, 2.05, -4.7], "yaw": 0.0, "width": 0.95, "height": 1.05,
 				"art": "landscape", "seed": 3, "frame": 0},
@@ -198,6 +200,9 @@ const ROOMS := {
 			{"kind": "hall_table", "pos": [2.4, 0.0, -3.55], "yaw": -5.0, "seed": 7},
 			{"kind": "coat_stand", "pos": [-5.4, 0.0, -2.4], "yaw": 0.0, "seed": 0},
 			{"kind": "umbrella_stand", "pos": [-5.15, 0.0, -3.2], "yaw": 10.0, "seed": 1},
+			# Loop 92: lamp near looking-glass (west hall corner read)
+			{"kind": "oil_lamp", "pos": [-5.6, 0.0, -1.4], "yaw": 15.0, "height": 1.0},
+			{"kind": "wall_sconce", "pos": [-6.7, 0.0, -1.0], "yaw": 90.0, "height": 2.25},
 			# Second stand near kitchen/south — visitors leave coats by service door
 			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
 			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
@@ -362,6 +367,14 @@ const ROOMS := {
 			# Iron plate walk to engine (experiment floor language, not garden stone)
 			{"kind": "floor_path", "pos": [0.0, 0.0, -1.0], "yaw": 0.0, "length": 5.5, "width": 1.35,
 				"surface": "iron", "seed": 2},
+			# Loop 92: side-aisle densify (from_south flanks were bare floor)
+			{"kind": "side_table", "pos": [3.4, 0.0, 0.8], "yaw": -15.0, "seed": 4},
+			{"kind": "oil_lamp", "pos": [3.3, 0.0, 0.7], "height": 0.95},
+			{"kind": "crate", "pos": [4.2, 0.0, 1.8], "scale": 0.7, "seed": 1},
+			{"kind": "copper_scrap", "pos": [-4.2, 0.0, 0.6], "scale": 0.75, "seed": 3},
+			{"kind": "stool", "pos": [-3.5, 0.0, 1.2], "yaw": 25.0, "seed": 4},
+			{"kind": "side_table", "pos": [-3.8, 0.0, -2.0], "yaw": 10.0, "seed": 9, "bare": true},
+			{"kind": "letter_stack", "pos": [-3.75, 0.68, -1.95], "yaw": -5.0, "seed": 5},
 		],
 		"doors": [
 			{
@@ -413,7 +426,7 @@ const ROOMS := {
 			{"kind": "window", "pos": [3.85, 1.85, 0.0], "yaw": -90.0, "width": 1.3, "height": 2.0, "seed": 4, "view": "res://assets/rooms/textures/views/view_garden2.jpg"},
 			{"kind": "window", "pos": [3.85, 1.85, -2.0], "yaw": -90.0, "width": 1.1, "height": 1.9, "seed": 5, "view": "res://assets/rooms/textures/views/view_garden.jpg"},
 			{"kind": "door_frame", "pos": [0.0, 1.15, 3.85], "yaw": 180.0, "width": 1.45, "height": 2.3},
-			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0},
+			{"kind": "mirror", "pos": [-3.7, 1.65, 0.5], "yaw": 90.0, "width": 0.95, "height": 1.35},
 			{"kind": "painting", "pos": [-3.7, 1.8, -1.8], "yaw": 90.0, "width": 0.75, "height": 0.95,
 				"art": "still_life", "seed": 0, "frame": 1},
 			{"kind": "painting", "pos": [-2.0, 1.95, -3.7], "yaw": 0.0, "width": 0.7, "height": 0.7,
