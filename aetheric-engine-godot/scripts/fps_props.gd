@@ -1843,12 +1843,12 @@ static func _make_oil_lamp(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0, stem_top * 0.35, 0), 0.04, 0.04, BRASS.darkened(0.15), false, 0.35, true)
 		_add_cylinder(root, Vector3(0, stem_top * 0.75, 0), 0.04, 0.035, BRASS.darkened(0.1), false, 0.35, true)
 	elif style == 1:
-		# Iron tripod base + wood pad (legs break coin-stack read)
-		_add_cylinder(root, Vector3(0, 0.04, 0), 0.08, 0.05, iron_mid, true, 0.45)
+		# Tripod base — loop 141: warm wood feet (not black iron L-junk on floor)
+		_add_cylinder(root, Vector3(0, 0.04, 0), 0.08, 0.05, wood_d, true, 0.5)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_box(root, Vector3(cos(rad) * 0.11, 0.03, sin(rad) * 0.11), Vector3(0.16, 0.03, 0.04), iron_mid.darkened(0.05), true, 0.45)
-			_add_cylinder(root, Vector3(cos(rad) * 0.16, 0.02, sin(rad) * 0.16), 0.025, 0.04, wood_d, true, 0.55)
+			_add_box(root, Vector3(cos(rad) * 0.11, 0.03, sin(rad) * 0.11), Vector3(0.16, 0.03, 0.04), wood, true, 0.5)
+			_add_cylinder(root, Vector3(cos(rad) * 0.16, 0.02, sin(rad) * 0.16), 0.025, 0.04, wood_d.lightened(0.08), true, 0.52)
 		_add_cylinder(root, Vector3(0, stem_top * 0.5, 0), 0.026, stem_top * 0.65, wood, true, 0.5)
 		_add_cylinder(root, Vector3(0, stem_top * 0.75, 0), 0.038, 0.03, BRASS.darkened(0.12), false, 0.35, true)
 	else:
@@ -2963,24 +2963,25 @@ static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: 
 					0.92
 				)
 		else:
-			# Palm: drooping ribbon fronds (long vertical blades splay outward)
-			for j in 4:
-				var pang := ang + float(j - 1.5) * 0.35
-				var bl := pw * (0.2 + float(j % 2) * 0.06)
-				var drop := 0.04 * ph + float(j) * 0.02 * ph
+			# Palm: drooping fronds (loop 141 — horizontal fans, not upright cactus sticks)
+			for j in 5:
+				var pang := ang + float(j - 2.0) * 0.28
+				var bl := pw * (0.22 + float(j % 3) * 0.05)
+				var drop := 0.02 * ph + float(j) * 0.018 * ph
+				# Long leaflet mostly horizontal/splayed
 				_add_box(
 					root,
-					Vector3(sx + cos(pang) * bl * 0.5, tip_y - drop * 0.3, sz + sin(pang) * bl * 0.5),
-					Vector3(0.022 * pw, bl * 0.85, 0.018 * pw),
+					Vector3(sx + cos(pang) * bl * 0.55, tip_y - drop, sz + sin(pang) * bl * 0.55),
+					Vector3(bl * 0.95, 0.014 * ph, 0.03 * pw),
 					leaf_c if j % 2 == 0 else leaf_a,
 					false,
 					0.9
 				)
-				# Slightly tilted mid-rib plate for width without a sphere
+				# Slight mid-rib under leaf for thickness
 				_add_box(
 					root,
-					Vector3(sx + cos(pang) * bl * 0.25, tip_y - drop * 0.5, sz + sin(pang) * bl * 0.25),
-					Vector3(bl * 0.55, 0.014 * ph, 0.02 * pw),
+					Vector3(sx + cos(pang) * bl * 0.35, tip_y - drop - 0.01 * ph, sz + sin(pang) * bl * 0.35),
+					Vector3(bl * 0.5, 0.01 * ph, 0.018 * pw),
 					leaf_b,
 					false,
 					0.92
@@ -3709,7 +3710,7 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
 			_add_box(root, Vector3(sx * (w * 0.5), sy * (h * 0.5), 0.07), Vector3(0.1, 0.1, 0.045), BRASS.lightened(0.05), false, 0.3)
-	# Silvered plate — painterly interior reflection (loop 133/139: brighter, no white streak)
+	# Silvered plate — loop 141: cleaner asset + stronger room-length silver read
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
 	gm.size = Vector2(w - 0.16, h - 0.16)
@@ -3718,28 +3719,31 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	var plate_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if plate_tex:
 		gmat.albedo_texture = plate_tex
-		gmat.albedo_color = Color(1.18, 1.15, 1.1)
+		gmat.albedo_color = Color(1.28, 1.26, 1.22)
 		gmat.emission_enabled = true
 		gmat.emission_texture = plate_tex
-		gmat.emission = Color(0.55, 0.52, 0.48)
-		gmat.emission_energy_multiplier = 0.28
+		gmat.emission = Color(0.72, 0.7, 0.65)
+		gmat.emission_energy_multiplier = 0.48
 	else:
-		gmat.albedo_color = Color(0.62, 0.62, 0.58)
-	gmat.roughness = 0.35
-	gmat.metallic = 0.55
+		gmat.albedo_color = Color(0.72, 0.74, 0.72)
+		gmat.emission_enabled = true
+		gmat.emission = Color(0.45, 0.48, 0.45)
+		gmat.emission_energy_multiplier = 0.35
+	gmat.roughness = 0.22
+	gmat.metallic = 0.75
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	glass.material_override = gmat
 	glass.position = Vector3(0, 0, 0.108)
 	root.add_child(glass)
-	# Soft specular catch — thin short glints (not a full-height white bar)
-	_add_unshaded_plate(root, Vector3(-w * 0.18, h * 0.18, 0.112), Vector3(0.014, h * 0.18, 0.002), Color(0.78, 0.76, 0.72))
-	_add_unshaded_plate(root, Vector3(w * 0.22, -h * 0.08, 0.112), Vector3(0.01, h * 0.1, 0.002), Color(0.7, 0.68, 0.64))
+	# Soft specular catch — short silver glints only
+	_add_unshaded_plate(root, Vector3(-w * 0.2, h * 0.2, 0.112), Vector3(0.012, h * 0.16, 0.002), Color(0.88, 0.9, 0.92))
+	_add_unshaded_plate(root, Vector3(w * 0.18, -h * 0.12, 0.112), Vector3(0.01, h * 0.1, 0.002), Color(0.8, 0.82, 0.84))
 	var catch_l := OmniLight3D.new()
-	catch_l.light_color = Color(1.0, 0.96, 0.9)
-	catch_l.light_energy = 0.42
-	catch_l.omni_range = 2.0
-	catch_l.position = Vector3(0.12, 0.1, 0.4)
+	catch_l.light_color = Color(0.95, 0.98, 1.0)
+	catch_l.light_energy = 0.55
+	catch_l.omni_range = 2.2
+	catch_l.position = Vector3(0.1, 0.12, 0.45)
 	root.add_child(catch_l)
 	return root
 

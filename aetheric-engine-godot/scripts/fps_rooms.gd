@@ -522,15 +522,15 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -5.6], "yaw": 0.0, "height": 2.4},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -5.6], "yaw": 0.0, "height": 2.4},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.5], "hang": 3.9},
-			# Instrument crates + copper scrap (experiment stock, not kitchen pots)
+			# Instrument crates + copper scrap (loop 141: scrap against walls, not aisle junk)
 			{"kind": "crate", "pos": [5.5, 0.0, 3.5], "scale": 0.9, "seed": 5},
 			{"kind": "crate", "pos": [6.0, 0.0, 2.9], "scale": 0.65, "seed": 6},
 			{"kind": "crate", "pos": [-6.2, 0.0, 3.2], "scale": 0.8, "seed": 7},
 			{"kind": "crate", "pos": [-5.8, 0.0, -3.8], "scale": 0.7, "seed": 2},
-			{"kind": "copper_scrap", "pos": [3.6, 0.0, -3.0], "scale": 0.95, "seed": 0},
-			{"kind": "copper_scrap", "pos": [-3.8, 0.0, -3.2], "scale": 0.8, "seed": 1},
-			{"kind": "copper_scrap", "pos": [5.8, 0.0, -2.5], "scale": 0.7, "seed": 4},
-			{"kind": "copper_pot", "pos": [4.8, 0.0, -3.0], "scale": 0.55, "seed": 2},
+			{"kind": "copper_scrap", "pos": [6.2, 0.0, -3.4], "scale": 0.9, "seed": 0},
+			{"kind": "copper_scrap", "pos": [-6.4, 0.0, -3.5], "scale": 0.8, "seed": 1},
+			{"kind": "copper_scrap", "pos": [6.5, 0.0, -1.8], "scale": 0.7, "seed": 4},
+			{"kind": "copper_pot", "pos": [5.4, 0.0, -3.2], "scale": 0.55, "seed": 2},
 			# Soft runner toward door — hall connection, not Persian ballroom
 			{
 				"kind": "rug",
@@ -545,7 +545,7 @@ const ROOMS := {
 			{"kind": "side_table", "pos": [3.4, 0.0, 0.8], "yaw": -15.0, "seed": 4},
 			{"kind": "oil_lamp", "pos": [3.3, 0.0, 0.7], "height": 0.95},
 			{"kind": "crate", "pos": [4.2, 0.0, 1.8], "scale": 0.7, "seed": 1},
-			{"kind": "copper_scrap", "pos": [-4.2, 0.0, 0.6], "scale": 0.75, "seed": 3},
+			{"kind": "copper_scrap", "pos": [-6.5, 0.0, 0.8], "scale": 0.72, "seed": 3},
 			{"kind": "stool", "pos": [-3.5, 0.0, 1.2], "yaw": 25.0, "seed": 4},
 			{"kind": "side_table", "pos": [-3.8, 0.0, -2.0], "yaw": 10.0, "seed": 9, "bare": true},
 			{"kind": "letter_stack", "pos": [-3.75, 0.68, -1.95], "yaw": -5.0, "seed": 5},
@@ -559,7 +559,7 @@ const ROOMS := {
 			{"kind": "crate", "pos": [-4.2, 0.0, 4.5], "scale": 0.7, "seed": 8},
 			{"kind": "stool", "pos": [1.0, 0.0, 3.6], "yaw": 20.0, "seed": 5},
 			{"kind": "stool", "pos": [-1.2, 0.0, 3.5], "yaw": -15.0, "seed": 6},
-			{"kind": "copper_scrap", "pos": [3.2, 0.0, 4.0], "scale": 0.7, "seed": 5},
+			{"kind": "copper_scrap", "pos": [5.8, 0.0, 4.4], "scale": 0.7, "seed": 5},
 			{"kind": "wall_sconce", "pos": [-5.5, 0.0, 5.4], "yaw": 180.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [5.5, 0.0, 5.4], "yaw": 180.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-1.8, 0.0, 5.55], "yaw": 180.0, "height": 2.3},
