@@ -330,78 +330,79 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Loop 165: Victorian wing — single side envelope (no nested depth stairs).
-	## Side FOV must be ONE tall plane + leading roll; front detail is inset only.
+	## Loop 199: Victorian wing — solid-mat mahogany + velvet (no wood/fabric washout mid-FOV).
+	## Side FOV: ONE tall plane + leading roll; front detail inset only (loop 165 geometry).
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	var fabric_d := fabric.darkened(0.1)
-	var fabric_dd := fabric.darkened(0.2)
-	var fabric_l := fabric.lightened(0.05)
+	var mat_fab := _solid_matte(fabric, 0.92)
+	var mat_fab_d := _solid_matte(fabric.darkened(0.1), 0.94)
+	var mat_fab_dd := _solid_matte(fabric.darkened(0.2), 0.94)
+	var mat_fab_l := _solid_matte(fabric.lightened(0.05), 0.9)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	# Slim mahogany seat rail
-	_add_box(root, Vector3(0, 0.22, 0.02), Vector3(0.78, 0.055, 0.7), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.26, 0.02), Vector3(0.82, 0.022, 0.72), MAHOGANY, false, 0.45)
+	_add_mesh_box(root, Vector3(0, 0.22, 0.02), Vector3(0.78, 0.055, 0.7), mat_md)
+	_add_mesh_box(root, Vector3(0, 0.26, 0.02), Vector3(0.82, 0.022, 0.72), mat_m)
 	# Seat + front bolster
-	_add_box(root, Vector3(0, 0.4, 0.08), Vector3(0.7, 0.16, 0.56), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.5, 0.1), Vector3(0.62, 0.04, 0.48), fabric_d, false, 0.92)
-	_add_cylinder_rotated(root, Vector3(0, 0.44, 0.34), 0.065, 0.66, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+	_add_mesh_box(root, Vector3(0, 0.4, 0.08), Vector3(0.7, 0.16, 0.56), mat_fab)
+	_add_mesh_box(root, Vector3(0, 0.5, 0.1), Vector3(0.62, 0.04, 0.48), mat_fab_d)
+	_add_mesh_cyl_rot(root, Vector3(0, 0.44, 0.34), 0.065, 0.66, mat_fab_l, Vector3(0, 0, PI * 0.5))
 	for bx in [-0.14, 0.0, 0.14]:
 		for bz in [-0.04, 0.1]:
-			_add_cylinder(root, Vector3(bx, 0.53, bz), 0.011, 0.01, fabric_dd, false, 0.95)
+			_add_mesh_cyl(root, Vector3(bx, 0.53, bz), 0.011, 0.01, mat_fab_dd, false)
 	# Back: ONE deep shell (not 3 nested stairs). Front pad is coplanar inset only.
-	_add_box(root, Vector3(0, 0.95, -0.12), Vector3(0.62, 0.95, 0.28), fabric, true, 0.9)
-	# Front-facing pad only (same Z extent as shell face — no extra depth step)
-	_add_box(root, Vector3(0, 0.96, 0.0), Vector3(0.5, 0.78, 0.06), fabric_d, false, 0.9)
-	_add_box(root, Vector3(0, 0.98, 0.02), Vector3(0.4, 0.55, 0.03), fabric_l, false, 0.92)
+	_add_mesh_box(root, Vector3(0, 0.95, -0.12), Vector3(0.62, 0.95, 0.28), mat_fab)
+	_add_mesh_box(root, Vector3(0, 0.96, 0.0), Vector3(0.5, 0.78, 0.06), mat_fab_d)
+	_add_mesh_box(root, Vector3(0, 0.98, 0.02), Vector3(0.4, 0.55, 0.03), mat_fab_l)
 	# Crown roll (horizontal, sits on shell top — not a third terrace slab)
-	_add_cylinder_rotated(root, Vector3(0, 1.38, -0.1), 0.09, 0.55, fabric, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_cylinder_rotated(root, Vector3(0, 1.42, -0.14), 0.055, 0.38, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_box(root, Vector3(0, 1.44, -0.2), Vector3(0.26, 0.035, 0.07), MAHOGANY, false, 0.45)
+	_add_mesh_cyl_rot(root, Vector3(0, 1.38, -0.1), 0.09, 0.55, mat_fab, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0, 1.42, -0.14), 0.055, 0.38, mat_fab_d, Vector3(0, 0, PI * 0.5))
+	_add_mesh_box(root, Vector3(0, 1.44, -0.2), Vector3(0.26, 0.035, 0.07), mat_m)
 	# Wings: full-height outer envelope (same depth as back shell so side is continuous)
 	for sx in [-1.0, 1.0]:
-		# Outer ear — tall + deep enough to mask arm/seat as separate steps from side
-		_add_box(root, Vector3(sx * 0.36, 0.92, 0.0), Vector3(0.2, 0.95, 0.52), fabric, true, 0.88)
-		# Leading vertical roll (full height of ear)
-		_add_cylinder(root, Vector3(sx * 0.36, 0.92, 0.24), 0.1, 0.9, fabric, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.36, 1.1, 0.18), 0.075, 0.5, fabric_d, false, 0.88)
-		# Outer bevel (thin, same height)
-		_add_box(root, Vector3(sx * 0.46, 0.92, 0.0), Vector3(0.02, 0.88, 0.42), fabric_dd, false, 0.9)
-		# Arm integrated under wing (not a separate side box)
-		_add_cylinder_rotated(root, Vector3(sx * 0.36, 0.56, 0.1), 0.055, 0.42, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
-		_add_cylinder(root, Vector3(sx * 0.36, 0.56, 0.32), 0.045, 0.06, fabric, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.36, 0.34, 0.18), 0.022, 0.14, MAHOGANY_DARK, true, 0.45)
-		_add_cylinder(root, Vector3(sx * 0.36, 0.27, 0.24), 0.03, 0.05, MAHOGANY, false, 0.45)
+		_add_mesh_box(root, Vector3(sx * 0.36, 0.92, 0.0), Vector3(0.2, 0.95, 0.52), mat_fab)
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.92, 0.24), 0.1, 0.9, mat_fab, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 1.1, 0.18), 0.075, 0.5, mat_fab_d, false)
+		_add_mesh_box(root, Vector3(sx * 0.46, 0.92, 0.0), Vector3(0.02, 0.88, 0.42), mat_fab_dd)
+		_add_mesh_cyl_rot(root, Vector3(sx * 0.36, 0.56, 0.1), 0.055, 0.42, mat_fab_l, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.56, 0.32), 0.045, 0.06, mat_fab, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.34, 0.18), 0.022, 0.14, mat_md, true)
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.27, 0.24), 0.03, 0.05, mat_m, false)
 	# Diamond button tufts on front pad only
 	for row in 4:
 		var by := 0.72 + float(row) * 0.15
 		var odd := row % 2 == 1
 		var cols: Array = [-0.09, 0.09] if odd else [-0.13, 0.0, 0.13]
 		for bx_v in cols:
-			_add_cylinder(root, Vector3(float(bx_v), by, 0.04), 0.011, 0.01, fabric_dd, false, 0.95)
+			_add_mesh_cyl(root, Vector3(float(bx_v), by, 0.04), 0.011, 0.01, mat_fab_dd, false)
 	# Turned legs + slim H-stretcher
 	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.28, 0.1, 0.24), 0.026, 0.17, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.28, 0.02, 0.24), 0.036, 0.022, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.26, 0.1, -0.2), 0.024, 0.17, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.26, 0.02, -0.2), 0.034, 0.022, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.1, 0.02), Vector3(0.5, 0.016, 0.016), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(-0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), MAHOGANY, false, 0.48)
+		_add_mesh_cyl(root, Vector3(sx * 0.28, 0.1, 0.24), 0.026, 0.17, mat_md, true)
+		_add_mesh_cyl(root, Vector3(sx * 0.28, 0.02, 0.24), 0.036, 0.022, mat_m, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.26, 0.1, -0.2), 0.024, 0.17, mat_md, true)
+		_add_mesh_cyl(root, Vector3(sx * 0.26, 0.02, -0.2), 0.034, 0.022, mat_m, false)
+	_add_mesh_box(root, Vector3(0, 0.1, 0.02), Vector3(0.5, 0.016, 0.016), mat_m)
+	_add_mesh_box(root, Vector3(-0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), mat_m)
+	_add_mesh_box(root, Vector3(0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), mat_m)
 	_add_contact_shadow(root, 0.55, 0.5)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
-	## Loop 161 — soft tufted footstool (not a green Minecraft brick).
-	## Uses velvet-mat cylinders/boxes only (no foliage sphere_blob).
+	## Loop 199: soft tufted footstool — solid-mat velvet + mahogany (no washout mid-FOV).
 	## seed: 0 square chesterfield · 1 round drum · 2 long fringe bench.
 	var root := Node3D.new()
 	root.name = "Ottoman"
 	var fabric: Color = prop.get("fabric", VELVET_GREEN.darkened(0.08))
-	var fabric_d := fabric.darkened(0.12)
-	var fabric_dd := fabric.darkened(0.24)
-	var fabric_l := fabric.lightened(0.05)
+	var mat_fab := _solid_matte(fabric, 0.92)
+	var mat_fab_d := _solid_matte(fabric.darkened(0.12), 0.94)
+	var mat_fab_dd := _solid_matte(fabric.darkened(0.24), 0.94)
+	var mat_fab_l := _solid_matte(fabric.lightened(0.05), 0.9)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
 	var w: float = float(prop.get("width", 0.78 if style != 2 else 0.95))
@@ -409,105 +410,91 @@ static func _make_ottoman(prop: Dictionary) -> Node3D:
 	if style == 1:
 		# Round drum — stepped dome + button ring, turned feet (morning)
 		var r: float = w * 0.4
-		_add_cylinder(root, Vector3(0, 0.08, 0), r * 0.92, 0.08, MAHOGANY_DARK, true, 0.42)
-		_add_cylinder(root, Vector3(0, 0.14, 0), r * 0.98, 0.05, MAHOGANY, false, 0.45)
-		_add_cylinder(root, Vector3(0, 0.28, 0), r, 0.22, fabric, true, 0.9)
-		_add_cylinder(root, Vector3(0, 0.4, 0), r * 0.9, 0.1, fabric_d, false, 0.92)
-		_add_cylinder(root, Vector3(0, 0.46, 0), r * 0.72, 0.06, fabric_l, false, 0.92)
-		_add_cylinder(root, Vector3(0, 0.5, 0), r * 0.45, 0.04, fabric_d, false, 0.93)
-		_add_cylinder(root, Vector3(0, 0.18, 0), r * 1.02, 0.04, fabric_dd, false, 0.88)
-		# Button ring (readable mid-FOV)
+		_add_mesh_cyl(root, Vector3(0, 0.08, 0), r * 0.92, 0.08, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.14, 0), r * 0.98, 0.05, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0, 0.28, 0), r, 0.22, mat_fab, true)
+		_add_mesh_cyl(root, Vector3(0, 0.4, 0), r * 0.9, 0.1, mat_fab_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.46, 0), r * 0.72, 0.06, mat_fab_l, false)
+		_add_mesh_cyl(root, Vector3(0, 0.5, 0), r * 0.45, 0.04, mat_fab_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.18, 0), r * 1.02, 0.04, mat_fab_dd, false)
 		for i in 8:
 			var ang := float(i) * TAU / 8.0
-			_add_cylinder(root, Vector3(cos(ang) * r * 0.42, 0.48, sin(ang) * r * 0.42), 0.02, 0.018, fabric_dd, false, 0.95)
-		_add_cylinder(root, Vector3(0, 0.52, 0), 0.022, 0.02, fabric_dd, false, 0.95)
-		# Side bolster ring (reads as soft roll, not wood barrel)
-		_add_cylinder(root, Vector3(0, 0.34, 0), r * 1.04, 0.06, fabric_l, false, 0.9)
+			_add_mesh_cyl(root, Vector3(cos(ang) * r * 0.42, 0.48, sin(ang) * r * 0.42), 0.02, 0.018, mat_fab_dd, false)
+		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.022, 0.02, mat_fab_dd, false)
+		_add_mesh_cyl(root, Vector3(0, 0.34, 0), r * 1.04, 0.06, mat_fab_l, false)
 		for i in 4:
 			var ang2 := float(i) * TAU / 4.0 + 0.35
 			var fx := cos(ang2) * r * 0.62
 			var fz := sin(ang2) * r * 0.62
-			_add_cylinder(root, Vector3(fx, 0.05, fz), 0.032, 0.1, MAHOGANY, true)
-			_add_cylinder(root, Vector3(fx, 0.01, fz), 0.042, 0.025, MAHOGANY_DARK, true)
+			_add_mesh_cyl(root, Vector3(fx, 0.05, fz), 0.032, 0.1, mat_m, true)
+			_add_mesh_cyl(root, Vector3(fx, 0.01, fz), 0.042, 0.025, mat_md, false)
 	elif style == 2:
 		# Long fringe bench — rolled ends, diamond tufts, mahogany rail
-		_add_box(root, Vector3(0, 0.12, 0), Vector3(w * 0.96, 0.08, d * 0.9), MAHOGANY_DARK, true, 0.42)
-		_add_box(root, Vector3(0, 0.17, 0), Vector3(w, 0.03, d * 0.96), MAHOGANY, false, 0.45)
-		_add_box(root, Vector3(0, 0.3, 0), Vector3(w * 0.94, 0.2, d * 0.88), fabric, true, 0.9)
-		_add_box(root, Vector3(0, 0.42, 0), Vector3(w * 0.86, 0.06, d * 0.78), fabric_d, false, 0.92)
-		# Cushion pads as short vertical cylinders (velvet mat), not foliage spheres
+		_add_mesh_box(root, Vector3(0, 0.12, 0), Vector3(w * 0.96, 0.08, d * 0.9), mat_md)
+		_add_mesh_box(root, Vector3(0, 0.17, 0), Vector3(w, 0.03, d * 0.96), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.3, 0), Vector3(w * 0.94, 0.2, d * 0.88), mat_fab)
+		_add_mesh_box(root, Vector3(0, 0.42, 0), Vector3(w * 0.86, 0.06, d * 0.78), mat_fab_d)
 		for i in 4:
 			var bx := (float(i) / 3.0 - 0.5) * w * 0.68
-			_add_cylinder(root, Vector3(bx, 0.46, 0), d * 0.28, 0.08, fabric_l, false, 0.92)
-		# Horizontal edge bolsters
-		_add_cylinder_rotated(root, Vector3(0, 0.36, d * 0.38), 0.05, w * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
-		_add_cylinder_rotated(root, Vector3(0, 0.36, -d * 0.38), 0.05, w * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+			_add_mesh_cyl(root, Vector3(bx, 0.46, 0), d * 0.28, 0.08, mat_fab_l, false)
+		_add_mesh_cyl_rot(root, Vector3(0, 0.36, d * 0.38), 0.05, w * 0.88, mat_fab_l, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0, 0.36, -d * 0.38), 0.05, w * 0.88, mat_fab_l, Vector3(0, 0, PI * 0.5))
 		for sx in [-1.0, 1.0]:
-			_add_cylinder_rotated(root, Vector3(sx * w * 0.42, 0.36, 0), 0.055, d * 0.7, fabric_d, Vector3(PI * 0.5, 0, 0), 0.9)
-			_add_cylinder(root, Vector3(sx * w * 0.44, 0.4, 0), 0.06, 0.08, fabric, false, 0.9)
-		# Diamond tufts
+			_add_mesh_cyl_rot(root, Vector3(sx * w * 0.42, 0.36, 0), 0.055, d * 0.7, mat_fab_d, Vector3(PI * 0.5, 0, 0))
+			_add_mesh_cyl(root, Vector3(sx * w * 0.44, 0.4, 0), 0.06, 0.08, mat_fab, false)
 		for i in 5:
 			for j in 2:
 				var bx2 := (float(i) / 4.0 - 0.5) * w * 0.72
 				var bz2 := (float(j) - 0.5) * d * 0.32
-				_add_cylinder(root, Vector3(bx2, 0.5, bz2), 0.018, 0.016, fabric_dd, false, 0.95)
-		# Fringe strips (vertical, not a second slab)
+				_add_mesh_cyl(root, Vector3(bx2, 0.5, bz2), 0.018, 0.016, mat_fab_dd, false)
 		for i in 9:
 			var fx := (float(i) / 8.0 - 0.5) * w * 0.88
-			_add_box(root, Vector3(fx, 0.1, d * 0.44), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
-			_add_box(root, Vector3(fx, 0.1, -d * 0.44), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
-		# Brass nailheads along front rail
+			_add_mesh_box(root, Vector3(fx, 0.1, d * 0.44), Vector3(0.04, 0.1, 0.02), mat_fab_dd)
+			_add_mesh_box(root, Vector3(fx, 0.1, -d * 0.44), Vector3(0.04, 0.1, 0.02), mat_fab_dd)
 		for i in 7:
 			var t := float(i) / 6.0
-			_add_cylinder(root, Vector3(-w * 0.4 + t * w * 0.8, 0.2, d * 0.42), 0.012, 0.014, BRASS, false, 0.3, true)
+			_add_mesh_cyl(root, Vector3(-w * 0.4 + t * w * 0.8, 0.2, d * 0.42), 0.012, 0.014, mat_br, false)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * w * 0.4, 0.055, sz * d * 0.34), 0.03, 0.1, MAHOGANY, true)
-				_add_cylinder(root, Vector3(sx * w * 0.4, 0.012, sz * d * 0.34), 0.04, 0.028, MAHOGANY_DARK, true)
+				_add_mesh_cyl(root, Vector3(sx * w * 0.4, 0.055, sz * d * 0.34), 0.03, 0.1, mat_m, true)
+				_add_mesh_cyl(root, Vector3(sx * w * 0.4, 0.012, sz * d * 0.34), 0.04, 0.028, mat_md, false)
 	else:
-		# Square chesterfield footstool (drawing-room hero) — soft mass, not a fridge brick
-		_add_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.92, 0.07, d * 0.9), MAHOGANY_DARK, true, 0.42)
-		_add_box(root, Vector3(0, 0.15, 0), Vector3(w * 0.98, 0.035, d * 0.96), MAHOGANY, false, 0.45)
-		# Main cushion + slightly inset top
-		_add_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.9, 0.18, d * 0.86), fabric, true, 0.9)
-		_add_box(root, Vector3(0, 0.39, 0), Vector3(w * 0.78, 0.08, d * 0.72), fabric_d, false, 0.92)
-		_add_box(root, Vector3(0, 0.45, 0), Vector3(w * 0.62, 0.05, d * 0.55), fabric_l, false, 0.93)
-		# Rolled perimeter bolsters (side volume + soft silhouette)
-		_add_cylinder_rotated(root, Vector3(0, 0.34, d * 0.38), 0.055, w * 0.82, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
-		_add_cylinder_rotated(root, Vector3(0, 0.34, -d * 0.38), 0.055, w * 0.82, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
-		_add_cylinder_rotated(root, Vector3(w * 0.4, 0.34, 0), 0.055, d * 0.72, fabric_l, Vector3(PI * 0.5, 0, 0), 0.9)
-		_add_cylinder_rotated(root, Vector3(-w * 0.4, 0.34, 0), 0.055, d * 0.72, fabric_l, Vector3(PI * 0.5, 0, 0), 0.9)
-		# Corner rolls (velvet cylinders, not foliage spheres)
+		# Square chesterfield footstool (drawing-room hero)
+		_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.92, 0.07, d * 0.9), mat_md)
+		_add_mesh_box(root, Vector3(0, 0.15, 0), Vector3(w * 0.98, 0.035, d * 0.96), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.9, 0.18, d * 0.86), mat_fab)
+		_add_mesh_box(root, Vector3(0, 0.39, 0), Vector3(w * 0.78, 0.08, d * 0.72), mat_fab_d)
+		_add_mesh_box(root, Vector3(0, 0.45, 0), Vector3(w * 0.62, 0.05, d * 0.55), mat_fab_l)
+		_add_mesh_cyl_rot(root, Vector3(0, 0.34, d * 0.38), 0.055, w * 0.82, mat_fab_l, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0, 0.34, -d * 0.38), 0.055, w * 0.82, mat_fab_l, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_l, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_cyl_rot(root, Vector3(-w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_l, Vector3(PI * 0.5, 0, 0))
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * w * 0.36, 0.36, sz * d * 0.32), 0.055, 0.1, fabric, false, 0.9)
-		# Diamond button tufts — large enough to read at room FOV
+				_add_mesh_cyl(root, Vector3(sx * w * 0.36, 0.36, sz * d * 0.32), 0.055, 0.1, mat_fab, false)
 		for row in 3:
 			var by := 0.48
 			var odd := row % 2 == 1
 			var cols: Array = [-0.12, 0.12] if odd else [-0.2, 0.0, 0.2]
 			for bx_v in cols:
 				var bz_v := (float(row) - 1.0) * d * 0.18
-				_add_cylinder(root, Vector3(float(bx_v), by, bz_v), 0.02, 0.016, fabric_dd, false, 0.95)
-		# Skirt fringe (thin vertical dangles)
+				_add_mesh_cyl(root, Vector3(float(bx_v), by, bz_v), 0.02, 0.016, mat_fab_dd, false)
 		for i in 7:
 			var fx := (float(i) / 6.0 - 0.5) * w * 0.82
-			_add_box(root, Vector3(fx, 0.1, d * 0.42), Vector3(0.035, 0.09, 0.018), fabric_dd, false, 0.88)
-			_add_box(root, Vector3(fx, 0.1, -d * 0.42), Vector3(0.035, 0.09, 0.018), fabric_dd, false, 0.88)
+			_add_mesh_box(root, Vector3(fx, 0.1, d * 0.42), Vector3(0.035, 0.09, 0.018), mat_fab_dd)
+			_add_mesh_box(root, Vector3(fx, 0.1, -d * 0.42), Vector3(0.035, 0.09, 0.018), mat_fab_dd)
 		for i in 5:
 			var fz := (float(i) / 4.0 - 0.5) * d * 0.75
-			_add_box(root, Vector3(w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), fabric_dd, false, 0.88)
-			_add_box(root, Vector3(-w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), fabric_dd, false, 0.88)
-		# Brass nailheads on mahogany rail
+			_add_mesh_box(root, Vector3(w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), mat_fab_dd)
+			_add_mesh_box(root, Vector3(-w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), mat_fab_dd)
 		for i in 6:
 			var t := float(i) / 5.0
-			_add_cylinder(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, d * 0.44), 0.011, 0.012, BRASS, false, 0.3, true)
-			_add_cylinder(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, -d * 0.44), 0.011, 0.012, BRASS, false, 0.3, true)
-		# Turned bun feet
+			_add_mesh_cyl(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, d * 0.44), 0.011, 0.012, mat_br, false)
+			_add_mesh_cyl(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, -d * 0.44), 0.011, 0.012, mat_br, false)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * w * 0.34, 0.05, sz * d * 0.3), 0.034, 0.1, MAHOGANY, true)
-				_add_cylinder(root, Vector3(sx * w * 0.34, 0.012, sz * d * 0.3), 0.044, 0.028, MAHOGANY_DARK, true)
+				_add_mesh_cyl(root, Vector3(sx * w * 0.34, 0.05, sz * d * 0.3), 0.034, 0.1, mat_m, true)
+				_add_mesh_cyl(root, Vector3(sx * w * 0.34, 0.012, sz * d * 0.3), 0.044, 0.028, mat_md, false)
 	_add_contact_shadow(root, w * 0.55, d * 0.55)
 	return root
 
@@ -1001,7 +988,7 @@ static func _make_tool_shelf(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_side_table(prop: Dictionary) -> Node3D:
-	## Occasional tables — base silhouette + top dressing fork by seed (uniqueness).
+	## Loop 199: occasional tables — solid-mat mahogany base + dress (no wood/brass washout).
 	## base style: 0 tripod · 1 square 4-leg · 2 demi-lune console.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
@@ -1010,68 +997,93 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 	var seed0: int = int(prop.get("seed", 0))
 	var base := seed0 % 3
 	var dress := (seed0 / 3) % 4
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_ml := _solid_matte(Color(0.36, 0.18, 0.1), 0.7)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
 	if base == 0:
-		# Tripod pedestal (loop 117/143: short warm feet — long dark bars read as rug L-junk)
-		_add_cylinder(root, Vector3(0, 0.64, 0), 0.3, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.67, 0), 0.32, 0.025, MAHOGANY_DARK, false)
-		_add_cylinder(root, Vector3(0, 0.61, 0), 0.28, 0.02, MAHOGANY.lightened(0.05), false)
-		# Turned column (stacked diameters)
-		_add_cylinder(root, Vector3(0, 0.52, 0), 0.09, 0.1, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.4, 0), 0.055, 0.16, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0, 0.28, 0), 0.07, 0.1, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.16, 0), 0.1, 0.08, MAHOGANY_DARK, true)
-		# Compact carved feet under column — not long free bars on the rug
-		_add_cylinder(root, Vector3(0, 0.06, 0), 0.12, 0.06, MAHOGANY, true, 0.48)
+		# Tripod pedestal (short warm feet — long dark bars read as rug L-junk)
+		_add_mesh_cyl(root, Vector3(0, 0.64, 0), 0.3, 0.04, mat_m, true)
+		_add_mesh_cyl(root, Vector3(0, 0.67, 0), 0.32, 0.025, mat_md, false)
+		_add_mesh_cyl(root, Vector3(0, 0.61, 0), 0.28, 0.02, mat_ml, false)
+		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.09, 0.1, mat_m, true)
+		_add_mesh_cyl(root, Vector3(0, 0.4, 0), 0.055, 0.16, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.28, 0), 0.07, 0.1, mat_m, true)
+		_add_mesh_cyl(root, Vector3(0, 0.16, 0), 0.1, 0.08, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.06, 0), 0.12, 0.06, mat_m, true)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
 			var fx := cos(rad) * 0.12
 			var fz := sin(rad) * 0.12
-			_add_box(root, Vector3(fx, 0.04, fz), Vector3(0.12, 0.035, 0.055), MAHOGANY, true, 0.48)
-			_add_cylinder(root, Vector3(fx * 1.2, 0.025, fz * 1.2), 0.028, 0.035, MAHOGANY.lightened(0.05), true)
+			_add_mesh_box(root, Vector3(fx, 0.04, fz), Vector3(0.12, 0.035, 0.055), mat_m)
+			_add_mesh_cyl(root, Vector3(fx * 1.2, 0.025, fz * 1.2), 0.028, 0.035, mat_ml, false)
 	elif base == 1:
-		# Square top + apron drawer + four turned legs (loop 117)
-		_add_box(root, Vector3(0, 0.64, 0), Vector3(0.55, 0.04, 0.55), MAHOGANY, true, 0.45)
-		_add_box(root, Vector3(0, 0.67, 0), Vector3(0.58, 0.02, 0.58), MAHOGANY_DARK, false, 0.42)
-		# Apron + false drawer
-		_add_box(root, Vector3(0, 0.56, 0.24), Vector3(0.5, 0.1, 0.04), MAHOGANY, false, 0.48)
-		_add_box(root, Vector3(0, 0.56, -0.24), Vector3(0.5, 0.1, 0.04), MAHOGANY, false, 0.48)
-		_add_box(root, Vector3(0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), MAHOGANY, false, 0.48)
-		_add_box(root, Vector3(-0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), MAHOGANY, false, 0.48)
-		_add_box(root, Vector3(0, 0.56, 0.26), Vector3(0.28, 0.06, 0.02), MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(0, 0.56, 0.28), 0.012, 0.02, BRASS, false, 0.3, true)
+		# Square top + apron drawer + four turned legs
+		_add_mesh_box(root, Vector3(0, 0.64, 0), Vector3(0.55, 0.04, 0.55), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.67, 0), Vector3(0.58, 0.02, 0.58), mat_md)
+		_add_mesh_box(root, Vector3(0, 0.56, 0.24), Vector3(0.5, 0.1, 0.04), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.56, -0.24), Vector3(0.5, 0.1, 0.04), mat_m)
+		_add_mesh_box(root, Vector3(0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), mat_m)
+		_add_mesh_box(root, Vector3(-0.24, 0.56, 0), Vector3(0.04, 0.1, 0.46), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.56, 0.26), Vector3(0.28, 0.06, 0.02), mat_md)
+		_add_mesh_cyl(root, Vector3(0, 0.56, 0.28), 0.012, 0.02, mat_br, false)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * 0.2, 0.4, sz * 0.2), 0.032, 0.24, MAHOGANY_DARK, true)
-				_add_cylinder(root, Vector3(sx * 0.2, 0.22, sz * 0.2), 0.024, 0.18, MAHOGANY, true)
-				_add_cylinder(root, Vector3(sx * 0.2, 0.08, sz * 0.2), 0.03, 0.12, MAHOGANY_DARK, true)
-				_add_cylinder(root, Vector3(sx * 0.2, 0.02, sz * 0.2), 0.04, 0.04, MAHOGANY, true)
-		_add_box(root, Vector3(0, 0.2, 0), Vector3(0.36, 0.025, 0.36), MAHOGANY, false, 0.5)
+				_add_mesh_cyl(root, Vector3(sx * 0.2, 0.4, sz * 0.2), 0.032, 0.24, mat_md, true)
+				_add_mesh_cyl(root, Vector3(sx * 0.2, 0.22, sz * 0.2), 0.024, 0.18, mat_m, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.2, 0.08, sz * 0.2), 0.03, 0.12, mat_md, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.2, 0.02, sz * 0.2), 0.04, 0.04, mat_m, false)
+		_add_mesh_box(root, Vector3(0, 0.2, 0), Vector3(0.36, 0.025, 0.36), mat_m)
 	else:
-		# Demi-lune console (loop 117: thicker top edge + curved apron)
-		_add_box(root, Vector3(0, 0.64, 0.05), Vector3(0.72, 0.045, 0.36), MAHOGANY, true, 0.45)
-		_add_cylinder(root, Vector3(0, 0.64, 0.05), 0.34, 0.045, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0, 0.67, 0.05), 0.32, 0.02, MAHOGANY_DARK, false)
-		_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.55, 0.08, 0.04), MAHOGANY, false, 0.48)
-		_add_cylinder(root, Vector3(-0.22, 0.36, 0.1), 0.03, 0.5, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.22, 0.36, 0.1), 0.03, 0.5, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(0.0, 0.36, -0.06), 0.032, 0.5, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(-0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
-		_add_cylinder(root, Vector3(0.0, 0.02, -0.06), 0.04, 0.04, MAHOGANY, true)
-		_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.42, 0.03, 0.14), MAHOGANY, false, 0.48)
-	# Loop 126/166 top dressing — thin leather folios (not Minecraft cubes)
+		# Demi-lune console
+		_add_mesh_box(root, Vector3(0, 0.64, 0.05), Vector3(0.72, 0.045, 0.36), mat_m)
+		_add_mesh_cyl(root, Vector3(0, 0.64, 0.05), 0.34, 0.045, mat_m, true)
+		_add_mesh_cyl(root, Vector3(0, 0.67, 0.05), 0.32, 0.02, mat_md, false)
+		_add_mesh_box(root, Vector3(0, 0.55, 0.12), Vector3(0.55, 0.08, 0.04), mat_m)
+		_add_mesh_cyl(root, Vector3(-0.22, 0.36, 0.1), 0.03, 0.5, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0.22, 0.36, 0.1), 0.03, 0.5, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0.0, 0.36, -0.06), 0.032, 0.5, mat_md, true)
+		_add_mesh_cyl(root, Vector3(-0.22, 0.02, 0.1), 0.04, 0.04, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0.22, 0.02, 0.1), 0.04, 0.04, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0.0, 0.02, -0.06), 0.04, 0.04, mat_m, false)
+		_add_mesh_box(root, Vector3(0, 0.28, 0.06), Vector3(0.42, 0.03, 0.14), mat_m)
+	# Top dressing — thin leather folios / lamp / pot / candle
 	var top_y := 0.69
 	if prop.get("bare", false):
 		_add_contact_shadow(root, 0.34, 0.34)
 		return root
 	if dress == 0:
-		# Loop 154 mini Argand + thin octavo (not fat book brick)
-		_add_cylinder(root, Vector3(0, top_y + 0.015, 0), 0.045, 0.028, MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(0, top_y + 0.05, 0), 0.04, 0.045, Color(0.48, 0.34, 0.16), false, 0.4, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.032, 0.018, BRASS.darkened(0.18), false, 0.32, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.028, 0.2, Color(0.95, 0.78, 0.42, 0.42), false, 0.12)
-		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.018, 0.16, Color(1.0, 0.9, 0.58, 0.28), false, 0.1)
-		_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.014, 0.02, Color(1.0, 0.82, 0.4), false, 0.35)
+		# Mini Argand + thin octavo — solid-mat font + amber glass (not brass washout)
+		var mat_font := _solid_metal(Color(0.48, 0.34, 0.16), 0.4)
+		var mat_g := StandardMaterial3D.new()
+		mat_g.albedo_color = Color(1.0, 0.82, 0.48, 0.55)
+		mat_g.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat_g.emission_enabled = true
+		mat_g.emission = Color(1.0, 0.72, 0.35)
+		mat_g.emission_energy_multiplier = 1.4
+		mat_g.roughness = 0.15
+		mat_g.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		var mat_ghi := StandardMaterial3D.new()
+		mat_ghi.albedo_color = Color(1.0, 0.92, 0.62, 0.35)
+		mat_ghi.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat_ghi.emission_enabled = true
+		mat_ghi.emission = Color(1.0, 0.85, 0.45)
+		mat_ghi.emission_energy_multiplier = 1.7
+		mat_ghi.roughness = 0.1
+		var mat_flame := StandardMaterial3D.new()
+		mat_flame.albedo_color = Color(1.0, 0.88, 0.5, 0.7)
+		mat_flame.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat_flame.emission_enabled = true
+		mat_flame.emission = Color(1.0, 0.8, 0.4)
+		mat_flame.emission_energy_multiplier = 2.0
+		mat_flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.015, 0), 0.045, 0.028, mat_md, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.05, 0), 0.04, 0.045, mat_font, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.08, 0), 0.032, 0.018, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.2, 0), 0.028, 0.2, mat_g, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.2, 0), 0.018, 0.16, mat_ghi, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.12, 0), 0.014, 0.02, mat_flame, false)
 		_add_table_folio(root, Vector3(0.12, top_y + 0.02, 0.04), seed0 + 2, 0.0)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
@@ -1080,13 +1092,14 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		lamp.position = Vector3(0, top_y + 0.22, 0)
 		root.add_child(lamp)
 	elif dress == 1:
-		# Stacked thin folios + cream crock (loop 166 — not colored cubes)
+		# Stacked thin folios + cream crock
+		var mat_cream := _solid_matte(Color(0.82, 0.76, 0.64), 0.9)
+		var mat_cream_d := _solid_matte(Color(0.7, 0.64, 0.52), 0.9)
 		_add_table_folio_stack(root, Vector3(-0.04, top_y + 0.01, 0.0), seed0, 3)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
+		_add_mesh_cyl(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, mat_cream, false)
+		_add_mesh_cyl(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, mat_cream_d, false)
 	elif dress == 2:
-		# Loop 181: classic clay flower pot — NOT wedding cake (no blue band / red lid disc).
-		# Tapered terracotta only + soil + irregular geranium cluster with leaves.
+		# Classic clay flower pot — solid-mat terracotta + irregular blooms
 		var mat_pot := _solid_matte(Color(0.7, 0.4, 0.22), 0.92)
 		var mat_pot_d := _solid_matte(Color(0.52, 0.3, 0.15), 0.94)
 		var mat_soil := _solid_matte(Color(0.14, 0.09, 0.05), 0.95)
@@ -1095,36 +1108,41 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		var mat_fl_r := _solid_matte(Color(0.62, 0.16, 0.14), 0.88)
 		var mat_fl_p := _solid_matte(Color(0.7, 0.35, 0.4), 0.88)
 		var mat_fl_w := _solid_matte(Color(0.82, 0.72, 0.55), 0.9)
-		# Saucer
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.01, 0), 0.1, 0.016, mat_pot_d, false)
-		# Tapered pot: narrow foot → wide mouth (one color family only)
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.04, 0), 0.055, 0.05, mat_pot_d, false)
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.1, 0), 0.075, 0.1, mat_pot, false)
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.16, 0), 0.09, 0.04, mat_pot, false)
-		# Rolled rim (same terracotta — not contrasting glaze ring)
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.185, 0), 0.1, 0.02, mat_pot_d, false)
-		# Soil
 		_add_mesh_cyl(root, Vector3(0, top_y + 0.19, 0), 0.07, 0.012, mat_soil, false)
-		# Leaf mound (breaks cake-lid silhouette)
 		_add_mesh_box(root, Vector3(0.0, top_y + 0.22, 0.0), Vector3(0.1, 0.025, 0.08), mat_leaf)
 		_add_mesh_box(root, Vector3(0.03, top_y + 0.23, 0.02), Vector3(0.06, 0.015, 0.05), mat_leaf_d)
 		_add_mesh_box(root, Vector3(-0.025, top_y + 0.225, -0.02), Vector3(0.05, 0.012, 0.045), mat_leaf)
-		# Irregular flower cluster (small offsets — not one red lid disc)
 		_add_mesh_cyl(root, Vector3(0.0, top_y + 0.245, 0.01), 0.022, 0.018, mat_fl_r, false)
 		_add_mesh_cyl(root, Vector3(0.035, top_y + 0.24, -0.015), 0.016, 0.014, mat_fl_p, false)
 		_add_mesh_cyl(root, Vector3(-0.03, top_y + 0.238, 0.02), 0.014, 0.012, mat_fl_w, false)
 		_add_mesh_cyl(root, Vector3(0.015, top_y + 0.255, -0.02), 0.012, 0.01, mat_fl_r, false)
 	else:
 		# Candlestick + letters (drawing-room identity)
-		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(-0.08, top_y + 0.08, 0.0), 0.025, 0.08, MAHOGANY, false, 0.48)
-		_add_cylinder(root, Vector3(-0.08, top_y + 0.13, 0.0), 0.04, 0.02, BRASS.darkened(0.2), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.08, top_y + 0.26, 0.0), 0.018, 0.22, CANDLE, false, 0.6)
-		_add_sphere_blob(root, Vector3(-0.08, top_y + 0.38, 0.0), 0.025, Color(1.0, 0.78, 0.35))
-		_add_box(root, Vector3(0.08, top_y, 0.02), Vector3(0.16, 0.01, 0.11), PAPER, false)
-		_add_box(root, Vector3(0.1, top_y + 0.012, 0.0), Vector3(0.14, 0.008, 0.1), PAPER.darkened(0.06), false)
-		_add_box(root, Vector3(0.12, top_y + 0.01, -0.08), Vector3(0.08, 0.02, 0.04), MAHOGANY_DARK, false, 0.45)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.03, -0.08), 0.006, 0.1, INK, false, 0.5)
+		var mat_candle := _solid_matte(Color(0.95, 0.82, 0.45), 0.7)
+		var mat_paper := _solid_matte(Color(0.84, 0.78, 0.62), 0.92)
+		var mat_paper_d := _solid_matte(Color(0.76, 0.7, 0.54), 0.92)
+		var mat_ink := _solid_matte(Color(0.1, 0.1, 0.14), 0.85)
+		var mat_flame_c := StandardMaterial3D.new()
+		mat_flame_c.albedo_color = Color(1.0, 0.78, 0.35, 0.85)
+		mat_flame_c.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat_flame_c.emission_enabled = true
+		mat_flame_c.emission = Color(1.0, 0.72, 0.3)
+		mat_flame_c.emission_energy_multiplier = 1.8
+		mat_flame_c.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, mat_md, false)
+		_add_mesh_cyl(root, Vector3(-0.08, top_y + 0.08, 0.0), 0.025, 0.08, mat_m, false)
+		_add_mesh_cyl(root, Vector3(-0.08, top_y + 0.13, 0.0), 0.04, 0.02, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(-0.08, top_y + 0.26, 0.0), 0.018, 0.22, mat_candle, false)
+		_add_mesh_cyl(root, Vector3(-0.08, top_y + 0.38, 0.0), 0.02, 0.03, mat_flame_c, false)
+		_add_mesh_box(root, Vector3(0.08, top_y, 0.02), Vector3(0.16, 0.01, 0.11), mat_paper)
+		_add_mesh_box(root, Vector3(0.1, top_y + 0.012, 0.0), Vector3(0.14, 0.008, 0.1), mat_paper_d)
+		_add_mesh_box(root, Vector3(0.12, top_y + 0.01, -0.08), Vector3(0.08, 0.02, 0.04), mat_md)
+		_add_mesh_cyl(root, Vector3(0.12, top_y + 0.03, -0.08), 0.006, 0.1, mat_ink, false)
 		var candle_l := OmniLight3D.new()
 		candle_l.light_color = Color(1.0, 0.82, 0.5)
 		candle_l.light_energy = 0.4
@@ -5064,18 +5082,18 @@ static func _book_color(seed: int) -> Color:
 
 
 static func _add_table_folio(root: Node3D, pos: Vector3, seed0: int, yaw_deg: float = 0.0) -> void:
-	## Single thin leather folio on a table — spine + gilt edge (not a cube).
+	## Single thin leather folio on a table — solid-mat spine + gilt (not texture washout).
 	var col := _book_color(seed0)
+	var mat_book := _solid_matte(col, 0.88)
+	var mat_spine := _solid_matte(col.darkened(0.12), 0.9)
+	var mat_gilt := _solid_metal(Color(0.78, 0.62, 0.32), 0.28)
 	var node := Node3D.new()
 	node.position = pos
 	node.rotation_degrees.y = yaw_deg
 	root.add_child(node)
-	# Lying flat: height is book thickness
-	_add_box(node, Vector3(0, 0.012, 0), Vector3(0.12, 0.022, 0.16), col, false, 0.68)
-	# Gilt page edge
-	_add_box(node, Vector3(0.055, 0.012, 0), Vector3(0.008, 0.018, 0.14), BRASS.lightened(0.05), false, 0.35)
-	# Spine band
-	_add_box(node, Vector3(-0.055, 0.012, 0), Vector3(0.012, 0.02, 0.15), col.darkened(0.12), false, 0.65)
+	_add_mesh_box(node, Vector3(0, 0.012, 0), Vector3(0.12, 0.022, 0.16), mat_book)
+	_add_mesh_box(node, Vector3(0.055, 0.012, 0), Vector3(0.008, 0.018, 0.14), mat_gilt)
+	_add_mesh_box(node, Vector3(-0.055, 0.012, 0), Vector3(0.012, 0.02, 0.15), mat_spine)
 
 
 static func _add_table_folio_stack(root: Node3D, pos: Vector3, seed0: int, count: int = 3) -> void:
