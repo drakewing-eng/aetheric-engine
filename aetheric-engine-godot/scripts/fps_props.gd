@@ -1869,9 +1869,8 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 
 
 static func _make_garden_bench(prop: Dictionary) -> Node3D:
-	## Victorian conservatory / park bench (loop 99).
-	## seed 0: cast-iron ends + oak horizontal slats (not Minecraft vertical bars).
-	## seed 1: teak garden settle with open back rails + scrolled arms.
+	## Loop 178: park bench — OPEN cast-iron ends (not black fridge slab mid-FOV).
+	## seed 0: iron scroll ends + oak seat slats. seed 1: teak settle.
 	var root := Node3D.new()
 	root.name = "GardenBench"
 	var seed0: int = int(prop.get("seed", 0))
@@ -1879,59 +1878,57 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 	var seat_y := 0.44
 	var seat_d := 0.48
 	if seed0 % 2 == 0:
-		# Painted cast-iron (black-green) + weathered oak slats — park-bench language
-		var iron_paint := Color(0.14, 0.16, 0.14)
-		var iron_hi := Color(0.22, 0.24, 0.2)
-		var oak_slat := Color(0.48, 0.34, 0.18)
-		var oak_edge := Color(0.38, 0.24, 0.12)
-		# Seat frame rails (front/back under slats)
-		_add_box(root, Vector3(0, seat_y - 0.04, 0.16), Vector3(w * 0.92, 0.04, 0.05), iron_paint, true, 0.45)
-		_add_box(root, Vector3(0, seat_y - 0.04, -0.16), Vector3(w * 0.92, 0.04, 0.05), iron_paint, true, 0.45)
-		# Horizontal seat slats (gaps between — reads as real bench, not solid block)
-		var n_seat := 5
-		for i in n_seat:
-			var t := float(i) / float(n_seat - 1)
-			var z := -0.18 + t * 0.38
-			_add_box(root, Vector3(0, seat_y, z), Vector3(w * 0.9, 0.035, 0.055), oak_slat, true, 0.62)
-		# Front nosing strip
-		_add_box(root, Vector3(0, seat_y + 0.01, 0.22), Vector3(w * 0.92, 0.04, 0.03), oak_edge, false, 0.55)
-		# Back: iron frame + vertical balusters (loop 100: horizontal stack read as shelves from rear)
-		_add_box(root, Vector3(0, 0.58, -0.22), Vector3(w * 0.94, 0.05, 0.04), iron_paint, true, 0.42)
-		_add_box(root, Vector3(0, 0.98, -0.22), Vector3(w * 0.94, 0.06, 0.05), iron_hi, true, 0.4)
-		# Crest rail curve suggestion (thicker centre)
-		_add_box(root, Vector3(0, 1.05, -0.21), Vector3(w * 0.7, 0.05, 0.04), iron_paint, false, 0.4)
-		_add_box(root, Vector3(0, 1.1, -0.2), Vector3(w * 0.28, 0.04, 0.035), iron_hi, false, 0.38)
-		var n_bal := 7
-		for i in n_bal:
-			var t := float(i) / float(n_bal - 1)
+		# Solid matte iron (true greys → no wood/velvet misclass)
+		var mat_i := _solid_matte(Color(0.16, 0.17, 0.16), 0.48)
+		var mat_ih := _solid_matte(Color(0.26, 0.27, 0.25), 0.45)
+		var mat_id := _solid_matte(Color(0.1, 0.11, 0.1), 0.52)
+		var mat_oak := _solid_matte(Color(0.55, 0.4, 0.22), 0.7)
+		var mat_oak_d := _solid_matte(Color(0.42, 0.28, 0.14), 0.72)
+		var mat_brass := _solid_copper_mat(Color(0.65, 0.5, 0.24), 0.35)
+		# Seat frame (thin rails only)
+		_add_mesh_box(root, Vector3(0, seat_y - 0.04, 0.16), Vector3(w * 0.9, 0.035, 0.04), mat_i)
+		_add_mesh_box(root, Vector3(0, seat_y - 0.04, -0.16), Vector3(w * 0.9, 0.035, 0.04), mat_i)
+		# 6 oak seat slats with clear air gaps
+		for i in 6:
+			var t := float(i) / 5.0
+			var z := -0.18 + t * 0.4
+			_add_mesh_box(root, Vector3(0, seat_y, z), Vector3(w * 0.88, 0.03, 0.045), mat_oak if i % 2 == 0 else mat_oak_d)
+		_add_mesh_box(root, Vector3(0, seat_y + 0.01, 0.23), Vector3(w * 0.9, 0.03, 0.025), mat_oak_d)
+		# Open back: rails + thin spindles only (air through — not solid wall)
+		_add_mesh_box(root, Vector3(0, 0.56, -0.22), Vector3(w * 0.92, 0.04, 0.035), mat_i)
+		_add_mesh_box(root, Vector3(0, 0.95, -0.22), Vector3(w * 0.92, 0.045, 0.035), mat_ih)
+		_add_mesh_box(root, Vector3(0, 1.08, -0.2), Vector3(w * 0.55, 0.04, 0.03), mat_i)
+		# Crest finial
+		_add_mesh_cyl(root, Vector3(0, 1.14, -0.2), 0.03, 0.06, mat_ih, false)
+		for i in 8:
+			var t := float(i) / 7.0
 			var bx: float = -w * 0.4 + t * w * 0.8
-			_add_box(root, Vector3(bx, 0.78, -0.2), Vector3(0.035, 0.38, 0.03), iron_paint, false, 0.42)
-			# Thin oak insert on baluster face (period wood-iron mix)
+			_add_mesh_box(root, Vector3(bx, 0.76, -0.2), Vector3(0.028, 0.36, 0.022), mat_id)
 			if i % 2 == 0:
-				_add_box(root, Vector3(bx, 0.78, -0.18), Vector3(0.02, 0.32, 0.02), oak_slat.darkened(0.08), false, 0.6)
-		# Cast-iron end standards (scrolled silhouette via stacked shapes)
+				_add_mesh_box(root, Vector3(bx, 0.76, -0.185), Vector3(0.016, 0.3, 0.014), mat_oak_d)
+		# OPEN end standards — frame outline + scroll, no solid side panel
 		for sx in [-1.0, 1.0]:
-			var ex: float = sx * w * 0.48
-			# Leg posts
-			_add_box(root, Vector3(ex, 0.22, 0.14), Vector3(0.06, 0.42, 0.06), iron_paint, true, 0.4)
-			_add_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.06, 0.42, 0.06), iron_paint, true, 0.4)
-			# Scroll feet
-			_add_box(root, Vector3(ex, 0.03, 0.18), Vector3(0.08, 0.05, 0.14), iron_hi, true, 0.4)
-			_add_box(root, Vector3(ex, 0.03, -0.22), Vector3(0.08, 0.05, 0.14), iron_hi, true, 0.4)
-			_add_cylinder(root, Vector3(ex, 0.04, 0.26), 0.04, 0.04, iron_paint, false, 0.4, true)
-			_add_cylinder(root, Vector3(ex, 0.04, -0.28), 0.04, 0.04, iron_paint, false, 0.4, true)
-			# Side panel / arm upright with decorative voids suggested by rails
-			_add_box(root, Vector3(ex, 0.72, -0.02), Vector3(0.05, 0.55, 0.06), iron_paint, true, 0.4)
-			_add_box(root, Vector3(ex, 0.55, 0.0), Vector3(0.04, 0.06, 0.38), iron_hi, false, 0.4)
-			# Armrest
-			_add_box(root, Vector3(ex, 0.68, 0.02), Vector3(0.07, 0.05, 0.42), iron_paint, false, 0.38)
-			_add_cylinder(root, Vector3(ex, 0.68, 0.22), 0.035, 0.06, iron_hi, false, 0.35, true)
-			# Decorative medallion on end
-			_add_cylinder(root, Vector3(ex + sx * 0.01, 0.82, -0.02), 0.05, 0.03, iron_hi, false, 0.35, true)
-			_add_cylinder(root, Vector3(ex + sx * 0.01, 0.82, -0.02), 0.025, 0.035, BRASS.darkened(0.2), false, 0.35, true)
-		# Centre stretcher under seat
-		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(w * 0.85, 0.035, 0.04), iron_paint, false, 0.45)
-		_add_box(root, Vector3(0, 0.18, 0.0), Vector3(0.04, 0.035, 0.3), iron_paint, false, 0.45)
+			var ex: float = sx * w * 0.47
+			# Front/back legs (slender)
+			_add_mesh_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.045, 0.4, 0.045), mat_i)
+			_add_mesh_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.045, 0.4, 0.045), mat_i)
+			# Scroll feet (outward curl)
+			_add_mesh_box(root, Vector3(ex, 0.03, 0.2), Vector3(0.06, 0.04, 0.12), mat_ih)
+			_add_mesh_box(root, Vector3(ex, 0.03, -0.22), Vector3(0.06, 0.04, 0.12), mat_ih)
+			_add_mesh_cyl(root, Vector3(ex, 0.035, 0.28), 0.035, 0.035, mat_i, false)
+			_add_mesh_cyl(root, Vector3(ex, 0.035, -0.3), 0.035, 0.035, mat_i, false)
+			# Upright + open arm (air under armrest)
+			_add_mesh_box(root, Vector3(ex, 0.78, -0.18), Vector3(0.04, 0.5, 0.04), mat_i)
+			_add_mesh_box(root, Vector3(ex, 0.66, 0.02), Vector3(0.045, 0.04, 0.4), mat_ih)
+			_add_mesh_cyl(root, Vector3(ex, 0.66, 0.24), 0.03, 0.05, mat_ih, false)
+			# Diagonal brace (scroll suggestion) — open triangle, not panel
+			_add_mesh_box(root, Vector3(ex, 0.4, -0.02), Vector3(0.03, 0.03, 0.28), mat_id)
+			_add_mesh_box(root, Vector3(ex, 0.5, 0.08), Vector3(0.03, 0.18, 0.03), mat_id)
+			# Brass medallion
+			_add_mesh_cyl(root, Vector3(ex + sx * 0.01, 0.85, -0.18), 0.04, 0.025, mat_brass, false)
+		# Stretchers under seat (thin X)
+		_add_mesh_box(root, Vector3(0, 0.16, 0.0), Vector3(w * 0.82, 0.028, 0.03), mat_id)
+		_add_mesh_box(root, Vector3(0, 0.16, 0.0), Vector3(0.03, 0.028, 0.28), mat_id)
 	else:
 		# Teak garden settle (loop 135): open ladder-back + seat slats (not fridge slab)
 		var teak := Color(0.42, 0.28, 0.14)

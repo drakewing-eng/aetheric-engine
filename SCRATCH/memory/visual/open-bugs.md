@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 178)
+
+- **Garden bench residual:** cast-iron park bench read as black fridge slab mid-FOV (solid end panels + dense back). Open iron ends (legs + arm + braces, air under armrest), thin spindle back, 6 oak seat slats with gaps, solid matte iron greys.  
+
 ## Status update 2026-07-29 (loop 177)
 
 - **Oil lamp residual:** freestanding Argands still thin gold sticks mid-FOV. Wider amber glass chimney (alpha emission, not brass), larger font cup, medium stem; stronger omni. Avoids fat brass barrels (loop 149) and hairline sticks.  
