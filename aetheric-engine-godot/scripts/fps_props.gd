@@ -912,50 +912,59 @@ static func _make_bookshelf(prop: Dictionary) -> Node3D:
 
 
 static func _make_crock_shelf(prop: Dictionary) -> Node3D:
-	## Kitchen open shelf: plates, crocks, copper — never library books.
+	## Loop 193: kitchen open dresser — solid-mat oak frame + plates/crocks/copper
+	## (not texture-washed wood cubes mid-FOV).
 	var root := Node3D.new()
 	root.name = "CrockShelf"
 	var width: float = float(prop.get("width", 1.4))
 	var height: float = float(prop.get("height", 1.7))
 	var depth: float = float(prop.get("depth", 0.32))
 	var seed0: int = int(prop.get("seed", 1))
-	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), OAK, true, 0.52)
-	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.08), true, 0.5)
-	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.08), true, 0.5)
-	_add_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), OAK.darkened(0.12), true, 0.5)
-	_add_box(root, Vector3(0, height - 0.04, 0.01), Vector3(width + 0.05, 0.08, depth + 0.04), OAK, false, 0.5)
+	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
+	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
+	var mat_oak_l := _solid_matte(Color(0.56, 0.42, 0.26), 0.75)
+	var mat_cream := _solid_matte(Color(0.84, 0.78, 0.66), 0.9)
+	var mat_cream_d := _solid_matte(Color(0.74, 0.68, 0.56), 0.9)
+	var mat_clay := _solid_matte(Color(0.72, 0.46, 0.28), 0.9)
+	var mat_clay_d := _solid_matte(Color(0.58, 0.36, 0.22), 0.9)
+	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
+	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
+	var mat_cop_l := _solid_metal(Color(0.78, 0.5, 0.24), 0.28)
+	# Frame: back, sides, plinth, cornice
+	_add_mesh_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), mat_oak)
+	_add_mesh_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), mat_oak_d)
+	_add_mesh_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, height - 0.04, 0.01), Vector3(width + 0.05, 0.08, depth + 0.04), mat_oak_l)
+	# Front edge bead on cornice
+	_add_mesh_box(root, Vector3(0, height - 0.02, depth * 0.35), Vector3(width * 0.95, 0.03, 0.03), mat_oak)
 	var shelves := 3
 	for i in shelves:
 		var y: float = 0.35 + float(i) * ((height - 0.5) / float(maxi(shelves - 1, 1)))
-		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), OAK.lightened(0.05), false, 0.55)
+		_add_mesh_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), mat_oak_l)
 		var n := 3 + (i + seed0) % 2
 		for j in n:
 			var x := -width * 0.32 + float(j) * (width * 0.64 / float(maxi(n - 1, 1)))
 			var kind := (i * 3 + j + seed0) % 5
 			if kind == 0:
-				# Plate stack with rim
-				_add_cylinder(root, Vector3(x, y + 0.035, 0.04), 0.09, 0.025, CREAM, false, 0.75)
-				_add_cylinder(root, Vector3(x, y + 0.055, 0.04), 0.08, 0.02, CREAM.darkened(0.06), false, 0.75)
-				_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.015, CREAM.lightened(0.04), false, 0.75)
+				_add_mesh_cyl(root, Vector3(x, y + 0.035, 0.04), 0.09, 0.025, mat_cream, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.055, 0.04), 0.08, 0.02, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.015, mat_cream, false)
 			elif kind == 1:
-				# Crock with lid
-				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.07, 0.16, CLAY if (j + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
-				_add_cylinder(root, Vector3(x, y + 0.19, 0.04), 0.06, 0.03, CLAY.darkened(0.1), false, 0.8)
+				_add_mesh_cyl(root, Vector3(x, y + 0.1, 0.04), 0.07, 0.16, mat_clay if (j + seed0) % 2 == 0 else mat_clay_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.19, 0.04), 0.06, 0.03, mat_clay_d, false)
 			elif kind == 2:
-				# Copper bowl: bottom + belly + flared rim + handle (loop 119)
-				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.07, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-				_add_cylinder(root, Vector3(x, y + 0.09, 0.04), 0.09, 0.1, COPPER, false, 0.35, true)
-				_add_cylinder(root, Vector3(x, y + 0.15, 0.04), 0.1, 0.02, COPPER.lightened(0.08), false, 0.32, true)
-				_add_box(root, Vector3(x + 0.09, y + 0.09, 0.04), Vector3(0.05, 0.03, 0.03), COPPER, false, 0.35)
+				_add_mesh_cyl(root, Vector3(x, y + 0.04, 0.04), 0.07, 0.02, mat_cop_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.09, 0.04), 0.09, 0.1, mat_cop, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.15, 0.04), 0.1, 0.02, mat_cop_l, false)
+				_add_mesh_box(root, Vector3(x + 0.09, y + 0.09, 0.04), Vector3(0.05, 0.03, 0.03), mat_cop)
 			elif kind == 3:
-				# Jug
-				_add_cylinder(root, Vector3(x, y + 0.08, 0.04), 0.055, 0.14, CREAM.darkened(0.08), false, 0.7)
-				_add_cylinder(root, Vector3(x, y + 0.16, 0.04), 0.04, 0.04, CREAM.darkened(0.05), false, 0.75)
-				_add_box(root, Vector3(x + 0.06, y + 0.1, 0.04), Vector3(0.04, 0.08, 0.03), CREAM.darkened(0.12), false, 0.7)
+				_add_mesh_cyl(root, Vector3(x, y + 0.08, 0.04), 0.055, 0.14, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.16, 0.04), 0.04, 0.04, mat_cream, false)
+				_add_mesh_box(root, Vector3(x + 0.06, y + 0.1, 0.04), Vector3(0.04, 0.08, 0.03), mat_cream_d)
 			else:
-				# Nested bowls
-				_add_cylinder(root, Vector3(x, y + 0.04, 0.04), 0.1, 0.035, CREAM.darkened(0.1), false, 0.7)
-				_add_cylinder(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.03, CREAM, false, 0.75)
+				_add_mesh_cyl(root, Vector3(x, y + 0.04, 0.04), 0.1, 0.035, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.04), 0.07, 0.03, mat_cream, false)
 	_add_contact_shadow(root, width * 0.5, depth * 0.6)
 	return root
 
@@ -1768,61 +1777,81 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			_add_mesh_cyl(root, Vector3(0.35, 0.88, 0.25), 0.032, 0.01, mat_cut, false)
 			_add_mesh_box(root, Vector3(-0.55, 0.875, 0.2), Vector3(0.16, 0.012, 0.12), mat_cloth_b)
 		2:
-			# Loop 159: market veg — oval wicker tray (not wooden crate), roots, chop block
-			var wick := Color(0.52, 0.38, 0.2)
-			var wick_d := Color(0.4, 0.28, 0.14)
-			# Shallow oval basket: cylinder body + rim (reads woven tray, not box)
-			_add_cylinder(root, Vector3(-0.38, 0.9, 0.0), 0.16, 0.08, wick, false, 0.72)
-			_add_cylinder(root, Vector3(-0.38, 0.88, 0.0), 0.14, 0.03, wick_d, false, 0.75)
-			_add_cylinder(root, Vector3(-0.38, 0.95, 0.0), 0.17, 0.025, wick_d, false, 0.7)
-			# Flatten oval via thin side lips
-			_add_box(root, Vector3(-0.38, 0.93, 0.12), Vector3(0.3, 0.04, 0.02), wick_d, false, 0.72)
-			_add_box(root, Vector3(-0.38, 0.93, -0.12), Vector3(0.3, 0.04, 0.02), wick_d, false, 0.72)
-			# Greens mound + roots / carrots
+			# Loop 193: market veg kit — solid-mat wicker tray + chop block (no washout)
+			var mat_wick := _solid_matte(Color(0.52, 0.38, 0.2), 0.92)
+			var mat_wick_d := _solid_matte(Color(0.4, 0.28, 0.14), 0.94)
+			var mat_chop := _solid_matte(Color(0.55, 0.42, 0.26), 0.82)
+			var mat_chop_d := _solid_matte(Color(0.42, 0.3, 0.16), 0.85)
+			var mat_cleaver := _solid_metal(Color(0.48, 0.48, 0.5), 0.4)
+			var mat_cleaver_h := _solid_matte(Color(0.32, 0.2, 0.1), 0.75)
+			var mat_crock_v := _solid_matte(Color(0.72, 0.64, 0.52), 0.9)
+			var mat_crock_vd := _solid_matte(Color(0.58, 0.5, 0.4), 0.9)
+			var mat_cloth_v := _solid_matte(Color(0.72, 0.74, 0.7), 0.92)
+			var mat_carrot := _solid_matte(Color(0.85, 0.5, 0.18), 0.88)
+			# Shallow oval basket
+			_add_mesh_cyl(root, Vector3(-0.38, 0.9, 0.0), 0.16, 0.08, mat_wick, false)
+			_add_mesh_cyl(root, Vector3(-0.38, 0.88, 0.0), 0.14, 0.03, mat_wick_d, false)
+			_add_mesh_cyl(root, Vector3(-0.38, 0.95, 0.0), 0.17, 0.025, mat_wick_d, false)
+			_add_mesh_box(root, Vector3(-0.38, 0.93, 0.12), Vector3(0.3, 0.04, 0.02), mat_wick_d)
+			_add_mesh_box(root, Vector3(-0.38, 0.93, -0.12), Vector3(0.3, 0.04, 0.02), mat_wick_d)
+			# Greens + roots
 			_add_sphere_blob(root, Vector3(-0.38, 0.98, 0.0), 0.08, Color(0.26, 0.4, 0.16))
 			_add_sphere_blob(root, Vector3(-0.32, 1.0, 0.06), 0.05, Color(0.3, 0.42, 0.18))
 			_add_sphere_blob(root, Vector3(-0.42, 0.99, -0.04), 0.045, Color(0.22, 0.36, 0.14))
 			_add_sphere_blob(root, Vector3(-0.34, 1.02, 0.04), 0.032, Color(0.85, 0.45, 0.15))
 			_add_sphere_blob(root, Vector3(-0.44, 1.0, 0.0), 0.028, Color(0.9, 0.5, 0.18))
-			_add_cylinder_rotated(root, Vector3(-0.28, 0.98, -0.04), 0.015, 0.1, Color(0.85, 0.55, 0.2), Vector3(0, 0, PI * 0.35), 0.7)
-			_add_cylinder_rotated(root, Vector3(-0.48, 0.98, 0.05), 0.012, 0.08, Color(0.8, 0.5, 0.18), Vector3(0, 0, -PI * 0.3), 0.7)
-			# Thick chop block + cleaver
-			_add_box(root, Vector3(0.3, 0.9, -0.05), Vector3(0.42, 0.09, 0.3), OAK.lightened(0.08), false, 0.55)
-			_add_box(root, Vector3(0.3, 0.86, -0.05), Vector3(0.46, 0.035, 0.33), OAK.darkened(0.05), false, 0.55)
-			_add_box(root, Vector3(0.36, 0.96, 0.02), Vector3(0.2, 0.015, 0.04), IRON.lightened(0.08), false, 0.35)
-			_add_cylinder_rotated(root, Vector3(0.22, 0.96, 0.02), 0.014, 0.07, Color(0.32, 0.2, 0.1), Vector3(0, 0, PI * 0.5), 0.6)
-			# Salt crock + tea towel
-			_add_cylinder(root, Vector3(0.52, 0.93, 0.16), 0.045, 0.09, CREAM.darkened(0.06), false, 0.85)
-			_add_cylinder(root, Vector3(0.52, 0.99, 0.16), 0.036, 0.022, CREAM.darkened(0.12), false, 0.85)
-			_add_box(root, Vector3(0.08, 0.875, 0.22), Vector3(0.18, 0.012, 0.12), Color(0.72, 0.74, 0.7), false, 0.8)
+			_add_mesh_cyl_rot(root, Vector3(-0.28, 0.98, -0.04), 0.015, 0.1, mat_carrot, Vector3(0, 0, PI * 0.35))
+			_add_mesh_cyl_rot(root, Vector3(-0.48, 0.98, 0.05), 0.012, 0.08, mat_carrot, Vector3(0, 0, -PI * 0.3))
+			# Chop block + cleaver
+			_add_mesh_box(root, Vector3(0.3, 0.9, -0.05), Vector3(0.42, 0.09, 0.3), mat_chop)
+			_add_mesh_box(root, Vector3(0.3, 0.86, -0.05), Vector3(0.46, 0.035, 0.33), mat_chop_d)
+			_add_mesh_box(root, Vector3(0.36, 0.96, 0.02), Vector3(0.2, 0.015, 0.04), mat_cleaver)
+			_add_mesh_cyl_rot(root, Vector3(0.22, 0.96, 0.02), 0.014, 0.07, mat_cleaver_h, Vector3(0, 0, PI * 0.5))
+			# Salt crock + towel + apple
+			_add_mesh_cyl(root, Vector3(0.52, 0.93, 0.16), 0.045, 0.09, mat_crock_v, false)
+			_add_mesh_cyl(root, Vector3(0.52, 0.99, 0.16), 0.036, 0.022, mat_crock_vd, false)
+			_add_mesh_box(root, Vector3(0.08, 0.875, 0.22), Vector3(0.18, 0.012, 0.12), mat_cloth_v)
 			_add_sphere_blob(root, Vector3(0.52, 0.9, -0.14), 0.038, Color(0.52, 0.16, 0.12))
 		_:
-			# Scullery prep — mortar, pestle, herb board, copper colander shallow, spoon, cloth
-			_add_box(root, Vector3(-0.35, 0.875, 0.05), Vector3(0.48, 0.03, 0.32), OAK.lightened(0.15), false, 0.65)
-			# Herb / leaf piles (flat greens, not cylinders)
-			_add_box(root, Vector3(-0.4, 0.9, 0.05), Vector3(0.22, 0.03, 0.14), Color(0.28, 0.4, 0.18), false, 0.85)
-			_add_box(root, Vector3(-0.28, 0.9, -0.05), Vector3(0.16, 0.025, 0.12), Color(0.32, 0.38, 0.16), false, 0.85)
-			# Mortar (short thick) + pestle
-			_add_cylinder(root, Vector3(0.15, 0.92, 0.05), 0.09, 0.1, STONE.lightened(0.1), false, 0.7)
-			_add_cylinder(root, Vector3(0.15, 0.98, 0.05), 0.1, 0.03, STONE, false, 0.65)
-			_add_cylinder(root, Vector3(0.22, 1.05, 0.08), 0.02, 0.16, OAK.darkened(0.05), false, 0.55)
-			_add_sphere_blob(root, Vector3(0.22, 0.98, 0.08), 0.03, OAK)
-			# Shallow copper colander (wide, low) + holes as dark dots
-			_add_cylinder(root, Vector3(0.5, 0.9, -0.1), 0.12, 0.05, COPPER, false, 0.35, true)
-			_add_cylinder(root, Vector3(0.5, 0.94, -0.1), 0.13, 0.02, COPPER.lightened(0.06), false, 0.32, true)
+			# Loop 193: scullery kit — solid-mat mortar, colander, herbs
+			var mat_herb_b := _solid_matte(Color(0.58, 0.46, 0.3), 0.85)
+			var mat_leaf_a := _solid_matte(Color(0.28, 0.4, 0.18), 0.92)
+			var mat_leaf_b := _solid_matte(Color(0.32, 0.38, 0.16), 0.92)
+			var mat_stone_m := _solid_matte(Color(0.58, 0.55, 0.48), 0.88)
+			var mat_stone_r := _solid_matte(Color(0.48, 0.45, 0.4), 0.88)
+			var mat_pestle := _solid_matte(Color(0.4, 0.28, 0.14), 0.8)
+			var mat_col := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
+			var mat_col_l := _solid_metal(Color(0.78, 0.5, 0.24), 0.28)
+			var mat_hole := _solid_matte(Color(0.15, 0.12, 0.1), 0.9)
+			var mat_spoon := _solid_matte(Color(0.5, 0.38, 0.22), 0.8)
+			var mat_ladle := _solid_metal(Color(0.38, 0.38, 0.4), 0.45)
+			var mat_ladle_c := _solid_metal(Color(0.62, 0.36, 0.16), 0.35)
+			var mat_cloth_s := _solid_matte(Color(0.68, 0.7, 0.66), 0.92)
+			var mat_jar := _solid_matte(Color(0.78, 0.72, 0.58), 0.9)
+			var mat_jar_d := _solid_matte(Color(0.65, 0.58, 0.46), 0.9)
+			_add_mesh_box(root, Vector3(-0.35, 0.875, 0.05), Vector3(0.48, 0.03, 0.32), mat_herb_b)
+			_add_mesh_box(root, Vector3(-0.4, 0.9, 0.05), Vector3(0.22, 0.03, 0.14), mat_leaf_a)
+			_add_mesh_box(root, Vector3(-0.28, 0.9, -0.05), Vector3(0.16, 0.025, 0.12), mat_leaf_b)
+			# Mortar + pestle
+			_add_mesh_cyl(root, Vector3(0.15, 0.92, 0.05), 0.09, 0.1, mat_stone_m, false)
+			_add_mesh_cyl(root, Vector3(0.15, 0.98, 0.05), 0.1, 0.03, mat_stone_r, false)
+			_add_mesh_cyl(root, Vector3(0.22, 1.05, 0.08), 0.02, 0.16, mat_pestle, false)
+			_add_sphere_blob(root, Vector3(0.22, 0.98, 0.08), 0.03, Color(0.42, 0.3, 0.16))
+			# Copper colander + holes
+			_add_mesh_cyl(root, Vector3(0.5, 0.9, -0.1), 0.12, 0.05, mat_col, false)
+			_add_mesh_cyl(root, Vector3(0.5, 0.94, -0.1), 0.13, 0.02, mat_col_l, false)
 			for hi in 4:
 				var hx := 0.45 + float(hi % 2) * 0.08
 				var hz := -0.14 + float(hi / 2) * 0.08
-				_add_cylinder(root, Vector3(hx, 0.92, hz), 0.012, 0.01, Color(0.15, 0.12, 0.1), false, 0.8)
-			# Wooden spoon + iron ladle
-			_add_box(root, Vector3(-0.1, 0.89, -0.2), Vector3(0.32, 0.015, 0.03), OAK.lightened(0.05), false, 0.55)
-			_add_sphere_blob(root, Vector3(-0.26, 0.89, -0.2), 0.028, OAK)
-			_add_box(root, Vector3(0.25, 0.89, 0.22), Vector3(0.28, 0.015, 0.025), IRON, false, 0.4)
-			_add_cylinder(root, Vector3(0.08, 0.89, 0.22), 0.035, 0.025, COPPER.darkened(0.05), false, 0.35, true)
-			# Cloth + small cream jar only
-			_add_box(root, Vector3(0.5, 0.875, 0.2), Vector3(0.16, 0.015, 0.12), Color(0.68, 0.7, 0.66), false, 0.8)
-			_add_cylinder(root, Vector3(-0.55, 0.92, 0.2), 0.045, 0.1, CREAM.darkened(0.1), false, 0.85)
-			_add_cylinder(root, Vector3(-0.55, 0.98, 0.2), 0.035, 0.03, CREAM.darkened(0.16), false, 0.85)
+				_add_mesh_cyl(root, Vector3(hx, 0.92, hz), 0.012, 0.01, mat_hole, false)
+			# Spoon + ladle
+			_add_mesh_box(root, Vector3(-0.1, 0.89, -0.2), Vector3(0.32, 0.015, 0.03), mat_spoon)
+			_add_sphere_blob(root, Vector3(-0.26, 0.89, -0.2), 0.028, Color(0.5, 0.38, 0.22))
+			_add_mesh_box(root, Vector3(0.25, 0.89, 0.22), Vector3(0.28, 0.015, 0.025), mat_ladle)
+			_add_mesh_cyl(root, Vector3(0.08, 0.89, 0.22), 0.035, 0.025, mat_ladle_c, false)
+			_add_mesh_box(root, Vector3(0.5, 0.875, 0.2), Vector3(0.16, 0.015, 0.12), mat_cloth_s)
+			_add_mesh_cyl(root, Vector3(-0.55, 0.92, 0.2), 0.045, 0.1, mat_jar, false)
+			_add_mesh_cyl(root, Vector3(-0.55, 0.98, 0.2), 0.035, 0.03, mat_jar_d, false)
 	_add_contact_shadow(root, width * 0.5, 0.5)
 	return root
 

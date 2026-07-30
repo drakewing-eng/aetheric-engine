@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 193)
+
+- **Prep kits 2–3 residual:** market veg + scullery still used `_mat_for` washout paths. Solid-mat wicker tray/chop block/cleaver; solid-mat mortar/colander/herbs.  
+- **Crock shelf residual:** oak frame + ware texture-washed mid-FOV kitchen. Solid-mat oak frame + cream plates/clay crocks/copper bowls.  
+
 ## Status update 2026-07-30 (loop 192)
 
 - **Prep flour sack residual (post-190):** upright cylinder still read as cake/tin mid-FOV. Horizontal hessian bag on its side + cinch ear + brand stamp + flour spill.  
