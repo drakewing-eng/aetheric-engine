@@ -2225,7 +2225,8 @@ static func _add_mesh_box(parent: Node3D, pos: Vector3, size: Vector3, mat: Mate
 
 
 static func _make_wall_sconce(prop: Dictionary) -> Node3D:
-	## Brass wall light — seed forks arm / gas-jet / candle plate (uniqueness).
+	## Loop 187: Victorian gas wall sconce — backplate + curved arm + frosted shade
+	## (not thin brass L-stick mid-FOV).
 	var root := Node3D.new()
 	root.name = "WallSconce"
 	var y: float = float(prop.get("height", 2.1))
@@ -2234,31 +2235,79 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 		y * 10.0 + float(prop.get("yaw", 0.0)) + float(ppos[0]) * 3.0 + float(ppos[2]) * 5.0
 	))))
 	var style := seed0 % 3
-	_add_box(root, Vector3(0, y, 0), Vector3(0.08, 0.14, 0.05), BRASS.darkened(0.05 * float(style)), false, 0.3)
+	var mat_br := _solid_metal(BRASS, 0.28)
+	var mat_br_d := _solid_metal(BRASS.darkened(0.12), 0.32)
+	var mat_br_l := _solid_metal(BRASS.lightened(0.06), 0.25)
+	# Frosted amber shade (alpha + emission — never brass path)
+	var mat_shade := StandardMaterial3D.new()
+	mat_shade.albedo_color = Color(0.92, 0.8, 0.52, 0.5)
+	mat_shade.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_shade.metallic = 0.0
+	mat_shade.roughness = 0.4
+	mat_shade.emission_enabled = true
+	mat_shade.emission = Color(1.0, 0.85, 0.5)
+	mat_shade.emission_energy_multiplier = 0.7
+	mat_shade.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	# Ornate backplate (reads on wall — not a tiny brass nub)
+	_add_mesh_box(root, Vector3(0, y, 0.01), Vector3(0.12, 0.2, 0.03), mat_br_d)
+	_add_mesh_box(root, Vector3(0, y, 0.025), Vector3(0.08, 0.14, 0.02), mat_br)
+	_add_mesh_cyl(root, Vector3(0, y + 0.08, 0.03), 0.035, 0.025, mat_br_l, false)
+	_add_mesh_cyl(root, Vector3(0, y - 0.08, 0.03), 0.03, 0.02, mat_br_d, false)
 	if style == 0:
-		# Straight arm + frosted amber cup (loop 127: not pale stick)
-		_add_box(root, Vector3(0, y, 0.1), Vector3(0.04, 0.04, 0.16), BRASS, false, 0.3)
-		_add_cylinder(root, Vector3(0, y - 0.02, 0.2), 0.06, 0.04, BRASS.darkened(0.1), false, 0.3, true)
-		_add_tapered_cylinder(root, Vector3(0, y - 0.08, 0.2), 0.025, 0.065, 0.12, Color(0.88, 0.78, 0.55), 0.4)
-		_add_sphere_blob(root, Vector3(0, y - 0.05, 0.2), 0.03, Color(1.0, 0.82, 0.4))
+		# Straight arm + inverted bell shade
+		_add_mesh_box(root, Vector3(0, y, 0.12), Vector3(0.035, 0.035, 0.18), mat_br)
+		_add_mesh_cyl(root, Vector3(0, y, 0.22), 0.04, 0.035, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, y - 0.02, 0.22), 0.05, 0.02, mat_br, false)
+		var shade := MeshInstance3D.new()
+		var sm := CylinderMesh.new()
+		sm.top_radius = 0.03
+		sm.bottom_radius = 0.07
+		sm.height = 0.1
+		sm.radial_segments = 10
+		shade.mesh = sm
+		shade.material_override = mat_shade
+		shade.position = Vector3(0, y - 0.08, 0.22)
+		root.add_child(shade)
+		_add_mesh_cyl(root, Vector3(0, y - 0.13, 0.22), 0.065, 0.012, mat_br_d, false)
+		_add_sphere_blob(root, Vector3(0, y - 0.04, 0.22), 0.025, Color(1.0, 0.82, 0.4))
 	elif style == 1:
-		# Curved arm + glass globe
-		_add_box(root, Vector3(0.04, y - 0.02, 0.08), Vector3(0.12, 0.035, 0.035), BRASS, false, 0.3)
-		_add_box(root, Vector3(0.1, y - 0.08, 0.14), Vector3(0.035, 0.12, 0.035), BRASS.darkened(0.05), false, 0.3)
-		_add_sphere_blob(root, Vector3(0.1, y - 0.16, 0.18), 0.07, Color(0.9, 0.82, 0.6))
-		_add_sphere_blob(root, Vector3(0.1, y - 0.16, 0.18), 0.04, Color(1.0, 0.85, 0.45))
+		# Double-curve arm + globe
+		_add_mesh_box(root, Vector3(0, y - 0.02, 0.1), Vector3(0.03, 0.03, 0.12), mat_br)
+		_add_mesh_box(root, Vector3(0.02, y - 0.08, 0.16), Vector3(0.03, 0.1, 0.03), mat_br_d)
+		_add_mesh_box(root, Vector3(0.02, y - 0.12, 0.2), Vector3(0.03, 0.03, 0.08), mat_br)
+		_add_mesh_cyl(root, Vector3(0.02, y - 0.14, 0.24), 0.035, 0.025, mat_br_l, false)
+		var globe := MeshInstance3D.new()
+		var gm := SphereMesh.new()
+		gm.radius = 0.06
+		gm.height = 0.12
+		globe.mesh = gm
+		globe.material_override = mat_shade
+		globe.position = Vector3(0.02, y - 0.18, 0.24)
+		root.add_child(globe)
+		_add_sphere_blob(root, Vector3(0.02, y - 0.16, 0.24), 0.028, Color(1.0, 0.85, 0.45))
 	else:
-		# Candle plate sconce with drip pan
-		_add_box(root, Vector3(0, y - 0.02, 0.1), Vector3(0.035, 0.035, 0.14), BRASS, false, 0.3)
-		_add_cylinder(root, Vector3(0, y - 0.08, 0.18), 0.08, 0.025, BRASS.darkened(0.1), false, 0.3, true)
-		_add_cylinder(root, Vector3(0, y + 0.02, 0.18), 0.02, 0.16, CANDLE, false, 0.55)
-		_add_sphere_blob(root, Vector3(0, y + 0.12, 0.18), 0.028, Color(1.0, 0.78, 0.35))
+		# Candle plate with drip pan + glass chimney
+		_add_mesh_box(root, Vector3(0, y - 0.02, 0.12), Vector3(0.03, 0.03, 0.16), mat_br)
+		_add_mesh_cyl(root, Vector3(0, y - 0.08, 0.2), 0.07, 0.02, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, y - 0.06, 0.2), 0.025, 0.04, mat_br, false)
+		_add_mesh_cyl(root, Vector3(0, y + 0.02, 0.2), 0.018, 0.14, _solid_matte(CANDLE, 0.7), false)
+		# Slim glass chimney (alpha)
+		var chim := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.028
+		cm.bottom_radius = 0.032
+		cm.height = 0.12
+		chim.mesh = cm
+		chim.material_override = mat_shade
+		chim.position = Vector3(0, y + 0.02, 0.2)
+		root.add_child(chim)
+		_add_sphere_blob(root, Vector3(0, y + 0.1, 0.2), 0.022, Color(1.0, 0.8, 0.4))
 
 	var lamp := OmniLight3D.new()
-	lamp.light_color = Color(1.0, 0.85, 0.55)
-	lamp.light_energy = 0.5 + float(style) * 0.06
-	lamp.omni_range = 3.2 + float(style) * 0.3
-	lamp.position = Vector3(0.0 if style != 1 else 0.08, y - 0.06, 0.18)
+	lamp.light_color = Color(1.0, 0.86, 0.55)
+	lamp.light_energy = 0.55 + float(style) * 0.05
+	lamp.omni_range = 3.4 + float(style) * 0.25
+	lamp.position = Vector3(0.0 if style != 1 else 0.02, y - 0.08, 0.2)
 	root.add_child(lamp)
 	return root
 

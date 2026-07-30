@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~overnight loop 186  
-**HEAD:** `dd7566f` visual loop 186  
+**Updated:** 2026-07-29 ~overnight loop 187  
+**HEAD:** (pending checkpoint) visual loop 187  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,8 +10,8 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–186** crate |
-| 5 | Geometric / surface detail | **ADVANCED 72–186** crate |
+| 4 | Unique Victorian objects | **ADVANCED 71–187** sconce |
+| 5 | Geometric / surface detail | **ADVANCED 72–187** sconce |
 | 6 | Victorian wall art | **ADVANCED 69+96+97+133** kitchen |
 | 7 | Plant diversity / side volume | **ADVANCED 74–169** min size |
 | 8 | Side-view mesh furniture | **DONE 70–165** wing envelope |
@@ -20,17 +20,17 @@
 | 11 | Hall / prep still-life | **ADVANCED 73–185** bud vase |
 | 12–23 | Conservatory densify | **ADVANCED 116–183** urn |
 | 24–113 | Materials…park bench | **DONE 89–178** |
-| 114–120 | Sink…bud vase | **DONE 179–185** |
-| 121 | Boarded shipping crates | **DONE 186** |
+| 114–121 | Sink…crate | **DONE 179–186** |
+| 122 | Victorian wall sconce | **DONE 187** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 183 | Pedestal garden urn (not milk-churn) |
 | 184 | Brass gasolier chandelier |
 | 185 | Hall bud vase porcelain bottle |
-| 186 | **Shipping crate:** plank faces + corner posts + iron bands/straps + skids (not solid Minecraft cube) |
+| 186 | Boarded shipping crate |
+| 187 | **Wall sconce:** backplate + arm + frosted alpha shade/globe (not thin brass L-stick) |
 
 ## Still high-value if continuing
 
@@ -40,4 +40,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_186/`  
+- Shots: `auto_loop_67/` … `auto_loop_187/`  
