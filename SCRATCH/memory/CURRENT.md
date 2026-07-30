@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
 **Updated:** 2026-07-30 ~overnight loop 200  
-**HEAD:** (pending commit loop 200)  
+**HEAD:** `c31ab66` visual loop 200  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
