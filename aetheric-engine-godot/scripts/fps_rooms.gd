@@ -21,6 +21,8 @@ const ROOMS := {
 		"wainscot_height": 1.2,
 		"floor_texture": TEX + "floor_drawing.jpg",
 		"floor_color": Color(0.28, 0.18, 0.10),
+		# Loop 235: denser oak boards (default 0.22 left huge planks mid-FOV)
+		"floor_uv_scale": 0.48,
 		"light_energy": 1.35,
 		"light_color": Color(1.0, 0.86, 0.62),
 		"ceiling_color": Color(0.86, 0.82, 0.74),
@@ -174,6 +176,8 @@ const ROOMS := {
 		"wainscot_height": 1.15,
 		"floor_texture": TEX + "floor_hall.jpg",
 		"floor_color": Color(0.20, 0.14, 0.10),
+		# Loop 235: denser hall boards under runner
+		"floor_uv_scale": 0.48,
 		"light_energy": 1.25,
 		"light_color": Color(0.96, 0.91, 0.8),
 		"ceiling_color": Color(0.88, 0.85, 0.78),
@@ -335,6 +339,8 @@ const ROOMS := {
 		"wainscot": TEX + "wainscot_gallery.jpg",
 		"floor_texture": TEX + "floor_gallery.jpg",
 		"floor_color": Color(0.16, 0.12, 0.09),
+		# Loop 235: denser oak boards (long gallery mid-FOV)
+		"floor_uv_scale": 0.52,
 		"light_energy": 1.0,
 		"light_color": Color(0.95, 0.9, 0.78),
 		"ceiling_color": Color(0.75, 0.72, 0.66),
@@ -489,6 +495,8 @@ const ROOMS := {
 		"wainscot_height": 1.35,
 		"floor_texture": TEX + "floor_morning.jpg",
 		"floor_color": Color(0.38, 0.28, 0.18),
+		# Loop 235: denser morning oak boards
+		"floor_uv_scale": 0.48,
 		# Loop 70–72: morning light — brighter, cooler-east sun wash
 		"light_energy": 1.42,
 		"light_color": Color(1.0, 0.96, 0.88),
@@ -619,6 +627,8 @@ const ROOMS := {
 		"wainscot_height": 2.15,
 		"floor_texture": TEX + "floor_workshop.jpg",
 		"floor_color": Color(0.18, 0.13, 0.09),
+		# Loop 235: denser workshop boards
+		"floor_uv_scale": 0.52,
 		# Loop 72: slightly cooler work light on limewash + board dado
 		"light_energy": 1.12,
 		"light_color": Color(1.0, 0.82, 0.55),

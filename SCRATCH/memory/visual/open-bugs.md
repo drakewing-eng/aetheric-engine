@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 235)
+
+- **Wood floor huge-plank residual:** default floor_uv 0.22 left oversized boards mid-FOV (gallery/drawing/hall/morning/workshop). Regenerated finer multi-plank plates (10–12 boards) + UV dens drawing/hall/morning **0.48**, gallery/workshop **0.52**. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 234)
 
 - **Kitchen quarry large-tile residual:** floor_uv 0.58 still large diamond game tiles mid-FOV. Regenerated fine diamond quarry plate (1024, cell 48) + UV **0.85**.  
