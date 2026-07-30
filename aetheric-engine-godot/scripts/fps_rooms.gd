@@ -231,18 +231,15 @@ const ROOMS := {
 			# Loop 98/144/146: NW corner densify — plants in corners only (no seat bleed)
 			{"kind": "hall_table", "pos": [-5.0, 0.0, -3.4], "yaw": 5.0, "seed": 2},
 			# Loop 157: mesh hall chairs (no cutout edge-on scrap)
-			{"kind": "chair", "pos": [-3.7, 0.0, -2.5], "yaw": 120.0, "seed": 0,
-				"fabric": Color(0.18, 0.28, 0.18)},
+			{"kind": "chair", "style": "hall", "pos": [-3.7, 0.0, -2.5], "yaw": 120.0, "seed": 0},
 			{"kind": "plant", "pos": [-6.1, 0.0, -3.85], "scale": 0.7, "seed": 4,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.8},
 			# Second stand near kitchen/south — visitors leave coats by service door
 			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
 			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
 			# Hall chairs flank runner — mesh (loop 157)
-			{"kind": "chair", "pos": [2.15, 0.0, -1.55], "yaw": -100.0, "seed": 1,
-				"fabric": Color(0.2, 0.3, 0.2)},
-			{"kind": "chair", "pos": [-2.2, 0.0, 1.6], "yaw": 80.0, "seed": 2,
-				"fabric": Color(0.22, 0.32, 0.2)},
+			{"kind": "chair", "style": "hall", "pos": [2.15, 0.0, -1.55], "yaw": -100.0, "seed": 1},
+			{"kind": "chair", "style": "hall", "pos": [-2.2, 0.0, 1.6], "yaw": 80.0, "seed": 2},
 			{"kind": "plant", "pos": [6.1, 0.0, -0.9], "scale": 0.7, "seed": 3,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.8},
 			{"kind": "plant", "pos": [-6.2, 0.0, 2.3], "scale": 0.6, "seed": 1,
@@ -261,8 +258,7 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.68, "height": 0.85},
 			{"kind": "plant", "pos": [-3.4, 0.0, 4.0], "scale": 0.78, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.72, "height": 0.95},
-			{"kind": "chair", "pos": [-2.4, 0.0, 3.0], "yaw": 160.0, "seed": 3,
-				"fabric": Color(0.18, 0.28, 0.18)},
+			{"kind": "chair", "style": "hall", "pos": [-2.4, 0.0, 3.0], "yaw": 160.0, "seed": 3},
 			{"kind": "oil_lamp", "pos": [2.6, 0.0, 3.4], "yaw": -10.0, "height": 0.95, "seed": 2},
 			# Loop 97: upper hall densify (long empty stripe paper between doors)
 			{"kind": "wall_sconce", "pos": [-4.5, 0.0, -2.0], "yaw": 90.0, "height": 2.35},
@@ -277,8 +273,7 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.8},
 			{"kind": "plant", "pos": [5.9, 0.0, -3.9], "scale": 0.78, "seed": 6,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 0.95},
-			{"kind": "chair", "pos": [-2.0, 0.0, -3.4], "yaw": 25.0, "seed": 4,
-				"fabric": Color(0.2, 0.3, 0.2)},
+			{"kind": "chair", "style": "hall", "pos": [-2.0, 0.0, -3.4], "yaw": 25.0, "seed": 4},
 			# Lamp beside demi-lune, not under table / on runner
 			{"kind": "oil_lamp", "pos": [3.3, 0.0, -3.5], "yaw": 10.0, "height": 0.9, "seed": 0},
 			{"kind": "wall_sconce", "pos": [-1.4, 0.0, -4.7], "yaw": 0.0, "height": 2.25},

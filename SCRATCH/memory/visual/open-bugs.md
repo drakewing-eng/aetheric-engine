@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 229)
+
+- **Workshop brick Minecraft residual:** limewash dens 0.58 still ~25cm blocks mid-FOV (workshop_spawn / from_north). Regenerated 18-row fine brick plate (1024) + board wainscot denser; dens wallpaper 0.58→**1.15**, wainscot 0.48→**0.78**.  
+- **Hall chair green pad residual:** balloon-back upholstered pads read as green fridge scrap mid-FOV (entrance_hall_spawn). New `style:"hall"` wood-seat Victorian hall chairs — open crest/splat backs, thin leather optional, no green velvet. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 228)
 
 - **Kitchen metro Minecraft residual:** oversized wainscot tiles mid-FOV (kitchen_spawn). Regenerated 24×18 metro plate + fine cream check wallpaper; dens 0.72→1.15; floor quarry denser plate + UV 0.42→0.58.  

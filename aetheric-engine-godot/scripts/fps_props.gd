@@ -284,8 +284,11 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	## Loop 198: side chair — solid-mat mahogany + velvet (no wood/fabric washout mid-FOV).
 	## Loop 223: Victorian balloon-back / cabriole silhouette mid-FOV
 	## (not boxy L-frame + green pad fridge in entrance_hall_spawn).
+	## Loop 229: style "hall" → wood-seat Victorian hall chair (not green velvet fridge pads).
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
+	if str(prop.get("style", "")) == "hall":
+		return _make_hall_chair(prop)
 	var root := Node3D.new()
 	root.name = "Chair"
 	var seed0: int = int(prop.get("seed", 0))
@@ -329,7 +332,7 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 			_add_mesh_box(root, Vector3(0, 1.05, -0.17), Vector3(0.28, 0.022, 0.022), mat_md)
 			_add_mesh_box(root, Vector3(0, 1.22, -0.16), Vector3(0.3, 0.02, 0.02), mat_m)
 		1:
-			# Upholstered balloon pad (hall/reception)
+			# Upholstered balloon pad (reception only — hall uses style:"hall")
 			_add_mesh_box(root, Vector3(0, 0.98, -0.16), Vector3(0.28, 0.5, 0.04), mat_fab)
 			_add_mesh_box(root, Vector3(0, 1.0, -0.13), Vector3(0.22, 0.42, 0.03), mat_fab_d)
 			_add_mesh_cyl(root, Vector3(0, 1.05, -0.12), 0.1, 0.28, mat_fab_l, false)
@@ -357,6 +360,89 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	_add_mesh_box(root, Vector3(-0.15, 0.12, 0.0), Vector3(0.018, 0.018, 0.28), mat_m)
 	_add_mesh_box(root, Vector3(0.15, 0.12, 0.0), Vector3(0.018, 0.018, 0.28), mat_m)
 	_add_contact_shadow(root, 0.36, 0.34)
+	return root
+
+
+static func _make_hall_chair(prop: Dictionary) -> Node3D:
+	## Loop 229: mid-Victorian hall chair — wood seat + open tall back + crest.
+	## Entrance hall residual: green velvet pads read as Minecraft fridge scrap mid-FOV.
+	## Period hall chairs are mahogany/oak with wood or thin leather seat (not plush green).
+	var root := Node3D.new()
+	root.name = "HallChair"
+	var seed0: int = int(prop.get("seed", 0))
+	var mat_m := _solid_matte(Color(0.28, 0.13, 0.07), 0.72)
+	var mat_md := _solid_matte(Color(0.16, 0.08, 0.04), 0.78)
+	var mat_ml := _solid_matte(Color(0.34, 0.17, 0.09), 0.7)
+	var mat_seat := _solid_matte(Color(0.32, 0.16, 0.09), 0.74)
+	var mat_seat_d := _solid_matte(Color(0.22, 0.11, 0.06), 0.8)
+	# Thin leather pad on some seeds (brown oxblood — never green velvet slab)
+	var use_leather: bool = (seed0 % 2) == 1
+	var mat_leather := _solid_matte(Color(0.28, 0.12, 0.08), 0.88)
+	var mat_leather_d := _solid_matte(Color(0.2, 0.09, 0.06), 0.9)
+	var mat_br := _solid_metal(Color(0.68, 0.52, 0.26), 0.32)
+	# Seat rail / apron — slim frame, open under
+	_add_mesh_box(root, Vector3(0, 0.42, 0.0), Vector3(0.44, 0.045, 0.4), mat_md)
+	_add_mesh_box(root, Vector3(0, 0.46, 0.0), Vector3(0.46, 0.02, 0.42), mat_m)
+	# Solid wood seat (slight dish) — not thick upholstered fridge pad
+	_add_mesh_box(root, Vector3(0, 0.5, 0.02), Vector3(0.4, 0.035, 0.36), mat_seat)
+	_add_mesh_box(root, Vector3(0, 0.52, 0.0), Vector3(0.34, 0.018, 0.3), mat_seat_d)
+	if use_leather:
+		# Thin leather cushion only (period optional)
+		_add_mesh_box(root, Vector3(0, 0.54, 0.02), Vector3(0.34, 0.02, 0.3), mat_leather)
+		_add_mesh_box(root, Vector3(0, 0.555, 0.02), Vector3(0.28, 0.01, 0.24), mat_leather_d)
+		# Brass tacks on seat front
+		for i in 4:
+			_add_mesh_cyl(root, Vector3(-0.12 + float(i) * 0.08, 0.46, 0.2), 0.007, 0.008, mat_br, false)
+	# Tall back stiles (hall chairs are taller / more formal than parlour side chairs)
+	for sx in [-1.0, 1.0]:
+		_add_mesh_box(root, Vector3(sx * 0.17, 0.95, -0.17), Vector3(0.04, 0.95, 0.035), mat_md)
+		_add_mesh_box(root, Vector3(sx * 0.17, 0.95, -0.17), Vector3(0.028, 0.9, 0.022), mat_m)
+		# Slight outward splay at top
+		_add_mesh_box(root, Vector3(sx * 0.185, 1.38, -0.17), Vector3(0.032, 0.12, 0.028), mat_ml)
+	# Crest rail (horizontal)
+	_add_mesh_box(root, Vector3(0, 1.42, -0.17), Vector3(0.42, 0.04, 0.04), mat_m)
+	_add_mesh_box(root, Vector3(0, 1.46, -0.17), Vector3(0.36, 0.025, 0.03), mat_ml)
+	# Lower back rail at seat join
+	_add_mesh_box(root, Vector3(0, 0.56, -0.17), Vector3(0.34, 0.03, 0.03), mat_md)
+	# Mid rail
+	_add_mesh_box(root, Vector3(0, 0.95, -0.17), Vector3(0.32, 0.022, 0.022), mat_m)
+	# Back splat variants by seed — always open air (no solid green pad)
+	match seed0 % 3:
+		0:
+			# Diamond / lozenge crest panel (classic hall chair)
+			_add_mesh_box(root, Vector3(0, 1.18, -0.165), Vector3(0.16, 0.16, 0.025), mat_ml)
+			_add_mesh_box(root, Vector3(0, 1.18, -0.15), Vector3(0.1, 0.1, 0.02), mat_md)
+			# Thin side splat bars
+			for sx in [-1.0, 1.0]:
+				_add_mesh_box(root, Vector3(sx * 0.1, 1.0, -0.17), Vector3(0.018, 0.55, 0.018), mat_m)
+		1:
+			# Vertical open splat bars (air through)
+			for bx in [-0.08, 0.0, 0.08]:
+				_add_mesh_box(root, Vector3(bx, 1.0, -0.17), Vector3(0.022, 0.7, 0.02), mat_m)
+			# Small oval crest
+			_add_mesh_cyl(root, Vector3(0, 1.28, -0.155), 0.055, 0.04, mat_ml, false)
+			_add_mesh_cyl(root, Vector3(0, 1.28, -0.14), 0.03, 0.02, mat_md, false)
+		_:
+			# Shield / vase splat
+			_add_mesh_box(root, Vector3(0, 1.05, -0.165), Vector3(0.12, 0.55, 0.028), mat_m)
+			_add_mesh_box(root, Vector3(0, 1.25, -0.16), Vector3(0.18, 0.08, 0.025), mat_ml)
+			_add_mesh_box(root, Vector3(0, 0.85, -0.16), Vector3(0.08, 0.12, 0.022), mat_md)
+			for sx in [-1.0, 1.0]:
+				_add_mesh_box(root, Vector3(sx * 0.09, 1.0, -0.17), Vector3(0.016, 0.45, 0.016), mat_m)
+	# Front legs — square taper with block foot (hall chairs often less cabriole)
+	for sx in [-1.0, 1.0]:
+		_add_mesh_box(root, Vector3(sx * 0.15, 0.22, 0.14), Vector3(0.04, 0.4, 0.04), mat_md)
+		_add_mesh_box(root, Vector3(sx * 0.15, 0.3, 0.14), Vector3(0.048, 0.06, 0.048), mat_m)
+		_add_mesh_box(root, Vector3(sx * 0.15, 0.03, 0.14), Vector3(0.05, 0.04, 0.05), mat_m)
+	# Rear legs — continuous with back stiles
+	for sx in [-1.0, 1.0]:
+		_add_mesh_box(root, Vector3(sx * 0.15, 0.22, -0.15), Vector3(0.038, 0.4, 0.038), mat_md)
+		_add_mesh_box(root, Vector3(sx * 0.15, 0.03, -0.15), Vector3(0.046, 0.035, 0.046), mat_m)
+	# H-stretcher
+	_add_mesh_box(root, Vector3(0, 0.12, 0.0), Vector3(0.28, 0.016, 0.016), mat_m)
+	_add_mesh_box(root, Vector3(-0.14, 0.12, 0.0), Vector3(0.016, 0.016, 0.26), mat_m)
+	_add_mesh_box(root, Vector3(0.14, 0.12, 0.0), Vector3(0.016, 0.016, 0.26), mat_m)
+	_add_contact_shadow(root, 0.34, 0.32)
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
