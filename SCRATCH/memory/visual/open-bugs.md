@@ -117,6 +117,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 160)
+
+- **Tea tray hero FOV:** pure-white block china on silver plank. Oval pewter tray, sphere-belly teapot + curved spout, warmer ivory (g≤0.64 so china ≠ linen fabric classifier), cups with tea liquid disc.  
+
 ## Status update 2026-07-29 (loop 156)
 
 - **Tea at four:** redesigned `_make_tea_tray` — silvered rim tray, belly teapot with spout/C-handle/lid knop, saucers+cups, jug, sugar (not white box stack).  
