@@ -90,28 +90,17 @@ const ROOMS := {
 			{"kind": "bookshelf", "pos": [-4.15, 0.0, 1.3], "yaw": 90.0, "width": 1.55, "height": 2.4, "seed": 11},
 			# SE: solid partner desk (was paper-thin writing-desk card edge-on)
 			{"kind": "desk", "pos": [3.35, 0.0, 0.8], "yaw": -90.0},
-			# Loop 135: painted side chair hero (Bell FOV was wood-block mesh)
-			{
-				"kind": "billboard_prop",
-				"pos": [2.35, 0.0, 0.8],
-				"yaw": 90.0,
-				"texture": PROP_DIR + "cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.72,
-				"height": 1.15,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.55, 1.0, 0.55],
-				"mesh_bulk": "chair",
-			},
+			# Loop 156: mesh desk chair (solid splat; no cross_plane scrap at Bell FOV)
+			{"kind": "chair", "pos": [2.35, 0.0, 0.8], "yaw": 90.0, "seed": 3,
+				"fabric": Color(0.2, 0.3, 0.2)},
 			{"kind": "letter_stack", "pos": [3.2, 0.78, 0.55], "yaw": -15.0, "seed": 1},
-			# SW conversation: painted wing hero + cross_planes (loop 142 — no green slab)
+			# SW conversation: painted wing + fuller mesh bulk, no cross_plane ghost (loop 156)
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.9, 0.0, 2.0],
 				"yaw": 40.0,
 				"texture": PROP_DIR + "cutout/hero_armchair.png",
-				"cross_planes": true,
+				"cross_planes": false,
 				"width": 1.15,
 				"height": 1.45,
 				"sink": 0.12,
@@ -120,20 +109,9 @@ const ROOMS := {
 				"mesh_bulk": "wing",
 			},
 			{"kind": "side_table", "pos": [-1.7, 0.0, 2.35], "yaw": -20.0, "seed": 1},
-			# East-center: solid side chair
-			{
-				"kind": "billboard_prop",
-				"pos": [3.2, 0.0, 2.8],
-				"yaw": -140.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.68,
-				"height": 1.1,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.5, 0.95, 0.5],
-				"mesh_bulk": "chair",
-			},
+			# East-center: mesh side chair (loop 156 — solid edge-on)
+			{"kind": "chair", "pos": [3.2, 0.0, 2.8], "yaw": -140.0, "seed": 0,
+				"fabric": Color(0.22, 0.32, 0.22)},
 			# Centre: bare tea table + tray only (loop 83 — no vase stack under tray)
 			{"kind": "side_table", "pos": [0.0, 0.0, 0.35], "yaw": 0.0, "seed": 1, "bare": true},
 			{"kind": "tea_tray", "pos": [0.0, 0.68, 0.35], "yaw": 15.0, "seed": 0},
@@ -160,19 +138,9 @@ const ROOMS := {
 			{"kind": "oil_lamp", "pos": [-2.1, 0.0, 3.55], "height": 1.0},
 			{"kind": "plant", "pos": [2.3, 0.0, 3.6], "scale": 0.65, "seed": 4,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.6, "height": 0.7},
-			{
-				"kind": "billboard_prop",
-				"pos": [1.6, 0.0, 3.4],
-				"yaw": -160.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.66,
-				"height": 1.08,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.48, 0.92, 0.48],
-				"mesh_bulk": "chair",
-			},
+			# Loop 156: mesh approach chair
+			{"kind": "chair", "pos": [1.6, 0.0, 3.4], "yaw": -160.0, "seed": 4,
+				"fabric": Color(0.22, 0.32, 0.22)},
 		],
 		"doors": [
 			{
@@ -646,28 +614,17 @@ const ROOMS := {
 				"texture": "res://assets/rooms/textures/rug_persian.jpg",
 			},
 			{"kind": "desk", "pos": [2.2, 0.0, -2.0], "yaw": -90.0},
-			# Loop 135/155: desk chair only (fewer cross_plane chairs → less edge scrap)
-			{
-				"kind": "billboard_prop",
-				"pos": [1.35, 0.0, -2.0],
-				"yaw": 90.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.7,
-				"height": 1.12,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.52, 0.98, 0.52],
-				"mesh_bulk": "chair",
-			},
+			# Loop 156: mesh desk chair (no cross_plane card scrap at edge-on)
+			{"kind": "chair", "pos": [1.35, 0.0, -2.0], "yaw": 90.0, "seed": 2,
+				"fabric": Color(0.22, 0.32, 0.22)},
 			{"kind": "letter_stack", "pos": [2.1, 0.78, -1.75], "yaw": -20.0, "seed": 2},
-			# Armchair reading nook — wing hero
+			# Armchair reading nook — painted wing + mesh bulk, NO cross_plane (loop 156)
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.0, 0.0, -0.6],
 				"yaw": 55.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_wing_green.png",
-				"cross_planes": true,
+				"cross_planes": false,
 				"width": 1.2,
 				"height": 1.5,
 				"sink": 0.12,
@@ -677,20 +634,9 @@ const ROOMS := {
 			},
 			{"kind": "side_table", "pos": [-1.1, 0.0, -0.2], "yaw": 20.0, "seed": 5, "bare": true},
 			{"kind": "tea_tray", "pos": [-1.1, 0.68, -0.2], "yaw": 15.0, "seed": 1},
-			# One soft chair SE (not mid-floor cluster — loop 155 thin)
-			{
-				"kind": "billboard_prop",
-				"pos": [1.1, 0.0, 1.5],
-				"yaw": -130.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.66,
-				"height": 1.08,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.48, 0.92, 0.48],
-				"mesh_bulk": "chair",
-			},
+			# Loop 156: mesh SE chair (solid splat/legs; no card ghost)
+			{"kind": "chair", "pos": [1.1, 0.0, 1.5], "yaw": -130.0, "seed": 1,
+				"fabric": Color(0.2, 0.3, 0.2)},
 			{"kind": "side_table", "pos": [1.7, 0.0, 1.7], "yaw": -20.0, "seed": 8},
 			{"kind": "letter_stack", "pos": [1.65, 0.68, 1.65], "yaw": 10.0, "seed": 0},
 			{"kind": "ottoman", "pos": [-1.2, 0.0, -1.5], "yaw": 20.0, "seed": 1,

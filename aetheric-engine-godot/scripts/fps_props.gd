@@ -453,59 +453,97 @@ static func _make_letter_stack(prop: Dictionary) -> Node3D:
 
 
 static func _make_tea_tray(prop: Dictionary) -> Node3D:
-	## Tea at four — silvered tray, period china (loop 103: cream ivory only,
-	## never pure white plastic blockware).
+	## Loop 156 — tea at four: silvered oval tray + readable china service.
+	## Teapot belly / spout / C-handle must read at room scale (not white box stack).
 	var root := Node3D.new()
 	root.name = "TeaTray"
 	var seed0: int = int(prop.get("seed", 0))
 	var china: Color
 	var trim: Color
-	var pattern: Color
+	var band: Color
 	match seed0 % 3:
-		0:  # cream + gilt
-			china = Color(0.86, 0.8, 0.68)
-			trim = BRASS.darkened(0.08)
-			pattern = Color(0.62, 0.48, 0.28)
-		1:  # blue willow on ivory
-			china = Color(0.84, 0.82, 0.74)
-			trim = Color(0.22, 0.34, 0.52)
-			pattern = Color(0.28, 0.4, 0.58)
-		_:  # soft rose band
-			china = Color(0.88, 0.8, 0.74)
-			trim = Color(0.5, 0.22, 0.22)
-			pattern = Color(0.58, 0.32, 0.32)
-	# Oval silver tray with rim
-	_add_box(root, Vector3(0, 0.015, 0), Vector3(0.5, 0.016, 0.34), BRASS.darkened(0.22), false, 0.28)
-	_add_box(root, Vector3(0, 0.026, 0), Vector3(0.46, 0.01, 0.3), BRASS.darkened(0.05), false, 0.25)
-	_add_box(root, Vector3(0, 0.032, 0), Vector3(0.42, 0.006, 0.26), Color(0.55, 0.52, 0.46), false, 0.4)
-	# Handles
-	_add_box(root, Vector3(-0.25, 0.038, 0), Vector3(0.04, 0.03, 0.1), BRASS.darkened(0.1), false, 0.28)
-	_add_box(root, Vector3(0.25, 0.038, 0), Vector3(0.04, 0.03, 0.1), BRASS.darkened(0.1), false, 0.28)
-	# Teapot — bulbous body, clear lid knop, spout, handle
-	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.07, 0.11, china, false, 0.6)
-	_add_cylinder(root, Vector3(-0.08, 0.1, 0.02), 0.072, 0.025, pattern, false, 0.5)
-	_add_cylinder(root, Vector3(-0.08, 0.16, 0.02), 0.055, 0.03, china.darkened(0.05), false, 0.58)
-	_add_cylinder(root, Vector3(-0.08, 0.185, 0.02), 0.022, 0.03, trim, false, 0.4)
-	_add_box(root, Vector3(0.02, 0.1, 0.02), Vector3(0.1, 0.022, 0.028), china.darkened(0.08), false, 0.58)
-	_add_box(root, Vector3(-0.16, 0.11, 0.02), Vector3(0.028, 0.07, 0.035), china.darkened(0.1), false, 0.58)
-	_add_cylinder(root, Vector3(-0.08, 0.13, 0.02), 0.073, 0.01, trim, false, 0.4)
-	# Cups + saucers
+		0:  # cream + gilt (drawing-room)
+			china = Color(0.9, 0.86, 0.76)
+			trim = BRASS.darkened(0.05)
+			band = Color(0.58, 0.42, 0.22)
+		1:  # blue willow on ivory (morning)
+			china = Color(0.88, 0.86, 0.8)
+			trim = Color(0.2, 0.32, 0.5)
+			band = Color(0.26, 0.38, 0.55)
+		_:  # soft rose
+			china = Color(0.92, 0.84, 0.78)
+			trim = Color(0.48, 0.2, 0.2)
+			band = Color(0.55, 0.3, 0.3)
+	var silver := Color(0.72, 0.72, 0.74)
+	var silver_d := Color(0.55, 0.55, 0.58)
+	var silver_hi := Color(0.82, 0.82, 0.84)
+	# Raised silver tray — rim lip + handles (not flat brass plank)
+	_add_box(root, Vector3(0, 0.012, 0), Vector3(0.52, 0.012, 0.36), silver_d, false, 0.28)
+	_add_box(root, Vector3(0, 0.022, 0), Vector3(0.48, 0.01, 0.32), silver, false, 0.25)
+	_add_box(root, Vector3(0, 0.03, 0), Vector3(0.44, 0.008, 0.28), silver_hi, false, 0.22)
+	# Raised rim walls
+	_add_box(root, Vector3(0, 0.04, 0.155), Vector3(0.48, 0.02, 0.018), silver, false, 0.28)
+	_add_box(root, Vector3(0, 0.04, -0.155), Vector3(0.48, 0.02, 0.018), silver, false, 0.28)
+	_add_box(root, Vector3(0.23, 0.04, 0), Vector3(0.018, 0.02, 0.3), silver, false, 0.28)
+	_add_box(root, Vector3(-0.23, 0.04, 0), Vector3(0.018, 0.02, 0.3), silver, false, 0.28)
+	# Loop handles
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.27, 0.045, 0), Vector3(0.035, 0.028, 0.09), silver_d, false, 0.28)
+		_add_box(root, Vector3(sx * 0.285, 0.055, 0), Vector3(0.02, 0.02, 0.06), silver_hi, false, 0.25)
+	# ── Teapot (hero) — bulb belly, dome lid, spout, C-handle ──
+	var tx := -0.1
+	var tz := 0.0
+	var base_y := 0.045
+	# Foot ring
+	_add_cylinder(root, Vector3(tx, base_y + 0.012, tz), 0.045, 0.014, china.darkened(0.08), false, 0.55)
+	# Belly (two stacked radii for round silhouette)
+	_add_cylinder(root, Vector3(tx, base_y + 0.055, tz), 0.075, 0.07, china, false, 0.55)
+	_add_cylinder(root, Vector3(tx, base_y + 0.1, tz), 0.068, 0.035, china.darkened(0.03), false, 0.55)
+	# Band decoration
+	_add_cylinder(root, Vector3(tx, base_y + 0.07, tz), 0.078, 0.012, band, false, 0.48)
+	# Shoulder + lid
+	_add_cylinder(root, Vector3(tx, base_y + 0.125, tz), 0.05, 0.02, china.darkened(0.05), false, 0.55)
+	_add_cylinder(root, Vector3(tx, base_y + 0.145, tz), 0.048, 0.025, china, false, 0.52)
+	_add_cylinder(root, Vector3(tx, base_y + 0.165, tz), 0.02, 0.02, trim, false, 0.35)
+	_add_sphere_blob(root, Vector3(tx, base_y + 0.18, tz), 0.014, trim.lightened(0.1))
+	# Spout (angled via stepped boxes toward +X)
+	_add_box(root, Vector3(tx + 0.07, base_y + 0.07, tz), Vector3(0.06, 0.028, 0.028), china.darkened(0.06), false, 0.55)
+	_add_box(root, Vector3(tx + 0.11, base_y + 0.085, tz), Vector3(0.05, 0.022, 0.022), china.darkened(0.08), false, 0.55)
+	_add_cylinder(root, Vector3(tx + 0.135, base_y + 0.095, tz), 0.012, 0.02, china.darkened(0.1), false, 0.55)
+	# C-handle (-X)
+	_add_box(root, Vector3(tx - 0.09, base_y + 0.08, tz), Vector3(0.02, 0.06, 0.03), china.darkened(0.1), false, 0.55)
+	_add_box(root, Vector3(tx - 0.1, base_y + 0.11, tz), Vector3(0.035, 0.018, 0.028), china.darkened(0.08), false, 0.55)
+	_add_box(root, Vector3(tx - 0.1, base_y + 0.05, tz), Vector3(0.03, 0.016, 0.028), china.darkened(0.08), false, 0.55)
+	# ── Two cups on saucers ──
 	for i in 2:
-		var cx := 0.1 + float(i) * 0.1
-		var cz := 0.04 - float(i) * 0.07
-		_add_cylinder(root, Vector3(cx, 0.042, cz), 0.042, 0.01, china.darkened(0.06), false, 0.58)
-		_add_cylinder(root, Vector3(cx, 0.065, cz), 0.028, 0.04, china, false, 0.58)
-		_add_cylinder(root, Vector3(cx, 0.08, cz), 0.03, 0.008, trim, false, 0.4)
-		_add_box(root, Vector3(cx + 0.028, 0.065, cz), Vector3(0.018, 0.028, 0.014), china.darkened(0.08), false, 0.58)
-	# Cream jug
-	_add_cylinder(root, Vector3(0.02, 0.07, -0.08), 0.024, 0.05, china, false, 0.58)
-	_add_cylinder(root, Vector3(0.02, 0.085, -0.08), 0.026, 0.008, pattern, false, 0.48)
-	_add_box(root, Vector3(0.05, 0.08, -0.08), Vector3(0.03, 0.02, 0.02), china.darkened(0.06), false, 0.55)
-	# Sugar bowl + lid
-	_add_cylinder(root, Vector3(-0.02, 0.07, -0.05), 0.032, 0.04, china, false, 0.55)
-	_add_cylinder(root, Vector3(-0.02, 0.095, -0.05), 0.02, 0.02, trim, false, 0.4)
-	# Spoon rest
-	_add_box(root, Vector3(0.14, 0.04, -0.02), Vector3(0.08, 0.008, 0.02), BRASS.darkened(0.1), false, 0.3)
+		var cx := 0.08 + float(i) * 0.12
+		var cz := 0.06 - float(i) * 0.1
+		# Saucer dish (wide thin)
+		_add_cylinder(root, Vector3(cx, base_y + 0.01, cz), 0.048, 0.008, china.darkened(0.05), false, 0.55)
+		_add_cylinder(root, Vector3(cx, base_y + 0.016, cz), 0.038, 0.006, china, false, 0.55)
+		# Cup body (open feel via rim ring lighter)
+		_add_cylinder(root, Vector3(cx, base_y + 0.04, cz), 0.026, 0.04, china, false, 0.55)
+		_add_cylinder(root, Vector3(cx, base_y + 0.06, cz), 0.028, 0.008, band if i == 0 else trim, false, 0.45)
+		_add_cylinder(root, Vector3(cx, base_y + 0.065, cz), 0.03, 0.006, china.lightened(0.05), false, 0.5)
+		# Cup handle
+		_add_box(root, Vector3(cx + 0.032, base_y + 0.04, cz), Vector3(0.016, 0.028, 0.012), china.darkened(0.08), false, 0.55)
+	# ── Cream jug ──
+	var jx := 0.05
+	var jz := -0.1
+	_add_cylinder(root, Vector3(jx, base_y + 0.035, jz), 0.022, 0.05, china, false, 0.55)
+	_add_cylinder(root, Vector3(jx, base_y + 0.06, jz), 0.024, 0.01, band, false, 0.48)
+	_add_box(root, Vector3(jx + 0.028, base_y + 0.05, jz), Vector3(0.028, 0.016, 0.018), china.darkened(0.06), false, 0.55)
+	_add_box(root, Vector3(jx - 0.022, base_y + 0.04, jz), Vector3(0.012, 0.03, 0.014), china.darkened(0.1), false, 0.55)
+	# ── Sugar bowl + lid ──
+	var sx2 := -0.02
+	var sz2 := -0.08
+	_add_cylinder(root, Vector3(sx2, base_y + 0.03, sz2), 0.03, 0.035, china, false, 0.55)
+	_add_cylinder(root, Vector3(sx2, base_y + 0.05, sz2), 0.032, 0.01, band, false, 0.48)
+	_add_cylinder(root, Vector3(sx2, base_y + 0.06, sz2), 0.028, 0.012, china.darkened(0.04), false, 0.55)
+	_add_cylinder(root, Vector3(sx2, base_y + 0.075, sz2), 0.012, 0.016, trim, false, 0.35)
+	# Teaspoons on tray
+	_add_box(root, Vector3(0.16, base_y + 0.012, -0.02), Vector3(0.09, 0.006, 0.012), silver_hi, false, 0.22)
+	_add_box(root, Vector3(0.2, base_y + 0.012, -0.035), Vector3(0.07, 0.005, 0.01), silver, false, 0.22)
 	return root
 
 
@@ -4260,11 +4298,16 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 							0.03, 0.04, MAHOGANY.lightened(0.04), false
 						)
 			else:
-				_add_box(root, Vector3(0, 0.4, -0.36), Vector3(ww * 0.9, 0.1, 0.22), MAHOGANY_DARK, false, 0.45)
-				_add_box(root, Vector3(0, 0.5, -0.34), Vector3(ww * 0.78, 0.1, 0.18), fab, false, 0.9)
-				_add_box(root, Vector3(0, 0.7, -0.44), Vector3(ww * 0.3, 0.22, 0.07), fab.darkened(0.15), false, 0.9)
+				# Loop 156: fuller wing bulk when no cross_planes (side volume without card ghost)
+				_add_box(root, Vector3(0, 0.38, -0.32), Vector3(ww * 0.95, 0.1, 0.28), MAHOGANY_DARK, false, 0.45)
+				_add_box(root, Vector3(0, 0.5, -0.28), Vector3(ww * 0.82, 0.14, 0.26), fab, false, 0.9)
+				_add_box(root, Vector3(0, 0.78, -0.42), Vector3(ww * 0.72, 0.5, 0.14), fab.darkened(0.08), false, 0.9)
+				_add_box(root, Vector3(0, 0.95, -0.38), Vector3(ww * 0.55, 0.18, 0.12), fab.darkened(0.12), false, 0.9)
 				for sx in [-1.0, 1.0]:
-					_add_cylinder(root, Vector3(sx * ww * 0.24, 0.1, -0.28), 0.024, 0.12, MAHOGANY, false)
+					# Wings / arms
+					_add_box(root, Vector3(sx * ww * 0.38, 0.62, -0.28), Vector3(0.1, 0.36, 0.22), fab.darkened(0.05), false, 0.88)
+					_add_cylinder(root, Vector3(sx * ww * 0.28, 0.12, -0.18), 0.026, 0.18, MAHOGANY, false)
+					_add_cylinder(root, Vector3(sx * ww * 0.28, 0.12, -0.38), 0.024, 0.18, MAHOGANY.darkened(0.05), false)
 		"chair":
 			# Loop 153: cross_planes → seat cushion + short stub feet (edge-on volume).
 			# No stretchers / long free legs (those read as gallery rug L-junk).
