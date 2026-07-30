@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 192)
+
+- **Prep flour sack residual (post-190):** upright cylinder still read as cake/tin mid-FOV. Horizontal hessian bag on its side + cinch ear + brand stamp + flour spill.  
+- **Prep lower shelf residual:** anonymous wood cubes. Bread tin + crock + nested copper pan, solid mats.  
+- **Baking kit (kit 1):** solid-mat dough/pie/rolling pin/bowl (no texture washout).  
+
 ## Status update 2026-07-30 (loop 191)
 
 - **Hero aetheric cyan dome residual:** fat teal/cyan hat + cool fill mid-FOV gallery_from_south. Brass gallery ring + compact amber chamber + warm copper aether glow; warm lights only (no cyan).  

@@ -1653,21 +1653,33 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 		for lz in [-0.32, 0.32]:
 			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), Color(0.38, 0.26, 0.14), true, 0.55)
 	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
-	# Lower shelf — boxes/trays first (not mystery copper towers)
-	_add_box(root, Vector3(0, 0.28, 0), Vector3(width * 0.72, 0.03, 0.55), OAK.lightened(0.05), false, 0.6)
-	_add_box(root, Vector3(-width * 0.18, 0.36, 0.05), Vector3(0.28, 0.14, 0.22), OAK.darkened(0.12), false, 0.6)
-	_add_box(root, Vector3(-width * 0.18, 0.44, 0.05), Vector3(0.24, 0.02, 0.18), OAK.darkened(0.05), false, 0.58)
-	_add_box(root, Vector3(width * 0.2, 0.34, -0.05), Vector3(0.26, 0.1, 0.2), Color(0.48, 0.36, 0.22), false, 0.7)
-	_add_cylinder(root, Vector3(width * 0.22, 0.42, 0.12), 0.06, 0.1, CREAM.darkened(0.1), false, 0.85)
+	# Loop 192: lower shelf — bread tin + crock + pan (not anonymous Minecraft cubes)
+	var mat_sh_oak := _solid_matte(Color(0.52, 0.4, 0.24), 0.82)
+	var mat_sh_oak_d := _solid_matte(Color(0.38, 0.26, 0.14), 0.85)
+	var mat_sh_tin := _solid_matte(Color(0.55, 0.5, 0.4), 0.7)
+	var mat_sh_crock := _solid_matte(Color(0.7, 0.6, 0.48), 0.9)
+	var mat_sh_crock_d := _solid_matte(Color(0.55, 0.45, 0.35), 0.9)
+	var mat_sh_cop := _solid_metal(Color(0.65, 0.38, 0.16), 0.35)
+	_add_mesh_box(root, Vector3(0, 0.28, 0), Vector3(width * 0.72, 0.03, 0.55), mat_sh_oak)
+	# Bread tin with lid seam
+	_add_mesh_box(root, Vector3(-width * 0.18, 0.36, 0.05), Vector3(0.26, 0.12, 0.2), mat_sh_tin)
+	_add_mesh_box(root, Vector3(-width * 0.18, 0.43, 0.05), Vector3(0.24, 0.02, 0.18), mat_sh_oak_d)
+	_add_mesh_box(root, Vector3(-width * 0.18, 0.4, 0.05), Vector3(0.02, 0.08, 0.18), mat_sh_oak_d)
+	# Salt crock on shelf
+	_add_mesh_cyl(root, Vector3(width * 0.05, 0.38, 0.1), 0.055, 0.12, mat_sh_crock, false)
+	_add_mesh_cyl(root, Vector3(width * 0.05, 0.45, 0.1), 0.04, 0.025, mat_sh_crock_d, false)
+	# Upside copper pan nest
+	_add_mesh_cyl(root, Vector3(width * 0.22, 0.35, -0.08), 0.09, 0.04, mat_sh_cop, false)
+	_add_mesh_cyl(root, Vector3(width * 0.22, 0.39, -0.08), 0.07, 0.03, mat_sh_cop, false)
 	match kit:
 		0:
-			# Loop 190: soft plump flour sack — ONE rounded hessian body (not crate box /
-			# wedding-cake tiers). Cinch ear + brand stamp only as bag identity.
-			var mat_hess := _solid_matte(Color(0.5, 0.4, 0.26), 0.96)
-			var mat_hess_d := _solid_matte(Color(0.38, 0.3, 0.18), 0.96)
-			var mat_dust := _solid_matte(Color(0.7, 0.62, 0.44), 0.97)
-			var mat_twine := _solid_matte(Color(0.28, 0.2, 0.1), 0.9)
-			var mat_stamp := _solid_matte(Color(0.3, 0.1, 0.06), 0.88)
+			# Loop 192: FLOUR BAG ON ITS SIDE — horizontal hessian cylinder (not upright
+			# cake/tin mid-FOV). Gathered open end + brand stamp + flour spill.
+			var mat_hess := _solid_matte(Color(0.48, 0.38, 0.24), 0.96)
+			var mat_hess_d := _solid_matte(Color(0.36, 0.28, 0.17), 0.96)
+			var mat_dust := _solid_matte(Color(0.72, 0.64, 0.46), 0.97)
+			var mat_twine := _solid_matte(Color(0.26, 0.18, 0.1), 0.9)
+			var mat_stamp := _solid_matte(Color(0.28, 0.1, 0.06), 0.88)
 			var mat_crust := _solid_matte(Color(0.48, 0.32, 0.16), 0.92)
 			var mat_crumb := _solid_matte(Color(0.78, 0.66, 0.46), 0.94)
 			var mat_board := _solid_matte(Color(0.62, 0.5, 0.32), 0.85)
@@ -1678,68 +1690,83 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			var mat_cloth := _solid_matte(Color(0.58, 0.54, 0.44), 0.95)
 			var mat_crock := _solid_matte(Color(0.72, 0.64, 0.52), 0.9)
 			var mat_crock_d := _solid_matte(Color(0.58, 0.5, 0.4), 0.9)
-			var bx := -0.48
-			var bz := 0.0
-			# Plump upright sack: single wide cylinder + same-mat side flatten (no box tiers)
-			_add_mesh_cyl(root, Vector3(bx, 0.96, bz), 0.12, 0.18, mat_hess, false)
-			_add_mesh_cyl(root, Vector3(bx, 0.88, bz), 0.11, 0.04, mat_hess_d, false)
-			# Mild oval stretch (thin cheeks — same color so silhouette stays one mass)
-			_add_mesh_box(root, Vector3(bx, 0.96, bz), Vector3(0.26, 0.14, 0.16), mat_hess)
-			# Gathered neck + soft ear fold + twine (bag, not crate lid)
-			_add_mesh_cyl(root, Vector3(bx, 1.08, bz), 0.055, 0.05, mat_hess_d, false)
-			_add_mesh_box(root, Vector3(bx + 0.04, 1.1, bz - 0.02), Vector3(0.07, 0.035, 0.05), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx, 1.085, bz), Vector3(0.12, 0.012, 0.012), mat_twine)
-			_add_mesh_box(root, Vector3(bx, 1.085, bz), Vector3(0.012, 0.012, 0.1), mat_twine)
-			# Brand stencil (curved face approx) + flour dust smear
-			_add_mesh_box(root, Vector3(bx + 0.11, 0.97, bz), Vector3(0.012, 0.07, 0.08), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx + 0.115, 0.975, bz), Vector3(0.008, 0.045, 0.05), mat_stamp)
-			_add_mesh_box(root, Vector3(bx, 1.05, bz + 0.04), Vector3(0.1, 0.01, 0.06), mat_dust)
+			var bx := -0.5
+			var by := 0.93
+			var bz := 0.02
+			# Body: long horizontal cylinder (axis X) — bag lying on side
+			_add_mesh_cyl_rot(root, Vector3(bx, by, bz), 0.1, 0.32, mat_hess, Vector3(0, 0, PI * 0.5))
+			# Slight top flatten / side plump (same mat — soft fabric mass)
+			_add_mesh_box(root, Vector3(bx, by + 0.02, bz), Vector3(0.28, 0.08, 0.14), mat_hess)
+			# Closed end disc + open gathered end
+			_add_mesh_cyl(root, Vector3(bx - 0.16, by, bz), 0.095, 0.03, mat_hess_d, false)
+			_add_mesh_cyl(root, Vector3(bx + 0.15, by, bz), 0.07, 0.04, mat_hess_d, false)
+			# Twine cinch at open end + soft ear flap
+			_add_mesh_cyl(root, Vector3(bx + 0.14, by, bz), 0.075, 0.015, mat_twine, false)
+			_add_mesh_box(root, Vector3(bx + 0.18, by + 0.03, bz), Vector3(0.06, 0.04, 0.05), mat_hess_d)
+			# Brand stamp on top face
+			_add_mesh_box(root, Vector3(bx - 0.02, by + 0.09, bz), Vector3(0.1, 0.01, 0.07), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx - 0.02, by + 0.095, bz), Vector3(0.07, 0.008, 0.045), mat_stamp)
+			# Flour spill near open mouth
+			_add_mesh_box(root, Vector3(bx + 0.2, 0.875, bz + 0.05), Vector3(0.12, 0.008, 0.1), mat_dust)
+			_add_mesh_cyl(root, Vector3(bx + 0.18, 0.88, bz + 0.02), 0.04, 0.02, mat_dust, false)
 			# Dough board + flour dust
-			_add_mesh_box(root, Vector3(0.12, 0.875, -0.05), Vector3(0.72, 0.03, 0.42), mat_board_d)
-			_add_mesh_box(root, Vector3(0.12, 0.89, -0.05), Vector3(0.7, 0.008, 0.4), mat_board)
-			_add_mesh_box(root, Vector3(0.04, 0.882, 0.0), Vector3(0.48, 0.006, 0.3), mat_dust)
-			# Oval loaf (rotated crust only)
-			_add_mesh_cyl_rot(root, Vector3(0.02, 0.915, -0.05), 0.05, 0.3, mat_crust, Vector3(0, 0, PI * 0.5))
-			_add_mesh_cyl_rot(root, Vector3(0.02, 0.93, -0.05), 0.036, 0.24, mat_crumb, Vector3(0, 0, PI * 0.5))
-			_add_mesh_box(root, Vector3(0.02, 0.955, -0.05), Vector3(0.18, 0.005, 0.008), mat_crust)
+			_add_mesh_box(root, Vector3(0.15, 0.875, -0.05), Vector3(0.7, 0.03, 0.42), mat_board_d)
+			_add_mesh_box(root, Vector3(0.15, 0.89, -0.05), Vector3(0.68, 0.008, 0.4), mat_board)
+			_add_mesh_box(root, Vector3(0.08, 0.882, 0.0), Vector3(0.45, 0.006, 0.28), mat_dust)
+			# Oval loaf
+			_add_mesh_cyl_rot(root, Vector3(0.05, 0.915, -0.05), 0.05, 0.28, mat_crust, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl_rot(root, Vector3(0.05, 0.93, -0.05), 0.036, 0.22, mat_crumb, Vector3(0, 0, PI * 0.5))
+			_add_mesh_box(root, Vector3(0.05, 0.955, -0.05), Vector3(0.16, 0.005, 0.008), mat_crust)
 			# Scoop + knife
-			_add_mesh_box(root, Vector3(-0.18, 0.9, 0.18), Vector3(0.1, 0.025, 0.06), mat_board)
-			_add_mesh_cyl_rot(root, Vector3(-0.12, 0.9, 0.18), 0.012, 0.1, mat_board_d, Vector3(0, 0, PI * 0.5))
-			_add_mesh_box(root, Vector3(0.36, 0.895, 0.12), Vector3(0.28, 0.012, 0.04), mat_board_d)
-			_add_mesh_box(root, Vector3(0.44, 0.905, 0.12), Vector3(0.2, 0.008, 0.018), mat_iron_b)
-			_add_mesh_cyl_rot(root, Vector3(0.3, 0.905, 0.12), 0.012, 0.08, mat_board_d, Vector3(0, 0, PI * 0.5))
-			# Shallow copper basin (solid metal) + towel
+			_add_mesh_box(root, Vector3(-0.15, 0.9, 0.18), Vector3(0.1, 0.025, 0.06), mat_board)
+			_add_mesh_cyl_rot(root, Vector3(-0.09, 0.9, 0.18), 0.012, 0.1, mat_board_d, Vector3(0, 0, PI * 0.5))
+			_add_mesh_box(root, Vector3(0.38, 0.895, 0.12), Vector3(0.28, 0.012, 0.04), mat_board_d)
+			_add_mesh_box(root, Vector3(0.46, 0.905, 0.12), Vector3(0.2, 0.008, 0.018), mat_iron_b)
+			_add_mesh_cyl_rot(root, Vector3(0.32, 0.905, 0.12), 0.012, 0.08, mat_board_d, Vector3(0, 0, PI * 0.5))
+			# Shallow copper basin + towel
 			_add_mesh_cyl(root, Vector3(0.55, 0.9, -0.15), 0.11, 0.05, mat_cop, false)
 			_add_mesh_cyl(root, Vector3(0.55, 0.935, -0.15), 0.12, 0.018, mat_cop_l, false)
 			_add_mesh_box(root, Vector3(0.52, 0.875, 0.14), Vector3(0.14, 0.012, 0.1), mat_cloth)
-			# Apples + salt crock (clear of sack)
-			_add_sphere_blob(root, Vector3(0.22, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
-			_add_sphere_blob(root, Vector3(0.3, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
-			_add_mesh_cyl(root, Vector3(0.35, 0.91, -0.22), 0.038, 0.07, mat_crock, false)
-			_add_mesh_cyl(root, Vector3(0.35, 0.955, -0.22), 0.03, 0.022, mat_crock_d, false)
+			# Apples + salt crock
+			_add_sphere_blob(root, Vector3(0.25, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
+			_add_sphere_blob(root, Vector3(0.32, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
+			_add_mesh_cyl(root, Vector3(0.38, 0.91, -0.22), 0.038, 0.07, mat_crock, false)
+			_add_mesh_cyl(root, Vector3(0.38, 0.955, -0.22), 0.03, 0.022, mat_crock_d, false)
 		1:
-			# Baking — pie board, pie dish, low mixing bowl, horizontal rolling pin, cutters
-			_add_box(root, Vector3(-0.4, 0.875, 0.0), Vector3(0.55, 0.03, 0.38), OAK.lightened(0.18), false, 0.65)
-			# Dough slab (soft, low — not a tall brick)
-			_add_box(root, Vector3(-0.4, 0.895, 0.0), Vector3(0.28, 0.03, 0.14), CREAM.darkened(0.08), false, 0.88)
-			_add_sphere_blob(root, Vector3(-0.4, 0.9, 0.0), 0.08, CREAM.darkened(0.1))
-			# Pie dish (shallow glazed) + crust rim
-			_add_cylinder(root, Vector3(0.1, 0.89, 0.1), 0.12, 0.04, Color(0.55, 0.22, 0.18), false, 0.7)
-			_add_cylinder(root, Vector3(0.1, 0.92, 0.1), 0.11, 0.025, Color(0.62, 0.28, 0.2), false, 0.65)
-			_add_cylinder(root, Vector3(0.1, 0.935, 0.1), 0.08, 0.02, Color(0.75, 0.55, 0.35), false, 0.8)
-			# Rolling pin — true horizontal (axis along X) + handles
-			_add_cylinder_rotated(root, Vector3(0.35, 0.9, -0.15), 0.028, 0.42, OAK.lightened(0.1), Vector3(0, 0, PI * 0.5), 0.6)
-			_add_cylinder_rotated(root, Vector3(0.12, 0.9, -0.15), 0.018, 0.06, MAHOGANY, Vector3(0, 0, PI * 0.5), 0.55)
-			_add_cylinder_rotated(root, Vector3(0.58, 0.9, -0.15), 0.018, 0.06, MAHOGANY, Vector3(0, 0, PI * 0.5), 0.55)
-			# Wide mixing bowl (low) + butter pat
-			_add_cylinder(root, Vector3(0.5, 0.92, 0.15), 0.13, 0.08, CLAY.lightened(0.05), false, 0.8)
-			_add_cylinder(root, Vector3(0.5, 0.97, 0.15), 0.14, 0.02, CLAY, false, 0.75)
-			_add_box(root, Vector3(-0.05, 0.875, 0.25), Vector3(0.14, 0.03, 0.1), CREAM.darkened(0.1), false, 0.85)
-			_add_sphere_blob(root, Vector3(-0.05, 0.895, 0.25), 0.035, CREAM.lightened(0.05))
-			# Cookie cutters as thin rings
-			_add_cylinder(root, Vector3(0.25, 0.88, 0.22), 0.04, 0.012, IRON.lightened(0.15), false, 0.4)
-			_add_cylinder(root, Vector3(0.35, 0.88, 0.25), 0.032, 0.01, IRON.lightened(0.1), false, 0.4)
-			_add_box(root, Vector3(-0.55, 0.875, 0.2), Vector3(0.16, 0.012, 0.12), Color(0.7, 0.72, 0.68), false, 0.8)
+			# Loop 192: baking kit — solid mats (no texture washout on dough/pie)
+			var mat_b_board := _solid_matte(Color(0.64, 0.52, 0.34), 0.85)
+			var mat_b_board_d := _solid_matte(Color(0.5, 0.38, 0.22), 0.88)
+			var mat_dough := _solid_matte(Color(0.82, 0.74, 0.58), 0.95)
+			var mat_pie := _solid_matte(Color(0.55, 0.22, 0.18), 0.85)
+			var mat_pie_l := _solid_matte(Color(0.62, 0.28, 0.2), 0.85)
+			var mat_crust_b := _solid_matte(Color(0.75, 0.55, 0.35), 0.9)
+			var mat_pin := _solid_matte(Color(0.58, 0.44, 0.28), 0.8)
+			var mat_pin_h := _solid_matte(Color(0.32, 0.18, 0.1), 0.75)
+			var mat_bowl := _solid_matte(Color(0.72, 0.48, 0.3), 0.88)
+			var mat_bowl_r := _solid_matte(Color(0.62, 0.4, 0.24), 0.88)
+			var mat_butter := _solid_matte(Color(0.88, 0.82, 0.62), 0.94)
+			var mat_cut := _solid_metal(Color(0.48, 0.48, 0.5), 0.4)
+			var mat_cloth_b := _solid_matte(Color(0.7, 0.72, 0.68), 0.92)
+			_add_mesh_box(root, Vector3(-0.4, 0.875, 0.0), Vector3(0.55, 0.03, 0.38), mat_b_board)
+			# Dough slab (soft, low)
+			_add_mesh_box(root, Vector3(-0.4, 0.895, 0.0), Vector3(0.28, 0.03, 0.14), mat_dough)
+			_add_sphere_blob(root, Vector3(-0.4, 0.9, 0.0), 0.08, Color(0.8, 0.72, 0.55))
+			# Pie dish + crust
+			_add_mesh_cyl(root, Vector3(0.1, 0.89, 0.1), 0.12, 0.04, mat_pie, false)
+			_add_mesh_cyl(root, Vector3(0.1, 0.92, 0.1), 0.11, 0.025, mat_pie_l, false)
+			_add_mesh_cyl(root, Vector3(0.1, 0.935, 0.1), 0.08, 0.02, mat_crust_b, false)
+			# Rolling pin
+			_add_mesh_cyl_rot(root, Vector3(0.35, 0.9, -0.15), 0.028, 0.42, mat_pin, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl_rot(root, Vector3(0.12, 0.9, -0.15), 0.018, 0.06, mat_pin_h, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl_rot(root, Vector3(0.58, 0.9, -0.15), 0.018, 0.06, mat_pin_h, Vector3(0, 0, PI * 0.5))
+			# Mixing bowl + butter
+			_add_mesh_cyl(root, Vector3(0.5, 0.92, 0.15), 0.13, 0.08, mat_bowl, false)
+			_add_mesh_cyl(root, Vector3(0.5, 0.97, 0.15), 0.14, 0.02, mat_bowl_r, false)
+			_add_mesh_box(root, Vector3(-0.05, 0.875, 0.25), Vector3(0.14, 0.03, 0.1), mat_butter)
+			_add_sphere_blob(root, Vector3(-0.05, 0.895, 0.25), 0.035, Color(0.9, 0.85, 0.65))
+			_add_mesh_cyl(root, Vector3(0.25, 0.88, 0.22), 0.04, 0.012, mat_cut, false)
+			_add_mesh_cyl(root, Vector3(0.35, 0.88, 0.25), 0.032, 0.01, mat_cut, false)
+			_add_mesh_box(root, Vector3(-0.55, 0.875, 0.2), Vector3(0.16, 0.012, 0.12), mat_cloth_b)
 		2:
 			# Loop 159: market veg — oval wicker tray (not wooden crate), roots, chop block
 			var wick := Color(0.52, 0.38, 0.2)

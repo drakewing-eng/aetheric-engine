@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 191  
-**HEAD:** `f60cbfa` visual loop 191  
+**Updated:** 2026-07-30 ~overnight loop 192  
+**HEAD:** `pending` visual loop 192  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,39 +10,37 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–191** umbrella stand |
-| 5 | Geometric / surface detail | **ADVANCED 72–191** brass gallery |
+| 4 | Unique Victorian objects | **ADVANCED 71–192** side flour bag |
+| 5 | Geometric / surface detail | **ADVANCED 72–192** prep shelf |
 | 6 | Victorian wall art | **ADVANCED 69+96+97+133** kitchen |
 | 7 | Plant diversity / side volume | **ADVANCED 74–169** min size |
 | 8 | Side-view mesh furniture | **DONE 70–165** wing envelope |
 | 9 | Door transition safety | **ADVANCED 76–167** UX |
 | 10 | Wallpaper contrast | **ADVANCED 72–142** morning stripes |
-| 11 | Hall / prep still-life | **ADVANCED 73–190** plump bag |
+| 11 | Hall / prep still-life | **ADVANCED 73–192** side bag |
 | 12–23 | Conservatory densify | **ADVANCED 116–183** urn |
 | 24–113 | Materials…park bench | **DONE 89–178** |
 | 114–122 | Sink…sconce | **DONE 179–187** |
-| 123 | Iron pot rail + copper pans | **DONE 188** |
-| 124 | Flour sack + wall plate rail | **DONE 189** |
-| 125 | Plump bag + hall tree + machine tops | **DONE 190** |
-| 126 | Hero aetheric amber terminal + umbrella stand | **DONE 191** |
+| 123–126 | Pot rail…aetheric terminal | **DONE 188–191** |
+| 127 | Side flour bag + prep shelf + baking kit | **DONE 192** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 187 | Victorian wall sconce |
 | 188 | Pot rack: twin iron rails + copper pans |
 | 189 | Flour sack rectangular + oak plate rail |
 | 190 | Plump flour bag + hall tree + secondary amber terminals |
-| 191 | **Hero aetheric brass gallery + amber chamber** (not cyan hat) + **umbrella stand** ceramic/oak + crook handles |
+| 191 | Hero aetheric brass gallery + amber chamber + umbrella stand |
+| 192 | **Flour bag on its side** (horizontal hessian, not upright cake/tin) + prep lower shelf bread tin/crock/pan + baking kit solid mats |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation (suite PASS; visual cues 167)  
 - Optional: user-driven residual notes after playtest  
-- Optional: prep kit 1–3 polish; kitchen flour bag still somewhat cylindrical  
+- Optional: prep kits 2–3 polish; scullery kit solid mats  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_191/`  
+- Shots: `auto_loop_67/` … `auto_loop_192/`  
