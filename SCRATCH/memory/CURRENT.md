@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
 **Updated:** 2026-07-29 ~overnight loop 158  
-**HEAD:** `dfc2710` visual loop 158  
+**HEAD:** `b495836` CURRENT pin (code `dfc2710` loop 158)  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
