@@ -331,8 +331,8 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Loop 158: Victorian wing — continuous shell, rounded crown, diamond tufts.
-	## Avoid ziggurat shelves and fridge slabs; side must read as one upholstered mass.
+	## Loop 164: Victorian wing — continuous side shell (no stepped wing boxes).
+	## Side FOV must read as one upholstered ear + arm, not a green stair stack.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -344,28 +344,34 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	# Slim mahogany seat rail
 	_add_box(root, Vector3(0, 0.22, 0.02), Vector3(0.76, 0.055, 0.68), MAHOGANY_DARK, true, 0.42)
 	_add_box(root, Vector3(0, 0.26, 0.02), Vector3(0.8, 0.022, 0.7), MAHOGANY, false, 0.45)
-	# Seat + horizontal front bolster
+	# Seat + front bolster
 	_add_box(root, Vector3(0, 0.4, 0.06), Vector3(0.68, 0.15, 0.54), fabric, true, 0.9)
 	_add_box(root, Vector3(0, 0.49, 0.08), Vector3(0.6, 0.045, 0.46), fabric_d, false, 0.92)
 	_add_cylinder_rotated(root, Vector3(0, 0.43, 0.32), 0.065, 0.64, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
 	for bx in [-0.14, 0.0, 0.14]:
 		for bz in [-0.05, 0.1]:
 			_add_cylinder(root, Vector3(bx, 0.52, bz), 0.011, 0.01, fabric_dd, false, 0.95)
-	# Continuous back shell (one mass + soft face) — no multi-shelf crown
+	# Continuous back shell
 	_add_box(root, Vector3(0, 0.92, -0.2), Vector3(0.56, 0.9, 0.2), fabric, true, 0.9)
 	_add_box(root, Vector3(0, 0.94, -0.1), Vector3(0.46, 0.8, 0.09), fabric_d, false, 0.9)
 	_add_box(root, Vector3(0, 0.98, -0.04), Vector3(0.38, 0.6, 0.05), fabric_l, false, 0.92)
-	# Rounded crown: horizontal roll + modest cap (not ziggurat terraces)
+	# Rounded crown roll
 	_add_cylinder_rotated(root, Vector3(0, 1.36, -0.12), 0.09, 0.52, fabric, Vector3(0, 0, PI * 0.5), 0.88)
 	_add_cylinder_rotated(root, Vector3(0, 1.4, -0.16), 0.06, 0.36, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
 	_add_box(root, Vector3(0, 1.42, -0.22), Vector3(0.28, 0.04, 0.08), MAHOGANY, false, 0.45)
-	# Wings as single forward ear each + rounded leading cylinder (no stair steps)
+	# Wings: ONE continuous side mass + leading roll (no upper/lower stair boxes)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.33, 0.9, 0.02), Vector3(0.16, 0.78, 0.42), fabric, true, 0.88)
-		_add_box(root, Vector3(sx * 0.3, 1.05, -0.08), Vector3(0.12, 0.45, 0.22), fabric_d, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.33, 0.92, 0.2), 0.08, 0.7, fabric, false, 0.88)
-		_add_box(root, Vector3(sx * 0.41, 0.92, 0.0), Vector3(0.025, 0.68, 0.34), fabric_dd, false, 0.9)
-		_add_box(root, Vector3(sx * 0.22, 0.95, -0.14), Vector3(0.1, 0.6, 0.1), fabric, false, 0.9)
+		# Main wing ear — single tall slab from arm to crown
+		_add_box(root, Vector3(sx * 0.34, 0.95, 0.02), Vector3(0.18, 0.88, 0.44), fabric, true, 0.88)
+		# Soft inner face (slight inset)
+		_add_box(root, Vector3(sx * 0.28, 0.98, -0.02), Vector3(0.08, 0.78, 0.32), fabric_d, false, 0.9)
+		# Rounded leading edge (full wing height)
+		_add_cylinder(root, Vector3(sx * 0.34, 0.95, 0.2), 0.09, 0.82, fabric, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.34, 1.15, 0.12), 0.07, 0.4, fabric_d, false, 0.88)
+		# Outer thin bevel only
+		_add_box(root, Vector3(sx * 0.43, 0.95, 0.0), Vector3(0.022, 0.78, 0.36), fabric_dd, false, 0.9)
+		# Fillet into back
+		_add_box(root, Vector3(sx * 0.22, 0.98, -0.14), Vector3(0.1, 0.7, 0.1), fabric, false, 0.9)
 	# Diamond button tufts
 	for row in 4:
 		var by := 0.7 + float(row) * 0.16
@@ -373,7 +379,7 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 		var cols: Array = [-0.09, 0.09] if odd else [-0.13, 0.0, 0.13]
 		for bx_v in cols:
 			_add_cylinder(root, Vector3(float(bx_v), by, -0.01), 0.011, 0.01, fabric_dd, false, 0.95)
-	# Rolled arms continuous under wings — scroll nose is a short fabric roll, not a billiard ball
+	# Rolled arms under wings
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.33, 0.52, 0.08), Vector3(0.14, 0.11, 0.4), fabric, true, 0.88)
 		_add_cylinder_rotated(root, Vector3(sx * 0.33, 0.56, 0.08), 0.05, 0.38, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
@@ -405,8 +411,8 @@ static func _make_ottoman(prop: Dictionary) -> Node3D:
 	var fabric_l := fabric.lightened(0.05)
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
-	var w: float = float(prop.get("width", 0.78 if style != 2 else 1.12))
-	var d: float = float(prop.get("depth", 0.56 if style != 1 else 0.78))
+	var w: float = float(prop.get("width", 0.78 if style != 2 else 0.95))
+	var d: float = float(prop.get("depth", 0.56 if style != 1 else 0.52))
 	if style == 1:
 		# Round drum — stepped dome + button ring, turned feet (morning)
 		var r: float = w * 0.4

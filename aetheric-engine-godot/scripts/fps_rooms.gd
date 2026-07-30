@@ -576,9 +576,9 @@ const ROOMS := {
 			{"kind": "letter_stack", "pos": [-1.8, 0.68, 2.7], "yaw": 12.0, "seed": 6},
 			{"kind": "plant", "pos": [2.0, 0.0, 2.9], "scale": 0.55, "seed": 5,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
-			# Loop 155: clear centre walk — one low ottoman only (no mid oil-lamp forest)
-			# Loop 161: deep sage hits green-velvet gate (brown taupe was timber chest)
-			{"kind": "ottoman", "pos": [0.15, 0.0, 0.7], "yaw": -30.0, "seed": 2,
+			# Loop 164: centre footstool is square (seed 0), not long fringe mattress
+			{"kind": "ottoman", "pos": [0.35, 0.0, 0.85], "yaw": -25.0, "seed": 0,
+				"width": 0.7, "depth": 0.5,
 				"fabric": Color(0.22, 0.32, 0.2)},
 			{"kind": "plant", "pos": [0.4, 0.0, -0.2], "scale": 0.45, "seed": 6,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.42, "height": 0.5},

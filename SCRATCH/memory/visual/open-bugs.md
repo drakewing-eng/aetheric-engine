@@ -121,6 +121,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Prep flour sack residual:** kit 0 used untextured `_add_sphere_blob` → beige snowman on doorway FOV. Cloth bag via linen cylinders + top folds + twine neck; oval loaf is cylinders only (no foliage end-blobs).  
 
+## Status update 2026-07-29 (loop 164)
+
+- **Wing side steps:** upper/lower wing boxes read as green stairs. Continuous tall ear + leading cylinder only.  
+- **Morning centre mattress:** seed-2 long fringe bench dominated rug FOV. Replaced with square seed-0 footstool (width 0.7); style-2 defaults slimmed.  
+
 ## Status update 2026-07-29 (loop 162)
 
 - **Sofa mesh residual:** loop 161 mesh used foliage `_add_sphere_blob` for cushions → pale lime balloons. Rewrote continuous buttoned seat + dense diamond back, velvet bolsters only, mahogany arm scrolls + crest. Ottoman morning fabrics re-gated (oxblood/sage hit velvet, not wood).  
