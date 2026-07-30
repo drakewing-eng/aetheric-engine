@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 231)
+
+- **Conservatory floor Minecraft residual:** large pale square tiles mid-FOV under glass (conservatory_spawn/corner, dens 0.38). Regenerated 14-row irregular flag plate (mixed widths, warm grit mortar, muted moss flecks); floor_uv_scale 0.38→**0.72**. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 230)
 
 - **Iron path slab residual:** dark flat Minecraft strip mid-FOV (gallery_spawn / workshop_spawn). Rewrote iron `floor_path` — denser staggered diamond-tread checker plates, raised bevel rims, cross-hatch ribs + lozenge nubs, recessed bolts, angle-iron curbs with brackets, warmer worn iron greys + rust/copper scuffs. Art + door suite PASS.  

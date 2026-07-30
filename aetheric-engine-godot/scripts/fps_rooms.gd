@@ -757,8 +757,8 @@ const ROOMS := {
 		"wainscot": TEX + "wainscot_drawing.jpg",
 		"floor_texture": TEX + "floor_conservatory.jpg",
 		"floor_color": Color(0.36, 0.42, 0.32),
-		# Loop 110: denser flagstones so grit/mortar survive bright glass light
-		"floor_uv_scale": 0.38,
+		# Loop 110/231: denser irregular flags (0.38 left large Minecraft tiles mid-FOV under glass)
+		"floor_uv_scale": 0.72,
 		"ceiling_color": Color(0.68, 0.78, 0.72),
 		"light_energy": 1.15,
 		"light_color": Color(0.85, 0.92, 0.95),
