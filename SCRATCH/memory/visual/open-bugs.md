@@ -139,6 +139,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Conservatory table cubes:** side_table seed 3 dress-1 book stack = fat colored Minecraft books. Conservatory uses seed 6 (botanical vase). Global table books via `_add_table_folio` / `_add_table_folio_stack` (thin leather + gilt edge).  
 
+## Status update 2026-07-29 (loop 167)
+
+- **Door closet residual (visual):** closed leaf still read as cupboard. Double leaves on wide doors; under-leaf emission leak; overdoor cornice; brass destination plaque + Label3D on leaf; HUD `[E] Enter · <room>`. Teleport graph tests still PASS.  
+
 ## Status update 2026-07-29 (loop 162)
 
 - **Sofa mesh residual:** loop 161 mesh used foliage `_add_sphere_blob` for cushions → pale lime balloons. Rewrote continuous buttoned seat + dense diamond back, velvet bolsters only, mahogany arm scrolls + crest. Ottoman morning fabrics re-gated (oxblood/sage hit velvet, not wood).  
