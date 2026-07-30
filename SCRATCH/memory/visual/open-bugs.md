@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 210)
+
+- **Prep kit 0 residual:** flour sack/log + brick loaf + red nub apples mid-FOV kitchen doorway. Rewrote plump multi-mass hessian sack, cottage loaf (base+top+scores), tiered apples with stems/leaf, rolling pin, thicker board, copper basin with dust fill.  
+- **Plant side residual:** paper-thin card edge extreme FOV. Denser fronds (more stems/blades), mesh clay pot ring under card, compass side pads. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 209)
 
 - **Kitchen wall residual:** cream metro wainscot + check paper UV dens 0.38 left ~30cm Minecraft blocks mid-FOV. Dens → 0.72; regenerated `wainscot_kitchen` (thinner warm grout, more courses) + finer cream check paper.  
