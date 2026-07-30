@@ -4446,7 +4446,25 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		# Lower metallic: without env probes high metal reads as pure black
 		metallic = 0.42
 		mat.roughness = minf(roughness, 0.58)
-	# Mahogany / wood browns / oak — dark red-browns are wood, not velvet.
+	# Loop 157: fabrics BEFORE wood — VELVET_RED (0.55,0.12,0.16) was matching
+	# mahogany wood path (r>g>b brown gate) and read as solid timber wing.
+	# Red velvet / oxblood (true fabric reds; MAHOGANY 0.30 stays below r threshold)
+	elif color.r > 0.32 and color.g < 0.24 and color.b < 0.24 and color.r > color.g + 0.18:
+		tex_path = TEX_VELVET_RED
+	# Green velvet — sage + deep (NOT bright plant leaf greens)
+	elif (
+		color.g > color.r + 0.01
+		and color.g > color.b * 0.85
+		and color.g > 0.18
+		and color.g < 0.46
+		and absf(color.r - color.b) < 0.14
+		and color.r < 0.4
+	):
+		if color.g < 0.3:
+			tex_path = TEX_VELVET_GREEN_DEEP
+		else:
+			tex_path = TEX_VELVET_GREEN
+	# Mahogany / wood browns / oak — after fabric so wing cloth ≠ timber
 	# Exclude terracotta (caught above) and stone greys.
 	elif (
 		color.r > 0.12 and color.r >= color.g * 0.85 and color.r > color.b
@@ -4463,21 +4481,6 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 	):
 		tex_path = TEX_WOOD_SCRUBBED if color.v > 0.55 else TEX_WOOD_PINE
 		wood_tint = 0.42
-	# Red velvet (true fabric reds — high r, low g relative, not brown wood)
-	elif color.r > 0.45 and color.g < 0.22 and color.b < 0.22 and color.r > color.g + 0.25:
-		tex_path = TEX_VELVET_RED
-	# Green velvet (muted furniture fabric only — NOT bright plant leaf greens)
-	elif (
-		color.g > color.r + 0.02
-		and color.g > color.b * 0.85
-		and color.g > 0.15
-		and color.g < 0.38
-		and absf(color.r - color.b) < 0.12
-	):
-		if color.g < 0.28:
-			tex_path = TEX_VELVET_GREEN_DEEP
-		else:
-			tex_path = TEX_VELVET_GREEN
 	# Linen / cream fabric
 	elif color.r > 0.7 and color.g > 0.65 and color.b > 0.5 and color.r - color.b < 0.25:
 		tex_path = TEX_LINEN

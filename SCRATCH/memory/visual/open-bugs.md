@@ -111,6 +111,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Tea at four:** redesigned `_make_tea_tray` — silvered rim tray, belly teapot with spout/C-handle/lid knop, saucers+cups, jug, sugar (not white box stack).  
 - **Chair edge scrap:** drawing desk/side/approach + morning desk/SE → solid mesh chairs. Wings drop cross_planes; fuller mesh bulk for side volume without double-card ghost.  
 
+## Status update 2026-07-29 (loop 157)
+
+- **Hall cutout chairs:** all entrance_hall side chairs → mesh (no cross_plane scrap). Gallery desk chair mesh. Kitchen formal cutout → stool.  
+- **Wings solid:** drawing red + morning sage `armchair` mesh (no painted card bulk mismatch).  
+- **Material bug:** VELVET_RED matched wood path first → timber wing. Fabrics now classify before wood browns.  
+
 ## Status update 2026-07-29 (loop 154)
 
 - **Oil lamp residual mass:** freestanding Argands were still reading as fat metal barrels (esp. workshop/gallery mid-FOV). Root cause: opaque amber glass Color matched brass in `_mat_for` → metallic brass texture on chimney. Fix: pencil stem + thimble font + tall chimney; glass/emission use alpha transparency (never brass path). Mini Argands on furniture dress kits slimmed to match.  
