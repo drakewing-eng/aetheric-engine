@@ -522,13 +522,16 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 static func _make_ottoman(prop: Dictionary) -> Node3D:
 	## Loop 199: soft tufted footstool — solid-mat velvet + mahogany (no washout mid-FOV).
 	## seed: 0 square chesterfield · 1 round drum · 2 long fringe bench.
+	## Loop 236: drum residual = red wedding-cake barrel mid-FOV (morning_room_center).
+	## Continuous low upholstery mass — not stacked pale rings / multi-tier cylinders.
 	var root := Node3D.new()
 	root.name = "Ottoman"
 	var fabric: Color = prop.get("fabric", VELVET_GREEN.darkened(0.08))
 	var mat_fab := _solid_matte(fabric, 0.92)
-	var mat_fab_d := _solid_matte(fabric.darkened(0.12), 0.94)
-	var mat_fab_dd := _solid_matte(fabric.darkened(0.24), 0.94)
-	var mat_fab_l := _solid_matte(fabric.lightened(0.05), 0.9)
+	var mat_fab_d := _solid_matte(fabric.darkened(0.1), 0.94)
+	var mat_fab_dd := _solid_matte(fabric.darkened(0.2), 0.94)
+	# Soft highlight only (never lightened white top)
+	var mat_fab_h := _solid_matte(fabric.darkened(0.02), 0.9)
 	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
 	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
@@ -537,26 +540,30 @@ static func _make_ottoman(prop: Dictionary) -> Node3D:
 	var w: float = float(prop.get("width", 0.78 if style != 2 else 0.95))
 	var d: float = float(prop.get("depth", 0.56 if style != 1 else 0.52))
 	if style == 1:
-		# Round drum — stepped dome + button ring, turned feet (morning)
-		var r: float = w * 0.4
-		_add_mesh_cyl(root, Vector3(0, 0.08, 0), r * 0.92, 0.08, mat_md, true)
-		_add_mesh_cyl(root, Vector3(0, 0.14, 0), r * 0.98, 0.05, mat_m, false)
-		_add_mesh_cyl(root, Vector3(0, 0.28, 0), r, 0.22, mat_fab, true)
-		_add_mesh_cyl(root, Vector3(0, 0.4, 0), r * 0.9, 0.1, mat_fab_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.46, 0), r * 0.72, 0.06, mat_fab_l, false)
-		_add_mesh_cyl(root, Vector3(0, 0.5, 0), r * 0.45, 0.04, mat_fab_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.18, 0), r * 1.02, 0.04, mat_fab_dd, false)
-		for i in 8:
-			var ang := float(i) * TAU / 8.0
-			_add_mesh_cyl(root, Vector3(cos(ang) * r * 0.42, 0.48, sin(ang) * r * 0.42), 0.02, 0.018, mat_fab_dd, false)
-		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.022, 0.02, mat_fab_dd, false)
-		_add_mesh_cyl(root, Vector3(0, 0.34, 0), r * 1.04, 0.06, mat_fab_l, false)
+		# Round drum footstool — LOW continuous body (not barrel wedding cake)
+		var r: float = w * 0.38
+		# Slim mahogany plinth only (not multi wood tiers)
+		_add_mesh_cyl(root, Vector3(0, 0.06, 0), r * 0.95, 0.06, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.1, 0), r * 0.98, 0.03, mat_m, false)
+		# ONE continuous velvet body (tall-ish single cylinder)
+		_add_mesh_cyl(root, Vector3(0, 0.26, 0), r, 0.28, mat_fab, true)
+		# Soft dome crown — two same-family steps only (not pale tiers)
+		_add_mesh_cyl(root, Vector3(0, 0.42, 0), r * 0.88, 0.08, mat_fab_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.47, 0), r * 0.62, 0.05, mat_fab_h, false)
+		# Mid seam band (subtle darker, not light ring)
+		_add_mesh_cyl(root, Vector3(0, 0.3, 0), r * 1.02, 0.035, mat_fab_dd, false)
+		# Button ring on top (dark only)
+		for i in 6:
+			var ang := float(i) * TAU / 6.0
+			_add_mesh_cyl(root, Vector3(cos(ang) * r * 0.35, 0.5, sin(ang) * r * 0.35), 0.016, 0.012, mat_fab_dd, false)
+		_add_mesh_cyl(root, Vector3(0, 0.51, 0), 0.018, 0.014, mat_fab_dd, false)
+		# Four bun feet
 		for i in 4:
 			var ang2 := float(i) * TAU / 4.0 + 0.35
-			var fx := cos(ang2) * r * 0.62
-			var fz := sin(ang2) * r * 0.62
-			_add_mesh_cyl(root, Vector3(fx, 0.05, fz), 0.032, 0.1, mat_m, true)
-			_add_mesh_cyl(root, Vector3(fx, 0.01, fz), 0.042, 0.025, mat_md, false)
+			var fx := cos(ang2) * r * 0.58
+			var fz := sin(ang2) * r * 0.58
+			_add_mesh_cyl(root, Vector3(fx, 0.04, fz), 0.028, 0.08, mat_m, true)
+			_add_mesh_cyl(root, Vector3(fx, 0.008, fz), 0.036, 0.02, mat_md, false)
 	elif style == 2:
 		# Long fringe bench — rolled ends, diamond tufts, mahogany rail
 		_add_mesh_box(root, Vector3(0, 0.12, 0), Vector3(w * 0.96, 0.08, d * 0.9), mat_md)
@@ -565,9 +572,9 @@ static func _make_ottoman(prop: Dictionary) -> Node3D:
 		_add_mesh_box(root, Vector3(0, 0.42, 0), Vector3(w * 0.86, 0.06, d * 0.78), mat_fab_d)
 		for i in 4:
 			var bx := (float(i) / 3.0 - 0.5) * w * 0.68
-			_add_mesh_cyl(root, Vector3(bx, 0.46, 0), d * 0.28, 0.08, mat_fab_l, false)
-		_add_mesh_cyl_rot(root, Vector3(0, 0.36, d * 0.38), 0.05, w * 0.88, mat_fab_l, Vector3(0, 0, PI * 0.5))
-		_add_mesh_cyl_rot(root, Vector3(0, 0.36, -d * 0.38), 0.05, w * 0.88, mat_fab_l, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl(root, Vector3(bx, 0.46, 0), d * 0.28, 0.08, mat_fab_h, false)
+		_add_mesh_cyl_rot(root, Vector3(0, 0.36, d * 0.38), 0.05, w * 0.88, mat_fab_h, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0, 0.36, -d * 0.38), 0.05, w * 0.88, mat_fab_h, Vector3(0, 0, PI * 0.5))
 		for sx in [-1.0, 1.0]:
 			_add_mesh_cyl_rot(root, Vector3(sx * w * 0.42, 0.36, 0), 0.055, d * 0.7, mat_fab_d, Vector3(PI * 0.5, 0, 0))
 			_add_mesh_cyl(root, Vector3(sx * w * 0.44, 0.4, 0), 0.06, 0.08, mat_fab, false)
@@ -588,38 +595,35 @@ static func _make_ottoman(prop: Dictionary) -> Node3D:
 				_add_mesh_cyl(root, Vector3(sx * w * 0.4, 0.055, sz * d * 0.34), 0.03, 0.1, mat_m, true)
 				_add_mesh_cyl(root, Vector3(sx * w * 0.4, 0.012, sz * d * 0.34), 0.04, 0.028, mat_md, false)
 	else:
-		# Square chesterfield footstool (drawing-room hero)
+		# Square chesterfield footstool (drawing-room hero) — continuous cushion, no pale top pad
 		_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.92, 0.07, d * 0.9), mat_md)
 		_add_mesh_box(root, Vector3(0, 0.15, 0), Vector3(w * 0.98, 0.035, d * 0.96), mat_m)
 		_add_mesh_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.9, 0.18, d * 0.86), mat_fab)
-		_add_mesh_box(root, Vector3(0, 0.39, 0), Vector3(w * 0.78, 0.08, d * 0.72), mat_fab_d)
-		_add_mesh_box(root, Vector3(0, 0.45, 0), Vector3(w * 0.62, 0.05, d * 0.55), mat_fab_l)
-		_add_mesh_cyl_rot(root, Vector3(0, 0.34, d * 0.38), 0.055, w * 0.82, mat_fab_l, Vector3(0, 0, PI * 0.5))
-		_add_mesh_cyl_rot(root, Vector3(0, 0.34, -d * 0.38), 0.055, w * 0.82, mat_fab_l, Vector3(0, 0, PI * 0.5))
-		_add_mesh_cyl_rot(root, Vector3(w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_l, Vector3(PI * 0.5, 0, 0))
-		_add_mesh_cyl_rot(root, Vector3(-w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_l, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_box(root, Vector3(0, 0.4, 0), Vector3(w * 0.8, 0.08, d * 0.74), mat_fab_d)
+		# Soft dome top — same fabric family (not lightened fridge pad)
+		_add_mesh_box(root, Vector3(0, 0.46, 0), Vector3(w * 0.65, 0.04, d * 0.58), mat_fab_h)
+		_add_mesh_cyl_rot(root, Vector3(0, 0.34, d * 0.38), 0.055, w * 0.82, mat_fab_h, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0, 0.34, -d * 0.38), 0.055, w * 0.82, mat_fab_h, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_h, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_cyl_rot(root, Vector3(-w * 0.4, 0.34, 0), 0.055, d * 0.72, mat_fab_h, Vector3(PI * 0.5, 0, 0))
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
 				_add_mesh_cyl(root, Vector3(sx * w * 0.36, 0.36, sz * d * 0.32), 0.055, 0.1, mat_fab, false)
 		for row in 3:
-			var by := 0.48
+			var by := 0.49
 			var odd := row % 2 == 1
 			var cols: Array = [-0.12, 0.12] if odd else [-0.2, 0.0, 0.2]
 			for bx_v in cols:
 				var bz_v := (float(row) - 1.0) * d * 0.18
-				_add_mesh_cyl(root, Vector3(float(bx_v), by, bz_v), 0.02, 0.016, mat_fab_dd, false)
+				_add_mesh_cyl(root, Vector3(float(bx_v), by, bz_v), 0.018, 0.014, mat_fab_dd, false)
+		# Slim fringe only (not deep hanging scraps)
 		for i in 7:
 			var fx := (float(i) / 6.0 - 0.5) * w * 0.82
-			_add_mesh_box(root, Vector3(fx, 0.1, d * 0.42), Vector3(0.035, 0.09, 0.018), mat_fab_dd)
-			_add_mesh_box(root, Vector3(fx, 0.1, -d * 0.42), Vector3(0.035, 0.09, 0.018), mat_fab_dd)
+			_add_mesh_box(root, Vector3(fx, 0.12, d * 0.42), Vector3(0.03, 0.06, 0.016), mat_fab_dd)
+			_add_mesh_box(root, Vector3(fx, 0.12, -d * 0.42), Vector3(0.03, 0.06, 0.016), mat_fab_dd)
 		for i in 5:
-			var fz := (float(i) / 4.0 - 0.5) * d * 0.75
-			_add_mesh_box(root, Vector3(w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), mat_fab_dd)
-			_add_mesh_box(root, Vector3(-w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), mat_fab_dd)
-		for i in 6:
-			var t := float(i) / 5.0
-			_add_mesh_cyl(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, d * 0.44), 0.011, 0.012, mat_br, false)
-			_add_mesh_cyl(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, -d * 0.44), 0.011, 0.012, mat_br, false)
+			var t := float(i) / 4.0
+			_add_mesh_cyl(root, Vector3(-w * 0.38 + t * w * 0.76, 0.17, d * 0.44), 0.01, 0.01, mat_br, false)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
 				_add_mesh_cyl(root, Vector3(sx * w * 0.34, 0.05, sz * d * 0.3), 0.034, 0.1, mat_m, true)
