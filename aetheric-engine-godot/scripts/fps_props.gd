@@ -1958,6 +1958,8 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 static func _make_floor_path(prop: Dictionary) -> Node3D:
 	## Loop 203: walk path solid mats — iron tread / wood boards / stone flags (no washout).
+	## Loop 212: stone = irregular garden flags (not pale game slabs + green rivet dots mid-FOV).
+	##          iron = darker worn tread, smaller recessed bolts (not bright rivet grid).
 	var root := Node3D.new()
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
@@ -1965,105 +1967,116 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	var seed0: int = int(prop.get("seed", 0))
 	var surface: String = str(prop.get("surface", "stone"))
 	var n := int(clampf(length / 0.55, 3.0, 14.0))
-	var mat_iron_mid := _solid_metal(Color(0.34, 0.34, 0.36), 0.5)
-	var mat_iron_light := _solid_metal(Color(0.42, 0.42, 0.44), 0.48)
-	var mat_iron_dark := _solid_metal(Color(0.26, 0.26, 0.28), 0.55)
-	var mat_iron_edge := _solid_metal(Color(0.48, 0.46, 0.42), 0.45)
-	var mat_iron_hi := _solid_metal(Color(0.48, 0.48, 0.5), 0.48)
-	var mat_riv := _solid_metal(Color(0.5, 0.5, 0.52), 0.42)
-	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
-	var mat_cop_scuff := _solid_metal(Color(0.55, 0.32, 0.14), 0.4)
+	var mat_iron_mid := _solid_metal(Color(0.28, 0.28, 0.3), 0.55)
+	var mat_iron_light := _solid_metal(Color(0.34, 0.34, 0.36), 0.52)
+	var mat_iron_dark := _solid_metal(Color(0.2, 0.2, 0.22), 0.58)
+	var mat_iron_edge := _solid_metal(Color(0.38, 0.36, 0.34), 0.5)
+	var mat_iron_hi := _solid_metal(Color(0.4, 0.4, 0.42), 0.5)
+	var mat_riv := _solid_metal(Color(0.32, 0.3, 0.28), 0.5)
+	var mat_br_d := _solid_metal(Color(0.48, 0.36, 0.18), 0.38)
+	var mat_cop_scuff := _solid_metal(Color(0.48, 0.28, 0.12), 0.42)
 	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
 	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
 	var mat_oak_dd := _solid_matte(Color(0.3, 0.2, 0.1), 0.85)
-	var mat_grit := _solid_matte(Color(0.42, 0.4, 0.36), 0.9)
-	var mat_grit_d := _solid_matte(Color(0.34, 0.32, 0.28), 0.92)
-	var mat_moss := _solid_matte(Color(0.18, 0.34, 0.14), 0.92)
-	var mat_moss_l := _solid_matte(Color(0.22, 0.36, 0.16), 0.92)
-	var mat_peb := _solid_matte(Color(0.46, 0.44, 0.39), 0.85)
+	# Stone bed: warm earth grit (not pale metal grey)
+	var mat_grit := _solid_matte(Color(0.38, 0.34, 0.28), 0.92)
+	var mat_grit_d := _solid_matte(Color(0.28, 0.24, 0.18), 0.94)
+	var mat_grit_l := _solid_matte(Color(0.44, 0.4, 0.32), 0.9)
+	# Moss: dark muted (not bright lime rivet dots)
+	var mat_moss := _solid_matte(Color(0.16, 0.24, 0.12), 0.94)
+	var mat_moss_l := _solid_matte(Color(0.2, 0.28, 0.14), 0.94)
+	var mat_peb := _solid_matte(Color(0.4, 0.36, 0.3), 0.88)
 	if surface == "iron":
 		_add_mesh_box(root, Vector3(0, 0.01, 0), Vector3(width * 0.98, 0.014, length * 0.98), mat_iron_dark)
-		_add_mesh_box(root, Vector3(-width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), mat_iron_mid)
-		_add_mesh_box(root, Vector3(width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), mat_iron_mid)
+		_add_mesh_box(root, Vector3(-width * 0.48, 0.03, 0), Vector3(0.05, 0.04, length * 0.96), mat_iron_mid)
+		_add_mesh_box(root, Vector3(width * 0.48, 0.03, 0), Vector3(0.05, 0.04, length * 0.96), mat_iron_mid)
 		for ez in [-1.0, 1.0]:
 			for ex in [-1.0, 1.0]:
-				_add_mesh_cyl(root, Vector3(ex * width * 0.48, 0.06, ez * length * 0.46), 0.03, 0.05, mat_br_d, false)
+				_add_mesh_cyl(root, Vector3(ex * width * 0.48, 0.05, ez * length * 0.46), 0.025, 0.04, mat_br_d, false)
 	for i in n:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
 		var ox := 0.03 * float(((i + seed0) % 3) - 1)
 		if surface == "iron":
-			var pw := width * (0.82 + float(i % 2) * 0.05)
-			var pd := 0.48
+			var pw := width * (0.8 + float(i % 2) * 0.04)
+			var pd := 0.46
 			var mat_pl := mat_iron_light if (i + seed0) % 2 == 0 else mat_iron_mid
-			_add_mesh_box(root, Vector3(ox, 0.028, z), Vector3(pw, 0.028, pd), mat_pl)
-			_add_mesh_box(root, Vector3(ox, 0.044, z - pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), mat_iron_edge)
-			_add_mesh_box(root, Vector3(ox, 0.044, z + pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), mat_iron_edge)
-			_add_mesh_box(root, Vector3(ox - pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), mat_iron_edge)
-			_add_mesh_box(root, Vector3(ox + pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox, 0.026, z), Vector3(pw, 0.026, pd), mat_pl)
+			# Thin wear groove only (not heavy bright frame)
+			_add_mesh_box(root, Vector3(ox, 0.04, z - pd * 0.42), Vector3(pw * 0.92, 0.008, 0.022), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox, 0.04, z + pd * 0.42), Vector3(pw * 0.92, 0.008, 0.022), mat_iron_edge)
 			if (i + seed0) % 2 == 0:
-				for r in 3:
-					var rx := ox - pw * 0.25 + float(r) * (pw * 0.25)
-					_add_mesh_box(root, Vector3(rx, 0.042, z), Vector3(0.04, 0.01, pd * 0.7), mat_iron_hi)
-			else:
-				for r2 in 2:
-					var rz := z - pd * 0.18 + float(r2) * (pd * 0.36)
-					_add_mesh_box(root, Vector3(ox, 0.042, rz), Vector3(pw * 0.7, 0.01, 0.035), mat_iron_hi)
+				for r in 2:
+					var rx := ox - pw * 0.2 + float(r) * (pw * 0.4)
+					_add_mesh_box(root, Vector3(rx, 0.038, z), Vector3(0.03, 0.006, pd * 0.55), mat_iron_hi)
+			# Corner bolts only (recessed dark, not bright rivet grid)
 			for cx in [-1.0, 1.0]:
 				for cz in [-1.0, 1.0]:
-					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.38, 0.05, z + cz * pd * 0.35), 0.018, 0.016, mat_riv, false)
-			_add_mesh_cyl(root, Vector3(ox, 0.05, z), 0.016, 0.014, mat_br_d, false)
-			_add_mesh_box(root, Vector3(ox, 0.02, z + pd * 0.5), Vector3(pw * 0.9, 0.01, 0.04), mat_iron_dark)
-			if (i + seed0) % 4 == 0:
-				_add_mesh_box(root, Vector3(ox + pw * 0.15, 0.046, z - 0.05), Vector3(0.12, 0.008, 0.08), mat_cop_scuff)
+					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.4, 0.042, z + cz * pd * 0.38), 0.012, 0.01, mat_riv, false)
+			_add_mesh_box(root, Vector3(ox, 0.018, z + pd * 0.5), Vector3(pw * 0.88, 0.008, 0.03), mat_iron_dark)
+			if (i + seed0) % 5 == 0:
+				_add_mesh_box(root, Vector3(ox + pw * 0.12, 0.04, z - 0.04), Vector3(0.1, 0.006, 0.06), mat_cop_scuff)
 		elif surface == "wood":
 			var mat_w := mat_oak if (i + seed0) % 2 == 0 else mat_oak_d
 			_add_mesh_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), mat_w)
 			_add_mesh_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), mat_oak_dd)
 		else:
-			var pw := width * (0.62 + float(i % 4) * 0.08)
-			var pd := 0.38 + float((i + seed0) % 4) * 0.07
+			# Garden flagstones — irregular sizes, warm stone, dark grit gaps
+			var pw := width * (0.48 + float((i * 2 + seed0) % 5) * 0.1)
+			var pd := 0.32 + float((i + seed0 * 2) % 5) * 0.08
 			var col: Color
-			match (i + seed0) % 5:
+			match (i + seed0) % 6:
 				0:
-					col = Color(0.52, 0.49, 0.43)
+					col = Color(0.48, 0.44, 0.36)
 				1:
-					col = Color(0.46, 0.44, 0.39)
+					col = Color(0.42, 0.38, 0.32)
 				2:
-					col = Color(0.56, 0.52, 0.46)
+					col = Color(0.52, 0.46, 0.38)
 				3:
-					col = Color(0.48, 0.47, 0.41)
+					col = Color(0.4, 0.36, 0.3)
+				4:
+					col = Color(0.5, 0.45, 0.36)
 				_:
-					col = Color(0.5, 0.48, 0.42)
-			var mat_flag := _solid_matte(col, 0.85)
-			var mat_flag_d := _solid_matte(col.darkened(0.14), 0.88)
-			var stagger: float = ((float((i * 3 + seed0) % 5) - 2.0) * 0.06)
+					col = Color(0.44, 0.4, 0.33)
+			var mat_flag := _solid_matte(col, 0.88)
+			var mat_flag_d := _solid_matte(col.darkened(0.12), 0.9)
+			var mat_flag_l := _solid_matte(col.lightened(0.06), 0.86)
+			# Strong stagger so flags don't read as aligned game tiles
+			var stagger: float = ((float((i * 5 + seed0 * 3) % 7) - 3.0) * 0.09)
 			var fx: float = ox + stagger
-			_add_mesh_box(root, Vector3(fx, 0.006, z), Vector3(pw * 1.18, 0.012, pd * 1.2), mat_grit)
-			var hy := 0.02 + float((i + seed0) % 4) * 0.006
-			_add_mesh_box(root, Vector3(fx, hy, z), Vector3(pw, 0.038, pd), mat_flag)
-			_add_mesh_box(root, Vector3(fx, hy - 0.01, z), Vector3(pw * 1.06, 0.012, pd * 1.06), mat_grit_d)
-			_add_mesh_box(root, Vector3(fx, 0.01, z + pd * 0.55), Vector3(pw * 0.98, 0.01, 0.06), mat_grit_d)
+			var hy := 0.018 + float((i + seed0) % 3) * 0.005
+			# Dark grit bed under each flag
+			_add_mesh_box(root, Vector3(fx, 0.005, z), Vector3(pw * 1.22, 0.01, pd * 1.25), mat_grit_d)
+			# Main flag (slightly trapezoid feel via dual offset boxes)
+			_add_mesh_box(root, Vector3(fx, hy, z), Vector3(pw, 0.032, pd), mat_flag)
+			_add_mesh_box(root, Vector3(fx + pw * 0.04, hy + 0.002, z + pd * 0.03), Vector3(pw * 0.88, 0.02, pd * 0.88), mat_flag_l)
+			# Worn edge chip
 			if (i + seed0) % 2 == 0:
-				_add_mesh_box(root, Vector3(fx + pw * 0.12, hy + 0.02, z - pd * 0.1), Vector3(pw * 0.35, 0.005, 0.016), mat_flag_d)
+				_add_mesh_box(root, Vector3(fx + pw * 0.35, hy + 0.012, z - pd * 0.28), Vector3(pw * 0.22, 0.01, pd * 0.2), mat_flag_d)
 			if (i + seed0) % 3 == 0:
-				_add_mesh_box(root, Vector3(fx - pw * 0.35, hy + 0.018, z + pd * 0.2), Vector3(0.08, 0.012, 0.1), mat_grit)
-			if (i + seed0) % 3 != 1:
-				_add_mesh_box(root, Vector3(fx + pw * 0.3, hy + 0.016, z - pd * 0.22), Vector3(0.1, 0.012, 0.06), mat_moss)
-			if (i + seed0) % 2 == 0:
-				_add_mesh_box(root, Vector3(fx - pw * 0.28, hy + 0.014, z + pd * 0.18), Vector3(0.08, 0.01, 0.05), mat_moss_l)
+				_add_mesh_box(root, Vector3(fx - pw * 0.3, hy + 0.01, z + pd * 0.25), Vector3(pw * 0.18, 0.01, pd * 0.18), mat_flag_d)
+			# Sparse dark moss in joints only (low flat pads — not bright rivets)
+			if (i + seed0) % 3 == 0:
+				_add_mesh_box(root, Vector3(fx + pw * 0.42, 0.012, z), Vector3(0.06, 0.008, pd * 0.45), mat_moss)
 			if (i + seed0) % 2 == 1:
-				_add_mesh_cyl(root, Vector3(fx + pw * 0.2, hy + 0.016, z + pd * 0.15), 0.02, 0.016, mat_peb, false)
+				_add_mesh_box(root, Vector3(fx, 0.012, z + pd * 0.48), Vector3(pw * 0.4, 0.008, 0.05), mat_moss_l)
+			# Occasional grit pebble (warm brown, not metal)
+			if (i + seed0) % 4 == 2:
+				_add_mesh_cyl(root, Vector3(fx - pw * 0.25, hy + 0.012, z + pd * 0.1), 0.018, 0.012, mat_peb, false)
 	if surface == "stone":
-		var mat_curb := _solid_matte(Color(0.46, 0.44, 0.39), 0.85)
-		var mat_peb2 := _solid_matte(Color(0.48, 0.46, 0.4), 0.82)
-		_add_mesh_box(root, Vector3(0, 0.005, 0), Vector3(width * 0.98, 0.01, length * 0.96), mat_grit)
-		_add_mesh_box(root, Vector3(-width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), mat_curb)
-		_add_mesh_box(root, Vector3(width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), mat_curb)
-		for gi in 12:
-			var gz := -length * 0.42 + float(gi) * (length * 0.84 / 11.0)
-			var gx_off: float = 0.02 if gi % 2 == 0 else -0.02
-			_add_mesh_cyl(root, Vector3(-width * 0.52 + gx_off, 0.028, gz), 0.03, 0.024, mat_peb2, false)
-			_add_mesh_cyl(root, Vector3(width * 0.52 - gx_off, 0.028, gz), 0.028, 0.022, mat_curb, false)
+		# Continuous gravel bed + low stone curbs (garden path identity)
+		_add_mesh_box(root, Vector3(0, 0.004, 0), Vector3(width * 1.05, 0.01, length * 0.98), mat_grit)
+		_add_mesh_box(root, Vector3(0, 0.008, 0), Vector3(width * 0.9, 0.008, length * 0.92), mat_grit_l)
+		# Low irregular curbs (not continuous pipe rails)
+		for side in [-1.0, 1.0]:
+			for ci in 8:
+				var cz := -length * 0.42 + float(ci) * (length * 0.84 / 7.0)
+				var cw := 0.12 + float((ci + seed0) % 3) * 0.03
+				var ch := 0.028 + float((ci + seed0) % 2) * 0.008
+				var cx: float = float(side) * (width * 0.52 + float(ci % 2) * 0.02)
+				var mat_c: StandardMaterial3D = mat_grit_d if ci % 2 == 0 else mat_peb
+				_add_mesh_box(root, Vector3(cx, ch * 0.5, cz), Vector3(cw, ch, 0.35 + float(ci % 3) * 0.08), mat_c)
+				if ci % 3 == 0:
+					_add_mesh_box(root, Vector3(cx, 0.01, cz + 0.12), Vector3(0.05, 0.008, 0.08), mat_moss)
 	return root
 
 

@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 212)
+
+- **Conservatory stone path residual:** pale aligned slabs + bright green moss dots read as game rivet path mid-FOV. Rewrote irregular staggered warm flags, dark grit bed, muted joint moss, low irregular curbs.  
+- **Gallery/workshop iron path residual:** bright rivet grid + pale plates. Darker worn tread, recessed dark bolts only, thinner wear grooves. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 211)
 
 - **Wall shelf residual:** kitchen plate rails sparse nubs mid-FOV (width/0.38 packing, tiny ware). Dens → width/0.26, 6 kit types (plate stacks, edge-on plates, lidded crocks, copper basins, jugs, pewter/blue jars) + front saucer row.  
