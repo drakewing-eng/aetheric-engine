@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 241)
+
+- **Chesterfield rectangular residual:** drawing_room_spawn/from_south still green fridge slab mid-FOV after 220. Rewrote roll-dominant chesterfield — three plump cylinder pillows + channel gaps, fat arm scrolls (not box ends), thin channelled back (vertical quilting, no thick slab), dual crown rolls, soft skirt teeth, slim plinth + bun feet. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 240)
 
 - **Wing armchair ziggurat/fridge residual:** morning_room_spawn front still stepped green stack; corner rear still fridge monolith after 239. Rewrote continuous club shell — one soft seat pillow, one back mass + single vertical rear half-round (no horizontal tank-tread stack), short wing cheeks + arm bolsters only, single crown roll, open air under apron.  

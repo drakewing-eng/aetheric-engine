@@ -772,9 +772,10 @@ static func _make_tea_tray(prop: Dictionary) -> Node3D:
 
 
 static func _make_sofa(prop: Dictionary) -> Node3D:
-	## Loop 200: olive chesterfield — solid-mat velvet + mahogany (no fabric/wood washout mid-FOV).
-	## Loop 220: side-curve polish — rolled arms + deep cushion channels + arched crown
-	## (not green fridge slab mid-FOV drawing_room_spawn).
+	## Loop 200/220: olive chesterfield — solid-mat velvet + mahogany.
+	## Loop 241: residual rectangular fridge mid-FOV (drawing_room_spawn/from_south).
+	## Roll-dominant chesterfield — fat arm scrolls + three plump pillows + deep buttoned
+	## back + dual crown rolls. NO large flat back slab, NO solid toe-kick wall.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -784,90 +785,96 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 	var mat_fab := _solid_matte(fabric, 0.92)
 	var mat_fab_d := _solid_matte(fabric.darkened(0.1), 0.94)
 	var mat_fab_dd := _solid_matte(fabric.darkened(0.22), 0.94)
-	var mat_fab_l := _solid_matte(fabric.lightened(0.04), 0.9)
+	# Soft highlight only (never pale white fridge face)
+	var mat_fab_h := _solid_matte(fabric.darkened(0.02), 0.9)
 	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
 	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
-	# Slim mahogany plinth (visible under soft skirt)
-	_add_mesh_box(root, Vector3(0, 0.12, 0.02), Vector3(width * 0.92, 0.06, 0.78), mat_md)
-	_add_mesh_box(root, Vector3(0, 0.18, 0.02), Vector3(width * 0.96, 0.025, 0.82), mat_m)
-	# Soft skirt drape (not solid fridge toe-kick wall)
-	for i in 13:
-		var fx := (float(i) / 12.0 - 0.5) * width * 0.88
-		var fh := 0.1 + (0.02 if i % 2 == 0 else 0.0)
-		_add_mesh_box(root, Vector3(fx, 0.1, 0.38), Vector3(0.055, fh, 0.02), mat_fab_dd)
-	# Seat deck base (narrower than arms so rolls read)
-	_add_mesh_box(root, Vector3(0, 0.32, 0.08), Vector3(width - 0.28, 0.12, 0.68), mat_fab_d)
-	# Three deeply channelled seat cushions (not one flat slab)
-	var cush_w: float = (width - 0.42) / 3.0
+	# Slim mahogany rail + bun feet only (air under skirt)
+	_add_mesh_box(root, Vector3(0, 0.14, 0.02), Vector3(width * 0.88, 0.04, 0.72), mat_md)
+	_add_mesh_box(root, Vector3(0, 0.18, 0.02), Vector3(width * 0.92, 0.02, 0.76), mat_m)
+	# Soft skirt teeth (not solid toe wall)
+	for i in 11:
+		var fx := (float(i) / 10.0 - 0.5) * width * 0.82
+		_add_mesh_box(root, Vector3(fx, 0.09, 0.36), Vector3(0.05, 0.09, 0.018), mat_fab_dd)
+	# Seat deck (low, hidden under pillows)
+	_add_mesh_box(root, Vector3(0, 0.28, 0.08), Vector3(width - 0.36, 0.08, 0.62), mat_fab_d)
+	# Three plump seat pillows — cylinder-dominant (not flat slabs)
+	var cush_w: float = (width - 0.5) / 3.0
 	for i in 3:
-		var cx: float = (float(i) - 1.0) * (cush_w + 0.06)
-		# Plump cushion body + domed top
-		_add_mesh_box(root, Vector3(cx, 0.44, 0.12), Vector3(cush_w, 0.14, 0.58), mat_fab)
-		_add_mesh_box(root, Vector3(cx, 0.52, 0.14), Vector3(cush_w * 0.88, 0.06, 0.5), mat_fab_l)
-		_add_mesh_cyl_rot(root, Vector3(cx, 0.5, 0.12), 0.05, cush_w * 0.7, mat_fab_d, Vector3(0, 0, PI * 0.5))
-		# Diamond tufts
+		var cx: float = (float(i) - 1.0) * (cush_w + 0.08)
+		_add_mesh_cyl(root, Vector3(cx, 0.42, 0.12), cush_w * 0.42, 0.16, mat_fab, false)
+		_add_mesh_box(root, Vector3(cx, 0.4, 0.12), Vector3(cush_w * 0.92, 0.12, 0.52), mat_fab)
+		_add_mesh_cyl(root, Vector3(cx, 0.5, 0.12), cush_w * 0.32, 0.08, mat_fab_h, false)
+		# Front bolster per cushion
+		_add_mesh_cyl_rot(root, Vector3(cx, 0.4, 0.36), 0.055, cush_w * 0.85, mat_fab_h, Vector3(0, 0, PI * 0.5))
+		# Dark diamond tufts
 		for j in 2:
 			for k in 2:
-				var bx := cx + (float(j) - 0.5) * cush_w * 0.35
-				var bz := 0.02 + float(k) * 0.18
-				_add_mesh_cyl(root, Vector3(bx, 0.56, bz), 0.012, 0.01, mat_fab_dd, false)
-		# Channel seam (dark gap between cushions)
+				var bx := cx + (float(j) - 0.5) * cush_w * 0.3
+				var bz := 0.04 + float(k) * 0.16
+				_add_mesh_cyl(root, Vector3(bx, 0.54, bz), 0.012, 0.01, mat_fab_dd, false)
+		# Dark channel gap
 		if i < 2:
-			var sx_gap: float = cx + cush_w * 0.5 + 0.03
-			_add_mesh_box(root, Vector3(sx_gap, 0.46, 0.12), Vector3(0.03, 0.12, 0.55), mat_fab_dd)
-	# Front seat bolster roll (continuous across)
-	_add_mesh_cyl_rot(root, Vector3(0, 0.4, 0.42), 0.07, width * 0.78, mat_fab_l, Vector3(0, 0, PI * 0.5))
-	_add_mesh_cyl_rot(root, Vector3(0, 0.38, 0.46), 0.045, width * 0.72, mat_fab, Vector3(0, 0, PI * 0.5))
-	# Back: thinner shell + inset pad (air behind top = not fridge block)
-	_add_mesh_box(root, Vector3(0, 0.82, -0.28), Vector3(width * 0.88, 0.62, 0.16), mat_fab)
-	_add_mesh_box(root, Vector3(0, 0.85, -0.16), Vector3(width * 0.78, 0.52, 0.08), mat_fab_d)
-	_add_mesh_box(root, Vector3(0, 0.88, -0.1), Vector3(width * 0.68, 0.42, 0.04), mat_fab_l)
-	# Diamond tuft grid on back
+			var sx_gap: float = cx + cush_w * 0.5 + 0.04
+			_add_mesh_box(root, Vector3(sx_gap, 0.42, 0.12), Vector3(0.028, 0.14, 0.5), mat_fab_dd)
+	# Continuous front bolster under cushions
+	_add_mesh_cyl_rot(root, Vector3(0, 0.36, 0.4), 0.06, width * 0.72, mat_fab_h, Vector3(0, 0, PI * 0.5))
+	# Back: THIN shell only — buttoned channels dominate (not thick fridge slab)
+	_add_mesh_box(root, Vector3(0, 0.78, -0.26), Vector3(width * 0.8, 0.52, 0.1), mat_fab)
+	# Deep vertical channel quilting on back (chesterfield read)
+	var n_ch := 7
+	for i in n_ch:
+		var bx2 := (float(i) / float(n_ch - 1) - 0.5) * width * 0.7
+		_add_mesh_cyl(root, Vector3(bx2, 0.8, -0.16), 0.04, 0.48, mat_fab_d, false)
+		# Dark seam between channels
+		if i < n_ch - 1:
+			var gx := bx2 + (width * 0.7 / float(n_ch - 1)) * 0.5
+			_add_mesh_box(root, Vector3(gx, 0.8, -0.14), Vector3(0.018, 0.46, 0.03), mat_fab_dd)
+	# Front of back pad (shallow)
+	_add_mesh_box(root, Vector3(0, 0.8, -0.08), Vector3(width * 0.72, 0.46, 0.04), mat_fab_d)
+	# Dense dark button grid
 	for row in 4:
-		var by := 0.62 + float(row) * 0.12
+		var by := 0.58 + float(row) * 0.11
 		var odd := row % 2 == 1
 		var n := 5 if odd else 6
 		for i in n:
-			var bx := (float(i) / float(maxi(n - 1, 1)) - 0.5) * width * 0.62
-			_add_mesh_cyl(root, Vector3(bx, by, -0.06), 0.013, 0.01, mat_fab_dd, false)
-	# Arched crown — dual rolls dominate top silhouette (not flat box lid)
-	_add_mesh_cyl_rot(root, Vector3(0, 1.12, -0.18), 0.09, width * 0.82, mat_fab, Vector3(0, 0, PI * 0.5))
-	_add_mesh_cyl_rot(root, Vector3(0, 1.18, -0.22), 0.065, width * 0.7, mat_fab_d, Vector3(0, 0, PI * 0.5))
-	_add_mesh_cyl_rot(root, Vector3(0, 1.22, -0.16), 0.04, width * 0.45, mat_fab_l, Vector3(0, 0, PI * 0.5))
-	# Small mahogany crest (compact — not fridge cornice bar)
-	_add_mesh_box(root, Vector3(0, 1.26, -0.26), Vector3(width * 0.28, 0.03, 0.06), mat_m)
-	_add_mesh_box(root, Vector3(0, 1.29, -0.26), Vector3(width * 0.12, 0.025, 0.045), mat_md)
-	# Rolled arms — CYLINDER-dominant (not box ends). Side FOV = soft curve.
+			var bx := (float(i) / float(maxi(n - 1, 1)) - 0.5) * width * 0.58
+			_add_mesh_cyl(root, Vector3(bx, by, -0.04), 0.012, 0.01, mat_fab_dd, false)
+	# Dual crown rolls dominate top (no flat box lid)
+	_add_mesh_cyl_rot(root, Vector3(0, 1.06, -0.14), 0.09, width * 0.78, mat_fab, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0, 1.12, -0.18), 0.06, width * 0.66, mat_fab_d, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0, 1.16, -0.12), 0.04, width * 0.4, mat_fab_h, Vector3(0, 0, PI * 0.5))
+	# Tiny mahogany crest
+	_add_mesh_box(root, Vector3(0, 1.2, -0.22), Vector3(width * 0.2, 0.022, 0.04), mat_m)
+	# Fat rolled arms — cylinder-dominant scrolls (main side mass)
 	for sx in [-1.0, 1.0]:
-		var ax: float = sx * (width * 0.5 - 0.14)
-		# Thin inner arm panel only (not full fridge cheek)
-		_add_mesh_box(root, Vector3(ax - sx * 0.02, 0.55, -0.02), Vector3(0.1, 0.32, 0.55), mat_fab_d)
-		# Outer vertical roll (main arm mass — reads as scroll from front + side)
-		_add_mesh_cyl(root, Vector3(ax + sx * 0.04, 0.62, 0.02), 0.11, 0.55, mat_fab, false)
-		_add_mesh_cyl(root, Vector3(ax + sx * 0.08, 0.68, 0.04), 0.085, 0.48, mat_fab_l, false)
-		# Top arm bolster (horizontal roll along arm)
-		_add_mesh_cyl_rot(root, Vector3(ax + sx * 0.02, 0.82, 0.04), 0.075, 0.62, mat_fab_l, Vector3(PI * 0.5, 0, 0))
-		_add_mesh_cyl_rot(root, Vector3(ax + sx * 0.02, 0.86, 0.0), 0.05, 0.5, mat_fab, Vector3(PI * 0.5, 0, 0))
-		# Front arm scroll (forward curl)
-		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.7, 0.36), 0.09, 0.16, mat_fab, false)
-		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.58, 0.4), 0.07, 0.1, mat_fab_d, false)
-		# Mahogany arm support under scroll
-		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.42, 0.32), 0.03, 0.16, mat_m, false)
-		_add_mesh_cyl_rot(root, Vector3(ax + sx * 0.02, 0.5, 0.4), 0.035, 0.1, mat_md, Vector3(PI * 0.5, 0, 0))
-		# Arm tufts
+		var ax: float = sx * (width * 0.5 - 0.12)
+		# Minimal inner cheek (not full fridge panel)
+		_add_mesh_box(root, Vector3(ax - sx * 0.02, 0.52, 0.0), Vector3(0.08, 0.28, 0.48), mat_fab_d)
+		# Fat outer vertical scroll (dominates arm silhouette)
+		_add_mesh_cyl(root, Vector3(ax + sx * 0.05, 0.58, 0.04), 0.13, 0.52, mat_fab, false)
+		_add_mesh_cyl(root, Vector3(ax + sx * 0.1, 0.64, 0.06), 0.095, 0.44, mat_fab_h, false)
+		# Top arm bolster
+		_add_mesh_cyl_rot(root, Vector3(ax + sx * 0.02, 0.8, 0.06), 0.08, 0.58, mat_fab_h, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_cyl_rot(root, Vector3(ax + sx * 0.02, 0.84, 0.02), 0.055, 0.46, mat_fab, Vector3(PI * 0.5, 0, 0))
+		# Forward curl scroll
+		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.66, 0.34), 0.1, 0.18, mat_fab, false)
+		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.54, 0.38), 0.075, 0.1, mat_fab_d, false)
+		# Mahogany under-scroll
+		_add_mesh_cyl(root, Vector3(ax + sx * 0.02, 0.4, 0.3), 0.028, 0.14, mat_m, false)
 		for k in 3:
-			_add_mesh_cyl(root, Vector3(ax + sx * 0.06, 0.75, -0.05 + float(k) * 0.14), 0.011, 0.01, mat_fab_dd, false)
-	# Brass nail row along front seat rail
+			_add_mesh_cyl(root, Vector3(ax + sx * 0.08, 0.72, -0.02 + float(k) * 0.12), 0.011, 0.01, mat_fab_dd, false)
+	# Brass nail row
 	for i in 11:
 		var t := float(i) / 10.0
-		_add_mesh_cyl(root, Vector3(-width * 0.38 + t * width * 0.76, 0.24, 0.4), 0.01, 0.012, mat_br, false)
-	# Turned bun feet (6)
+		_add_mesh_cyl(root, Vector3(-width * 0.36 + t * width * 0.72, 0.22, 0.38), 0.01, 0.012, mat_br, false)
+	# Bun feet (6)
 	for sx in [-1.0, 0.0, 1.0]:
-		_add_mesh_cyl(root, Vector3(sx * width * 0.36, 0.055, 0.26), 0.028, 0.1, mat_m, true)
-		_add_mesh_cyl(root, Vector3(sx * width * 0.36, 0.01, 0.26), 0.038, 0.022, mat_md, false)
-		_add_mesh_cyl(root, Vector3(sx * width * 0.36, 0.055, -0.22), 0.026, 0.1, mat_m, true)
-		_add_mesh_cyl(root, Vector3(sx * width * 0.36, 0.01, -0.22), 0.036, 0.022, mat_md, false)
+		_add_mesh_cyl(root, Vector3(sx * width * 0.34, 0.05, 0.24), 0.028, 0.1, mat_m, true)
+		_add_mesh_cyl(root, Vector3(sx * width * 0.34, 0.01, 0.24), 0.038, 0.022, mat_md, false)
+		_add_mesh_cyl(root, Vector3(sx * width * 0.34, 0.05, -0.2), 0.026, 0.1, mat_m, true)
+		_add_mesh_cyl(root, Vector3(sx * width * 0.34, 0.01, -0.2), 0.036, 0.022, mat_md, false)
 	_add_contact_shadow(root, width * 0.48, 0.5)
 	return root
 
