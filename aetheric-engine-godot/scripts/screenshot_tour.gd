@@ -151,11 +151,21 @@ func _shoot_room(room_id: String) -> void:
 	)
 
 	# View 3: from north looking south (yaw 180 = look +Z)
+	# Loop 148: gallery engine at z≈-3.2 — stay behind it (z≤-5) or offset so we never sit inside coils
+	var north_z := -half_d + 1.85
+	var north_y := 1.7
+	var north_pitch := -5.0
+	var north_x := 0.0
+	if room_id == "gallery":
+		north_x = 1.8
+		north_z = -5.15
+		north_y = 1.9
+		north_pitch = -6.0
 	await _capture(
 		room_id + "_from_north",
-		Vector3(0.0, 1.7, -half_d + 1.85),
+		Vector3(north_x, north_y, north_z),
 		180.0,
-		-5.0
+		north_pitch
 	)
 
 	# View 4: elevated corner overview
