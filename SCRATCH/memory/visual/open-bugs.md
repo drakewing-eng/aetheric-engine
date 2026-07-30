@@ -92,3 +92,7 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Urns:** classical amphora + handles, stone grit, sparse ivy (no green knob crown).  
 - **Oil lamps:** slim stem, smaller font, taller amber glass hero.  
 
+## Status update 2026-07-29 (loop 151)
+
+- **Whole-house residual spacing:** hall plants no longer under demi-lune; freestanding lamps off runner. Workshop lamps/scrap/crates clear of iron path centre. Kitchen door approach wall-side only. Conservatory lamp beside table not under apron.  
+

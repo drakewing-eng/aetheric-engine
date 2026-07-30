@@ -366,13 +366,14 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [4.5, 0.0, -2.0], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-4.5, 0.0, 2.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [4.5, 0.0, 2.0], "yaw": -90.0, "height": 2.35},
-			{"kind": "oil_lamp", "pos": [2.5, 0.0, -2.0], "yaw": 20.0, "height": 1.05},
-			{"kind": "oil_lamp", "pos": [-2.5, 0.0, 1.2], "yaw": -15.0, "height": 1.0},
-			# Loop 101: spawn approach densify (entrance_hall_spawn empty flanks by drawing door)
-			{"kind": "plant", "pos": [-2.4, 0.0, -4.0], "scale": 0.65, "seed": 5,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.65},
-			{"kind": "plant", "pos": [2.5, 0.0, -4.0], "scale": 0.7, "seed": 6,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.6, "height": 0.85},
+			# Loop 151: lamps off runner (not freestanding posts on carpet)
+			{"kind": "oil_lamp", "pos": [3.6, 0.0, -2.0], "yaw": 20.0, "height": 0.95, "seed": 2},
+			{"kind": "oil_lamp", "pos": [-3.5, 0.0, 1.3], "yaw": -15.0, "height": 0.9, "seed": 1},
+			# Loop 101/151: spawn flanks — plants in far corners (was under demi-lune table)
+			{"kind": "plant", "pos": [-5.9, 0.0, -4.0], "scale": 0.6, "seed": 5,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
+			{"kind": "plant", "pos": [5.9, 0.0, -3.9], "scale": 0.65, "seed": 6,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.55, "height": 0.8},
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.0, 0.0, -3.4],
@@ -386,7 +387,8 @@ const ROOMS := {
 				"col_size": [0.5, 0.95, 0.5],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "oil_lamp", "pos": [-1.6, 0.0, -3.9], "yaw": 10.0, "height": 1.0},
+			# Lamp beside demi-lune, not under table / on runner
+			{"kind": "oil_lamp", "pos": [3.3, 0.0, -3.5], "yaw": 10.0, "height": 0.9, "seed": 0},
 			{"kind": "wall_sconce", "pos": [-1.4, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [1.4, 0.0, -4.7], "yaw": 0.0, "height": 2.25},
 		],
@@ -866,11 +868,12 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [1.5, 0.0, -2.3], "scale": 0.6, "seed": 4},
 			{"kind": "copper_scrap", "pos": [-3.6, 0.0, 1.6], "scale": 1.0, "seed": 0},
 			{"kind": "copper_scrap", "pos": [3.5, 0.0, 2.2], "scale": 0.85, "seed": 2},
-			{"kind": "copper_scrap", "pos": [0.4, 0.0, -3.5], "scale": 0.7, "seed": 4},
-			{"kind": "copper_scrap", "pos": [3.6, 0.0, -3.2], "scale": 0.75, "seed": 1},
-			{"kind": "oil_lamp", "pos": [-0.6, 0.0, -1.2], "yaw": 25.0, "height": 1.05},
-			{"kind": "oil_lamp", "pos": [2.6, 0.0, -1.5], "yaw": -30.0, "height": 0.98},
-			{"kind": "oil_lamp", "pos": [-3.0, 0.0, 1.0], "yaw": 40.0, "height": 1.0},
+			# Loop 151: scrap off iron path (was mid-aisle)
+			{"kind": "copper_scrap", "pos": [3.2, 0.0, -3.5], "scale": 0.7, "seed": 4},
+			{"kind": "copper_scrap", "pos": [3.6, 0.0, -2.6], "scale": 0.75, "seed": 1},
+			{"kind": "oil_lamp", "pos": [-2.3, 0.0, -1.0], "yaw": 25.0, "height": 0.95, "seed": 0},
+			{"kind": "oil_lamp", "pos": [2.8, 0.0, -1.5], "yaw": -30.0, "height": 0.9, "seed": 1},
+			{"kind": "oil_lamp", "pos": [-3.2, 0.0, 1.0], "yaw": 40.0, "height": 0.95, "seed": 2},
 			{"kind": "wall_sconce", "pos": [-4.3, 0.0, 1.5], "yaw": 90.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [4.3, 0.0, 0.5], "yaw": -90.0, "height": 2.25},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -4.15], "yaw": 0.0, "height": 2.3},
@@ -880,12 +883,13 @@ const ROOMS := {
 			{"kind": "tool_rack", "pos": [-2.5, 0.0, 4.15], "yaw": 180.0, "seed": 4},
 			{"kind": "tool_rack", "pos": [2.5, 0.0, 4.15], "yaw": 180.0, "seed": 5},
 			{"kind": "chalk_board", "pos": [0.0, 0.0, 4.15], "yaw": 180.0, "seed": 1},
-			{"kind": "crate", "pos": [-1.5, 0.0, 3.5], "scale": 0.8, "seed": 2},
-			{"kind": "crate", "pos": [1.6, 0.0, 3.6], "scale": 0.7, "seed": 0},
-			{"kind": "copper_scrap", "pos": [0.5, 0.0, 3.4], "scale": 0.85, "seed": 3},
+			{"kind": "crate", "pos": [-2.4, 0.0, 3.5], "scale": 0.8, "seed": 2},
+			{"kind": "crate", "pos": [2.4, 0.0, 3.6], "scale": 0.7, "seed": 0},
+			{"kind": "copper_scrap", "pos": [3.0, 0.0, 3.3], "scale": 0.85, "seed": 3},
 			{"kind": "wall_sconce", "pos": [-1.5, 0.0, 4.15], "yaw": 180.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [1.5, 0.0, 4.15], "yaw": 180.0, "height": 2.3},
-			{"kind": "oil_lamp", "pos": [0.0, 0.0, 3.2], "yaw": 0.0, "height": 1.0},
+			# Loop 151: lamp off path centre (was blocking aisle at z=3.2)
+			{"kind": "oil_lamp", "pos": [2.2, 0.0, 3.2], "yaw": 0.0, "height": 0.9, "seed": 1},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
 				"surface": "iron", "seed": 3},
 			# Loop 110: practical work runner flanking iron path (bench approach, not salon Persian)
@@ -893,15 +897,15 @@ const ROOMS := {
 				"texture": "res://assets/rooms/textures/work_runner.jpg"},
 			{"kind": "rug", "pos": [1.9, 0.0, 0.3], "size": [1.1, 4.8], "yaw": 0.0,
 				"texture": "res://assets/rooms/textures/work_runner.jpg"},
-			# Loop 93: mid-floor densify (from_north empty path flanks)
-			{"kind": "crate", "pos": [-1.6, 0.0, 1.2], "scale": 0.7, "seed": 6},
-			{"kind": "crate", "pos": [1.7, 0.0, 1.4], "scale": 0.65, "seed": 7},
-			{"kind": "copper_scrap", "pos": [-1.4, 0.0, 0.2], "scale": 0.8, "seed": 5},
-			{"kind": "copper_scrap", "pos": [1.5, 0.0, 0.4], "scale": 0.7, "seed": 6},
-			{"kind": "stool", "pos": [-1.3, 0.0, 2.2], "yaw": 30.0, "seed": 3},
-			{"kind": "stool", "pos": [1.4, 0.0, 2.0], "yaw": -25.0, "seed": 4},
-			{"kind": "copper_pot", "pos": [-1.8, 0.0, 2.8], "scale": 0.7, "seed": 5},
-			{"kind": "oil_lamp", "pos": [1.2, 0.0, 1.0], "yaw": 15.0, "height": 0.95},
+			# Loop 93/151: mid-floor densify — stay on runners, not iron plates
+			{"kind": "crate", "pos": [-2.0, 0.0, 1.2], "scale": 0.7, "seed": 6},
+			{"kind": "crate", "pos": [2.1, 0.0, 1.4], "scale": 0.65, "seed": 7},
+			{"kind": "copper_scrap", "pos": [-2.0, 0.0, 0.2], "scale": 0.8, "seed": 5},
+			{"kind": "copper_scrap", "pos": [2.1, 0.0, 0.4], "scale": 0.7, "seed": 6},
+			{"kind": "stool", "pos": [-1.6, 0.0, 2.2], "yaw": 30.0, "seed": 3},
+			{"kind": "stool", "pos": [1.7, 0.0, 2.0], "yaw": -25.0, "seed": 4},
+			{"kind": "copper_pot", "pos": [-2.2, 0.0, 2.8], "scale": 0.7, "seed": 5},
+			{"kind": "oil_lamp", "pos": [2.0, 0.0, 1.0], "yaw": 15.0, "height": 0.9, "seed": 2},
 		],
 		"doors": [
 			{
@@ -992,9 +996,9 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
 			{"kind": "plant", "pos": [1.6, 0.0, 3.35], "scale": 0.75, "seed": 10,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 0.95},
-			# One still-life table by south bench only
+			# One still-life table by south bench — lamp beside table (not under apron)
 			{"kind": "side_table", "pos": [-0.15, 0.0, -2.5], "yaw": 5.0, "seed": 3},
-			{"kind": "oil_lamp", "pos": [-0.1, 0.0, -2.15], "height": 0.8, "seed": 0},
+			{"kind": "oil_lamp", "pos": [-0.75, 0.0, -2.35], "height": 0.78, "seed": 0},
 			# Classical urns at corners (not mid-path)
 			{"kind": "urn", "pos": [3.45, 0.0, -1.1], "scale": 1.0, "seed": 0},
 			{"kind": "urn", "pos": [-3.45, 0.0, -0.9], "scale": 0.9, "seed": 1},
@@ -1149,11 +1153,11 @@ const ROOMS := {
 			{"kind": "wall_shelf", "pos": [1.5, 0.0, -3.7], "yaw": 0.0, "width": 1.0, "shelf_y": 2.25, "seed": 15},
 			{"kind": "wall_sconce", "pos": [-1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
 			{"kind": "wall_sconce", "pos": [1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
-			{"kind": "copper_pot", "pos": [-2.8, 0.0, -3.0], "scale": 0.7, "seed": 12},
-			{"kind": "copper_pot", "pos": [2.9, 0.0, -2.7], "scale": 0.65, "seed": 13},
-			{"kind": "crate", "pos": [-1.6, 0.0, -3.1], "scale": 0.55, "seed": 14},
-			{"kind": "oil_lamp", "pos": [1.7, 0.0, -3.15], "yaw": -5.0, "height": 0.95},
-			{"kind": "stool", "pos": [0.9, 0.0, -2.4], "yaw": -15.0, "seed": 6},
+			# Loop 151: door approach clear — wall-side props only (no mid-path stool)
+			{"kind": "copper_pot", "pos": [-3.2, 0.0, -3.0], "scale": 0.7, "seed": 12},
+			{"kind": "copper_pot", "pos": [3.2, 0.0, -2.7], "scale": 0.65, "seed": 13},
+			{"kind": "crate", "pos": [-3.0, 0.0, -3.1], "scale": 0.55, "seed": 14},
+			{"kind": "oil_lamp", "pos": [3.0, 0.0, -3.0], "yaw": -5.0, "height": 0.9, "seed": 1},
 		],
 		"doors": [
 			{
