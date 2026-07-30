@@ -361,7 +361,9 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
 	## Loop 199: Victorian wing — solid-mat mahogany + velvet (no wood/fabric washout mid-FOV).
-	## Loop 220: roll-dominant wing + arched crown (not green fridge slab mid-FOV morning_room).
+	## Loop 220: roll-dominant wing + arched crown.
+	## Loop 227: continuous shell from REAR/SIDE (morning_room_corner residual = green pipe stack).
+	## One deep back shell + single outer wing roll each side (not multi-cylinder organ pipes).
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -383,27 +385,25 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	for bx in [-0.12, 0.0, 0.12]:
 		for bz in [-0.02, 0.1]:
 			_add_mesh_cyl(root, Vector3(bx, 0.52, bz), 0.011, 0.01, mat_fab_dd, false)
-	# Back: thinner shell (not deep fridge block)
-	_add_mesh_box(root, Vector3(0, 0.9, -0.16), Vector3(0.52, 0.82, 0.18), mat_fab)
-	_add_mesh_box(root, Vector3(0, 0.92, -0.04), Vector3(0.42, 0.68, 0.06), mat_fab_d)
-	_add_mesh_box(root, Vector3(0, 0.94, 0.0), Vector3(0.34, 0.48, 0.03), mat_fab_l)
-	# Dual crown rolls (arched top — not terrace slab stack)
-	_add_mesh_cyl_rot(root, Vector3(0, 1.28, -0.12), 0.085, 0.5, mat_fab, Vector3(0, 0, PI * 0.5))
-	_add_mesh_cyl_rot(root, Vector3(0, 1.34, -0.16), 0.055, 0.36, mat_fab_d, Vector3(0, 0, PI * 0.5))
-	_add_mesh_box(root, Vector3(0, 1.36, -0.2), Vector3(0.18, 0.028, 0.05), mat_m)
-	# Wings: cylinder-dominant outer envelope (soft side curve, not box cheek)
+	# CONTINUOUS deep back shell (fills rear silhouette — not nested boxes/tubes)
+	_add_mesh_box(root, Vector3(0, 0.92, -0.1), Vector3(0.58, 0.88, 0.32), mat_fab)
+	_add_mesh_box(root, Vector3(0, 0.94, 0.02), Vector3(0.46, 0.72, 0.08), mat_fab_d)
+	_add_mesh_box(root, Vector3(0, 0.96, 0.06), Vector3(0.36, 0.5, 0.04), mat_fab_l)
+	# Single crown roll + mahogany crest (not multi-terrace)
+	_add_mesh_cyl_rot(root, Vector3(0, 1.32, -0.1), 0.09, 0.52, mat_fab, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0, 1.36, -0.14), 0.05, 0.32, mat_fab_d, Vector3(0, 0, PI * 0.5))
+	_add_mesh_box(root, Vector3(0, 1.38, -0.18), Vector3(0.16, 0.025, 0.045), mat_m)
+	# Wings: solid panel + ONE outer roll (continuous side, not 3 stacked pipes)
 	for sx in [-1.0, 1.0]:
-		# Thin inner wing panel
-		_add_mesh_box(root, Vector3(sx * 0.3, 0.88, -0.04), Vector3(0.12, 0.78, 0.38), mat_fab_d)
-		# Outer vertical rolls (main side mass)
-		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.9, 0.12), 0.1, 0.82, mat_fab, false)
-		_add_mesh_cyl(root, Vector3(sx * 0.4, 0.95, 0.18), 0.08, 0.7, mat_fab_l, false)
-		_add_mesh_cyl(root, Vector3(sx * 0.36, 1.05, 0.08), 0.07, 0.45, mat_fab_d, false)
-		# Leading front wing roll
-		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.88, 0.28), 0.09, 0.55, mat_fab, false)
-		# Arm bolster under wing
-		_add_mesh_cyl_rot(root, Vector3(sx * 0.34, 0.54, 0.08), 0.055, 0.38, mat_fab_l, Vector3(PI * 0.5, 0, 0))
-		_add_mesh_cyl(root, Vector3(sx * 0.34, 0.52, 0.28), 0.05, 0.07, mat_fab, false)
+		# Full-height wing panel (same depth as back — continuous rear mass)
+		_add_mesh_box(root, Vector3(sx * 0.34, 0.9, -0.02), Vector3(0.16, 0.85, 0.48), mat_fab)
+		# Single soft outer roll (edge only)
+		_add_mesh_cyl(root, Vector3(sx * 0.42, 0.92, 0.08), 0.085, 0.78, mat_fab_l, false)
+		# Leading front wing curve (one mass)
+		_add_mesh_cyl(root, Vector3(sx * 0.36, 0.88, 0.26), 0.08, 0.55, mat_fab_d, false)
+		# Arm bolster under wing (horizontal only)
+		_add_mesh_cyl_rot(root, Vector3(sx * 0.34, 0.54, 0.06), 0.055, 0.4, mat_fab_l, Vector3(PI * 0.5, 0, 0))
+		_add_mesh_cyl(root, Vector3(sx * 0.34, 0.52, 0.28), 0.05, 0.06, mat_fab, false)
 		# Mahogany support under arm
 		_add_mesh_cyl(root, Vector3(sx * 0.34, 0.32, 0.16), 0.02, 0.12, mat_md, true)
 		_add_mesh_cyl(root, Vector3(sx * 0.34, 0.26, 0.22), 0.028, 0.04, mat_m, false)
@@ -413,7 +413,7 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 		var odd := row % 2 == 1
 		var cols: Array = [-0.08, 0.08] if odd else [-0.12, 0.0, 0.12]
 		for bx_v in cols:
-			_add_mesh_cyl(root, Vector3(float(bx_v), by, 0.02), 0.011, 0.01, mat_fab_dd, false)
+			_add_mesh_cyl(root, Vector3(float(bx_v), by, 0.05), 0.011, 0.01, mat_fab_dd, false)
 	# Turned legs + slim H-stretcher
 	for sx in [-1.0, 1.0]:
 		_add_mesh_cyl(root, Vector3(sx * 0.26, 0.09, 0.22), 0.024, 0.16, mat_md, true)
