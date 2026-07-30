@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 223)
+
+- **Hall/side chair residual:** boxy L-frame + green pad mid-FOV (entrance_hall_spawn hub). Rewrote balloon-back silhouette — slender turned stiles, arched crown rolls, 3 splat styles (open rails / padded / vase), plump seat + front bolster, turned bun feet + slim H-stretcher.  
+- **Overmantel TV residual:** dark soot plate on fireplace mid-FOV. Gilt layered frame + thin liner + metallic silver plate + crest/rosettes + highlight streaks. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 222)
 
 - **Copper scrap stick residual:** workshop/gallery floor heaps still thin bar cross / cool-metal nubs mid-FOV (workshop_from_south). Rewrote raised-lip oak tray + 3 styles: fat wire spool + U-bend, stacked plate sheets with rolled edges, fat pipe elbows + coupling (warm copper g≤0.42). Art + door suite PASS.  

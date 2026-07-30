@@ -282,6 +282,8 @@ static func _make_desk(prop: Dictionary) -> Node3D:
 
 static func _make_chair(prop: Dictionary) -> Node3D:
 	## Loop 198: side chair — solid-mat mahogany + velvet (no wood/fabric washout mid-FOV).
+	## Loop 223: Victorian balloon-back / cabriole silhouette mid-FOV
+	## (not boxy L-frame + green pad fridge in entrance_hall_spawn).
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -291,49 +293,70 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	var mat_fab := _solid_matte(fabric, 0.92)
 	var mat_fab_d := _solid_matte(fabric.darkened(0.12), 0.94)
 	var mat_fab_dd := _solid_matte(fabric.darkened(0.2), 0.94)
+	var mat_fab_l := _solid_matte(fabric.lightened(0.04), 0.9)
 	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
 	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	var mat_ml := _solid_matte(Color(0.36, 0.18, 0.1), 0.7)
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
-	_add_mesh_box(root, Vector3(0, 0.42, 0.02), Vector3(0.5, 0.08, 0.5), mat_m)
-	_add_mesh_box(root, Vector3(0, 0.5, 0.02), Vector3(0.46, 0.1, 0.46), mat_fab)
-	_add_mesh_box(root, Vector3(0, 0.56, 0.02), Vector3(0.4, 0.04, 0.4), mat_fab_d)
-	_add_mesh_box(root, Vector3(0, 0.52, 0.25), Vector3(0.44, 0.012, 0.018), mat_fab_dd)
+	# Seat rail — slim apron (not thick fridge slab)
+	_add_mesh_box(root, Vector3(0, 0.4, 0.02), Vector3(0.46, 0.05, 0.44), mat_md)
+	_add_mesh_box(root, Vector3(0, 0.44, 0.02), Vector3(0.48, 0.025, 0.46), mat_m)
+	# Plump upholstered seat + front bolster roll
+	_add_mesh_box(root, Vector3(0, 0.5, 0.04), Vector3(0.42, 0.08, 0.4), mat_fab)
+	_add_mesh_box(root, Vector3(0, 0.55, 0.04), Vector3(0.36, 0.04, 0.34), mat_fab_d)
+	_add_mesh_cyl_rot(root, Vector3(0, 0.5, 0.24), 0.045, 0.4, mat_fab_l, Vector3(0, 0, PI * 0.5))
+	# Brass nail row on front seat rail
 	for i in 5:
-		_add_mesh_cyl(root, Vector3(-0.18 + float(i) * 0.09, 0.46, 0.26), 0.009, 0.012, mat_br, false)
+		_add_mesh_cyl(root, Vector3(-0.16 + float(i) * 0.08, 0.44, 0.24), 0.008, 0.01, mat_br, false)
+	# Back stiles — slender turned posts that curve into balloon crown (not thick box uprights)
 	for sx in [-1.0, 1.0]:
-		_add_mesh_box(root, Vector3(sx * 0.21, 0.95, -0.2), Vector3(0.045, 0.9, 0.05), mat_m)
-		_add_mesh_cyl(root, Vector3(sx * 0.21, 0.95, -0.2), 0.022, 0.85, mat_md, false)
-	_add_mesh_box(root, Vector3(0, 1.36, -0.19), Vector3(0.46, 0.08, 0.055), mat_m)
-	_add_mesh_box(root, Vector3(0, 1.42, -0.18), Vector3(0.28, 0.04, 0.04), mat_ml)
-	_add_mesh_box(root, Vector3(0, 0.58, -0.2), Vector3(0.4, 0.05, 0.04), mat_md)
+		# Lower stile (thin)
+		_add_mesh_cyl(root, Vector3(sx * 0.18, 0.7, -0.18), 0.02, 0.45, mat_md, false)
+		# Upper stile flares slightly out + back for balloon
+		_add_mesh_cyl(root, Vector3(sx * 0.2, 1.05, -0.2), 0.018, 0.35, mat_m, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.22, 1.28, -0.18), 0.02, 0.18, mat_ml, false)
+	# Balloon crown arch (horizontal rolls — not flat bar lid)
+	_add_mesh_cyl_rot(root, Vector3(0, 1.38, -0.18), 0.035, 0.42, mat_m, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0, 1.42, -0.16), 0.025, 0.28, mat_ml, Vector3(0, 0, PI * 0.5))
+	# Lower back rail under seat join
+	_add_mesh_box(root, Vector3(0, 0.55, -0.18), Vector3(0.36, 0.035, 0.03), mat_md)
+	# Back splat styles by seed
 	match seed0 % 3:
 		0:
-			for bx in [-0.1, 0.0, 0.1]:
-				_add_mesh_box(root, Vector3(bx, 0.98, -0.18), Vector3(0.035, 0.65, 0.03), mat_m)
-			_add_mesh_box(root, Vector3(0, 1.15, -0.18), Vector3(0.32, 0.03, 0.03), mat_md)
+			# Open balloon splat — 3 thin verticals + mid rail (air through back)
+			for bx in [-0.08, 0.0, 0.08]:
+				_add_mesh_cyl(root, Vector3(bx, 0.95, -0.17), 0.014, 0.55, mat_m, false)
+			_add_mesh_box(root, Vector3(0, 1.05, -0.17), Vector3(0.28, 0.022, 0.022), mat_md)
+			_add_mesh_box(root, Vector3(0, 1.22, -0.16), Vector3(0.3, 0.02, 0.02), mat_m)
 		1:
-			_add_mesh_box(root, Vector3(0, 1.02, -0.2), Vector3(0.32, 0.55, 0.04), mat_m)
-			_add_mesh_box(root, Vector3(0, 1.02, -0.15), Vector3(0.26, 0.48, 0.05), mat_fab)
-			_add_mesh_cyl(root, Vector3(0, 1.05, -0.13), 0.12, 0.35, mat_fab_d, false)
+			# Upholstered balloon pad (hall/reception)
+			_add_mesh_box(root, Vector3(0, 0.98, -0.16), Vector3(0.28, 0.5, 0.04), mat_fab)
+			_add_mesh_box(root, Vector3(0, 1.0, -0.13), Vector3(0.22, 0.42, 0.03), mat_fab_d)
+			_add_mesh_cyl(root, Vector3(0, 1.05, -0.12), 0.1, 0.28, mat_fab_l, false)
 			for bi in 2:
-				_add_mesh_cyl(root, Vector3((float(bi) - 0.5) * 0.1, 1.05, -0.1), 0.012, 0.014, mat_fab_dd, false)
+				_add_mesh_cyl(root, Vector3((float(bi) - 0.5) * 0.08, 1.05, -0.1), 0.01, 0.012, mat_fab_dd, false)
 		_:
-			_add_mesh_box(root, Vector3(0, 0.98, -0.18), Vector3(0.06, 0.65, 0.035), mat_md)
-			_add_mesh_box(root, Vector3(0, 1.2, -0.17), Vector3(0.26, 0.05, 0.03), mat_m)
+			# Central vase splat (mid-Victorian)
+			_add_mesh_cyl(root, Vector3(0, 0.95, -0.17), 0.025, 0.55, mat_md, false)
+			_add_mesh_box(root, Vector3(0, 1.1, -0.16), Vector3(0.14, 0.12, 0.03), mat_m)
+			_add_mesh_box(root, Vector3(0, 1.25, -0.16), Vector3(0.22, 0.04, 0.025), mat_ml)
 			for sx in [-1.0, 1.0]:
-				_add_mesh_box(root, Vector3(sx * 0.1, 0.9, -0.18), Vector3(0.035, 0.4, 0.028), mat_m)
-	for offset in [Vector3(-0.18, 0.2, 0.18), Vector3(0.18, 0.2, 0.18)]:
-		_add_mesh_cyl(root, offset, 0.028, 0.38, mat_md, true)
-		_add_mesh_cyl(root, Vector3(offset.x, 0.08, offset.z), 0.032, 0.08, mat_m, false)
-		_add_mesh_cyl(root, Vector3(offset.x, 0.02, offset.z), 0.04, 0.03, mat_md, false)
-	for offset in [Vector3(-0.18, 0.2, -0.18), Vector3(0.18, 0.2, -0.18)]:
-		_add_mesh_cyl(root, offset, 0.025, 0.38, mat_md, true)
-		_add_mesh_cyl(root, Vector3(offset.x, 0.02, offset.z), 0.036, 0.03, mat_m, false)
-	_add_mesh_box(root, Vector3(0, 0.12, 0.0), Vector3(0.34, 0.025, 0.025), mat_m)
-	_add_mesh_box(root, Vector3(-0.17, 0.12, 0.0), Vector3(0.025, 0.025, 0.3), mat_m)
-	_add_mesh_box(root, Vector3(0.17, 0.12, 0.0), Vector3(0.025, 0.025, 0.3), mat_m)
-	_add_contact_shadow(root, 0.4, 0.38)
+				_add_mesh_box(root, Vector3(sx * 0.08, 0.95, -0.17), Vector3(0.02, 0.35, 0.02), mat_m)
+	# Front legs — turned taper with bun foot
+	for sx in [-1.0, 1.0]:
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.2, 0.16), 0.024, 0.36, mat_md, true)
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.28, 0.16), 0.03, 0.06, mat_m, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.08, 0.16), 0.028, 0.08, mat_m, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.018, 0.16), 0.036, 0.028, mat_md, false)
+	# Rear legs — slight rake back
+	for sx in [-1.0, 1.0]:
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.2, -0.16), 0.022, 0.36, mat_md, true)
+		_add_mesh_cyl(root, Vector3(sx * 0.16, 0.018, -0.16), 0.032, 0.028, mat_m, false)
+	# Slim H-stretcher (open air under seat)
+	_add_mesh_box(root, Vector3(0, 0.12, 0.0), Vector3(0.3, 0.018, 0.018), mat_m)
+	_add_mesh_box(root, Vector3(-0.15, 0.12, 0.0), Vector3(0.018, 0.018, 0.28), mat_m)
+	_add_mesh_box(root, Vector3(0.15, 0.12, 0.0), Vector3(0.018, 0.018, 0.28), mat_m)
+	_add_contact_shadow(root, 0.36, 0.34)
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
@@ -4519,33 +4542,49 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	_add_mesh_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), mat_marble)
 	_add_mesh_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), mat_marble_l)
 	_add_mesh_box(root, Vector3(0, 1.42, 0.22), Vector3(1.9, 0.04, 0.08), mat_marble_d)
-	# Chimney-glass overmantel — silvered plate
-	_add_mesh_box(root, Vector3(0, 1.95, 0.0), Vector3(1.05, 0.85, 0.08), mat_br_d)
-	_add_mesh_box(root, Vector3(0, 1.95, 0.04), Vector3(0.92, 0.72, 0.04), mat_br_d)
-	_add_mesh_box(root, Vector3(0, 1.95, 0.055), Vector3(0.82, 0.62, 0.02), mat_soot_l)
+	# Loop 223: chimney-glass overmantel — gilt frame + silver plate (not dark TV rectangle mid-FOV).
+	# Outer gilt frame with depth + inner liner + crest
+	_add_mesh_box(root, Vector3(0, 1.95, 0.0), Vector3(1.0, 0.78, 0.07), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 1.95, 0.03), Vector3(0.88, 0.66, 0.04), mat_br)
+	# Dark wood liner (thin — plate dominates, not solid soot block)
+	_add_mesh_box(root, Vector3(0, 1.95, 0.05), Vector3(0.78, 0.56, 0.015), mat_md)
+	# Silvered plate with warm highlight (reads as glass, not blank monitor)
 	var om_plate := MeshInstance3D.new()
 	var om_mesh := QuadMesh.new()
-	om_mesh.size = Vector2(0.76, 0.56)
+	om_mesh.size = Vector2(0.72, 0.5)
 	om_plate.mesh = om_mesh
 	var om_mat := StandardMaterial3D.new()
 	var om_tex := _load_tex("res://assets/rooms/textures/victorian/mirror_plate.jpg")
 	if om_tex:
 		om_mat.albedo_texture = om_tex
-		om_mat.albedo_color = Color(1.2, 1.18, 1.14)
+		om_mat.albedo_color = Color(1.15, 1.12, 1.08)
 		om_mat.emission_enabled = true
 		om_mat.emission_texture = om_tex
-		om_mat.emission = Color(0.55, 0.52, 0.48)
-		om_mat.emission_energy_multiplier = 0.35
+		om_mat.emission = Color(0.7, 0.68, 0.62)
+		om_mat.emission_energy_multiplier = 0.55
 	else:
-		om_mat.albedo_color = Color(0.65, 0.68, 0.66)
-	om_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		om_mat.albedo_color = Color(0.72, 0.74, 0.72)
+		om_mat.emission_enabled = true
+		om_mat.emission = Color(0.55, 0.58, 0.55)
+		om_mat.emission_energy_multiplier = 0.4
+	om_mat.metallic = 0.85
+	om_mat.roughness = 0.15
+	om_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	om_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	om_plate.material_override = om_mat
-	om_plate.position = Vector3(0, 1.95, 0.07)
+	om_plate.position = Vector3(0, 1.95, 0.065)
 	root.add_child(om_plate)
-	_add_unshaded_plate(root, Vector3(-0.18, 2.08, 0.075), Vector3(0.01, 0.16, 0.004), Color(0.88, 0.9, 0.92))
-	_add_mesh_box(root, Vector3(0, 2.42, 0.02), Vector3(0.28, 0.1, 0.05), mat_br_l)
-	_add_mesh_cyl(root, Vector3(0, 2.5, 0.03), 0.035, 0.04, mat_br, false)
+	# Specular highlight streak (glass identity)
+	_add_unshaded_plate(root, Vector3(-0.16, 2.05, 0.07), Vector3(0.01, 0.18, 0.004), Color(0.92, 0.94, 0.95, 0.7))
+	_add_unshaded_plate(root, Vector3(0.12, 1.88, 0.07), Vector3(0.08, 0.01, 0.004), Color(0.85, 0.88, 0.9, 0.5))
+	# Gilt crest / pediment (not bare bar)
+	_add_mesh_box(root, Vector3(0, 2.38, 0.02), Vector3(0.32, 0.08, 0.05), mat_br_l)
+	_add_mesh_box(root, Vector3(0, 2.42, 0.02), Vector3(0.18, 0.05, 0.04), mat_br)
+	_add_mesh_cyl(root, Vector3(0, 2.48, 0.03), 0.03, 0.035, mat_br_l, false)
+	# Corner gilt rosettes
+	for sx in [-1.0, 1.0]:
+		for sy in [-1.0, 1.0]:
+			_add_mesh_cyl(root, Vector3(sx * 0.42, 1.95 + sy * 0.3, 0.04), 0.03, 0.02, mat_br_l, false)
 	# Mantel ornaments by seed
 	match seed0 % 3:
 		0:
