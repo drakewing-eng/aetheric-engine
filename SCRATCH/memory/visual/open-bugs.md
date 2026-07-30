@@ -117,6 +117,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 163)
+
+- **Prep flour sack residual:** kit 0 used untextured `_add_sphere_blob` → beige snowman on doorway FOV. Cloth bag via linen cylinders + top folds + twine neck; oval loaf is cylinders only (no foliage end-blobs).  
+
 ## Status update 2026-07-29 (loop 162)
 
 - **Sofa mesh residual:** loop 161 mesh used foliage `_add_sphere_blob` for cushions → pale lime balloons. Rewrote continuous buttoned seat + dense diamond back, velvet bolsters only, mahogany arm scrolls + crest. Ottoman morning fabrics re-gated (oxblood/sage hit velvet, not wood).  

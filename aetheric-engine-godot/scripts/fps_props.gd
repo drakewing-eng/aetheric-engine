@@ -1565,30 +1565,39 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(width * 0.22, 0.42, 0.12), 0.06, 0.1, CREAM.darkened(0.1), false, 0.85)
 	match kit:
 		0:
-			# Loop 159: flour/dough day — soft sack + oval loaf (not Minecraft cubes)
-			# Crust/crumb colors MUST miss copper gate (r>0.55,g 0.25–0.48,b<0.32).
-			var sack := Color(0.72, 0.64, 0.48)
-			var sack_d := Color(0.55, 0.46, 0.32)
-			var crust := Color(0.5, 0.34, 0.18)   # wood-path brown, not copper metal
-			var crumb := Color(0.88, 0.78, 0.58)  # pale linen/cream, not brass
-			# Flour sack — soft slumped bag (sphere masses + short neck), not stacked tins
-			_add_sphere_blob(root, Vector3(-0.52, 0.94, 0.05), 0.13, sack)
-			_add_sphere_blob(root, Vector3(-0.48, 0.98, 0.1), 0.09, sack_d)
-			_add_sphere_blob(root, Vector3(-0.56, 0.97, 0.0), 0.08, sack)
-			_add_sphere_blob(root, Vector3(-0.52, 1.04, 0.05), 0.08, sack_d)
-			# Gathered neck + twine (short only)
-			_add_cylinder(root, Vector3(-0.52, 1.12, 0.05), 0.055, 0.07, sack_d, false, 0.92)
-			_add_cylinder(root, Vector3(-0.52, 1.16, 0.05), 0.035, 0.04, sack_d.darkened(0.1), false, 0.9)
-			_add_cylinder(root, Vector3(-0.52, 1.13, 0.05), 0.06, 0.012, Color(0.36, 0.28, 0.16), false, 0.8)
+			# Loop 163: flour/dough day — cloth bag + oval loaf (no snowman sphere stack).
+			# Crust/crumb MUST miss copper (r>0.55,g 0.25–0.48,b<0.32). Sack hits linen.
+			var sack := Color(0.78, 0.7, 0.55)      # linen path
+			var sack_d := Color(0.62, 0.54, 0.4)
+			var sack_dd := Color(0.5, 0.42, 0.3)
+			var crust := Color(0.5, 0.34, 0.18)     # wood brown, not copper metal
+			var crumb := Color(0.82, 0.72, 0.52)     # matte pale (g≤0.72, not brass)
+			# Flour sack — cloth bag via linen cylinders (soft silhouette, textured).
+			# Avoid: sphere_blob snowman (untextured) OR stacked bare cubes.
+			_add_cylinder(root, Vector3(-0.52, 0.95, 0.04), 0.12, 0.16, sack, false, 0.92)
+			_add_cylinder(root, Vector3(-0.5, 0.97, 0.07), 0.1, 0.14, sack_d, false, 0.92)
+			_add_cylinder(root, Vector3(-0.55, 0.96, 0.0), 0.08, 0.12, sack, false, 0.92)
+			# Slightly wider belly mid-band (slumped bag read)
+			_add_cylinder(root, Vector3(-0.52, 0.98, 0.04), 0.13, 0.06, sack_d, false, 0.9)
+			# Cloth folds as thin draped lids (not full cube mass)
+			_add_box(root, Vector3(-0.52, 1.06, 0.04), Vector3(0.2, 0.04, 0.16), sack_d, false, 0.9)
+			_add_box(root, Vector3(-0.48, 1.08, 0.0), Vector3(0.08, 0.035, 0.06), sack, false, 0.9)
+			_add_box(root, Vector3(-0.58, 1.075, 0.06), Vector3(0.06, 0.03, 0.06), sack_dd, false, 0.9)
+			# Gathered neck + twine
+			_add_cylinder(root, Vector3(-0.52, 1.12, 0.04), 0.048, 0.055, sack_dd, false, 0.9)
+			_add_cylinder(root, Vector3(-0.52, 1.16, 0.04), 0.03, 0.03, sack_d.darkened(0.08), false, 0.9)
+			_add_cylinder(root, Vector3(-0.52, 1.125, 0.04), 0.052, 0.012, Color(0.36, 0.28, 0.16), false, 0.8)
+			# Stencil band on bag face
+			_add_box(root, Vector3(-0.41, 0.98, 0.04), Vector3(0.012, 0.07, 0.09), sack_dd, false, 0.88)
 			# Wide dough board + flour dust smear
 			_add_box(root, Vector3(0.08, 0.875, -0.05), Vector3(0.7, 0.03, 0.4), OAK.lightened(0.18), false, 0.65)
 			_add_box(root, Vector3(0.08, 0.89, -0.05), Vector3(0.68, 0.008, 0.38), OAK.lightened(0.1), false, 0.68)
 			_add_box(root, Vector3(0.0, 0.882, 0.0), Vector3(0.42, 0.006, 0.28), CREAM.lightened(0.08), false, 0.95)
-			# Oval loaf — horizontal crust + rounded ends (rough matte, never metal tex)
-			_add_cylinder_rotated(root, Vector3(-0.02, 0.93, -0.05), 0.055, 0.28, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_cylinder_rotated(root, Vector3(-0.02, 0.945, -0.05), 0.04, 0.22, crumb, Vector3(0, 0, PI * 0.5), 0.94)
-			_add_sphere_blob(root, Vector3(-0.14, 0.93, -0.05), 0.05, crust)
-			_add_sphere_blob(root, Vector3(0.1, 0.93, -0.05), 0.05, crust)
+			# Oval loaf — stacked horizontal cylinders only (no foliage end-blobs)
+			_add_cylinder_rotated(root, Vector3(-0.02, 0.93, -0.05), 0.055, 0.3, crust, Vector3(0, 0, PI * 0.5), 0.92)
+			_add_cylinder_rotated(root, Vector3(-0.02, 0.945, -0.05), 0.042, 0.24, crumb, Vector3(0, 0, PI * 0.5), 0.94)
+			_add_cylinder_rotated(root, Vector3(-0.14, 0.93, -0.05), 0.048, 0.06, crust, Vector3(0, 0, PI * 0.5), 0.92)
+			_add_cylinder_rotated(root, Vector3(0.1, 0.93, -0.05), 0.048, 0.06, crust, Vector3(0, 0, PI * 0.5), 0.92)
 			# Score lines on crust
 			_add_box(root, Vector3(-0.02, 0.985, -0.05), Vector3(0.18, 0.006, 0.008), crust.darkened(0.12), false, 0.92)
 			_add_box(root, Vector3(-0.02, 0.985, -0.02), Vector3(0.14, 0.005, 0.006), crust.darkened(0.1), false, 0.92)
@@ -1603,7 +1612,7 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			_add_cylinder(root, Vector3(0.52, 0.935, -0.15), 0.12, 0.018, COPPER.lightened(0.08), false, 0.32, true)
 			_add_box(root, Vector3(0.5, 0.875, 0.14), Vector3(0.14, 0.012, 0.1), Color(0.62, 0.58, 0.48), false, 0.85)
 			_add_box(root, Vector3(0.5, 0.885, 0.14), Vector3(0.1, 0.01, 0.08), Color(0.7, 0.66, 0.55), false, 0.88)
-			# Cold apples (novel cue)
+			# Cold apples (produce — sphere_blob OK)
 			_add_sphere_blob(root, Vector3(0.18, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
 			_add_sphere_blob(root, Vector3(0.26, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
 			_add_sphere_blob(root, Vector3(0.2, 0.91, 0.1), 0.03, Color(0.6, 0.2, 0.14))
