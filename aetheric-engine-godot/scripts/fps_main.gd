@@ -139,8 +139,9 @@ func _update_prompt() -> void:
 		interact_prompt.text = "[E] Talk to %s" % data.get("name", "someone")
 	elif not _near_door.is_empty():
 		interact_prompt.visible = true
-		# Loop 153: closed leaf teleports — "Enter" not "Open" (avoids closet expectation)
-		interact_prompt.text = "[E] Enter %s" % _near_door.get("label", "next room")
+		# Loop 153/167: closed leaf teleports — clear destination (not "Open" closet)
+		var dest := str(_near_door.get("label", "next room"))
+		interact_prompt.text = "[E] Enter · %s" % dest
 	else:
 		interact_prompt.visible = false
 

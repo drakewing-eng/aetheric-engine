@@ -417,45 +417,115 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.1, door_h + 0.05, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
 	# Solid backstop — blocks void; closed leaf also collides
 	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), Color(0.28, 0.18, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0), true)
-	# Loop 125: closed 4-panel leaf + hardware (reads as real door, not closet slab)
+	# Loop 167: warm light strip under leaf → "room beyond" not closet void
+	_add_portal_glow(root, Vector3(0, 0.035, -depth + 0.02), Vector3(door_w * 0.72, 0.018, 0.04))
+	# Loop 167: closed leaf(s) — double for wide doors (hall/gallery scale)
 	var leaf_h := door_h - 0.06
 	var leaf_cy := 0.04 + leaf_h * 0.5
-	var leaf_w := door_w * 0.9
 	var lz := -depth + 0.07
 	var wood := Color(0.34, 0.22, 0.12)
 	var wood_d := Color(0.26, 0.16, 0.09)
 	var wood_p := Color(0.3, 0.18, 0.1)
 	var brass := Color(0.74, 0.58, 0.28)
-	_add_portal_box(root, Vector3(0, leaf_cy, lz), Vector3(leaf_w, leaf_h, 0.05), wood, wood_tex, Vector3(1.0, 2.0, 1.0), true)
-	# Kick rail
-	_add_portal_box(root, Vector3(0, 0.1, lz + 0.02), Vector3(leaf_w * 0.96, 0.1, 0.03), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
-	# Stiles / rails (4-panel grid)
-	var stile := 0.1
-	_add_portal_box(root, Vector3(-leaf_w * 0.5 + stile * 0.5, leaf_cy, lz + 0.02), Vector3(stile, leaf_h * 0.96, 0.025), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
-	_add_portal_box(root, Vector3(leaf_w * 0.5 - stile * 0.5, leaf_cy, lz + 0.02), Vector3(stile, leaf_h * 0.96, 0.025), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
-	_add_portal_box(root, Vector3(0, 0.04 + leaf_h - stile * 0.5, lz + 0.02), Vector3(leaf_w * 0.94, stile, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
-	_add_portal_box(root, Vector3(0, 0.04 + stile * 0.5, lz + 0.02), Vector3(leaf_w * 0.94, stile, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
-	_add_portal_box(root, Vector3(0, leaf_cy, lz + 0.02), Vector3(leaf_w * 0.7, stile * 0.85, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
-	_add_portal_box(root, Vector3(0, leaf_cy, lz + 0.02), Vector3(stile * 0.75, leaf_h * 0.75, 0.022), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
-	# Four fielded panels (raised lip + recessed field)
+	var double_leaf := door_w >= 1.55
+	if double_leaf:
+		# Pair of 4-panel leaves with centre meeting stile
+		var leaf_half := door_w * 0.44
+		for side in [-1.0, 1.0]:
+			var cx: float = float(side) * (leaf_half * 0.52 + 0.02)
+			_add_portal_leaf(root, cx, leaf_cy, lz, leaf_half, leaf_h, wood, wood_d, wood_p, brass, wood_tex, side > 0.0)
+		# Meeting stile strip
+		_add_portal_box(root, Vector3(0, leaf_cy, lz + 0.03), Vector3(0.04, leaf_h * 0.96, 0.03), wood_d, wood_tex, Vector3(0.4, 2.0, 1.0))
+	else:
+		_add_portal_leaf(root, 0.0, leaf_cy, lz, door_w * 0.9, leaf_h, wood, wood_d, wood_p, brass, wood_tex, true)
+	# Overdoor cornice + pediment (reads as formal entrance, not closet frame)
+	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.22, 0.1, depth + 0.06), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
+	_add_portal_box(root, Vector3(0, door_h + 0.12, -depth * 0.35), Vector3(door_w + 0.1, 0.06, depth * 0.6), Color(0.36, 0.24, 0.14), wood_tex, Vector3(1.0, 0.4, 1.0))
+	_add_portal_box(root, Vector3(0, door_h + 0.18, -depth * 0.3), Vector3(door_w * 0.35, 0.05, 0.08), brass.darkened(0.2), null, Vector3.ONE)
+	# Destination plaque on leaf face (eye height) — not buried in cornice
+	var label_txt := str(door.get("label", "next room"))
+	var plaque_y: float = clampf(leaf_cy + leaf_h * 0.18, 1.35, 1.85)
+	_add_portal_box(root, Vector3(0, plaque_y, lz + 0.055), Vector3(minf(door_w * 0.55, 0.95), 0.11, 0.025), brass.darkened(0.22), null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, plaque_y, lz + 0.07), Vector3(minf(door_w * 0.48, 0.85), 0.08, 0.018), Color(0.16, 0.1, 0.06), null, Vector3.ONE)
+	var lbl := Label3D.new()
+	lbl.name = "DoorDestination"
+	lbl.text = label_txt
+	lbl.font_size = 42
+	lbl.modulate = Color(0.94, 0.84, 0.55)
+	lbl.outline_modulate = Color(0.08, 0.04, 0.02)
+	lbl.outline_size = 8
+	lbl.position = Vector3(0, plaque_y, lz + 0.09)
+	lbl.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	lbl.pixel_size = 0.0042
+	root.add_child(lbl)
+
+
+func _add_portal_leaf(
+	parent: Node3D,
+	cx: float,
+	leaf_cy: float,
+	lz: float,
+	leaf_w: float,
+	leaf_h: float,
+	wood: Color,
+	wood_d: Color,
+	wood_p: Color,
+	brass: Color,
+	wood_tex: Texture2D,
+	knob_on_right: bool
+) -> void:
+	## One 4-panel closed leaf (loop 167 helper for single/double doors).
+	_add_portal_box(parent, Vector3(cx, leaf_cy, lz), Vector3(leaf_w, leaf_h, 0.05), wood, wood_tex, Vector3(1.0, 2.0, 1.0), true)
+	_add_portal_box(parent, Vector3(cx, 0.1, lz + 0.02), Vector3(leaf_w * 0.96, 0.1, 0.03), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
+	var stile := 0.09
+	_add_portal_box(parent, Vector3(cx - leaf_w * 0.5 + stile * 0.5, leaf_cy, lz + 0.02), Vector3(stile, leaf_h * 0.96, 0.025), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
+	_add_portal_box(parent, Vector3(cx + leaf_w * 0.5 - stile * 0.5, leaf_cy, lz + 0.02), Vector3(stile, leaf_h * 0.96, 0.025), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
+	_add_portal_box(parent, Vector3(cx, 0.04 + leaf_h - stile * 0.5, lz + 0.02), Vector3(leaf_w * 0.94, stile, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
+	_add_portal_box(parent, Vector3(cx, 0.04 + stile * 0.5, lz + 0.02), Vector3(leaf_w * 0.94, stile, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
+	_add_portal_box(parent, Vector3(cx, leaf_cy, lz + 0.02), Vector3(leaf_w * 0.7, stile * 0.85, 0.025), wood_d, wood_tex, Vector3(1.0, 0.5, 1.0))
+	_add_portal_box(parent, Vector3(cx, leaf_cy, lz + 0.02), Vector3(stile * 0.75, leaf_h * 0.75, 0.022), wood_d, wood_tex, Vector3(0.5, 2.0, 1.0))
 	var pw := leaf_w * 0.32
 	var ph := leaf_h * 0.28
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			var px2: float = float(sx) * leaf_w * 0.22
+			var px2: float = cx + float(sx) * leaf_w * 0.22
 			var py2: float = leaf_cy + float(sy) * leaf_h * 0.2
-			_add_portal_box(root, Vector3(px2, py2, lz + 0.03), Vector3(pw, ph, 0.015), wood_p, wood_tex, Vector3(0.8, 1.0, 1.0))
-			_add_portal_box(root, Vector3(px2, py2, lz + 0.04), Vector3(pw * 0.72, ph * 0.68, 0.012), wood.lightened(0.08), wood_tex, Vector3(0.7, 0.9, 1.0))
-	# Brass lock plate + knob + keyhole escutcheon
-	_add_portal_box(root, Vector3(leaf_w * 0.28, leaf_cy + 0.05, lz + 0.045), Vector3(0.09, 0.16, 0.02), brass.darkened(0.15), null, Vector3.ONE)
-	_add_portal_box(root, Vector3(leaf_w * 0.28, leaf_cy + 0.08, lz + 0.06), Vector3(0.06, 0.06, 0.04), brass, null, Vector3.ONE)
-	_add_portal_box(root, Vector3(leaf_w * 0.28, leaf_cy - 0.02, lz + 0.055), Vector3(0.05, 0.08, 0.02), brass.lightened(0.05), null, Vector3.ONE)
-	# Butt hinges on hinge side
+			_add_portal_box(parent, Vector3(px2, py2, lz + 0.03), Vector3(pw, ph, 0.015), wood_p, wood_tex, Vector3(0.8, 1.0, 1.0))
+			_add_portal_box(parent, Vector3(px2, py2, lz + 0.04), Vector3(pw * 0.72, ph * 0.68, 0.012), wood.lightened(0.08), wood_tex, Vector3(0.7, 0.9, 1.0))
+	var kx: float = cx + (leaf_w * 0.28 if knob_on_right else -leaf_w * 0.28)
+	_add_portal_box(parent, Vector3(kx, leaf_cy + 0.05, lz + 0.045), Vector3(0.09, 0.16, 0.02), brass.darkened(0.15), null, Vector3.ONE)
+	_add_portal_box(parent, Vector3(kx, leaf_cy + 0.08, lz + 0.06), Vector3(0.06, 0.06, 0.04), brass, null, Vector3.ONE)
+	_add_portal_box(parent, Vector3(kx, leaf_cy - 0.02, lz + 0.055), Vector3(0.05, 0.08, 0.02), brass.lightened(0.05), null, Vector3.ONE)
+	var hx: float = cx + (-leaf_w * 0.42 if knob_on_right else leaf_w * 0.42)
 	for hy_off in [-0.35, 0.0, 0.35]:
-		_add_portal_box(root, Vector3(-leaf_w * 0.42, leaf_cy + hy_off * leaf_h * 0.5, lz + 0.05), Vector3(0.05, 0.14, 0.035), brass, null, Vector3.ONE)
-	# Lintel
-	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.18, 0.08, depth + 0.05), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
+		_add_portal_box(parent, Vector3(hx, leaf_cy + hy_off * leaf_h * 0.5, lz + 0.05), Vector3(0.05, 0.14, 0.035), brass, null, Vector3.ONE)
 
+
+func _add_portal_glow(parent: Node3D, pos: Vector3, size: Vector3) -> void:
+	## Warm strip under closed leaf — next-room light leak (not a void closet).
+	var mi := MeshInstance3D.new()
+	mi.name = "DoorLightLeak"
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	mi.mesh = mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.78, 0.45, 0.85)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.72, 0.35)
+	mat.emission_energy_multiplier = 1.4
+	mat.roughness = 0.6
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	mi.material_override = mat
+	mi.position = pos
+	parent.add_child(mi)
+	# Soft fill omni just behind leaf
+	var light := OmniLight3D.new()
+	light.name = "DoorBeyondLight"
+	light.light_color = Color(1.0, 0.85, 0.6)
+	light.light_energy = 0.35
+	light.omni_range = 1.2
+	light.position = pos + Vector3(0, 0.4, -0.08)
+	parent.add_child(light)
 
 func _add_portal_box(
 	parent: Node3D,

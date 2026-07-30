@@ -4029,6 +4029,24 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.12, 0.04, depth + 0.14), door_frame_col, false, 0.45)
 	# Continuous dark kick under leaf (closes light gap under pale oak doors)
 	_add_box(root, Vector3(0, 0.04, 0.05), Vector3(w - 0.06, 0.08, 0.1), door_wood.darkened(0.12), true, 0.45)
+	# Loop 167: warm under-leaf glow (next room light leak — not closet void)
+	var glow := MeshInstance3D.new()
+	glow.name = "DoorLightLeak"
+	var gmesh := BoxMesh.new()
+	gmesh.size = Vector3(w * 0.7, 0.016, 0.04)
+	glow.mesh = gmesh
+	var gmat := StandardMaterial3D.new()
+	gmat.albedo_color = Color(1.0, 0.78, 0.45, 0.8)
+	gmat.emission_enabled = true
+	gmat.emission = Color(1.0, 0.72, 0.35)
+	gmat.emission_energy_multiplier = 1.2
+	gmat.roughness = 0.6
+	glow.material_override = gmat
+	glow.position = Vector3(0, 0.03, 0.08)
+	root.add_child(glow)
+	# Overdoor cornice (formal entrance read)
+	_add_box(root, Vector3(0, h + 0.12, 0.02), Vector3(w + 0.28, 0.08, depth + 0.1), case_col, false, 0.42)
+	_add_box(root, Vector3(0, h + 0.18, 0.04), Vector3(w * 0.4, 0.05, 0.08), BRASS.darkened(0.2), false, 0.32)
 	# Jamb feet — ground the case into the threshold
 	_add_box(root, Vector3(-w * 0.5 - 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)
 	_add_box(root, Vector3(w * 0.5 + 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)

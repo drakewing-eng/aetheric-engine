@@ -86,7 +86,7 @@ func _update_prompt() -> void:
 		interact_prompt.text = "[E] Talk to %s" % _near_npc["name"]
 	elif not _near_door.is_empty():
 		interact_prompt.visible = true
-		interact_prompt.text = "[E] Enter %s" % _near_door["label"]
+		interact_prompt.text = "[E] Enter · %s" % _near_door["label"]
 	else:
 		interact_prompt.visible = false
 

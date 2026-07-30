@@ -117,6 +117,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 167)
+
+- **Door closet residual:** portal visual identity — double leaves for wide doors, destination Label3D plaque on lintel, warm under-leaf emission + soft omni (next-room light leak), overdoor cornice. Feature frames get glow + cornice. Prompt `[E] Enter · <room>`. Automated door suite still PASS; human playtest still recommended.  
+
 ## Status update 2026-07-29 (loop 165)
 
 - **Wing side residual:** nested back/wing boxes still read as green stairs from morning side FOV after 164. Single deep shell + full-height wing envelope; front pad coplanar; arms under wing.  
