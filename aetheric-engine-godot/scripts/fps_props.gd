@@ -1330,26 +1330,26 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		lamp1.position = Vector3(0.4, ty + 0.4, 0)
 		root.add_child(lamp1)
 	elif dress == 2:
-		# Loop 185: porcelain bud vase + blooms — not cream cylinder cake mid-FOV.
-		var mat_vase := _solid_matte(Color(0.78, 0.74, 0.68), 0.45)
-		var mat_vase_d := _solid_matte(Color(0.55, 0.5, 0.44), 0.5)
-		var mat_blue := _solid_matte(Color(0.22, 0.32, 0.48), 0.4)
+		# Loop 185/224: porcelain bud vase — warm ivory (not pale cream cake mid-FOV hall).
+		var mat_vase := _solid_matte(Color(0.72, 0.66, 0.55), 0.5)
+		var mat_vase_d := _solid_matte(Color(0.52, 0.46, 0.38), 0.55)
+		var mat_blue := _solid_matte(Color(0.2, 0.3, 0.45), 0.4)
 		var mat_leaf := _solid_matte(Color(0.2, 0.38, 0.14), 0.9)
 		var mat_fl_r := _solid_matte(Color(0.62, 0.18, 0.16), 0.88)
 		var mat_fl_p := _solid_matte(Color(0.72, 0.4, 0.42), 0.88)
 		var mat_fl_y := _solid_matte(Color(0.78, 0.62, 0.28), 0.9)
-		# Slim bottle/bud vase (narrow neck — not wedding-cake tiers)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.02, 0), 0.045, 0.025, mat_vase_d, false)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.1, 0), 0.055, 0.14, mat_vase, false)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.12, 0), 0.058, 0.018, mat_blue, false)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.2, 0), 0.03, 0.08, mat_vase_d, false)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.25, 0), 0.04, 0.02, mat_vase, false)
-		# Irregular bloom cluster + leaves (not one sphere lid)
-		_add_mesh_box(root, Vector3(0.32, ty + 0.28, 0.0), Vector3(0.08, 0.02, 0.06), mat_leaf)
-		_add_mesh_cyl(root, Vector3(0.32, ty + 0.3, 0.01), 0.02, 0.016, mat_fl_r, false)
-		_add_mesh_cyl(root, Vector3(0.35, ty + 0.295, -0.015), 0.016, 0.012, mat_fl_p, false)
-		_add_mesh_cyl(root, Vector3(0.29, ty + 0.292, 0.02), 0.014, 0.012, mat_fl_y, false)
-		_add_mesh_cyl(root, Vector3(0.34, ty + 0.31, 0.0), 0.012, 0.01, mat_fl_r, false)
+		# Slim bottle: foot → belly → narrow neck (continuous taper, not tiers)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.015, 0), 0.04, 0.02, mat_vase_d, false)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.08, 0), 0.048, 0.1, mat_vase, false)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.1, 0), 0.05, 0.015, mat_blue, false)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.16, 0), 0.028, 0.07, mat_vase_d, false)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.21, 0), 0.035, 0.018, mat_vase, false)
+		# Low irregular bloom cluster (not lid disc)
+		_add_mesh_box(root, Vector3(0.32, ty + 0.24, 0.0), Vector3(0.07, 0.018, 0.055), mat_leaf)
+		_add_mesh_cyl(root, Vector3(0.32, ty + 0.26, 0.01), 0.018, 0.014, mat_fl_r, false)
+		_add_mesh_cyl(root, Vector3(0.35, ty + 0.255, -0.012), 0.014, 0.011, mat_fl_p, false)
+		_add_mesh_cyl(root, Vector3(0.29, ty + 0.252, 0.018), 0.012, 0.01, mat_fl_y, false)
+		_add_mesh_cyl(root, Vector3(0.33, ty + 0.27, 0.0), 0.01, 0.009, mat_fl_r, false)
 		# Calling cards + ink tray
 		_add_mesh_box(root, Vector3(-0.32, ty + 0.005, 0.05), Vector3(0.28, 0.015, 0.16), _solid_matte(PAPER, 0.92))
 		_add_mesh_box(root, Vector3(-0.3, ty + 0.018, 0.02), Vector3(0.2, 0.008, 0.11), _solid_matte(PAPER.darkened(0.06), 0.92))
@@ -4310,153 +4310,170 @@ static func _make_coat_stand(prop: Dictionary) -> Node3D:
 
 static func _make_umbrella_stand(prop: Dictionary) -> Node3D:
 	## Loop 191: Victorian stick stand — ceramic/oak pot + brass rim + umbrella crooks
-	## (not anonymous dark cylinder mid-FOV).
+	## Loop 224: not pale milk-churn / anonymous cylinder mid-FOV (entrance_hall_corner).
+	## Urn taper + warm stoneware or oak, crook sticks with fabric canopy hints.
 	var root := Node3D.new()
 	root.name = "UmbrellaStand"
 	var seed0: int = int(prop.get("seed", 0))
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
 	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_br_l := _solid_metal(Color(0.8, 0.64, 0.34), 0.28)
 	var mat_stick := _solid_matte(Color(0.22, 0.14, 0.08), 0.75)
 	var mat_stick_b := _solid_matte(Color(0.14, 0.1, 0.08), 0.8)
 	var mat_handle := _solid_matte(Color(0.35, 0.22, 0.12), 0.7)
+	var mat_canopy := _solid_matte(Color(0.28, 0.12, 0.1) if seed0 % 2 == 0 else Color(0.12, 0.16, 0.22), 0.9)
 	if seed0 % 2 == 0:
-		var mat_w := _solid_matte(Color(0.28, 0.16, 0.09), 0.72)
-		var mat_wd := _solid_matte(Color(0.2, 0.11, 0.06), 0.75)
-		# Turned oak jar: foot + belly + brass rim
-		_add_mesh_cyl(root, Vector3(0, 0.04, 0), 0.16, 0.06, mat_wd, true)
-		_add_mesh_cyl(root, Vector3(0, 0.28, 0), 0.14, 0.42, mat_w, false)
-		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.155, 0.05, mat_br, false)
-		_add_mesh_cyl(root, Vector3(0, 0.56, 0), 0.14, 0.03, mat_br_d, false)
+		var mat_w := _solid_matte(Color(0.32, 0.2, 0.11), 0.72)
+		var mat_wd := _solid_matte(Color(0.22, 0.13, 0.07), 0.75)
+		var mat_wl := _solid_matte(Color(0.4, 0.26, 0.14), 0.7)
+		# Turned oak urn: foot disc + tapered belly + brass rolled rim
+		_add_mesh_cyl(root, Vector3(0, 0.03, 0), 0.18, 0.05, mat_wd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.1, 0), 0.12, 0.08, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, 0.28, 0), 0.15, 0.28, mat_wl, false)
+		_add_mesh_cyl(root, Vector3(0, 0.42, 0), 0.13, 0.12, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.16, 0.04, mat_br, false)
+		_add_mesh_cyl(root, Vector3(0, 0.56, 0), 0.14, 0.025, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.58, 0), 0.12, 0.015, mat_br_l, false)
 		# Inner dark well
-		_add_mesh_cyl(root, Vector3(0, 0.35, 0), 0.1, 0.28, mat_wd, false)
+		_add_mesh_cyl(root, Vector3(0, 0.35, 0), 0.09, 0.26, mat_wd, false)
 	else:
-		# Ceramic stand with glaze band + foot
-		var mat_cer := _solid_matte(Color(0.78, 0.72, 0.6), 0.88)
-		var mat_cer_d := _solid_matte(Color(0.62, 0.55, 0.44), 0.9)
-		var mat_glaze := _solid_matte(Color(0.45, 0.22, 0.16), 0.75)
-		var mat_clay := _solid_matte(Color(0.55, 0.36, 0.22), 0.88)
-		_add_mesh_cyl(root, Vector3(0, 0.04, 0), 0.17, 0.05, mat_clay, true)
-		_add_mesh_cyl(root, Vector3(0, 0.28, 0), 0.15, 0.42, mat_cer, false)
-		_add_mesh_cyl(root, Vector3(0, 0.35, 0), 0.155, 0.08, mat_glaze, false)
-		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.17, 0.04, mat_cer_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.35, 0), 0.11, 0.28, mat_cer_d, false)
-	# Umbrellas / sticks with crook handles (identity, not bare nubs)
+		# Warm stoneware (not pale cream milk-churn) + blue glaze band
+		var mat_cer := _solid_matte(Color(0.62, 0.52, 0.4), 0.88)
+		var mat_cer_d := _solid_matte(Color(0.48, 0.4, 0.3), 0.9)
+		var mat_cer_l := _solid_matte(Color(0.7, 0.58, 0.44), 0.86)
+		var mat_glaze := _solid_matte(Color(0.28, 0.36, 0.48), 0.55)
+		var mat_clay := _solid_matte(Color(0.5, 0.34, 0.2), 0.88)
+		_add_mesh_cyl(root, Vector3(0, 0.03, 0), 0.18, 0.05, mat_clay, true)
+		_add_mesh_cyl(root, Vector3(0, 0.12, 0), 0.11, 0.1, mat_cer_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.3, 0), 0.155, 0.28, mat_cer, false)
+		_add_mesh_cyl(root, Vector3(0, 0.36, 0), 0.16, 0.06, mat_glaze, false)
+		_add_mesh_cyl(root, Vector3(0, 0.48, 0), 0.13, 0.1, mat_cer_l, false)
+		_add_mesh_cyl(root, Vector3(0, 0.55, 0), 0.165, 0.035, mat_br, false)
+		_add_mesh_cyl(root, Vector3(0, 0.58, 0), 0.14, 0.02, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.35, 0), 0.1, 0.26, mat_cer_d, false)
+	# Umbrellas / sticks with crook handles + small canopy mass (identity)
 	var n := 3 + seed0 % 2
 	for i in n:
-		var ang := float(i) * 0.9 + float(seed0) * 0.2
-		var ox := cos(ang) * 0.05
-		var oz := sin(ang) * 0.04
-		var h := 0.55 + float((i + seed0) % 3) * 0.1
+		var ang := float(i) * 0.95 + float(seed0) * 0.25
+		var ox := cos(ang) * 0.055
+		var oz := sin(ang) * 0.045
+		var h := 0.58 + float((i + seed0) % 3) * 0.1
 		var smat: Material = mat_stick if i % 2 == 0 else mat_stick_b
-		_add_mesh_cyl(root, Vector3(ox, 0.55 + h * 0.45, oz), 0.014 + float(i) * 0.002, h, smat, false)
-		# Crook handle (horizontal + tip)
-		_add_mesh_box(root, Vector3(ox + 0.04, 0.55 + h * 0.9, oz), Vector3(0.08, 0.025, 0.025), mat_handle)
-		_add_mesh_cyl(root, Vector3(ox + 0.07, 0.55 + h * 0.85, oz), 0.02, 0.05, mat_handle, false)
-	_add_contact_shadow(root, 0.2, 0.2)
+		_add_mesh_cyl(root, Vector3(ox, 0.58 + h * 0.42, oz), 0.014 + float(i) * 0.002, h, smat, false)
+		# Crook handle
+		_add_mesh_box(root, Vector3(ox + 0.045, 0.58 + h * 0.88, oz), Vector3(0.09, 0.022, 0.022), mat_handle)
+		_add_mesh_cyl(root, Vector3(ox + 0.08, 0.58 + h * 0.82, oz), 0.018, 0.05, mat_handle, false)
+		# Furled canopy blob near mid-stick (not bare pole)
+		if i % 2 == 0:
+			_add_mesh_cyl(root, Vector3(ox + 0.02, 0.75 + float(i) * 0.05, oz), 0.035, 0.08, mat_canopy, false)
+	_add_contact_shadow(root, 0.22, 0.22)
 	return root
 
 # ─── Features ────────────────────────────────────────────────────────────────
 
 static func _make_chandelier(_prop: Dictionary) -> Node3D:
 	## Loop 184: Victorian brass gasolier — ring arms + frosted alpha shades
-	## (not cream ice-cream cone cluster mid-FOV).
+	## Loop 224: brass-dominant mid-FOV — short open bells (not cream ice-cream cone cluster).
 	var root := Node3D.new()
 	root.name = "Chandelier"
 	var hang: float = float(_prop.get("hang", 2.95))
 	var mat_br := _solid_metal(BRASS, 0.28)
 	var mat_br_d := _solid_metal(BRASS.darkened(0.12), 0.32)
 	var mat_br_l := _solid_metal(BRASS.lightened(0.08), 0.25)
-	var mat_rose := _solid_matte(Color(0.82, 0.78, 0.7), 0.85)
-	# Frosted amber glass — alpha so never brass path; soft emission
+	var mat_rose := _solid_matte(Color(0.78, 0.72, 0.62), 0.85)
+	# More transparent amber glass — brass reads first, not cream mass
 	var mat_shade := StandardMaterial3D.new()
-	mat_shade.albedo_color = Color(0.92, 0.78, 0.48, 0.55)
+	mat_shade.albedo_color = Color(0.85, 0.68, 0.38, 0.38)
 	mat_shade.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat_shade.metallic = 0.0
-	mat_shade.roughness = 0.35
+	mat_shade.roughness = 0.3
 	mat_shade.emission_enabled = true
-	mat_shade.emission = Color(1.0, 0.82, 0.45)
-	mat_shade.emission_energy_multiplier = 0.55
+	mat_shade.emission = Color(1.0, 0.75, 0.4)
+	mat_shade.emission_energy_multiplier = 0.7
 	mat_shade.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	var mat_shade_i := StandardMaterial3D.new()
-	mat_shade_i.albedo_color = Color(1.0, 0.9, 0.6, 0.35)
+	mat_shade_i.albedo_color = Color(1.0, 0.85, 0.5, 0.28)
 	mat_shade_i.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat_shade_i.metallic = 0.0
-	mat_shade_i.roughness = 0.25
+	mat_shade_i.roughness = 0.2
 	mat_shade_i.emission_enabled = true
-	mat_shade_i.emission = Color(1.0, 0.88, 0.55)
-	mat_shade_i.emission_energy_multiplier = 0.9
+	mat_shade_i.emission = Color(1.0, 0.82, 0.48)
+	mat_shade_i.emission_energy_multiplier = 1.1
 	mat_shade_i.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	var mat_crystal := _solid_matte(Color(0.78, 0.82, 0.88), 0.2)
 	# Ceiling rose + brass drop rod
-	_add_mesh_cyl(root, Vector3(0, hang + 0.3, 0), 0.16, 0.04, mat_rose, false)
-	_add_mesh_cyl(root, Vector3(0, hang + 0.26, 0), 0.08, 0.035, mat_br_d, false)
-	_add_mesh_cyl(root, Vector3(0, hang + 0.08, 0), 0.018, 0.32, mat_br, false)
-	# Central body (compact brass reservoir — not tall glass stack)
-	_add_mesh_cyl(root, Vector3(0, hang - 0.05, 0), 0.1, 0.05, mat_br_d, false)
-	_add_mesh_cyl(root, Vector3(0, hang - 0.12, 0), 0.15, 0.09, mat_br, false)
-	_add_mesh_cyl(root, Vector3(0, hang - 0.18, 0), 0.1, 0.04, mat_br_l, false)
-	# Brass arm ring (identity of gasolier)
-	_add_mesh_cyl(root, Vector3(0, hang - 0.08, 0), 0.32, 0.02, mat_br_d, false)
-	# Six curved arms + compact bell shades
+	_add_mesh_cyl(root, Vector3(0, hang + 0.3, 0), 0.14, 0.035, mat_rose, false)
+	_add_mesh_cyl(root, Vector3(0, hang + 0.26, 0), 0.07, 0.03, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, hang + 0.08, 0), 0.02, 0.3, mat_br, false)
+	# Central brass body (hero mass — not glass stack)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.02, 0), 0.09, 0.04, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.1, 0), 0.14, 0.1, mat_br, false)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.18, 0), 0.09, 0.04, mat_br_l, false)
+	# Double brass arm rings (gasolier identity)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.06, 0), 0.3, 0.018, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.1, 0), 0.34, 0.014, mat_br, false)
+	# Six arms + SHORT open-mouth bells (brass gallery dominates silhouette)
 	for i in 6:
 		var a := float(i) * 60.0
 		var rad := deg_to_rad(a)
-		var ax: float = cos(rad) * 0.42
-		var az: float = sin(rad) * 0.42
-		# Arm segments (stepped curve outward + down)
-		_add_mesh_box(root, Vector3(ax * 0.35, hang - 0.06, az * 0.35), Vector3(0.16, 0.028, 0.028), mat_br)
-		_add_mesh_box(root, Vector3(ax * 0.7, hang - 0.12, az * 0.7), Vector3(0.14, 0.024, 0.024), mat_br_d)
-		# Cup + nozzle
-		_add_mesh_cyl(root, Vector3(ax, hang - 0.16, az), 0.035, 0.04, mat_br, false)
-		_add_mesh_cyl(root, Vector3(ax, hang - 0.19, az), 0.05, 0.02, mat_br_d, false)
-		# Bell shade: wider OPEN mouth DOWN, shorter (not tall ice-cream cone)
-		# top narrow (at jet), bottom wider (mouth)
+		var ax: float = cos(rad) * 0.4
+		var az: float = sin(rad) * 0.4
+		# Arm: brass tube segments
+		_add_mesh_box(root, Vector3(ax * 0.32, hang - 0.05, az * 0.32), Vector3(0.15, 0.03, 0.03), mat_br)
+		_add_mesh_box(root, Vector3(ax * 0.65, hang - 0.1, az * 0.65), Vector3(0.13, 0.026, 0.026), mat_br_d)
+		# Cup + nozzle (brass mass at shade top)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.14, az), 0.04, 0.04, mat_br, false)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.17, az), 0.055, 0.022, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.19, az), 0.03, 0.02, mat_br_l, false)
+		# SHORT wide-open bell (h=0.08 — not tall cone mass)
 		var shade := MeshInstance3D.new()
 		var sm := CylinderMesh.new()
-		sm.top_radius = 0.04
-		sm.bottom_radius = 0.09
-		sm.height = 0.12
+		sm.top_radius = 0.035
+		sm.bottom_radius = 0.095
+		sm.height = 0.08
 		sm.radial_segments = 12
 		shade.mesh = sm
 		shade.material_override = mat_shade
-		shade.position = Vector3(ax, hang - 0.26, az)
+		shade.position = Vector3(ax, hang - 0.24, az)
 		root.add_child(shade)
-		# Inner glow
 		var inner := MeshInstance3D.new()
 		var im := CylinderMesh.new()
-		im.top_radius = 0.02
+		im.top_radius = 0.018
 		im.bottom_radius = 0.05
-		im.height = 0.08
+		im.height = 0.055
 		im.radial_segments = 10
 		inner.mesh = im
 		inner.material_override = mat_shade_i
-		inner.position = Vector3(ax, hang - 0.24, az)
+		inner.position = Vector3(ax, hang - 0.23, az)
 		root.add_child(inner)
-		# Gallery ring at mouth
-		_add_mesh_cyl(root, Vector3(ax, hang - 0.32, az), 0.085, 0.012, mat_br_d, false)
+		# Double brass gallery at mouth (breaks cream-cone read)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.28, az), 0.09, 0.012, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.295, az), 0.08, 0.01, mat_br, false)
 		# Flame
 		var _fl7 := StandardMaterial3D.new()
 		_fl7.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
 		_fl7.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		_fl7.emission_enabled = true
 		_fl7.emission = Color(1.0, 0.72, 0.3)
-		_fl7.emission_energy_multiplier = 1.7
+		_fl7.emission_energy_multiplier = 1.8
 		_fl7.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_add_mesh_cyl(root, Vector3(ax, hang - 0.2, az), 0.022, 0.0286, _fl7, false)
-	# Crystal pendants under bowl (subtle, not long sticks)
-	for j in 6:
-		var ja := float(j) * 60.0 + 20.0
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.18, az), 0.02, 0.025, _fl7, false)
+	# Crystal drops under central bowl
+	for j in 8:
+		var ja := float(j) * 45.0 + 15.0
 		var jr := deg_to_rad(ja)
 		_add_mesh_box(
 			root,
-			Vector3(cos(jr) * 0.1, hang - 0.26, sin(jr) * 0.1),
-			Vector3(0.014, 0.07, 0.014),
-			_solid_matte(Color(0.75, 0.78, 0.82), 0.25)
+			Vector3(cos(jr) * 0.09, hang - 0.28, sin(jr) * 0.09),
+			Vector3(0.012, 0.08, 0.012),
+			mat_crystal
 		)
+		_add_mesh_cyl(root, Vector3(cos(jr) * 0.09, hang - 0.33, sin(jr) * 0.09), 0.012, 0.02, mat_crystal, false)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.86, 0.58)
-	light.light_energy = 1.25
-	light.omni_range = 7.8
-	light.position = Vector3(0, hang - 0.2, 0)
+	light.light_energy = 1.3
+	light.omni_range = 8.0
+	light.position = Vector3(0, hang - 0.18, 0)
 	root.add_child(light)
 	return root
 
