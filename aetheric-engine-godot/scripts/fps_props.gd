@@ -2098,39 +2098,36 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 		_add_mesh_box(root, Vector3(0, 0.16, 0.0), Vector3(w * 0.82, 0.028, 0.03), mat_id)
 		_add_mesh_box(root, Vector3(0, 0.16, 0.0), Vector3(0.03, 0.028, 0.28), mat_id)
 	else:
-		# Teak garden settle (loop 135): open ladder-back + seat slats (not fridge slab)
-		var teak := Color(0.42, 0.28, 0.14)
-		var teak_d := Color(0.3, 0.18, 0.08)
-		var teak_l := Color(0.52, 0.36, 0.18)
-		var cushion := Color(0.55, 0.42, 0.28)
-		# Seat: horizontal slats with gaps
-		_add_box(root, Vector3(0, seat_y - 0.05, 0.0), Vector3(w * 0.94, 0.05, seat_d * 0.95), teak_d, true, 0.52)
+		# Teak garden settle — solid-mat ladder-back + seat slats (loop 202)
+		var mat_teak := _solid_matte(Color(0.42, 0.28, 0.14), 0.72)
+		var mat_teak_d := _solid_matte(Color(0.3, 0.18, 0.08), 0.78)
+		var mat_teak_l := _solid_matte(Color(0.52, 0.36, 0.18), 0.7)
+		var mat_cush := _solid_matte(Color(0.55, 0.42, 0.28), 0.88)
+		_add_mesh_box(root, Vector3(0, seat_y - 0.05, 0.0), Vector3(w * 0.94, 0.05, seat_d * 0.95), mat_teak_d)
 		for i in 5:
 			var t := float(i) / 4.0
 			var z := -0.18 + t * 0.36
-			_add_box(root, Vector3(0, seat_y, z), Vector3(w * 0.9, 0.04, 0.05), teak_l if i % 2 == 0 else teak, true, 0.58)
-		_add_box(root, Vector3(0, seat_y + 0.04, 0.02), Vector3(w * 0.88, 0.035, seat_d * 0.75), cushion, false, 0.85)
-		# Open ladder-back: rails only + thin spindles (air shows through)
-		_add_box(root, Vector3(0, 0.58, -0.22), Vector3(w * 0.9, 0.05, 0.05), teak_d, true, 0.5)
-		_add_box(root, Vector3(0, 0.85, -0.22), Vector3(w * 0.88, 0.04, 0.04), teak, false, 0.5)
-		_add_box(root, Vector3(0, 1.1, -0.22), Vector3(w * 0.9, 0.06, 0.05), teak_l, true, 0.5)
-		_add_box(root, Vector3(0, 1.16, -0.2), Vector3(w * 0.4, 0.04, 0.04), teak, false, 0.5)
+			_add_mesh_box(root, Vector3(0, seat_y, z), Vector3(w * 0.9, 0.04, 0.05), mat_teak_l if i % 2 == 0 else mat_teak)
+		_add_mesh_box(root, Vector3(0, seat_y + 0.04, 0.02), Vector3(w * 0.88, 0.035, seat_d * 0.75), mat_cush)
+		_add_mesh_box(root, Vector3(0, 0.58, -0.22), Vector3(w * 0.9, 0.05, 0.05), mat_teak_d)
+		_add_mesh_box(root, Vector3(0, 0.85, -0.22), Vector3(w * 0.88, 0.04, 0.04), mat_teak)
+		_add_mesh_box(root, Vector3(0, 1.1, -0.22), Vector3(w * 0.9, 0.06, 0.05), mat_teak_l)
+		_add_mesh_box(root, Vector3(0, 1.16, -0.2), Vector3(w * 0.4, 0.04, 0.04), mat_teak)
 		for i in 7:
 			var t := float(i) / 6.0
 			var bx: float = -w * 0.38 + t * w * 0.76
-			_add_box(root, Vector3(bx, 0.85, -0.2), Vector3(0.035, 0.48, 0.03), teak_d if i % 2 == 0 else teak, false, 0.55)
-		# Arms + open ends
+			_add_mesh_box(root, Vector3(bx, 0.85, -0.2), Vector3(0.035, 0.48, 0.03), mat_teak_d if i % 2 == 0 else mat_teak)
 		for sx in [-1.0, 1.0]:
 			var ex: float = sx * w * 0.45
-			_add_box(root, Vector3(ex, 0.85, -0.2), Vector3(0.08, 0.65, 0.08), teak_d, true, 0.5)
-			_add_box(root, Vector3(ex, 0.62, 0.05), Vector3(0.09, 0.06, 0.42), teak_l, false, 0.5)
-			_add_cylinder(root, Vector3(ex, 0.62, 0.24), 0.04, 0.05, teak, false, 0.5)
-			_add_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
-			_add_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.07, 0.4, 0.07), teak_d, true, 0.52)
-			_add_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
-			_add_box(root, Vector3(ex, 0.03, -0.18), Vector3(0.09, 0.04, 0.1), teak, true, 0.52)
-		_add_box(root, Vector3(0, 0.15, 0.0), Vector3(w * 0.8, 0.035, 0.04), teak_d, false, 0.55)
-		_add_box(root, Vector3(0, 0.15, 0.0), Vector3(0.04, 0.035, 0.3), teak_d, false, 0.55)
+			_add_mesh_box(root, Vector3(ex, 0.85, -0.2), Vector3(0.08, 0.65, 0.08), mat_teak_d)
+			_add_mesh_box(root, Vector3(ex, 0.62, 0.05), Vector3(0.09, 0.06, 0.42), mat_teak_l)
+			_add_mesh_cyl(root, Vector3(ex, 0.62, 0.24), 0.04, 0.05, mat_teak, false)
+			_add_mesh_box(root, Vector3(ex, 0.22, 0.16), Vector3(0.07, 0.4, 0.07), mat_teak_d)
+			_add_mesh_box(root, Vector3(ex, 0.22, -0.18), Vector3(0.07, 0.4, 0.07), mat_teak_d)
+			_add_mesh_box(root, Vector3(ex, 0.03, 0.16), Vector3(0.09, 0.04, 0.1), mat_teak)
+			_add_mesh_box(root, Vector3(ex, 0.03, -0.18), Vector3(0.09, 0.04, 0.1), mat_teak)
+		_add_mesh_box(root, Vector3(0, 0.15, 0.0), Vector3(w * 0.8, 0.035, 0.04), mat_teak_d)
+		_add_mesh_box(root, Vector3(0, 0.15, 0.0), Vector3(0.04, 0.035, 0.3), mat_teak_d)
 	_add_contact_shadow(root, w * 0.5, 0.38)
 	return root
 
@@ -2665,57 +2662,59 @@ static func _make_pot_rack(prop: Dictionary) -> Node3D:
 
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
-	## Loop 118: bulbous copper vessels with rims/handles (not flat coil stacks).
+	## Loop 202: solid-metal copper vessels (no metal_copper.jpg washout mid-FOV).
 	var root := Node3D.new()
 	root.name = "CopperPot"
 	var scale: float = prop.get("scale", 1.0)
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 5
 	var col := COPPER if style % 2 == 0 else COPPER.darkened(0.08)
+	var mat_c := _solid_metal(col, 0.32)
+	var mat_cd := _solid_metal(col.darkened(0.08), 0.36)
+	var mat_cl := _solid_metal(col.lightened(0.06), 0.28)
+	var mat_br := _solid_metal(BRASS.darkened(0.1), 0.32)
+	var mat_br_l := _solid_metal(BRASS, 0.28)
+	var mat_iron := _solid_metal(Color(0.42, 0.42, 0.44), 0.48)
+	var mat_soot := _solid_matte(Color(0.14, 0.1, 0.08), 0.9)
 	if style == 0:
-		# Classic kettle — belly + shoulder + bail
-		_add_cylinder(root, Vector3(0, 0.06 * scale, 0), 0.11 * scale, 0.08 * scale, col.darkened(0.06), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.14 * scale, 0), 0.15 * scale, 0.12 * scale, col, true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.22 * scale, 0), 0.13 * scale, 0.08 * scale, col.lightened(0.05), true, 0.32, true)
-		_add_cylinder(root, Vector3(0, 0.28 * scale, 0), 0.14 * scale, 0.03 * scale, col.lightened(0.1), false, 0.3, true)
-		_add_cylinder(root, Vector3(0, 0.3 * scale, 0), 0.09 * scale, 0.025 * scale, Color(0.18, 0.1, 0.06), false)
-		_add_box(root, Vector3(0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), col, false, 0.35)
-		_add_box(root, Vector3(0, 0.32 * scale, 0), Vector3(0.32 * scale, 0.02 * scale, 0.025 * scale), BRASS.darkened(0.1), false, 0.3)
-		_add_box(root, Vector3(0.14 * scale, 0.16 * scale, 0), Vector3(0.08 * scale, 0.04 * scale, 0.06 * scale), col.darkened(0.05), false, 0.35)
+		_add_mesh_cyl(root, Vector3(0, 0.06 * scale, 0), 0.11 * scale, 0.08 * scale, mat_cd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.14 * scale, 0), 0.15 * scale, 0.12 * scale, mat_c, true)
+		_add_mesh_cyl(root, Vector3(0, 0.22 * scale, 0), 0.13 * scale, 0.08 * scale, mat_cl, true)
+		_add_mesh_cyl(root, Vector3(0, 0.28 * scale, 0), 0.14 * scale, 0.03 * scale, mat_cl, false)
+		_add_mesh_cyl(root, Vector3(0, 0.3 * scale, 0), 0.09 * scale, 0.025 * scale, mat_soot, false)
+		_add_mesh_box(root, Vector3(0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), mat_c)
+		_add_mesh_box(root, Vector3(-0.15 * scale, 0.2 * scale, 0), Vector3(0.03 * scale, 0.12 * scale, 0.03 * scale), mat_c)
+		_add_mesh_box(root, Vector3(0, 0.32 * scale, 0), Vector3(0.32 * scale, 0.02 * scale, 0.025 * scale), mat_br)
+		_add_mesh_box(root, Vector3(0.14 * scale, 0.16 * scale, 0), Vector3(0.08 * scale, 0.04 * scale, 0.06 * scale), mat_cd)
 	elif style == 1:
-		# Wide skillet — deep rim + long handle + helper loop
-		_add_cylinder(root, Vector3(0, 0.05 * scale, 0), 0.16 * scale, 0.06 * scale, col.darkened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.1 * scale, 0), 0.19 * scale, 0.08 * scale, col.lightened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.15 * scale, 0), 0.2 * scale, 0.03 * scale, col, false, 0.3, true)
-		_add_box(root, Vector3(0.24 * scale, 0.11 * scale, 0), Vector3(0.22 * scale, 0.028 * scale, 0.05 * scale), col, false, 0.35)
-		_add_cylinder(root, Vector3(0.36 * scale, 0.11 * scale, 0), 0.025 * scale, 0.04 * scale, col.darkened(0.08), false, 0.35, true)
-		_add_box(root, Vector3(-0.18 * scale, 0.12 * scale, 0), Vector3(0.06 * scale, 0.04 * scale, 0.05 * scale), col, false, 0.35)
+		_add_mesh_cyl(root, Vector3(0, 0.05 * scale, 0), 0.16 * scale, 0.06 * scale, mat_cd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.1 * scale, 0), 0.19 * scale, 0.08 * scale, mat_cl, true)
+		_add_mesh_cyl(root, Vector3(0, 0.15 * scale, 0), 0.2 * scale, 0.03 * scale, mat_c, false)
+		_add_mesh_box(root, Vector3(0.24 * scale, 0.11 * scale, 0), Vector3(0.22 * scale, 0.028 * scale, 0.05 * scale), mat_c)
+		_add_mesh_cyl(root, Vector3(0.36 * scale, 0.11 * scale, 0), 0.025 * scale, 0.04 * scale, mat_cd, false)
+		_add_mesh_box(root, Vector3(-0.18 * scale, 0.12 * scale, 0), Vector3(0.06 * scale, 0.04 * scale, 0.05 * scale), mat_c)
 	elif style == 2:
-		# Tall stockpot with lid + side handles
-		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.11 * scale, 0.1 * scale, col.darkened(0.08), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.2 * scale, 0), 0.13 * scale, 0.18 * scale, col.darkened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.12 * scale, 0.08 * scale, col, true, 0.32, true)
-		_add_cylinder(root, Vector3(0, 0.38 * scale, 0), 0.135 * scale, 0.03 * scale, col.lightened(0.08), false, 0.3, true)
-		_add_cylinder(root, Vector3(0, 0.42 * scale, 0), 0.05 * scale, 0.04 * scale, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), col, false, 0.35)
+		_add_mesh_cyl(root, Vector3(0, 0.08 * scale, 0), 0.11 * scale, 0.1 * scale, mat_cd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.2 * scale, 0), 0.13 * scale, 0.18 * scale, mat_c, true)
+		_add_mesh_cyl(root, Vector3(0, 0.32 * scale, 0), 0.12 * scale, 0.08 * scale, mat_cl, true)
+		_add_mesh_cyl(root, Vector3(0, 0.38 * scale, 0), 0.135 * scale, 0.03 * scale, mat_cl, false)
+		_add_mesh_cyl(root, Vector3(0, 0.42 * scale, 0), 0.05 * scale, 0.04 * scale, mat_br_l, false)
+		_add_mesh_box(root, Vector3(0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), mat_c)
+		_add_mesh_box(root, Vector3(-0.14 * scale, 0.24 * scale, 0), Vector3(0.04 * scale, 0.1 * scale, 0.08 * scale), mat_c)
 	elif style == 3:
-		# Water jug / ewer — bulb body + neck + spout + handle
-		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.08 * scale, 0.08 * scale, col.darkened(0.05), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.12 * scale, col.lightened(0.04), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, 0.26 * scale, 0), 0.07 * scale, 0.1 * scale, col, true, 0.32, true)
-		_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.06 * scale, 0.04 * scale, col.lightened(0.06), false, 0.32, true)
-		_add_box(root, Vector3(0.12 * scale, 0.24 * scale, 0), Vector3(0.12 * scale, 0.035 * scale, 0.05 * scale), col, false, 0.35)
-		_add_box(root, Vector3(-0.1 * scale, 0.2 * scale, 0), Vector3(0.04 * scale, 0.14 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
-		_add_box(root, Vector3(-0.08 * scale, 0.3 * scale, 0), Vector3(0.1 * scale, 0.025 * scale, 0.03 * scale), col.darkened(0.05), false, 0.35)
+		_add_mesh_cyl(root, Vector3(0, 0.08 * scale, 0), 0.08 * scale, 0.08 * scale, mat_cd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.16 * scale, 0), 0.12 * scale, 0.12 * scale, mat_cl, true)
+		_add_mesh_cyl(root, Vector3(0, 0.26 * scale, 0), 0.07 * scale, 0.1 * scale, mat_c, true)
+		_add_mesh_cyl(root, Vector3(0, 0.32 * scale, 0), 0.06 * scale, 0.04 * scale, mat_cl, false)
+		_add_mesh_box(root, Vector3(0.12 * scale, 0.24 * scale, 0), Vector3(0.12 * scale, 0.035 * scale, 0.05 * scale), mat_c)
+		_add_mesh_box(root, Vector3(-0.1 * scale, 0.2 * scale, 0), Vector3(0.04 * scale, 0.14 * scale, 0.03 * scale), mat_cd)
+		_add_mesh_box(root, Vector3(-0.08 * scale, 0.3 * scale, 0), Vector3(0.1 * scale, 0.025 * scale, 0.03 * scale), mat_cd)
 	else:
-		# Coal scuttle / bucket — tapered + hoop + bail
-		_add_cylinder(root, Vector3(0, 0.08 * scale, 0), 0.12 * scale, 0.1 * scale, col.darkened(0.12), true, 0.4, true)
-		_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.16 * scale, 0.14 * scale, col.darkened(0.1), true, 0.4, true)
-		_add_cylinder(root, Vector3(0, 0.26 * scale, 0), 0.17 * scale, 0.03 * scale, IRON.lightened(0.1), false, 0.45)
-		_add_box(root, Vector3(0, 0.34 * scale, 0), Vector3(0.025 * scale, 0.14 * scale, 0.3 * scale), IRON, false, 0.4)
-		_add_box(root, Vector3(0.1 * scale, 0.14 * scale, 0.1 * scale), Vector3(0.06 * scale, 0.04 * scale, 0.06 * scale), Color(0.12, 0.1, 0.1), false, 0.8)
+		_add_mesh_cyl(root, Vector3(0, 0.08 * scale, 0), 0.12 * scale, 0.1 * scale, mat_cd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.18 * scale, 0), 0.16 * scale, 0.14 * scale, mat_c, true)
+		_add_mesh_cyl(root, Vector3(0, 0.26 * scale, 0), 0.17 * scale, 0.03 * scale, mat_iron, false)
+		_add_mesh_box(root, Vector3(0, 0.34 * scale, 0), Vector3(0.025 * scale, 0.14 * scale, 0.3 * scale), mat_iron)
+		_add_mesh_box(root, Vector3(0.1 * scale, 0.14 * scale, 0.1 * scale), Vector3(0.06 * scale, 0.04 * scale, 0.06 * scale), mat_soot)
 	_add_contact_shadow(root, 0.2 * scale, 0.2 * scale)
 	return root
 
@@ -3209,9 +3208,8 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
 
 static func _make_machine(prop: Dictionary) -> Node3D:
-	## Secondary gallery apparatus — loop 131: THREE distinct instrument silhouettes
-	## by seed (coil frame / harmonic fork / Leyden stack). Never mini-clones of the
-	## main aetheric engine, never solid gold coin towers.
+	## Loop 202: secondary gallery instruments — full solid mats (coil/fork/Leyden).
+	## Three silhouettes by seed; never mini-clones of the main aetheric engine.
 	var root := Node3D.new()
 	root.name = "Machine"
 	var height: float = float(prop.get("height", 2.6))
@@ -3221,39 +3219,48 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	var iron_dark := Color(0.24, 0.24, 0.26)
 	var oak_d := Color(0.26, 0.16, 0.09)
 	var oak := Color(0.4, 0.26, 0.14)
-	var glass_c := Color(0.35, 0.55, 0.58)
-	var glass_hi := Color(0.45, 0.68, 0.72)
+	var mat_br_s := _solid_metal(BRASS, 0.28)
+	var mat_br_sd := _solid_metal(BRASS.darkened(0.1), 0.32)
+	var mat_br_sl := _solid_metal(BRASS.lightened(0.05), 0.26)
+	var mat_cop_s := _solid_metal(COPPER, 0.32)
+	var mat_cop_sd := _solid_metal(COPPER.darkened(0.1), 0.36)
+	var mat_cop_sl := _solid_metal(COPPER.lightened(0.08), 0.28)
+	var mat_oak_s := _solid_matte(oak, 0.72)
+	var mat_oak_sd := _solid_matte(oak_d, 0.75)
+	var mat_oak_sdd := _solid_matte(oak_d.darkened(0.1), 0.78)
+	var mat_iron_s := _solid_matte(iron_mid, 0.55)
+	var mat_iron_sd := _solid_matte(iron_dark, 0.58)
+	var mat_gauge := _solid_matte(Color(0.85, 0.88, 0.8), 0.5)
 	var top_y: float = 1.6
 	match style:
 		0:
-			# Open oak frame + spaced copper coils + dome (secondary coil apparatus)
+			# Open oak frame + spaced copper coils + amber terminal
 			var col_h: float = maxf(height * 0.68, 1.35)
-			_add_box(root, Vector3(0, 0.1, 0), Vector3(1.15, 0.2, 1.05), iron_mid, true, 0.45)
-			_add_box(root, Vector3(0, 0.24, 0), Vector3(0.98, 0.1, 0.88), oak_d, true, 0.5)
-			_add_box(root, Vector3(0, 0.3, 0), Vector3(0.82, 0.04, 0.74), COPPER.darkened(0.15), false, 0.35)
+			_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(1.15, 0.2, 1.05), mat_iron_s)
+			_add_mesh_box(root, Vector3(0, 0.24, 0), Vector3(0.98, 0.1, 0.88), mat_oak_sd)
+			_add_mesh_box(root, Vector3(0, 0.3, 0), Vector3(0.82, 0.04, 0.74), mat_cop_sd)
 			var col_mid: float = 0.4 + col_h * 0.45
-			_add_cylinder(root, Vector3(0, col_mid, 0), 0.06, col_h * 0.85, BRASS.darkened(0.05), true, 0.3, true)
+			_add_mesh_cyl(root, Vector3(0, col_mid, 0), 0.06, col_h * 0.85, mat_br_sd, true)
 			for sx in [-1.0, 1.0]:
 				for sz in [-1.0, 1.0]:
-					_add_box(root, Vector3(sx * 0.34, col_mid, sz * 0.34), Vector3(0.065, col_h * 0.8, 0.065), oak_d, true, 0.5)
-					_add_cylinder(root, Vector3(sx * 0.34, 0.4 + col_h * 0.85, sz * 0.34), 0.045, 0.045, BRASS, false, 0.28, true)
-			_add_box(root, Vector3(0, 0.4 + col_h * 0.82, 0), Vector3(0.78, 0.06, 0.78), oak, false, 0.5)
-			_add_box(root, Vector3(0, 0.4 + col_h * 0.86, 0), Vector3(0.66, 0.03, 0.66), BRASS.darkened(0.1), false, 0.3)
+					_add_mesh_box(root, Vector3(sx * 0.34, col_mid, sz * 0.34), Vector3(0.065, col_h * 0.8, 0.065), mat_oak_sd)
+					_add_mesh_cyl(root, Vector3(sx * 0.34, 0.4 + col_h * 0.85, sz * 0.34), 0.045, 0.045, mat_br_s, false)
+			_add_mesh_box(root, Vector3(0, 0.4 + col_h * 0.82, 0), Vector3(0.78, 0.06, 0.78), mat_oak_s)
+			_add_mesh_box(root, Vector3(0, 0.4 + col_h * 0.86, 0), Vector3(0.66, 0.03, 0.66), mat_br_sd)
 			for i in 4:
 				var y: float = 0.52 + float(i) * (col_h * 0.18)
 				var r: float = 0.4 - float(i) * 0.04
-				var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.1)
-				_add_cylinder(root, Vector3(0, y, 0), r, 0.055, copper_col, false, 0.32, true)
-				_add_cylinder(root, Vector3(0, y + 0.02, 0), r * 0.86, 0.02, copper_col.lightened(0.1), false, 0.3, true)
-				_add_cylinder(root, Vector3(0, y, 0), r * 0.5, 0.045, oak_d.darkened(0.1), false, 0.55)
+				var mat_coil := mat_cop_s if i % 2 == 0 else mat_cop_sd
+				var mat_coil_l := mat_cop_sl if i % 2 == 0 else mat_cop_s
+				_add_mesh_cyl(root, Vector3(0, y, 0), r, 0.055, mat_coil, false)
+				_add_mesh_cyl(root, Vector3(0, y + 0.02, 0), r * 0.86, 0.02, mat_coil_l, false)
+				_add_mesh_cyl(root, Vector3(0, y, 0), r * 0.5, 0.045, mat_oak_sdd, false)
 				var wind := 1.0 if i % 2 == 0 else -1.0
 				for s in 10:
 					var ang: float = float(s) * (TAU / 10.0) * wind
-					_add_box(root, Vector3(cos(ang) * r * 0.96, y, sin(ang) * r * 0.96),
-						Vector3(0.04, 0.03, 0.06), copper_col.lightened(0.05), false, 0.28)
+					_add_mesh_box(root, Vector3(cos(ang) * r * 0.96, y, sin(ang) * r * 0.96), Vector3(0.04, 0.03, 0.06), mat_coil_l)
 				var side := 1.0 if i % 2 == 0 else -1.0
-				_add_box(root, Vector3(side * r * 0.95, y, 0), Vector3(0.055, 0.07, 0.07), BRASS, false, 0.28)
-			# Loop 190: brass terminal + small amber jar (not fat cyan hat mid-FOV)
+				_add_mesh_box(root, Vector3(side * r * 0.95, y, 0), Vector3(0.055, 0.07, 0.07), mat_br_s)
 			top_y = 0.42 + col_h * 0.9
 			var mat_br0 := _solid_metal(BRASS.lightened(0.05), 0.28)
 			var mat_br0d := _solid_metal(BRASS.darkened(0.08), 0.32)
@@ -3265,13 +3272,12 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			for ri in 4:
 				var ra := float(ri) * TAU / 4.0
 				_add_mesh_box(root, Vector3(cos(ra) * 0.1, top_y + 0.08, sin(ra) * 0.1), Vector3(0.016, 0.1, 0.016), mat_br0d)
-			# Gauge bank + copper riser
-			_add_box(root, Vector3(0.55, 0.55, 0.1), Vector3(0.28, 0.42, 0.3), oak_d, true, 0.48)
+			_add_mesh_box(root, Vector3(0.55, 0.55, 0.1), Vector3(0.28, 0.42, 0.3), mat_oak_sd)
 			for gi in 3:
-				_add_cylinder(root, Vector3(0.55, 0.62 + float(gi) * 0.12, 0.22), 0.055, 0.025, BRASS, false, 0.28, true)
-				_add_cylinder(root, Vector3(0.55, 0.63 + float(gi) * 0.12, 0.24), 0.04, 0.01, Color(0.85, 0.88, 0.8), false, 0.5)
-			_add_cylinder(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, COPPER, false, 0.32, true)
-			_add_cylinder(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, BRASS, false, 0.3, true)
+				_add_mesh_cyl(root, Vector3(0.55, 0.62 + float(gi) * 0.12, 0.22), 0.055, 0.025, mat_br_s, false)
+				_add_mesh_cyl(root, Vector3(0.55, 0.63 + float(gi) * 0.12, 0.24), 0.04, 0.01, mat_gauge, false)
+			_add_mesh_cyl(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, mat_cop_s, false)
+			_add_mesh_cyl(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, mat_br_s, false)
 		1:
 			# Loop 182: OPEN harmonic resonator — not closed iron fridge with cyan hat.
 			# Oak plinth + two posts + air-spaced copper diaphragms + tuning fork crown.
@@ -3342,50 +3348,52 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			fork_core.position = Vector3(0, 1.82, 0.05)
 			root.add_child(fork_core)
 		_:
-			# Leyden / glass-stack apparatus (vertical jar battery look)
-			_add_box(root, Vector3(0, 0.1, 0), Vector3(1.05, 0.2, 1.0), oak_d, true, 0.5)
-			_add_box(root, Vector3(0, 0.24, 0), Vector3(0.92, 0.1, 0.88), oak, true, 0.5)
-			_add_box(root, Vector3(0, 0.3, 0), Vector3(0.78, 0.04, 0.74), iron_mid, false, 0.45)
-			# Three glass jars with copper foil bands
+			# Leyden / glass-stack apparatus — solid mats + warm amber terminal (not cyan hat)
+			var mat_glass := StandardMaterial3D.new()
+			mat_glass.albedo_color = Color(0.55, 0.72, 0.7, 0.55)
+			mat_glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mat_glass.metallic = 0.05
+			mat_glass.roughness = 0.25
+			mat_glass.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+			_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(1.05, 0.2, 1.0), mat_oak_sd)
+			_add_mesh_box(root, Vector3(0, 0.24, 0), Vector3(0.92, 0.1, 0.88), mat_oak_s)
+			_add_mesh_box(root, Vector3(0, 0.3, 0), Vector3(0.78, 0.04, 0.74), mat_iron_s)
 			for i in 3:
 				var jx := -0.28 + float(i) * 0.28
 				var jh := 0.85 + float(i % 2) * 0.15
-				_add_cylinder(root, Vector3(jx, 0.35 + jh * 0.5, 0.05), 0.12, jh, glass_c, false, 0.35)
-				_add_cylinder(root, Vector3(jx, 0.55, 0.05), 0.125, 0.08, COPPER, false, 0.3, true)
-				_add_cylinder(root, Vector3(jx, 0.85, 0.05), 0.125, 0.06, COPPER.darkened(0.08), false, 0.3, true)
-				_add_cylinder(root, Vector3(jx, 0.35 + jh, 0.05), 0.08, 0.04, BRASS, false, 0.28, true)
-				_add_cylinder(root, Vector3(jx, 0.4 + jh, 0.05), 0.02, 0.12, BRASS.darkened(0.05), false, 0.28, true)
-			# Central mast with stacked copper discs (air gaps) + sphere terminal
-			_add_cylinder(root, Vector3(0, 1.0, -0.25), 0.04, 1.2, BRASS, true, 0.28, true)
+				_add_mesh_cyl(root, Vector3(jx, 0.35 + jh * 0.5, 0.05), 0.12, jh, mat_glass, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.55, 0.05), 0.125, 0.08, mat_cop_s, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.85, 0.05), 0.125, 0.06, mat_cop_sd, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.35 + jh, 0.05), 0.08, 0.04, mat_br_s, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.4 + jh, 0.05), 0.02, 0.12, mat_br_sd, false)
+			_add_mesh_cyl(root, Vector3(0, 1.0, -0.25), 0.04, 1.2, mat_br_s, true)
 			for i in 5:
 				var y: float = 0.55 + float(i) * 0.18
 				var r: float = 0.22 - float(i) * 0.02
-				_add_cylinder(root, Vector3(0, y, -0.25), r, 0.04, COPPER if i % 2 == 0 else COPPER.darkened(0.1), false, 0.3, true)
-			_add_sphere_blob(root, Vector3(0, 1.7, -0.25), 0.1, BRASS.lightened(0.05))
-			# Connecting rods between jars and mast
-			_add_box(root, Vector3(0, 1.15, -0.08), Vector3(0.55, 0.03, 0.03), BRASS.darkened(0.1), false, 0.3)
-			_add_box(root, Vector3(0, 0.9, 0.0), Vector3(0.6, 0.025, 0.025), COPPER, false, 0.32)
-			# Side control panel
-			_add_box(root, Vector3(0.45, 0.55, 0.25), Vector3(0.25, 0.4, 0.28), iron_dark, true, 0.45)
-			_add_cylinder(root, Vector3(0.45, 0.7, 0.38), 0.06, 0.03, BRASS, false, 0.28, true)
-			_add_cylinder(root, Vector3(0.45, 0.85, 0.38), 0.05, 0.025, BRASS.darkened(0.1), false, 0.28, true)
+				_add_mesh_cyl(root, Vector3(0, y, -0.25), r, 0.04, mat_cop_s if i % 2 == 0 else mat_cop_sd, false)
+			_add_mesh_cyl(root, Vector3(0, 1.7, -0.25), 0.1, 0.12, mat_br_sl, false)
+			_add_mesh_box(root, Vector3(0, 1.15, -0.08), Vector3(0.55, 0.03, 0.03), mat_br_sd)
+			_add_mesh_box(root, Vector3(0, 0.9, 0.0), Vector3(0.6, 0.025, 0.025), mat_cop_s)
+			_add_mesh_box(root, Vector3(0.45, 0.55, 0.25), Vector3(0.25, 0.4, 0.28), mat_iron_sd)
+			_add_mesh_cyl(root, Vector3(0.45, 0.7, 0.38), 0.06, 0.03, mat_br_s, false)
+			_add_mesh_cyl(root, Vector3(0.45, 0.85, 0.38), 0.05, 0.025, mat_br_sd, false)
 			top_y = 1.65
-			# Subtle cyan glow at terminal
+			# Warm amber terminal (matches house aether language — not cyan game orb)
 			var leyden_g := MeshInstance3D.new()
 			var lsm := SphereMesh.new()
 			lsm.radius = 0.05
 			lsm.height = 0.1
 			leyden_g.mesh = lsm
 			var lmat := StandardMaterial3D.new()
-			lmat.albedo_color = Color(0.55, 0.9, 1.0)
+			lmat.albedo_color = Color(0.95, 0.75, 0.4)
 			lmat.emission_enabled = true
-			lmat.emission = Color(0.4, 0.85, 1.0)
-			lmat.emission_energy_multiplier = 1.8
+			lmat.emission = Color(0.9, 0.65, 0.3)
+			lmat.emission_energy_multiplier = 1.5
 			lmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			leyden_g.material_override = lmat
 			leyden_g.position = Vector3(0, 1.72, -0.25)
 			root.add_child(leyden_g)
-	# Shared: warm brass-energy accent (style 0) — not cyan game-hat glow mid-FOV
+	# Shared: warm brass-energy accent (style 0)
 	if style == 0:
 		var core := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
@@ -3402,10 +3410,10 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 		core.material_override = cmat
 		core.position = Vector3(0, top_y + 0.14, 0)
 		root.add_child(core)
-	# Front valve wheel (all styles — control language)
-	_add_cylinder(root, Vector3(0.0, 0.52, 0.48), 0.1, 0.03, BRASS, false, 0.28, true)
-	_add_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.18, 0.02, 0.02), BRASS.lightened(0.05), false, 0.28)
-	_add_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.02, 0.02, 0.18), BRASS.lightened(0.05), false, 0.28)
+	# Front valve wheel (all styles)
+	_add_mesh_cyl(root, Vector3(0.0, 0.52, 0.48), 0.1, 0.03, mat_br_s, false)
+	_add_mesh_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.18, 0.02, 0.02), mat_br_sl)
+	_add_mesh_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.02, 0.02, 0.18), mat_br_sl)
 	var glow := OmniLight3D.new()
 	glow.light_color = Color(0.95, 0.78, 0.55)
 	glow.light_energy = 0.55

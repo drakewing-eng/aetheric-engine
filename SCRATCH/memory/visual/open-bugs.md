@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 202)
+
+- **Secondary machine residual:** style 0 coil frame + style 2 Leyden still `_mat_for` washout mid-FOV. Full solid-mat bases/coils/jars; Leyden cyan terminal → warm amber. Style 1 already solid from 182.  
+- **Teak garden settle residual:** seed-1 bench still textured wood path. Solid-mat teak + cushion.  
+- **Copper pot residual:** freestanding vessels used metal_copper texture. Solid-metal copper/brass/iron all 5 styles.  
+
 ## Status update 2026-07-30 (loop 201)
 
 - **Fireplace residual:** marble/brass/iron/mantel still `_mat_for` washout mid-FOV. Full solid-mat surround, overmantel frame, fender, tools, scuttle, seed mantel kits (candles/urns/clock). Flame/sparks/mirror plate kept special.  
