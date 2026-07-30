@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 209)
+
+- **Kitchen wall residual:** cream metro wainscot + check paper UV dens 0.38 left ~30cm Minecraft blocks mid-FOV. Dens → 0.72; regenerated `wainscot_kitchen` (thinner warm grout, more courses) + finer cream check paper.  
+- **Workshop brick residual:** limewash brick dens 0.32 oversized. Dens → 0.58 + regenerated finer courses; board wainscot dens 0.48.  
+- **Plant/furniture contact shadow residual:** pure black unshaded discs (α=0.45, plant rx=pw*0.42) read as void under pots mid-FOV. Soft warm brown α=0.28; plant shadow tightened to pw*0.26. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 208)
 
 - **Architectural trim residual:** skirting/crown/picture rail/chair rail used pale `furniture_wood.jpg` tint → washed pink-brown mid-FOV. Solid-mat mahogany tones matching furniture language.  

@@ -860,13 +860,16 @@ func _make_mat(tex_path: String, fallback: Color, plane_size: Vector2, tiled: bo
 			mat.albedo_texture = tex
 			if tiled:
 				# Damask denser (loop 77); service tiles denser so grout reads (loop 115)
+				# Loop 209: kitchen/workshop denser still — 0.38 left ~30cm Minecraft blocks mid-FOV
 				var dens := 0.22
 				if tex_path.find("wallpaper_drawing") >= 0 or tex_path.find("wallpaper_gallery") >= 0:
 					dens = 0.28
 				elif tex_path.find("wainscot_kitchen") >= 0 or tex_path.find("wallpaper_kitchen") >= 0:
-					dens = 0.38
-				elif tex_path.find("wallpaper_workshop") >= 0 or tex_path.find("wainscot_workshop") >= 0:
-					dens = 0.32
+					dens = 0.72  # ~15cm metro tiles / fine cream check (period service)
+				elif tex_path.find("wallpaper_workshop") >= 0:
+					dens = 0.58  # limewash brick — half-size vs 0.32 Minecraft stretch
+				elif tex_path.find("wainscot_workshop") >= 0:
+					dens = 0.48  # board wainscot closer vertical rhythm
 				mat.uv1_scale = Vector3(plane_size.x * dens, plane_size.y * dens, 1.0)
 			return mat
 	mat.albedo_color = fallback

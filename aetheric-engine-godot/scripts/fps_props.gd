@@ -3682,7 +3682,8 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			bp["mesh_pot"] = false
 			bp["col_size"] = [pw * 0.5, ph * 0.75, pw * 0.5]
 			var root_plant := _make_billboard_prop(bp)
-			_add_contact_shadow(root_plant, pw * 0.42, pw * 0.35)
+			# Loop 209: tight warm shadow under pot only (was pw*0.42 black void disc)
+			_add_contact_shadow(root_plant, pw * 0.26, pw * 0.22)
 			# Loop 74: denser mesh frond bulk ABOVE pot (~0.35*h) for walk-around sides
 			_add_plant_mesh_fronds(root_plant, pw, ph, tex_path.find("fern") >= 0, int(prop.get("seed", 0)))
 			return root_plant
@@ -3716,7 +3717,7 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			Vector3(0.03 * scale, bl * 0.7, 0.025 * scale),
 			mat_leaf_c if i % 2 == 0 else mat_leaf_a
 		)
-	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
+	_add_contact_shadow(root, 0.16 * scale, 0.16 * scale)
 	return root
 
 
@@ -5264,21 +5265,22 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 
 static func _add_contact_shadow(parent: Node3D, rx: float, rz: float) -> void:
 	## Soft dark disc under furniture for grounding (Myst still-life weight).
+	## Loop 209: lower alpha + warm brown (was pure black void disc mid-FOV under plants).
 	var mi := MeshInstance3D.new()
 	mi.name = "ContactShadow"
 	var mesh := CylinderMesh.new()
 	mesh.top_radius = rx
 	mesh.bottom_radius = rx
-	mesh.height = 0.015
+	mesh.height = 0.012
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.02, 0.015, 0.01, 0.45)
+	mat.albedo_color = Color(0.08, 0.05, 0.03, 0.28)
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mi.material_override = mat
 	# Above floor, below rug — avoid coplanar flicker
-	mi.position = Vector3(0, 0.02, 0)
+	mi.position = Vector3(0, 0.018, 0)
 	mi.scale = Vector3(1.0, 1.0, rz / maxf(rx, 0.01))
 	parent.add_child(mi)
 
