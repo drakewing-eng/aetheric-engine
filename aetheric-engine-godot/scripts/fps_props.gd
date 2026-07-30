@@ -1956,58 +1956,63 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 
 
 static func _make_urn(prop: Dictionary) -> Node3D:
-	## Loop 149: classical stone/terracotta urn — stone grit (not wood/copper barrel).
-	## Sparse trailing ivy; no green knob crown.
+	## Loop 175: classical amphora — ONE continuous stone body (not stacked barrel tiers).
+	## Solid matte stone (no TEX_STONE bands); clear C-handles; sparse trailing ivy only.
 	var root := Node3D.new()
 	root.name = "Urn"
 	var seed0: int = int(prop.get("seed", 0))
 	var scale: float = float(prop.get("scale", 1.0))
-	# Prefer cool stone greys; terracotta only when seed odd (now classifies as clay not copper)
-	var body := Color(0.58, 0.55, 0.48) if seed0 % 2 == 0 else Color(0.72, 0.46, 0.28)
-	var body_d := body.darkened(0.1)
-	var body_l := body.lightened(0.06)
-	# Square plinth + moulded foot
-	_add_box(root, Vector3(0, 0.05 * scale, 0), Vector3(0.42 * scale, 0.08 * scale, 0.42 * scale), body_d, true, 0.78)
-	_add_box(root, Vector3(0, 0.1 * scale, 0), Vector3(0.34 * scale, 0.04 * scale, 0.34 * scale), body, true, 0.75)
-	_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.16 * scale, 0.08 * scale, body_d, true, 0.78)
-	# Classical amphora belly (wide mid, narrow neck)
-	_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.15 * scale, 0.18 * scale, body, true, 0.78)
-	_add_cylinder(root, Vector3(0, 0.48 * scale, 0), 0.18 * scale, 0.16 * scale, body_l, true, 0.76)
-	_add_cylinder(root, Vector3(0, 0.6 * scale, 0), 0.12 * scale, 0.1 * scale, body, true, 0.78)
-	# Neck + everted rim
-	_add_cylinder(root, Vector3(0, 0.7 * scale, 0), 0.09 * scale, 0.1 * scale, body_d, false, 0.78)
-	_add_cylinder(root, Vector3(0, 0.78 * scale, 0), 0.14 * scale, 0.04 * scale, body_l, false, 0.72)
-	_add_cylinder(root, Vector3(0, 0.81 * scale, 0), 0.11 * scale, 0.03 * scale, body_d, false, 0.75)
-	# Two side handles (reads as urn, not barrel)
+	# Warm limestone / cool ashlar (TEX_STONE gate if used; solid matte preferred)
+	var body_c := Color(0.62, 0.58, 0.5) if seed0 % 2 == 0 else Color(0.68, 0.62, 0.52)
+	var body_d := Color(0.48, 0.44, 0.38) if seed0 % 2 == 0 else Color(0.52, 0.46, 0.38)
+	var body_l := Color(0.7, 0.66, 0.58) if seed0 % 2 == 0 else Color(0.74, 0.68, 0.58)
+	var mat := _solid_matte(body_c, 0.88)
+	var mat_d := _solid_matte(body_d, 0.9)
+	var mat_l := _solid_matte(body_l, 0.86)
+	# Square plinth (reads as base, separate from amphora body)
+	_add_mesh_box(root, Vector3(0, 0.04 * scale, 0), Vector3(0.4 * scale, 0.08 * scale, 0.4 * scale), mat_d)
+	_add_mesh_box(root, Vector3(0, 0.09 * scale, 0), Vector3(0.32 * scale, 0.03 * scale, 0.32 * scale), mat)
+	# ONE continuous amphora: foot → wide belly → shoulder → neck (minimal seams)
+	_add_mesh_cyl(root, Vector3(0, 0.16 * scale, 0), 0.14 * scale, 0.1 * scale, mat_d, true)
+	_add_mesh_cyl(root, Vector3(0, 0.38 * scale, 0), 0.2 * scale, 0.32 * scale, mat, true)
+	_add_mesh_cyl(root, Vector3(0, 0.58 * scale, 0), 0.14 * scale, 0.12 * scale, mat_l, true)
+	# Short neck + everted rim only (not multi-tier crown)
+	_add_mesh_cyl(root, Vector3(0, 0.68 * scale, 0), 0.09 * scale, 0.08 * scale, mat_d, false)
+	_add_mesh_cyl(root, Vector3(0, 0.74 * scale, 0), 0.13 * scale, 0.035 * scale, mat_l, false)
+	# C-handles (loop from belly to neck — amphora, not barrel)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.17 * scale, 0.55 * scale, 0), Vector3(0.04 * scale, 0.16 * scale, 0.05 * scale), body_d, false, 0.75)
-		_add_box(root, Vector3(sx * 0.2 * scale, 0.62 * scale, 0), Vector3(0.06 * scale, 0.04 * scale, 0.05 * scale), body, false, 0.75)
-	# Sparse fluting (3 ribs, not weave bands)
-	for fi in 3:
-		var fang := float(fi) * TAU / 3.0 + 0.2
-		_add_box(
+		_add_mesh_box(root, Vector3(sx * 0.18 * scale, 0.5 * scale, 0), Vector3(0.035 * scale, 0.2 * scale, 0.05 * scale), mat_d)
+		_add_mesh_box(root, Vector3(sx * 0.2 * scale, 0.62 * scale, 0), Vector3(0.06 * scale, 0.035 * scale, 0.05 * scale), mat)
+		_add_mesh_box(root, Vector3(sx * 0.14 * scale, 0.42 * scale, 0), Vector3(0.05 * scale, 0.035 * scale, 0.05 * scale), mat)
+	# Two sparse flutes only (not weave/barrel ribs)
+	for fi in 2:
+		var fang := float(fi) * PI + 0.4 + float(seed0) * 0.1
+		_add_mesh_box(
 			root,
-			Vector3(cos(fang) * 0.16 * scale, 0.45 * scale, sin(fang) * 0.16 * scale),
-			Vector3(0.02 * scale, 0.22 * scale, 0.02 * scale),
-			body_d, false, 0.72
+			Vector3(cos(fang) * 0.18 * scale, 0.4 * scale, sin(fang) * 0.18 * scale),
+			Vector3(0.018 * scale, 0.2 * scale, 0.018 * scale),
+			mat_d
 		)
-	# Soil + sparse trailing ivy only (no upright green knobs)
-	_add_cylinder(root, Vector3(0, 0.82 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.16, 0.11, 0.07), false, 0.92)
+	# Soil + trailing ivy (side only, no upright knob crown)
+	var mat_soil := _solid_matte(Color(0.16, 0.11, 0.07), 0.95)
+	_add_mesh_cyl(root, Vector3(0, 0.76 * scale, 0), 0.09 * scale, 0.025 * scale, mat_soil, false)
 	var leaf_a := Color(0.2, 0.38, 0.14)
 	var leaf_b := Color(0.14, 0.3, 0.1)
-	var stem_c := Color(0.24, 0.2, 0.1)
+	var mat_la := _solid_matte(leaf_a, 0.92)
+	var mat_lb := _solid_matte(leaf_b, 0.92)
+	var mat_stem := _solid_matte(Color(0.24, 0.2, 0.1), 0.9)
 	for i in 3:
 		var ang := float(i) * TAU / 3.0 + float(seed0) * 0.35
-		var lx: float = cos(ang) * 0.12 * scale
-		var lz: float = sin(ang) * 0.12 * scale
-		_add_cylinder(root, Vector3(lx, 0.65 * scale, lz), 0.007 * scale, 0.22 * scale, stem_c, false, 0.88)
+		var lx: float = cos(ang) * 0.11 * scale
+		var lz: float = sin(ang) * 0.11 * scale
+		_add_mesh_cyl(root, Vector3(lx, 0.62 * scale, lz), 0.007 * scale, 0.18 * scale, mat_stem, false)
 		for j in 2:
-			var jy: float = 0.72 * scale - float(j) * 0.08 * scale
-			_add_box(
+			var jy: float = 0.68 * scale - float(j) * 0.07 * scale
+			_add_mesh_box(
 				root,
-				Vector3(lx + cos(ang) * 0.025 * scale, jy, lz + sin(ang) * 0.025 * scale),
-				Vector3(0.04 * scale, 0.01 * scale, 0.018 * scale),
-				leaf_a if j % 2 == 0 else leaf_b, false, 0.92
+				Vector3(lx + cos(ang) * 0.03 * scale, jy, lz + sin(ang) * 0.03 * scale),
+				Vector3(0.045 * scale, 0.01 * scale, 0.02 * scale),
+				mat_la if j % 2 == 0 else mat_lb
 			)
 	_add_contact_shadow(root, 0.24 * scale, 0.24 * scale)
 	return root
