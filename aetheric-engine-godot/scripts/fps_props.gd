@@ -3208,8 +3208,9 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			var sc: float = float(prop.get("scale", 1.0))
 			var ph: float = float(bp.get("height", 1.1 * sc))
 			var pw: float = float(bp.get("width", 0.9 * sc))
-			ph = clampf(ph, 0.45, 1.55)
-			pw = clampf(pw, 0.4, 1.2)
+			# Loop 169: floor plants below ~0.6h read as green scrap mid-FOV
+			ph = clampf(ph, 0.68, 1.55)
+			pw = clampf(pw, 0.55, 1.2)
 			bp["height"] = ph
 			bp["width"] = pw
 			# Light sink — new assets are pot-to-crown, less empty padding

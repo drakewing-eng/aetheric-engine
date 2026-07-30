@@ -147,6 +147,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Door closet residual (visual):** closed leaf still read as cupboard. Double leaves on wide doors; under-leaf emission leak; overdoor cornice; brass destination plaque + Label3D on leaf; HUD `[E] Enter · <room>`. Teleport graph tests still PASS.  
 
+## Status update 2026-07-29 (loop 169)
+
+- **Tiny floor plants:** mid-FOV green scrap from scale≤0.55 ferns on carpets. Plant card min size raised (h≥0.68, w≥0.55); morning mid-rug micro fern removed; perimeter plants enlarged in hall/drawing/morning/conservatory.  
+
 ## Status update 2026-07-29 (loop 162)
 
 - **Sofa mesh residual:** loop 161 mesh used foliage `_add_sphere_blob` for cushions → pale lime balloons. Rewrote continuous buttoned seat + dense diamond back, velvet bolsters only, mahogany arm scrolls + crest. Ottoman morning fabrics re-gated (oxblood/sage hit velvet, not wood).  
