@@ -1085,23 +1085,33 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
 		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Loop 170: porcelain urn vase + clustered blooms (not white stick-cup)
-		# Cream g≥0.65 linen / pale — miss copper; amphora silhouette
-		var china_v := Color(0.88, 0.82, 0.72)
-		var china_vd := Color(0.78, 0.72, 0.62)
-		_add_cylinder(root, Vector3(0, top_y + 0.02, 0), 0.05, 0.03, china_vd, false, 0.65)
-		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.065, 0.1, china_v, false, 0.65)
-		_add_cylinder(root, Vector3(0, top_y + 0.15, 0), 0.05, 0.05, china_vd, false, 0.65)
-		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.04, 0.04, china_v, false, 0.65)
-		_add_cylinder(root, Vector3(0, top_y + 0.24, 0), 0.055, 0.025, china_vd, false, 0.62)
-		# Stem cluster + blooms (short cylinders, multiple)
-		for bi in 4:
-			var bang := float(bi) * TAU / 4.0 + 0.3
-			var bx := cos(bang) * 0.025
-			var bz := sin(bang) * 0.025
-			_add_cylinder(root, Vector3(bx, top_y + 0.3, bz), 0.008, 0.1, Color(0.2, 0.34, 0.14), false, 0.85)
-			_add_cylinder(root, Vector3(bx * 1.4, top_y + 0.36, bz * 1.4), 0.02, 0.028, Color(0.58, 0.18, 0.2) if bi % 2 == 0 else Color(0.7, 0.5, 0.25), false, 0.8)
-		_add_cylinder(root, Vector3(0, top_y + 0.38, 0), 0.018, 0.025, Color(0.55, 0.2, 0.22), false, 0.8)
+		# Loop 172: glazed earthenware pot (not white wedding-cake tiers).
+		# Warm CLAY/stone body + blue band; dense low bloom crown.
+		# Clay gate: r>0.65 g≥0.45 g<0.56 b<0.38 (terracotta before copper).
+		var pot := Color(0.72, 0.5, 0.32)      # terracotta
+		var pot_d := Color(0.58, 0.4, 0.24)
+		var pot_l := Color(0.78, 0.56, 0.36)
+		var glaze := Color(0.22, 0.32, 0.42)    # blue-grey band (not metal)
+		# Foot + ONE wide belly (pot, not stacked cups)
+		_add_cylinder(root, Vector3(0, top_y + 0.015, 0), 0.05, 0.022, pot_d, false, 0.78)
+		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.085, 0.11, pot, false, 0.78)
+		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.072, 0.04, pot_l, false, 0.78)
+		# Decorative band
+		_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.088, 0.018, glaze, false, 0.55)
+		# Short neck + rim
+		_add_cylinder(root, Vector3(0, top_y + 0.175, 0), 0.048, 0.03, pot_d, false, 0.75)
+		_add_cylinder(root, Vector3(0, top_y + 0.195, 0), 0.062, 0.018, pot_l, false, 0.75)
+		# Soil
+		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.04, 0.014, Color(0.16, 0.1, 0.06), false, 0.9)
+		# Dense bloom crown (low mass)
+		for bi in 5:
+			var bang := float(bi) * TAU / 5.0 + 0.35
+			var bx := cos(bang) * 0.028
+			var bz := sin(bang) * 0.028
+			_add_cylinder(root, Vector3(bx, top_y + 0.235, bz), 0.007, 0.05, Color(0.16, 0.3, 0.1), false, 0.85)
+			var bloom := Color(0.58, 0.16, 0.18) if bi % 2 == 0 else Color(0.68, 0.42, 0.18)
+			_add_cylinder(root, Vector3(bx * 1.15, top_y + 0.27, bz * 1.15), 0.022, 0.02, bloom, false, 0.78)
+		_add_cylinder(root, Vector3(0, top_y + 0.275, 0), 0.02, 0.022, Color(0.52, 0.14, 0.16), false, 0.78)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
