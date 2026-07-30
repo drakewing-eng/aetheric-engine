@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
 **Updated:** 2026-07-29 ~overnight loop 174  
-**HEAD:** `25d2132` visual loop 174  
+**HEAD:** (pending) visual loop 174  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -17,25 +17,24 @@
 | 8 | Side-view mesh furniture | **DONE 70–165** wing envelope |
 | 9 | Door transition safety | **ADVANCED 76–167** UX |
 | 10 | Wallpaper contrast | **ADVANCED 72–142** morning stripes |
-| 11 | Hall / prep still-life | **ADVANCED 73–168** linen sack |
-| 12–23 | Conservatory densify | **ADVANCED 116–174** can |
-| 24–52 | Materials…stools | **DONE 89–127+138** |
-| 53–62 | Copper…stools/sconces | **DONE 118–127+140** |
-| 63–72 | Plants…tight bulk | **DONE 128–137** |
-| 73–108 | Sofa…stone path | **DONE 138–173** |
-| 109 | Solid-metal copper Haws can | **DONE 174** |
+| 11 | Hall / prep still-life | **ADVANCED 73–174** linen sack |
+| 12–23 | Conservatory densify | **ADVANCED 116–174** can+pot |
+| 24–106 | Materials…can/trug | **DONE 89–171** |
+| 107–108 | Botanical pot + stone path | **DONE 172–173** |
+| 109 | Solid copper can (no weave grain) | **DONE 174** |
+| 110 | Prep flour sack box (no coil tower) | **DONE 174** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 172 | Botanical pot attempt (tier residual) |
-| 173 | Single-body clay pot + irregular stone path |
-| 174 | **Watering can:** solid copper mats (no metal_copper.jpg grain=wicker); all parts g-safe copper; body matches spout |
+| 172–173 | Botanical pot + irregular path |
+| 174 | **Can:** solid metal copper mats (no metal_copper.jpg grain = wicker); **pot:** solid matte terracotta; **sack:** wide linen BOX bag (not cylinder tower); helpers `_solid_matte` / `_add_mesh_*` |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation (suite PASS; visual cues 167)  
+- Optional: classical urn still stacked-stone barrel mid-FOV  
 - Optional: user-driven residual notes after playtest  
 
 ## Anchors

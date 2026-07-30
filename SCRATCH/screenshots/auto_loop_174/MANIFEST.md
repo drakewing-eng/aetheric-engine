@@ -1,1 +1,1 @@
-loop 174: solid-metal copper Haws can (no copper.jpg grain=wicker); g-safe copper colors
+loop 174: solid copper Haws can + matte pot + linen flour sack
