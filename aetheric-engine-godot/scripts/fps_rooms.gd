@@ -1078,12 +1078,9 @@ const ROOMS := {
 			{"kind": "prep_table", "pos": [2.9, 0.0, -1.2], "yaw": -90.0, "width": 1.45, "seed": 2},
 			{"kind": "stool", "pos": [-1.1, 0.0, -0.5], "yaw": 20.0, "seed": 23},
 			{"kind": "stool", "pos": [1.1, 0.0, -0.5], "yaw": -15.0, "seed": 24},
-			# Copper: spaced working stock, not a cluster
-			{"kind": "copper_pot", "pos": [-1.5, 0.0, 2.6], "scale": 1.1, "seed": 24},
-			{"kind": "copper_pot", "pos": [1.3, 0.0, 2.7], "scale": 0.95, "seed": 26},
-			{"kind": "copper_pot", "pos": [3.1, 0.0, 1.2], "scale": 0.85, "seed": 27},
-			{"kind": "crate", "pos": [-3.3, 0.0, -2.4], "scale": 0.9, "seed": 28},
-			{"kind": "crate", "pos": [3.2, 0.0, -2.5], "scale": 0.75, "seed": 30},
+			# Loop 152: few copper on floor — most pots hang on racks
+			{"kind": "copper_pot", "pos": [-2.8, 0.0, 2.8], "scale": 1.0, "seed": 24},
+			{"kind": "copper_pot", "pos": [2.6, 0.0, 2.9], "scale": 0.9, "seed": 26},
 			{
 				"kind": "billboard_prop",
 				"pos": [2.0, 0.0, -1.0],
@@ -1112,52 +1109,34 @@ const ROOMS := {
 			{"kind": "crock_shelf", "pos": [3.5, 0.0, -2.6], "yaw": -90.0, "width": 1.15, "height": 1.55, "seed": 7},
 			{"kind": "wall_shelf", "pos": [-1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.3, "shelf_y": 2.55, "seed": 7},
 			{"kind": "wall_shelf", "pos": [1.5, 0.0, 3.5], "yaw": 180.0, "width": 1.3, "shelf_y": 2.55, "seed": 8},
-			# Loop 80: side-wall plate rails fill empty cream plaster from doorway
+			# Side-wall plate rails
 			{"kind": "wall_shelf", "pos": [4.2, 0.0, -0.8], "yaw": -90.0, "width": 1.5, "shelf_y": 1.75, "seed": 3},
 			{"kind": "wall_shelf", "pos": [4.2, 0.0, 1.6], "yaw": -90.0, "width": 1.2, "shelf_y": 2.2, "seed": 5},
 			{"kind": "wall_shelf", "pos": [-4.2, 0.0, 0.2], "yaw": 90.0, "width": 1.4, "shelf_y": 1.85, "seed": 6},
-			# Loop 147: wicker baskets (weave read) — not crate/barrel floor clutter
-			{"kind": "wicker_basket", "pos": [-3.4, 0.0, 0.2], "scale": 1.05, "seed": 0, "fill": "apples"},
-			{"kind": "wicker_basket", "pos": [3.4, 0.0, 0.4], "scale": 0.95, "seed": 1, "fill": "linen"},
-			{"kind": "copper_pot", "pos": [3.1, 0.0, 0.9], "scale": 0.7, "seed": 5},
-			{"kind": "oil_lamp", "pos": [-2.4, 0.0, -2.0], "yaw": 30.0, "height": 1.0},
+			# Loop 152: three wide trugs in corners (not barrel pile under sink)
+			{"kind": "wicker_basket", "pos": [-3.5, 0.0, 0.3], "scale": 1.05, "seed": 0, "fill": "apples"},
+			{"kind": "wicker_basket", "pos": [3.5, 0.0, 0.5], "scale": 0.95, "seed": 1, "fill": "linen"},
+			{"kind": "wicker_basket", "pos": [3.2, 0.0, 2.0], "scale": 0.9, "seed": 3, "fill": "veg"},
+			{"kind": "oil_lamp", "pos": [-2.6, 0.0, -2.2], "yaw": 30.0, "height": 0.9, "seed": 0},
 			{"kind": "wall_sconce", "pos": [-3.8, 0.0, 2.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [3.8, 0.0, 1.5], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
 			{"kind": "wall_sconce", "pos": [2.0, 0.0, -3.7], "yaw": 0.0, "height": 2.4},
-			# Loop 90: south wall densify (from_south was empty cream around hall door)
+			# South wall densify
 			{"kind": "wall_shelf", "pos": [-2.6, 0.0, -3.7], "yaw": 0.0, "width": 1.4, "shelf_y": 1.85, "seed": 9},
 			{"kind": "wall_shelf", "pos": [2.6, 0.0, -3.7], "yaw": 0.0, "width": 1.4, "shelf_y": 1.85, "seed": 10},
 			{"kind": "crock_shelf", "pos": [-3.5, 0.0, -3.2], "yaw": 0.0, "width": 1.1, "height": 1.45, "seed": 3},
-			{"kind": "copper_pot", "pos": [2.4, 0.0, -3.0], "scale": 0.75, "seed": 8},
-			{"kind": "crate", "pos": [3.3, 0.0, -3.1], "scale": 0.7, "seed": 4},
-			{"kind": "oil_lamp", "pos": [-1.4, 0.0, -3.0], "yaw": -10.0, "height": 0.95},
-			# Loop 94/147: door-approach — basket + stool (clear walk)
-			{"kind": "stool", "pos": [-1.3, 0.0, -1.8], "yaw": 20.0, "seed": 5},
-			{"kind": "wicker_basket", "pos": [1.5, 0.0, -2.2], "scale": 0.9, "seed": 2, "fill": "veg"},
-			{"kind": "copper_pot", "pos": [-2.0, 0.0, -2.6], "scale": 0.65, "seed": 9},
-			{"kind": "oil_lamp", "pos": [1.2, 0.0, -2.8], "yaw": 10.0, "height": 0.95},
-			# Loop 95/147: NE corner — basket under sink approach
+			{"kind": "oil_lamp", "pos": [2.8, 0.0, -2.9], "yaw": -5.0, "height": 0.9, "seed": 1},
+			# Door approach clear of mid-path pots
 			{"kind": "wall_shelf", "pos": [4.2, 0.0, 3.0], "yaw": -90.0, "width": 1.1, "shelf_y": 1.9, "seed": 11},
 			{"kind": "wall_sconce", "pos": [3.8, 0.0, 3.2], "yaw": -90.0, "height": 2.35},
-			{"kind": "copper_pot", "pos": [2.4, 0.0, 2.9], "scale": 0.8, "seed": 10},
-			{"kind": "wicker_basket", "pos": [2.8, 0.0, 1.8], "scale": 0.85, "seed": 3, "fill": "apples"},
-			{"kind": "oil_lamp", "pos": [2.6, 0.0, 2.2], "height": 0.95},
-			# Loop 106: mid north cream plaster (kitchen_center empty strip above dado)
 			{"kind": "wall_shelf", "pos": [1.8, 0.0, 3.55], "yaw": 180.0, "width": 1.2, "shelf_y": 1.85, "seed": 12},
 			{"kind": "wall_shelf", "pos": [-1.0, 0.0, 3.55], "yaw": 180.0, "width": 1.0, "shelf_y": 2.15, "seed": 13},
-			{"kind": "copper_pot", "pos": [0.8, 0.0, 3.2], "scale": 0.7, "seed": 11},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, 3.55], "yaw": 180.0, "height": 2.35},
-			# Loop 115: south door wall mid-band densify (from_south empty cream flanks)
 			{"kind": "wall_shelf", "pos": [-1.5, 0.0, -3.7], "yaw": 0.0, "width": 1.0, "shelf_y": 2.25, "seed": 14},
 			{"kind": "wall_shelf", "pos": [1.5, 0.0, -3.7], "yaw": 0.0, "width": 1.0, "shelf_y": 2.25, "seed": 15},
 			{"kind": "wall_sconce", "pos": [-1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
 			{"kind": "wall_sconce", "pos": [1.0, 0.0, -3.7], "yaw": 0.0, "height": 2.55},
-			# Loop 151: door approach clear — wall-side props only (no mid-path stool)
-			{"kind": "copper_pot", "pos": [-3.2, 0.0, -3.0], "scale": 0.7, "seed": 12},
-			{"kind": "copper_pot", "pos": [3.2, 0.0, -2.7], "scale": 0.65, "seed": 13},
-			{"kind": "crate", "pos": [-3.0, 0.0, -3.1], "scale": 0.55, "seed": 14},
-			{"kind": "oil_lamp", "pos": [3.0, 0.0, -3.0], "yaw": -5.0, "height": 0.9, "seed": 1},
 		],
 		"doors": [
 			{

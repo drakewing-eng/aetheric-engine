@@ -2381,7 +2381,7 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:
-	## Loop 147: kitchen/service wicker — weave ribs + handles (not plain wood barrels).
+	## Loop 152: low wide trug (not tall barrel) — oval weave + clear handles/fill.
 	## fill: "apples" | "linen" | "veg" | "" empty
 	var root := Node3D.new()
 	root.name = "WickerBasket"
@@ -2392,48 +2392,49 @@ static func _make_wicker_basket(prop: Dictionary) -> Node3D:
 		fill = "apples"
 	elif fill == "" and seed0 % 3 == 1:
 		fill = "linen"
-	var wick := Color(0.55, 0.4, 0.22) if seed0 % 2 == 0 else Color(0.48, 0.34, 0.18)
-	var wick_d := wick.darkened(0.12)
-	var wick_l := wick.lightened(0.08)
-	var r: float = 0.16 * s
-	var h: float = 0.22 * s
-	# Body + base ring
-	_add_cylinder(root, Vector3(0, h * 0.45, 0), r * 0.92, h * 0.85, wick, true, 0.75)
-	_add_cylinder(root, Vector3(0, 0.03 * s, 0), r * 0.95, 0.04 * s, wick_d, true, 0.7)
-	_add_cylinder(root, Vector3(0, h * 0.05, 0), r * 0.7, 0.03 * s, Color(0.25, 0.18, 0.1), false, 0.85)
+	var wick := Color(0.58, 0.42, 0.24) if seed0 % 2 == 0 else Color(0.5, 0.36, 0.2)
+	var wick_d := wick.darkened(0.14)
+	var wick_l := wick.lightened(0.1)
+	# Wide low profile — trug, not drum
+	var rx: float = 0.22 * s
+	var rz: float = 0.16 * s
+	var h: float = 0.14 * s
+	# Flattened oval body (box core + rounded ends)
+	_add_box(root, Vector3(0, h * 0.45, 0), Vector3(rx * 1.6, h * 0.85, rz * 1.5), wick, true, 0.75)
+	_add_cylinder(root, Vector3(rx * 0.55, h * 0.45, 0), rz * 0.75, h * 0.85, wick, true, 0.75)
+	_add_cylinder(root, Vector3(-rx * 0.55, h * 0.45, 0), rz * 0.75, h * 0.85, wick, true, 0.75)
+	# Base + interior dark
+	_add_box(root, Vector3(0, 0.02 * s, 0), Vector3(rx * 1.65, 0.03 * s, rz * 1.55), wick_d, true, 0.7)
+	_add_box(root, Vector3(0, h * 0.55, 0), Vector3(rx * 1.3, 0.02 * s, rz * 1.2), Color(0.22, 0.15, 0.08), false, 0.85)
 	# Horizontal weave bands
-	for bi in 4:
-		var by := 0.06 * s + float(bi) * (h * 0.18)
-		_add_cylinder(root, Vector3(0, by, 0), r * 1.02, 0.018 * s, wick_d if bi % 2 == 0 else wick_l, false, 0.72)
-	# Vertical stave ribs (weave read at distance)
-	for vi in 8:
-		var ang := float(vi) * TAU / 8.0
-		_add_box(
-			root,
-			Vector3(cos(ang) * r * 0.95, h * 0.45, sin(ang) * r * 0.95),
-			Vector3(0.018 * s, h * 0.75, 0.018 * s),
-			wick_d, false, 0.7
-		)
-	# Top rim + bail handles
-	_add_cylinder(root, Vector3(0, h * 0.9, 0), r * 1.05, 0.03 * s, wick_l, false, 0.7)
-	_add_box(root, Vector3(0, h * 1.05, 0), Vector3(0.02 * s, 0.14 * s, r * 1.7), wick_d, false, 0.65)
-	_add_box(root, Vector3(r * 0.95, h * 0.95, 0), Vector3(0.04 * s, 0.08 * s, 0.04 * s), wick, false, 0.65)
-	_add_box(root, Vector3(-r * 0.95, h * 0.95, 0), Vector3(0.04 * s, 0.08 * s, 0.04 * s), wick, false, 0.65)
+	for bi in 3:
+		var by := 0.04 * s + float(bi) * (h * 0.28)
+		_add_box(root, Vector3(0, by, 0), Vector3(rx * 1.68, 0.015 * s, rz * 1.58), wick_d if bi % 2 == 0 else wick_l, false, 0.72)
+	# Vertical ribs on long sides
+	for vi in 5:
+		var t := (float(vi) / 4.0 - 0.5) * rx * 1.4
+		_add_box(root, Vector3(t, h * 0.45, rz * 0.72), Vector3(0.015 * s, h * 0.7, 0.015 * s), wick_d, false, 0.7)
+		_add_box(root, Vector3(t, h * 0.45, -rz * 0.72), Vector3(0.015 * s, h * 0.7, 0.015 * s), wick_d, false, 0.7)
+	# Rim + two end handles (trug)
+	_add_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.7, 0.025 * s, rz * 1.6), wick_l, false, 0.7)
+	_add_box(root, Vector3(rx * 0.85, h * 0.95, 0), Vector3(0.05 * s, 0.1 * s, 0.06 * s), wick, false, 0.65)
+	_add_box(root, Vector3(-rx * 0.85, h * 0.95, 0), Vector3(0.05 * s, 0.1 * s, 0.06 * s), wick, false, 0.65)
+	_add_box(root, Vector3(0, h * 1.05, 0), Vector3(rx * 1.5, 0.02 * s, 0.03 * s), wick_d, false, 0.65)
 	# Fill
 	if fill == "apples":
 		for ai in 5:
-			var ax := cos(float(ai) * 1.4) * r * 0.35
-			var az := sin(float(ai) * 1.4) * r * 0.35
+			var ax := cos(float(ai) * 1.4) * rx * 0.4
+			var az := sin(float(ai) * 1.4) * rz * 0.35
 			var acol := Color(0.55, 0.18, 0.12) if ai % 2 == 0 else Color(0.48, 0.22, 0.1)
-			_add_sphere_blob(root, Vector3(ax, h * 0.75, az), 0.04 * s, acol)
+			_add_sphere_blob(root, Vector3(ax, h * 0.7, az), 0.04 * s, acol)
 	elif fill == "linen":
-		_add_box(root, Vector3(0, h * 0.75, 0), Vector3(r * 1.1, 0.06 * s, r * 1.1), Color(0.82, 0.78, 0.68), false, 0.9)
-		_add_box(root, Vector3(0.02 * s, h * 0.82, 0.02 * s), Vector3(r * 0.9, 0.04 * s, r * 0.85), Color(0.78, 0.74, 0.64), false, 0.9)
+		_add_box(root, Vector3(0, h * 0.7, 0), Vector3(rx * 1.2, 0.05 * s, rz * 1.1), Color(0.82, 0.78, 0.68), false, 0.9)
+		_add_box(root, Vector3(0.02 * s, h * 0.78, 0.02 * s), Vector3(rx * 1.0, 0.035 * s, rz * 0.9), Color(0.78, 0.74, 0.64), false, 0.9)
 	elif fill == "veg":
-		_add_box(root, Vector3(0, h * 0.72, 0), Vector3(r * 0.9, 0.05 * s, r * 0.7), Color(0.28, 0.4, 0.16), false, 0.85)
-		_add_sphere_blob(root, Vector3(r * 0.25, h * 0.78, 0), 0.035 * s, Color(0.85, 0.45, 0.15))
-		_add_sphere_blob(root, Vector3(-r * 0.2, h * 0.76, r * 0.15), 0.03 * s, Color(0.75, 0.25, 0.15))
-	_add_contact_shadow(root, r * 1.1, r * 1.1)
+		_add_box(root, Vector3(0, h * 0.65, 0), Vector3(rx * 1.0, 0.04 * s, rz * 0.8), Color(0.28, 0.4, 0.16), false, 0.85)
+		_add_sphere_blob(root, Vector3(rx * 0.3, h * 0.72, 0), 0.035 * s, Color(0.85, 0.45, 0.15))
+		_add_sphere_blob(root, Vector3(-rx * 0.25, h * 0.7, rz * 0.2), 0.03 * s, Color(0.75, 0.25, 0.15))
+	_add_contact_shadow(root, rx * 1.2, rz * 1.2)
 	return root
 
 
