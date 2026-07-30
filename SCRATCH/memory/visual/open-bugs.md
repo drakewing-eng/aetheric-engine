@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 189)
+
+- **Prep flour sack residual:** kit-0 still wedding-cake cylinder tiers mid-FOV (`kitchen_from_south`). Low rectangular hessian bag — continuous body width, sewn panels, twine, brand stamp, solid matte (not tier stack).  
+- **Wall shelf residual:** black stick posts + thin plank mid-FOV kitchen-wide. Oak plate rail + wall back plate + triangle wood brackets + iron L-straps + solid-mat plates/crocks/copper.  
+
 ## Status update 2026-07-29 (loop 188)
 
 - **Kitchen pot rack residual:** mahogany stick T-frame mid-FOV. Twin iron rails + oak wall brackets + iron struts, S-hooks, solid-metal copper skillets/saute/covered pot/ladle (not stick lumber).  
