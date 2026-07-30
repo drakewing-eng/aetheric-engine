@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 224  
-**HEAD:** `1e5b30b` visual loop 224  
+**Updated:** 2026-07-30 ~overnight loop 225  
+**HEAD:** pending visual loop 225  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,7 +10,7 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–224** aetheric |
+| 4 | Unique Victorian objects | **ADVANCED 71–225** aetheric |
 | 5 | Geometric / surface detail | **ADVANCED 72–213** range flue |
 | 6 | Victorian wall art | **ADVANCED 69–205** frames |
 | 7 | Plant diversity / side volume | **ADVANCED 74–210** denser fronds |
@@ -23,15 +23,16 @@
 | 143–152 | Arch trim…main aetheric open | **DONE 208–217** |
 | 153–158 | Flour sack…overmantel gilt | **DONE 218–223** |
 | 159 | Gasolier + umbrella stand polish | **DONE 224** |
+| 160 | Open peg-rail tool rack + stools | **DONE 225** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 221 | **Open Leyden-jar battery** (style-2) — gallery east |
 | 222 | **Copper scrap** raised-lip tray + spool / plates / elbows |
 | 223 | **Balloon-back side chairs** + **gilt chimney-glass overmantel** |
 | 224 | **Brass-dominant gasolier** + **urn umbrella stand** + hall bud vase |
+| 225 | **Open peg-rail tool rack** + **turned stools** (not disc-on-sticks) |
 
 ## Still high-value if continuing
 
@@ -42,10 +43,10 @@
 ## Solid-mat / residual status
 
 - Prop solid-mat conversion largely exhausted  
-- Architecture, machines, furniture, hall dress, lights advanced 208–224  
+- Architecture, machines, furniture, workshop racks, lights advanced 208–225  
 - Intentional textures kept (wallpaper, floors, rugs, oils, views, plant cards)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_224/`  
+- Shots: `auto_loop_67/` … `auto_loop_225/`  

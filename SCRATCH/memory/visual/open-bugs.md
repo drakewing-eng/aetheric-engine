@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 225)
+
+- **Tool rack board residual:** solid brown wall slabs + hairline sticks mid-FOV (workshop_from_north). Rewrote open peg-rail rack — top/bottom rails + side posts, air behind, two peg rails, chunky hammer/wrench/tongs/plane/mallet heads, lower tool row + shelf ledge.  
+- **Stool residual:** flat disc-on-sticks mid-FOV gallery/workshop. Tripod with turned swell + ring; square with thick seat + apron; padded drum with dome tufts. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 224)
 
 - **Chandelier ice-cream residual:** cream cone cluster mid-FOV (morning_room/hall). Brass-dominant gasolier rewrite — shorter open bells (h=0.08), more transparent amber, double brass galleries, dual arm rings, crystal drops.  

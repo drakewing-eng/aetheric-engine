@@ -3201,90 +3201,103 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 
 static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	## Loop 196: wall tool rack — solid-mat frame + iron/copper tool heads (not stick washout).
+	## Loop 225: OPEN peg-rail rack mid-FOV (workshop_from_north) — not solid brown board slab
+	## with hairline sticks. Two oak rails + pegs + chunky tool heads proud of wall.
 	var root := Node3D.new()
 	root.name = "ToolRack"
 	var seed0: int = int(prop.get("seed", 0))
-	var mat_frame := _solid_matte(Color(0.22, 0.12, 0.07), 0.8)
-	var mat_side := _solid_matte(Color(0.32, 0.16, 0.09), 0.78)
-	var mat_back := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
-	var mat_wood_h := _solid_matte(Color(0.32, 0.2, 0.1), 0.8)
-	var mat_wood_l := _solid_matte(Color(0.42, 0.28, 0.14), 0.78)
-	var mat_oak_l := _solid_matte(Color(0.5, 0.38, 0.22), 0.8)
+	var mat_frame := _solid_matte(Color(0.28, 0.16, 0.09), 0.78)
+	var mat_frame_d := _solid_matte(Color(0.2, 0.11, 0.06), 0.82)
+	var mat_frame_l := _solid_matte(Color(0.38, 0.24, 0.12), 0.75)
+	var mat_wood_h := _solid_matte(Color(0.36, 0.22, 0.12), 0.78)
+	var mat_wood_l := _solid_matte(Color(0.48, 0.34, 0.18), 0.76)
+	var mat_oak_l := _solid_matte(Color(0.52, 0.4, 0.24), 0.8)
 	var mat_iron := _solid_metal(Color(0.36, 0.36, 0.38), 0.48)
-	var mat_iron_l := _solid_metal(Color(0.48, 0.48, 0.5), 0.45)
-	var mat_iron_d := _solid_metal(Color(0.28, 0.28, 0.3), 0.52)
+	var mat_iron_l := _solid_metal(Color(0.5, 0.5, 0.52), 0.42)
+	var mat_iron_d := _solid_metal(Color(0.26, 0.26, 0.28), 0.52)
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
 	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
-	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
-	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
-	_add_mesh_box(root, Vector3(0, 1.35, 0), Vector3(1.55, 0.1, 0.12), mat_frame)
-	_add_mesh_box(root, Vector3(0, 0.55, 0), Vector3(1.55, 0.08, 0.12), mat_frame)
-	_add_mesh_box(root, Vector3(-0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), mat_side)
-	_add_mesh_box(root, Vector3(0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), mat_side)
-	_add_mesh_box(root, Vector3(0, 0.95, -0.04), Vector3(1.4, 0.85, 0.03), mat_back)
-	for i in 6:
-		var x := -0.55 + float(i) * 0.22
-		_add_mesh_cyl(root, Vector3(x, 1.28, 0.1), 0.018, 0.12, mat_wood_l, false)
-		var kind := (i + seed0 * 3) % 6
+	var mat_cop := _solid_metal(Color(0.72, 0.42, 0.18), 0.3)
+	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.34)
+	# Open frame: top/bottom rails + side posts only (AIR behind tools — not solid board)
+	_add_mesh_box(root, Vector3(0, 1.42, 0.02), Vector3(1.6, 0.08, 0.1), mat_frame)
+	_add_mesh_box(root, Vector3(0, 1.48, 0.02), Vector3(1.5, 0.03, 0.08), mat_frame_l)
+	_add_mesh_box(root, Vector3(0, 0.48, 0.02), Vector3(1.6, 0.07, 0.1), mat_frame_d)
+	_add_mesh_box(root, Vector3(-0.76, 0.95, 0.02), Vector3(0.07, 1.0, 0.1), mat_frame)
+	_add_mesh_box(root, Vector3(0.76, 0.95, 0.02), Vector3(0.07, 1.0, 0.1), mat_frame)
+	# Two horizontal peg rails (period pegboard identity)
+	_add_mesh_box(root, Vector3(0, 1.22, 0.06), Vector3(1.45, 0.05, 0.06), mat_frame_l)
+	_add_mesh_box(root, Vector3(0, 0.72, 0.06), Vector3(1.45, 0.05, 0.06), mat_frame_l)
+	# Sparse vertical back battens only (air gaps between — not solid wall)
+	for bi in 4:
+		var bx := -0.5 + float(bi) * 0.33
+		_add_mesh_box(root, Vector3(bx, 0.95, -0.02), Vector3(0.04, 0.85, 0.025), mat_frame_d)
+	# Upper row: 5 chunky tools on pegs (larger heads for mid-FOV)
+	for i in 5:
+		var x := -0.5 + float(i) * 0.25
+		# Peg
+		_add_mesh_cyl(root, Vector3(x, 1.22, 0.12), 0.02, 0.1, mat_wood_l, false)
+		_add_mesh_cyl(root, Vector3(x, 1.22, 0.18), 0.028, 0.03, mat_wood_h, false)
+		var kind := (i + seed0 * 2) % 5
 		match kind:
-			0:  # claw hammer
-				_add_mesh_cyl(root, Vector3(x, 0.95, 0.12), 0.028, 0.52, mat_wood_h, false)
-				_add_mesh_box(root, Vector3(x, 0.68, 0.16), Vector3(0.22, 0.1, 0.09), mat_iron)
-				_add_mesh_box(root, Vector3(x + 0.12, 0.68, 0.16), Vector3(0.08, 0.08, 0.07), mat_iron_l)
-				_add_mesh_box(root, Vector3(x - 0.12, 0.66, 0.16), Vector3(0.08, 0.05, 0.06), mat_iron_d)
-				_add_mesh_box(root, Vector3(x - 0.16, 0.62, 0.16), Vector3(0.04, 0.08, 0.05), mat_iron)
-				_add_mesh_box(root, Vector3(x - 0.16, 0.7, 0.16), Vector3(0.04, 0.08, 0.05), mat_iron)
-			1:  # Rooke open-end wrench
-				_add_mesh_box(root, Vector3(x, 0.95, 0.12), Vector3(0.04, 0.5, 0.04), mat_iron_d)
-				_add_mesh_box(root, Vector3(x, 0.68, 0.16), Vector3(0.2, 0.08, 0.08), mat_iron)
-				_add_mesh_box(root, Vector3(x + 0.12, 0.72, 0.18), Vector3(0.06, 0.1, 0.05), mat_iron_l)
-				_add_mesh_box(root, Vector3(x + 0.12, 0.64, 0.18), Vector3(0.06, 0.1, 0.05), mat_iron_l)
-				_add_mesh_box(root, Vector3(x + 0.16, 0.68, 0.18), Vector3(0.04, 0.05, 0.05), mat_iron)
+			0:  # claw hammer — fat head
+				_add_mesh_cyl(root, Vector3(x, 0.95, 0.16), 0.032, 0.48, mat_wood_h, false)
+				_add_mesh_box(root, Vector3(x, 0.7, 0.2), Vector3(0.26, 0.12, 0.1), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.14, 0.7, 0.2), Vector3(0.1, 0.1, 0.08), mat_iron_l)
+				_add_mesh_box(root, Vector3(x - 0.14, 0.68, 0.2), Vector3(0.1, 0.06, 0.07), mat_iron_d)
+				_add_mesh_box(root, Vector3(x - 0.18, 0.64, 0.2), Vector3(0.05, 0.1, 0.05), mat_iron)
+			1:  # open-end wrench (Rooke)
+				_add_mesh_box(root, Vector3(x, 0.95, 0.16), Vector3(0.05, 0.48, 0.05), mat_iron_d)
+				_add_mesh_box(root, Vector3(x, 0.7, 0.2), Vector3(0.24, 0.1, 0.09), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.14, 0.74, 0.22), Vector3(0.07, 0.12, 0.05), mat_iron_l)
+				_add_mesh_box(root, Vector3(x + 0.14, 0.66, 0.22), Vector3(0.07, 0.12, 0.05), mat_iron_l)
 			2:  # tongs
-				_add_mesh_box(root, Vector3(x - 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), mat_iron)
-				_add_mesh_box(root, Vector3(x + 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), mat_iron)
-				_add_mesh_box(root, Vector3(x, 1.15, 0.12), Vector3(0.12, 0.04, 0.04), mat_iron_d)
-				_add_mesh_box(root, Vector3(x - 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), mat_iron_l)
-				_add_mesh_box(root, Vector3(x + 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), mat_iron_l)
+				_add_mesh_box(root, Vector3(x - 0.04, 0.95, 0.16), Vector3(0.032, 0.5, 0.032), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.04, 0.95, 0.16), Vector3(0.032, 0.5, 0.032), mat_iron)
+				_add_mesh_box(root, Vector3(x, 1.15, 0.16), Vector3(0.14, 0.04, 0.04), mat_iron_d)
+				_add_mesh_box(root, Vector3(x - 0.06, 0.68, 0.2), Vector3(0.07, 0.05, 0.09), mat_iron_l)
+				_add_mesh_box(root, Vector3(x + 0.06, 0.68, 0.2), Vector3(0.07, 0.05, 0.09), mat_iron_l)
 			3:  # wood plane
-				_add_mesh_box(root, Vector3(x, 0.85, 0.14), Vector3(0.12, 0.1, 0.32), mat_wood_l)
-				_add_mesh_box(root, Vector3(x, 0.95, 0.05), Vector3(0.08, 0.1, 0.06), mat_wood_h)
-				_add_mesh_box(root, Vector3(x, 0.82, 0.26), Vector3(0.1, 0.04, 0.08), mat_iron)
-				_add_mesh_box(root, Vector3(x, 0.88, 0.14), Vector3(0.06, 0.03, 0.12), mat_br_d)
-			4:  # file
-				_add_mesh_cyl(root, Vector3(x, 1.05, 0.12), 0.03, 0.18, mat_wood_h, false)
-				_add_mesh_box(root, Vector3(x, 0.78, 0.12), Vector3(0.045, 0.42, 0.04), mat_iron_l)
-				for ti in 4:
-					_add_mesh_box(root, Vector3(x + 0.025, 0.65 + float(ti) * 0.08, 0.12), Vector3(0.01, 0.02, 0.035), mat_iron)
+				_add_mesh_box(root, Vector3(x, 0.88, 0.18), Vector3(0.14, 0.12, 0.36), mat_wood_l)
+				_add_mesh_box(root, Vector3(x, 0.98, 0.08), Vector3(0.09, 0.1, 0.07), mat_wood_h)
+				_add_mesh_box(root, Vector3(x, 0.84, 0.3), Vector3(0.12, 0.05, 0.09), mat_iron)
+				_add_mesh_box(root, Vector3(x, 0.92, 0.18), Vector3(0.07, 0.035, 0.14), mat_br_d)
 			_:  # copper mallet
-				_add_mesh_cyl(root, Vector3(x, 0.98, 0.12), 0.03, 0.42, mat_wood_l, false)
-				_add_mesh_cyl(root, Vector3(x, 0.72, 0.16), 0.09, 0.14, mat_cop, false)
-				_add_mesh_cyl(root, Vector3(x, 0.72, 0.16), 0.1, 0.04, mat_cop_d, false)
-	for i in 3:
-		var x2 := -0.35 + float(i) * 0.35
-		var kind2 := (i + seed0 + 2) % 4
-		_add_mesh_cyl(root, Vector3(x2, 0.58, 0.1), 0.014, 0.1, mat_wood_l, false)
+				_add_mesh_cyl(root, Vector3(x, 0.98, 0.16), 0.035, 0.4, mat_wood_l, false)
+				_add_mesh_cyl(root, Vector3(x, 0.72, 0.2), 0.1, 0.16, mat_cop, false)
+				_add_mesh_cyl(root, Vector3(x, 0.72, 0.2), 0.11, 0.045, mat_cop_d, false)
+	# Lower row: 4 tools on bottom peg rail
+	for i in 4:
+		var x2 := -0.4 + float(i) * 0.27
+		var kind2 := (i + seed0 + 1) % 4
+		_add_mesh_cyl(root, Vector3(x2, 0.72, 0.12), 0.018, 0.09, mat_wood_l, false)
+		_add_mesh_cyl(root, Vector3(x2, 0.72, 0.17), 0.025, 0.025, mat_wood_h, false)
 		if kind2 == 0:
-			_add_mesh_box(root, Vector3(x2, 0.38, 0.12), Vector3(0.035, 0.3, 0.035), mat_wood_h)
-			_add_mesh_box(root, Vector3(x2, 0.24, 0.16), Vector3(0.14, 0.08, 0.06), mat_iron)
-			_add_mesh_box(root, Vector3(x2 + 0.08, 0.24, 0.16), Vector3(0.06, 0.1, 0.04), mat_iron_l)
+			_add_mesh_box(root, Vector3(x2, 0.48, 0.16), Vector3(0.04, 0.32, 0.04), mat_wood_h)
+			_add_mesh_box(root, Vector3(x2, 0.32, 0.2), Vector3(0.16, 0.09, 0.07), mat_iron)
+			_add_mesh_box(root, Vector3(x2 + 0.09, 0.32, 0.2), Vector3(0.07, 0.12, 0.05), mat_iron_l)
 		elif kind2 == 1:
-			_add_mesh_cyl(root, Vector3(x2, 0.4, 0.14), 0.02, 0.32, mat_br_d, false)
-			_add_mesh_box(root, Vector3(x2, 0.55, 0.14), Vector3(0.1, 0.03, 0.03), mat_br)
+			_add_mesh_cyl(root, Vector3(x2, 0.5, 0.18), 0.025, 0.3, mat_br_d, false)
+			_add_mesh_box(root, Vector3(x2, 0.62, 0.18), Vector3(0.12, 0.035, 0.035), mat_br)
+			_add_mesh_cyl(root, Vector3(x2, 0.35, 0.18), 0.04, 0.06, mat_br, false)
 		elif kind2 == 2:
-			_add_mesh_box(root, Vector3(x2, 0.4, 0.14), Vector3(0.05, 0.28, 0.05), mat_iron)
-			_add_mesh_box(root, Vector3(x2, 0.24, 0.14), Vector3(0.06, 0.04, 0.04), mat_iron_l)
+			_add_mesh_box(root, Vector3(x2, 0.5, 0.18), Vector3(0.055, 0.3, 0.055), mat_iron)
+			_add_mesh_box(root, Vector3(x2, 0.34, 0.18), Vector3(0.07, 0.05, 0.05), mat_iron_l)
 		else:
-			_add_mesh_cyl(root, Vector3(x2, 0.4, 0.14), 0.025, 0.28, mat_iron_d, false)
-			_add_mesh_cyl(root, Vector3(x2, 0.28, 0.14), 0.05, 0.08, mat_cop, false)
+			_add_mesh_cyl(root, Vector3(x2, 0.5, 0.18), 0.028, 0.28, mat_iron_d, false)
+			_add_mesh_cyl(root, Vector3(x2, 0.36, 0.18), 0.055, 0.1, mat_cop, false)
+	# Shelf ledge with small parts (identity clutter)
+	_add_mesh_box(root, Vector3(0, 0.55, 0.1), Vector3(1.3, 0.03, 0.1), mat_oak_l)
 	if seed0 % 2 == 0:
-		_add_mesh_box(root, Vector3(-0.35, 0.62, 0.1), Vector3(0.1, 0.04, 0.08), mat_cop_d)
-		_add_mesh_cyl(root, Vector3(-0.18, 0.64, 0.1), 0.03, 0.08, mat_br, false)
-		_add_mesh_box(root, Vector3(0.0, 0.62, 0.1), Vector3(0.12, 0.03, 0.06), mat_iron_l)
+		_add_mesh_box(root, Vector3(-0.35, 0.6, 0.12), Vector3(0.12, 0.05, 0.08), mat_cop_d)
+		_add_mesh_cyl(root, Vector3(-0.15, 0.62, 0.12), 0.035, 0.08, mat_br, false)
+		_add_mesh_box(root, Vector3(0.1, 0.6, 0.12), Vector3(0.14, 0.04, 0.07), mat_iron_l)
+		_add_mesh_cyl(root, Vector3(0.35, 0.62, 0.12), 0.03, 0.07, mat_cop, false)
 	else:
-		_add_mesh_box(root, Vector3(0.15, 0.62, 0.1), Vector3(0.22, 0.05, 0.12), mat_oak_l)
-		_add_mesh_cyl(root, Vector3(0.4, 0.64, 0.1), 0.028, 0.08, mat_cop, false)
-		_add_mesh_box(root, Vector3(0.5, 0.62, 0.1), Vector3(0.08, 0.04, 0.06), mat_br_d)
+		_add_mesh_box(root, Vector3(0.1, 0.6, 0.12), Vector3(0.24, 0.055, 0.1), mat_oak_l)
+		_add_mesh_cyl(root, Vector3(0.35, 0.63, 0.12), 0.032, 0.08, mat_cop, false)
+		_add_mesh_box(root, Vector3(0.5, 0.6, 0.12), Vector3(0.09, 0.045, 0.06), mat_br_d)
+		_add_mesh_box(root, Vector3(-0.3, 0.6, 0.12), Vector3(0.1, 0.04, 0.08), mat_iron)
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:
@@ -3477,6 +3490,7 @@ static func _make_crate(prop: Dictionary) -> Node3D:
 
 static func _make_stool(prop: Dictionary) -> Node3D:
 	## Loop 198: stools — solid-mat wood + velvet (no washout mid-FOV).
+	## Loop 225: turned furniture mass mid-FOV (gallery/workshop) — not flat disc on sticks.
 	## seed: 0 tripod oak · 1 four-leg square · 2 padded drum
 	var root := Node3D.new()
 	root.name = "Stool"
@@ -3488,59 +3502,69 @@ static func _make_stool(prop: Dictionary) -> Node3D:
 	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
 	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	if style == 0:
-		_add_mesh_cyl(root, Vector3(0, 0.48, 0), 0.21, 0.06, mat_oak, true)
-		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.19, 0.035, mat_oak_l, false)
-		_add_mesh_cyl(root, Vector3(0, 0.54, 0), 0.2, 0.02, mat_oak_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.44, 0), 0.22, 0.025, mat_md, false)
+		# Thick turned seat disc + apron ring
+		_add_mesh_cyl(root, Vector3(0, 0.46, 0), 0.22, 0.05, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.5, 0), 0.23, 0.055, mat_oak, true)
+		_add_mesh_cyl(root, Vector3(0, 0.54, 0), 0.2, 0.03, mat_oak_l, false)
+		_add_mesh_cyl(root, Vector3(0, 0.57, 0), 0.21, 0.02, mat_oak_d, false)
+		# Tripod splayed legs with turned swell + ring stretcher
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			var lx := cos(rad) * 0.15
-			var lz := sin(rad) * 0.15
-			_add_mesh_cyl(root, Vector3(lx, 0.34, lz), 0.034, 0.2, mat_md, true)
-			_add_mesh_cyl(root, Vector3(lx, 0.2, lz), 0.025, 0.14, mat_m, false)
-			_add_mesh_cyl(root, Vector3(lx, 0.08, lz), 0.03, 0.12, mat_md, false)
-			_add_mesh_cyl(root, Vector3(lx, 0.02, lz), 0.042, 0.04, mat_m, false)
-		_add_mesh_cyl(root, Vector3(0, 0.16, 0), 0.17, 0.028, mat_md, false)
-		_add_mesh_cyl(root, Vector3(0, 0.16, 0), 0.13, 0.02, mat_m, false)
+			var lx := cos(rad) * 0.16
+			var lz := sin(rad) * 0.16
+			_add_mesh_cyl(root, Vector3(lx * 0.7, 0.38, lz * 0.7), 0.038, 0.12, mat_md, true)
+			_add_mesh_cyl(root, Vector3(lx, 0.22, lz), 0.028, 0.22, mat_m, false)
+			_add_mesh_cyl(root, Vector3(lx, 0.22, lz), 0.035, 0.05, mat_oak_l, false)
+			_add_mesh_cyl(root, Vector3(lx, 0.04, lz), 0.032, 0.08, mat_md, false)
+			_add_mesh_cyl(root, Vector3(lx, 0.015, lz), 0.045, 0.03, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0, 0.14, 0), 0.15, 0.025, mat_md, false)
+		_add_mesh_cyl(root, Vector3(0, 0.14, 0), 0.11, 0.018, mat_m, false)
 	elif style == 1:
-		_add_mesh_box(root, Vector3(0, 0.5, 0), Vector3(0.4, 0.05, 0.4), mat_oak)
-		_add_mesh_box(root, Vector3(0, 0.54, 0), Vector3(0.38, 0.025, 0.38), mat_oak_l)
-		_add_mesh_box(root, Vector3(0, 0.46, 0.18), Vector3(0.36, 0.05, 0.035), mat_m)
-		_add_mesh_box(root, Vector3(0, 0.46, -0.18), Vector3(0.36, 0.05, 0.035), mat_m)
-		_add_mesh_box(root, Vector3(0.18, 0.46, 0), Vector3(0.035, 0.05, 0.34), mat_m)
-		_add_mesh_box(root, Vector3(-0.18, 0.46, 0), Vector3(0.035, 0.05, 0.34), mat_m)
+		# Square stool — thick seat pad + apron (not flat plank on sticks)
+		_add_mesh_box(root, Vector3(0, 0.48, 0), Vector3(0.42, 0.06, 0.42), mat_oak_d)
+		_add_mesh_box(root, Vector3(0, 0.52, 0), Vector3(0.4, 0.04, 0.4), mat_oak)
+		_add_mesh_box(root, Vector3(0, 0.55, 0), Vector3(0.36, 0.025, 0.36), mat_oak_l)
+		# Apron on 4 sides
+		_add_mesh_box(root, Vector3(0, 0.44, 0.18), Vector3(0.38, 0.06, 0.04), mat_m)
+		_add_mesh_box(root, Vector3(0, 0.44, -0.18), Vector3(0.38, 0.06, 0.04), mat_m)
+		_add_mesh_box(root, Vector3(0.18, 0.44, 0), Vector3(0.04, 0.06, 0.36), mat_m)
+		_add_mesh_box(root, Vector3(-0.18, 0.44, 0), Vector3(0.04, 0.06, 0.36), mat_m)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.34, sz * 0.15), 0.032, 0.2, mat_md, true)
-				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.18, sz * 0.15), 0.024, 0.16, mat_m, false)
-				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.06, sz * 0.15), 0.03, 0.1, mat_md, false)
-				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.02, sz * 0.15), 0.04, 0.035, mat_m, false)
-		_add_mesh_box(root, Vector3(0, 0.14, 0), Vector3(0.28, 0.028, 0.028), mat_md)
-		_add_mesh_box(root, Vector3(-0.14, 0.14, 0), Vector3(0.028, 0.028, 0.26), mat_md)
-		_add_mesh_box(root, Vector3(0.14, 0.14, 0), Vector3(0.028, 0.028, 0.26), mat_md)
+				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.32, sz * 0.15), 0.032, 0.18, mat_md, true)
+				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.16, sz * 0.15), 0.026, 0.16, mat_m, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.04, sz * 0.15), 0.032, 0.08, mat_md, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.15, 0.015, sz * 0.15), 0.042, 0.03, mat_m, false)
+		_add_mesh_box(root, Vector3(0, 0.12, 0), Vector3(0.28, 0.025, 0.025), mat_md)
+		_add_mesh_box(root, Vector3(-0.14, 0.12, 0), Vector3(0.025, 0.025, 0.26), mat_md)
+		_add_mesh_box(root, Vector3(0.14, 0.12, 0), Vector3(0.025, 0.025, 0.26), mat_md)
 	else:
+		# Padded drum — soft dome + tufts + turned feet (workshop/kitchen)
 		var fab := VELVET_GREEN.darkened(0.08) if seed0 % 2 == 0 else VELVET_RED.darkened(0.12)
 		var mat_fab := _solid_matte(fab, 0.92)
 		var mat_fab_d := _solid_matte(fab.darkened(0.14), 0.94)
 		var mat_fab_dd := _solid_matte(fab.darkened(0.25), 0.94)
-		_add_mesh_cyl(root, Vector3(0, 0.36, 0), 0.22, 0.08, mat_md, true)
-		_add_mesh_cyl(root, Vector3(0, 0.42, 0), 0.215, 0.04, mat_m, false)
-		_add_mesh_cyl(root, Vector3(0, 0.46, 0), 0.2, 0.03, mat_oak_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.195, 0.1, mat_fab, true)
-		_add_mesh_cyl(root, Vector3(0, 0.58, 0), 0.18, 0.04, mat_fab_d, false)
-		_add_mesh_cyl(root, Vector3(0, 0.55, 0), 0.2, 0.015, mat_md, false)
+		var mat_fab_l := _solid_matte(fab.lightened(0.05), 0.9)
+		_add_mesh_cyl(root, Vector3(0, 0.34, 0), 0.23, 0.07, mat_md, true)
+		_add_mesh_cyl(root, Vector3(0, 0.4, 0), 0.22, 0.04, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0, 0.44, 0), 0.2, 0.03, mat_oak_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.52, 0), 0.2, 0.12, mat_fab, true)
+		_add_mesh_cyl(root, Vector3(0, 0.6, 0), 0.175, 0.05, mat_fab_d, false)
+		_add_mesh_cyl(root, Vector3(0, 0.64, 0), 0.12, 0.03, mat_fab_l, false)
+		_add_mesh_cyl(root, Vector3(0, 0.48, 0), 0.21, 0.02, mat_md, false)
 		for ti in 6:
 			var ta := float(ti) * TAU / 6.0
-			_add_mesh_cyl(root, Vector3(cos(ta) * 0.08, 0.6, sin(ta) * 0.08), 0.012, 0.012, mat_fab_dd, false)
+			_add_mesh_cyl(root, Vector3(cos(ta) * 0.09, 0.62, sin(ta) * 0.09), 0.014, 0.014, mat_fab_dd, false)
+		_add_mesh_cyl(root, Vector3(0, 0.66, 0), 0.016, 0.015, mat_fab_dd, false)
 		for a in [0.0, 90.0, 180.0, 270.0]:
 			var rad := deg_to_rad(a)
-			var lx := cos(rad) * 0.13
-			var lz := sin(rad) * 0.13
-			_add_mesh_cyl(root, Vector3(lx, 0.26, lz), 0.03, 0.16, mat_md, true)
-			_add_mesh_cyl(root, Vector3(lx, 0.12, lz), 0.024, 0.14, mat_m, false)
-			_add_mesh_cyl(root, Vector3(lx, 0.02, lz), 0.034, 0.04, mat_m, false)
-		_add_mesh_cyl(root, Vector3(0, 0.12, 0), 0.14, 0.022, mat_md, false)
-	_add_contact_shadow(root, 0.26, 0.26)
+			var lx := cos(rad) * 0.14
+			var lz := sin(rad) * 0.14
+			_add_mesh_cyl(root, Vector3(lx, 0.24, lz), 0.032, 0.16, mat_md, true)
+			_add_mesh_cyl(root, Vector3(lx, 0.1, lz), 0.026, 0.14, mat_m, false)
+			_add_mesh_cyl(root, Vector3(lx, 0.015, lz), 0.038, 0.03, mat_m, false)
+		_add_mesh_cyl(root, Vector3(0, 0.1, 0), 0.15, 0.022, mat_md, false)
+	_add_contact_shadow(root, 0.28, 0.28)
 	return root
 
 # ─── Gallery / aetheric ──────────────────────────────────────────────────────
