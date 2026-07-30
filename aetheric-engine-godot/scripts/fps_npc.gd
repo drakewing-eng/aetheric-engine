@@ -1,12 +1,12 @@
 extends Node3D
 
 ## In-world NPC: camera-facing full-figure sprite billboard + collision for E-talk.
-## Sprites: res://assets/characters/sprites/sprite_<id>.png (hard alpha cutout on black bg)
+## Sprites: res://assets/characters/sprites/sprite_<id>.png (hard alpha cutout)
 ## Optional walk cycle: sprite_<id>_walk_0.png … walk_3.png (distance-driven while patrolling)
 
 const SPRITE_DIR := "res://assets/characters/sprites/"
-## Metres of travel per full 4-frame cycle (tune: smaller = faster footwork)
-const WALK_CYCLE_METRES := 0.72
+## Metres of travel per full walk cycle (tuned for clear step cadence, less glide)
+const WALK_CYCLE_METRES := 0.55
 const WALK_FRAME_COUNT := 4
 
 var npc_data: Dictionary = {}
@@ -22,9 +22,10 @@ var _char_mat: StandardMaterial3D = null
 var _idle_tex: Texture2D = null
 var _walk_texs: Array = []  # Texture2D, empty if no cycle
 var _walk_dist := 0.0
-var _walk_frame := 0
+var _walk_frame := -1
 var _world_h := 1.7
 var _foot_shadow: MeshInstance3D = null
+var _was_dwelling := true
 
 @onready var body_mesh: MeshInstance3D = $BodyMesh
 @onready var body: StaticBody3D = $Body
@@ -67,6 +68,21 @@ func setup(data: Dictionary) -> void:
 		body.position = Vector3(0, h * 0.5, 0)
 
 	set_meta("npc", data)
+	_set_idle()
+
+
+## Pure: which walk frame for distance traveled (0 .. n_frames-1).
+static func select_walk_frame(distance_m: float, cycle_m: float, n_frames: int) -> int:
+	if n_frames <= 0:
+		return 0
+	var cm: float = cycle_m if cycle_m > 0.0001 else 1.0
+	var t: float = fposmod(distance_m / cm, 1.0)
+	return int(t * float(n_frames)) % n_frames
+
+
+## Pure: while dwelling at a waypoint, show idle (not a walk frame).
+static func should_use_idle(dwelling: bool) -> bool:
+	return dwelling
 
 
 static func sprite_path_for(npc_id: String) -> String:
@@ -81,19 +97,35 @@ static func walk_frame_path(npc_id: String, frame: int) -> String:
 	return SPRITE_DIR + "sprite_%s_walk_%d.png" % [id, frame]
 
 
+## Load texture without mipmaps (avoids alpha-scissor holes in dark cloth).
 static func _load_texture(tex_path: String) -> Texture2D:
 	if tex_path == "":
 		return null
-	if ResourceLoader.exists(tex_path):
-		var res = load(tex_path)
-		if res is Texture2D:
-			return res
 	var abs_path := ProjectSettings.globalize_path(tex_path)
 	if FileAccess.file_exists(abs_path):
 		var img := Image.new()
 		if img.load(abs_path) == OK:
+			# Do not generate mipmaps — dark coat/trousers + scissor + mips = fuzzy holes.
 			return ImageTexture.create_from_image(img)
+	if ResourceLoader.exists(tex_path):
+		var res = load(tex_path)
+		if res is Texture2D:
+			return res
 	return null
+
+
+func _make_char_material(tex: Texture2D) -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = tex
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mat.alpha_scissor_threshold = 0.5
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	# No mipmaps: LINEAR only (not LINEAR_WITH_MIPMAPS)
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
+	return mat
 
 
 func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
@@ -102,7 +134,6 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 	_idle_tex = tex
 	_walk_texs.clear()
 
-	# Load optional 4-frame walk cycle if all frames exist
 	var walk_ok := true
 	var loaded_walk: Array = []
 	for fi in WALK_FRAME_COUNT:
@@ -128,19 +159,20 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 			body_mesh.position = Vector3(0, height * 0.5, 0)
 		return
 
-	# Prefer walk frame 0 for sizing if idle missing
 	if tex == null:
 		tex = _walk_texs[0]
 		_idle_tex = tex
 
-	# Use a depth-writing quad mesh instead of Sprite3D soft transparency.
-	# ALPHA_SCISSOR keeps opaque clothing (black dresses) solid and sorts with furniture.
 	var tex_h: float = float(tex.get_height())
 	var tex_w: float = float(tex.get_width())
 	if tex_h < 1.0:
 		tex_h = 1024.0
 	if tex_w < 1.0:
 		tex_w = 512.0
+	# Prefer walk-frame pixel size when present so all frames share one quad aspect
+	if not _walk_texs.is_empty():
+		tex_w = float(_walk_texs[0].get_width())
+		tex_h = float(_walk_texs[0].get_height())
 	var aspect: float = tex_w / tex_h
 	var world_h: float = height
 	var world_w: float = height * aspect
@@ -150,26 +182,16 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = "CharacterSprite"
 	mi.mesh = quad
-	var mat := StandardMaterial3D.new()
-	mat.albedo_texture = tex
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mat.alpha_scissor_threshold = 0.5
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
-	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
+	var mat := _make_char_material(tex)
 	mi.material_override = mat
-	# Feet on floor: quad center at half height
 	mi.position = Vector3(0, world_h * 0.5 + 0.01, 0)
 	add_child(mi)
 	_char_mesh = mi
 	_char_mat = mat
-	_sprite = null  # mesh path; keep var for compatibility
+	_sprite = null
 
 
 func _setup_foot_shadow() -> void:
-	## Soft contact disc so billboard feet read as planted on the floor.
 	var mi := MeshInstance3D.new()
 	mi.name = "FootShadow"
 	var disc := CylinderMesh.new()
@@ -199,13 +221,18 @@ func _set_sprite_tex(tex: Texture2D) -> void:
 func _set_walk_frame(frame: int) -> void:
 	if _walk_texs.is_empty():
 		return
-	_walk_frame = posmod(frame, _walk_texs.size())
+	var f: int = posmod(frame, _walk_texs.size())
+	if f == _walk_frame and not _was_dwelling:
+		return
+	_walk_frame = f
 	_set_sprite_tex(_walk_texs[_walk_frame])
+	_was_dwelling = false
 
 
 func _set_idle() -> void:
 	_walk_dist = 0.0
-	_walk_frame = 0
+	_walk_frame = -1
+	_was_dwelling = true
 	if _idle_tex:
 		_set_sprite_tex(_idle_tex)
 	elif not _walk_texs.is_empty():
@@ -217,7 +244,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if _dwell_left > 0.0:
 		_dwell_left -= delta
-		_set_idle()
+		if not _was_dwelling or _walk_frame != -1:
+			_set_idle()
 		return
 	var target := _points[_index]
 	var flat := Vector2(global_position.x - target.x, global_position.z - target.z)
@@ -230,13 +258,10 @@ func _physics_process(delta: float) -> void:
 	var step := _speed * delta
 	global_position += dir * step
 
-	# Distance-driven walk cycle (only if frames loaded)
 	if not _walk_texs.is_empty():
 		_walk_dist += step
-		var cycle_t := fposmod(_walk_dist / WALK_CYCLE_METRES, 1.0)
-		var frame := int(cycle_t * float(_walk_texs.size())) % _walk_texs.size()
-		if frame != _walk_frame:
-			_set_walk_frame(frame)
+		var frame := select_walk_frame(_walk_dist, WALK_CYCLE_METRES, _walk_texs.size())
+		_set_walk_frame(frame)
 
 
 func distance_to_player(player_pos: Vector3) -> float:
