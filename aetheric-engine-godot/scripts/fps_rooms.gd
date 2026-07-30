@@ -282,7 +282,7 @@ const ROOMS := {
 			# Loop 92: lamp near looking-glass (west hall corner read)
 			{"kind": "oil_lamp", "pos": [-5.6, 0.0, -1.4], "yaw": 15.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-6.7, 0.0, -1.0], "yaw": 90.0, "height": 2.25},
-			# Loop 98/144: NW corner densify — plant clear of chair seat
+			# Loop 98/144/146: NW corner densify — plants in corners only (no seat bleed)
 			{"kind": "hall_table", "pos": [-5.0, 0.0, -3.4], "yaw": 5.0, "seed": 2},
 			{
 				"kind": "billboard_prop",
@@ -297,15 +297,15 @@ const ROOMS := {
 				"col_size": [0.5, 0.95, 0.5],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "plant", "pos": [-6.15, 0.0, -3.7], "scale": 0.65, "seed": 4,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.65},
+			{"kind": "plant", "pos": [-6.3, 0.0, -3.9], "scale": 0.55, "seed": 4,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.48, "height": 0.58},
 			# Second stand near kitchen/south — visitors leave coats by service door
 			{"kind": "coat_stand", "pos": [5.1, 0.0, 3.4], "yaw": -25.0, "seed": 1},
 			{"kind": "umbrella_stand", "pos": [4.6, 0.0, 3.85], "yaw": -15.0, "seed": 0},
-			# Hall chairs flank runner — painted heroes (loop 135/144 spacing)
+			# Hall chairs flank runner — painted heroes (loop 135/146 clear of plants)
 			{
 				"kind": "billboard_prop",
-				"pos": [2.05, 0.0, -1.5],
+				"pos": [2.15, 0.0, -1.55],
 				"yaw": -100.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
@@ -318,7 +318,7 @@ const ROOMS := {
 			},
 			{
 				"kind": "billboard_prop",
-				"pos": [-2.1, 0.0, 1.55],
+				"pos": [-2.2, 0.0, 1.6],
 				"yaw": 80.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
@@ -329,10 +329,10 @@ const ROOMS := {
 				"col_size": [0.5, 0.95, 0.5],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "plant", "pos": [5.6, 0.0, -0.6], "scale": 0.85, "seed": 3,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.8, "height": 0.9},
-			{"kind": "plant", "pos": [-5.7, 0.0, 2.0], "scale": 0.7, "seed": 1,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.65, "height": 0.9},
+			{"kind": "plant", "pos": [6.1, 0.0, -0.9], "scale": 0.7, "seed": 3,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.8},
+			{"kind": "plant", "pos": [-6.2, 0.0, 2.3], "scale": 0.6, "seed": 1,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.55, "height": 0.8},
 			# Freestanding oil lamp south of center (table kits already carry their own lights)
 			{"kind": "oil_lamp", "pos": [-0.55, 0.0, 2.6], "yaw": 15.0, "height": 1.15},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},
@@ -342,14 +342,14 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-6.5, 0.0, -1.0], "yaw": 90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [-2.2, 0.0, 4.6], "yaw": 180.0, "height": 2.15},
-			# Loop 87: kitchen/south approach densify (from_north read)
-			{"kind": "plant", "pos": [2.8, 0.0, 3.8], "scale": 0.7, "seed": 2,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
-			{"kind": "plant", "pos": [-2.8, 0.0, 3.8], "scale": 0.8, "seed": 0,
-				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.75, "height": 0.95},
+			# Loop 87/146: south plants in corners — clear of south chairs
+			{"kind": "plant", "pos": [3.4, 0.0, 4.0], "scale": 0.6, "seed": 2,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.55, "height": 0.65},
+			{"kind": "plant", "pos": [-3.4, 0.0, 4.0], "scale": 0.65, "seed": 0,
+				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.6, "height": 0.8},
 			{
 				"kind": "billboard_prop",
-				"pos": [-2.4, 0.0, 3.2],
+				"pos": [-2.4, 0.0, 3.0],
 				"yaw": 160.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,

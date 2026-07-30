@@ -2216,51 +2216,86 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	_add_box(root, Vector3(width * 0.2, 0.35, 0.35), Vector3(width * 0.28, 0.22, 0.12), MAHOGANY, false, 0.48)
 	_add_cylinder(root, Vector3(-width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
 	_add_cylinder(root, Vector3(width * 0.2, 0.35, 0.42), 0.02, 0.06, BRASS, false, 0.3, true)
-	# Seed-unique top dressing (loop 123: vessels + tools, not copper coin stacks)
+	# Seed-unique top dressing (loop 146: files/clamps/timber — Rooke bench micro)
 	var iron_mid := Color(0.36, 0.36, 0.38)
+	var iron_d := Color(0.28, 0.28, 0.3)
 	var dress := seed0 % 3
 	if dress == 0:
-		# Measuring plate + ruler + calipers + oil can + copper bowl
-		_add_box(root, Vector3(-0.4, 0.93, 0.15), Vector3(0.35, 0.04, 0.25), BRASS, false, 0.3)
-		_add_box(root, Vector3(0.0, 0.94, 0.25), Vector3(0.55, 0.03, 0.08), iron_mid, false, 0.45)
-		_add_box(root, Vector3(-0.15, 0.95, 0.3), Vector3(0.08, 0.04, 0.22), iron_mid.lightened(0.1), false, 0.45)
-		# Oil can: belly + spout (not tall brass cylinder)
-		_add_cylinder(root, Vector3(0.6, 0.95, 0.1), 0.05, 0.04, BRASS.darkened(0.1), false, 0.32, true)
-		_add_cylinder(root, Vector3(0.6, 1.0, 0.1), 0.07, 0.1, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(0.7, 1.02, 0.1), Vector3(0.1, 0.025, 0.03), BRASS.darkened(0.05), false, 0.3)
-		_add_box(root, Vector3(0.35, 0.93, -0.15), Vector3(0.28, 0.02, 0.18), PAPER, false)
-		# Copper bowl with rim + handle
-		_add_cylinder(root, Vector3(-0.7, 0.94, -0.2), 0.05, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.7, 0.98, -0.2), 0.065, 0.08, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.7, 1.03, -0.2), 0.07, 0.02, COPPER.lightened(0.08), false, 0.32, true)
-		_add_box(root, Vector3(-0.6, 0.98, -0.2), Vector3(0.06, 0.03, 0.03), COPPER, false, 0.35)
-		_add_box(root, Vector3(0.15, 0.94, 0.05), Vector3(0.12, 0.03, 0.04), iron_mid, false, 0.4)
+		# Measuring plate + steel rule + calipers + oil can + file + scrap timber
+		_add_box(root, Vector3(-0.45, 0.93, 0.12), Vector3(0.32, 0.035, 0.22), BRASS.darkened(0.08), false, 0.3)
+		_add_box(root, Vector3(0.05, 0.935, 0.28), Vector3(0.7, 0.02, 0.05), iron_mid, false, 0.42)  # steel rule
+		# Tick marks on rule
+		for ti in 6:
+			_add_box(root, Vector3(-0.25 + float(ti) * 0.1, 0.945, 0.3), Vector3(0.01, 0.015, 0.03), iron_d, false, 0.4)
+		# Calipers (L-jaw)
+		_add_box(root, Vector3(-0.15, 0.95, 0.15), Vector3(0.06, 0.03, 0.2), iron_mid.lightened(0.08), false, 0.42)
+		_add_box(root, Vector3(-0.05, 0.95, 0.05), Vector3(0.18, 0.03, 0.05), iron_mid, false, 0.42)
+		# Flat file + rasp (lying — not coin towers)
+		_add_box(root, Vector3(0.35, 0.94, 0.05), Vector3(0.42, 0.025, 0.06), iron_mid, false, 0.4)
+		_add_box(root, Vector3(0.5, 0.95, 0.05), Vector3(0.08, 0.035, 0.05), Color(0.4, 0.26, 0.14), false, 0.55)
+		_add_box(root, Vector3(0.25, 0.94, -0.2), Vector3(0.38, 0.022, 0.05), iron_d, false, 0.4)
+		_add_box(root, Vector3(0.4, 0.95, -0.2), Vector3(0.07, 0.03, 0.045), Color(0.38, 0.24, 0.12), false, 0.55)
+		# Oil can: belly + spout
+		_add_cylinder(root, Vector3(0.75, 0.95, 0.15), 0.045, 0.035, BRASS.darkened(0.1), false, 0.32, true)
+		_add_cylinder(root, Vector3(0.75, 1.0, 0.15), 0.065, 0.09, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.85, 1.02, 0.15), Vector3(0.09, 0.022, 0.025), BRASS.darkened(0.05), false, 0.3)
+		# Scrap timber offcuts
+		_add_box(root, Vector3(-0.7, 0.94, -0.15), Vector3(0.35, 0.04, 0.08), OAK.lightened(0.05), false, 0.58)
+		_add_box(root, Vector3(-0.55, 0.96, -0.22), Vector3(0.2, 0.035, 0.06), OAK.darkened(0.08), false, 0.55)
+		_add_box(root, Vector3(0.1, 0.93, -0.25), Vector3(0.25, 0.02, 0.16), PAPER, false)
+		# Small copper dish (rim bowl, not stack)
+		_add_cylinder(root, Vector3(-0.75, 0.95, 0.2), 0.055, 0.025, COPPER.darkened(0.08), false, 0.32, true)
+		_add_cylinder(root, Vector3(-0.75, 0.98, 0.2), 0.07, 0.05, COPPER, false, 0.32, true)
 	elif dress == 1:
-		# Plans + wrench + copper stock coil on arbor + chalk
-		_add_box(root, Vector3(0.3, 0.92, -0.1), Vector3(0.45, 0.03, 0.32), PAPER, false)
-		_add_box(root, Vector3(0.35, 0.94, -0.08), Vector3(0.3, 0.01, 0.22), PAPER.darkened(0.08), false)
-		_add_box(root, Vector3(0.32, 0.95, -0.05), Vector3(0.18, 0.008, 0.12), PAPER.darkened(0.12), false)
-		_add_box(root, Vector3(-0.5, 0.94, 0.1), Vector3(0.5, 0.03, 0.08), iron_mid, false, 0.45)
-		_add_box(root, Vector3(-0.2, 0.95, 0.15), Vector3(0.08, 0.05, 0.14), iron_mid.lightened(0.08), false, 0.45)
-		# Short copper tube stock (lying), not upright stack
-		_add_cylinder(root, Vector3(0.7, 0.96, 0.15), 0.025, 0.28, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(0.55, 0.96, 0.22), 0.02, 0.18, COPPER.darkened(0.08), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.75, 0.97, -0.15), 0.04, 0.1, CREAM, false)
-		_add_box(root, Vector3(0.05, 0.93, 0.25), Vector3(0.2, 0.025, 0.12), OAK, false, 0.55)
+		# Plans + Rooke wrench + G-clamp + lying copper tube + chalk + mallet
+		_add_box(root, Vector3(0.25, 0.92, -0.12), Vector3(0.5, 0.025, 0.34), PAPER, false)
+		_add_box(root, Vector3(0.3, 0.94, -0.1), Vector3(0.35, 0.01, 0.24), PAPER.darkened(0.08), false)
+		_add_box(root, Vector3(0.28, 0.95, -0.06), Vector3(0.2, 0.008, 0.14), PAPER.darkened(0.12), false)
+		# Open-end wrench (Rooke)
+		_add_box(root, Vector3(-0.55, 0.94, 0.12), Vector3(0.55, 0.03, 0.07), iron_mid, false, 0.42)
+		_add_box(root, Vector3(-0.25, 0.95, 0.18), Vector3(0.1, 0.05, 0.14), iron_mid.lightened(0.08), false, 0.42)
+		_add_box(root, Vector3(-0.22, 0.95, 0.22), Vector3(0.05, 0.04, 0.08), iron_d, false, 0.4)  # open jaw
+		# G-clamp
+		_add_box(root, Vector3(0.65, 0.98, 0.05), Vector3(0.06, 0.14, 0.12), iron_mid, false, 0.42)
+		_add_box(root, Vector3(0.65, 0.93, 0.12), Vector3(0.14, 0.04, 0.05), iron_mid.lightened(0.05), false, 0.42)
+		_add_box(root, Vector3(0.65, 1.05, 0.12), Vector3(0.14, 0.035, 0.05), iron_mid, false, 0.42)
+		_add_cylinder(root, Vector3(0.72, 0.99, 0.12), 0.015, 0.12, iron_d, false, 0.4)
+		_add_cylinder(root, Vector3(0.72, 1.08, 0.12), 0.03, 0.025, BRASS.darkened(0.1), false, 0.32, true)
+		# Lying copper tube stock (not upright coins)
+		_add_cylinder(root, Vector3(0.55, 0.96, 0.25), 0.022, 0.32, COPPER, false, 0.32, true)
+		_add_cylinder(root, Vector3(0.4, 0.96, 0.3), 0.018, 0.22, COPPER.darkened(0.06), false, 0.32, true)
+		# Timber offcut stack (flat boards)
+		_add_box(root, Vector3(-0.7, 0.94, -0.2), Vector3(0.28, 0.03, 0.16), OAK.lightened(0.08), false, 0.58)
+		_add_box(root, Vector3(-0.68, 0.97, -0.18), Vector3(0.24, 0.025, 0.14), OAK.darkened(0.05), false, 0.55)
+		_add_box(root, Vector3(-0.66, 1.0, -0.16), Vector3(0.2, 0.02, 0.12), OAK, false, 0.55)
+		# Chalk stub + mallet
+		_add_cylinder(root, Vector3(-0.35, 0.95, -0.25), 0.018, 0.08, CREAM, false)
+		_add_cylinder(root, Vector3(0.05, 0.97, 0.22), 0.04, 0.12, Color(0.38, 0.24, 0.12), false, 0.55)
+		_add_box(root, Vector3(0.05, 0.94, 0.32), Vector3(0.1, 0.06, 0.08), iron_mid, false, 0.42)
 	else:
-		# Vice + wood block + copper pot + rule + scrap plate
-		_add_box(root, Vector3(0.75, 0.98, -0.15), Vector3(0.22, 0.14, 0.16), iron_mid, false, 0.45)
-		_add_cylinder(root, Vector3(0.75, 1.1, -0.15), 0.035, 0.12, iron_mid.lightened(0.1), false, 0.45)
-		_add_cylinder(root, Vector3(0.75, 1.12, -0.05), 0.02, 0.08, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(-0.55, 0.95, 0.0), Vector3(0.28, 0.03, 0.2), Color(0.22, 0.14, 0.1), false, 0.6)
-		# Small copper stockpot with lid knob
-		_add_cylinder(root, Vector3(-0.2, 0.94, 0.2), 0.045, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.2, 0.99, 0.2), 0.055, 0.1, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.2, 1.05, 0.2), 0.06, 0.02, COPPER.lightened(0.06), false, 0.32, true)
-		_add_cylinder(root, Vector3(-0.2, 1.08, 0.2), 0.025, 0.03, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(0.2, 0.93, 0.2), Vector3(0.35, 0.04, 0.2), BRASS.darkened(0.1), false, 0.3)
-		_add_box(root, Vector3(0.0, 0.93, -0.25), Vector3(0.4, 0.02, 0.06), iron_mid, false, 0.45)
-		_add_box(root, Vector3(-0.75, 0.94, 0.2), Vector3(0.12, 0.05, 0.1), COPPER.darkened(0.1), false, 0.35)
+		# Bench vice + wood block + G-clamp + file + scrap plate + rule
+		_add_box(root, Vector3(0.7, 0.98, -0.12), Vector3(0.24, 0.14, 0.18), iron_mid, false, 0.42)
+		_add_box(root, Vector3(0.7, 1.08, -0.05), Vector3(0.12, 0.08, 0.1), iron_d, false, 0.4)
+		_add_cylinder(root, Vector3(0.7, 1.12, 0.05), 0.02, 0.1, BRASS, false, 0.3, true)
+		_add_box(root, Vector3(0.7, 1.14, 0.1), Vector3(0.08, 0.04, 0.04), iron_mid.lightened(0.08), false, 0.4)
+		# Work block
+		_add_box(root, Vector3(-0.5, 0.95, 0.05), Vector3(0.32, 0.06, 0.22), Color(0.28, 0.18, 0.1), false, 0.58)
+		# File on block
+		_add_box(root, Vector3(-0.45, 1.0, 0.08), Vector3(0.28, 0.02, 0.045), iron_mid, false, 0.4)
+		_add_box(root, Vector3(-0.32, 1.01, 0.08), Vector3(0.06, 0.03, 0.04), Color(0.4, 0.26, 0.14), false, 0.55)
+		# Small G-clamp
+		_add_box(root, Vector3(0.15, 0.98, 0.2), Vector3(0.05, 0.12, 0.1), iron_mid, false, 0.42)
+		_add_box(root, Vector3(0.15, 0.93, 0.26), Vector3(0.12, 0.03, 0.04), iron_mid, false, 0.42)
+		_add_box(root, Vector3(0.15, 1.05, 0.26), Vector3(0.12, 0.03, 0.04), iron_d, false, 0.4)
+		_add_cylinder(root, Vector3(0.2, 0.99, 0.26), 0.012, 0.1, iron_mid.lightened(0.05), false, 0.4)
+		# Scrap copper plate (flat) + steel rule
+		_add_box(root, Vector3(-0.15, 0.93, -0.22), Vector3(0.28, 0.02, 0.18), COPPER.darkened(0.05), false, 0.32)
+		_add_box(root, Vector3(0.35, 0.935, -0.25), Vector3(0.5, 0.018, 0.04), iron_mid, false, 0.42)
+		# Timber scrap
+		_add_box(root, Vector3(-0.75, 0.94, 0.18), Vector3(0.18, 0.05, 0.12), OAK.lightened(0.05), false, 0.55)
+		_add_box(root, Vector3(-0.7, 0.97, 0.22), Vector3(0.12, 0.03, 0.08), OAK.darkened(0.1), false, 0.55)
+		# Pencil / chalk
+		_add_cylinder(root, Vector3(0.4, 0.94, 0.15), 0.01, 0.14, Color(0.75, 0.55, 0.25), false)
 	_add_contact_shadow(root, width * 0.5, 0.55)
 	return root
 
