@@ -4225,12 +4225,25 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			# Loop 147: cross_planes → seat-only pad (no tall side cubes / legs)
+			# Loop 147/153: cross_planes → seat pad + short feet (no tall legs/stretchers)
 			var ww: float = clampf(width * 0.42, 0.42, 0.58)
 			var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
 			if cross_planes:
 				_add_box(root, Vector3(0, 0.42, -0.28), Vector3(ww * 0.85, 0.08, 0.2), MAHOGANY_DARK, false, 0.45)
 				_add_box(root, Vector3(0, 0.5, -0.26), Vector3(ww * 0.72, 0.1, 0.16), fab, false, 0.9)
+				# Short stub feet under pad only — not free bars on the rug
+				for sx in [-1.0, 1.0]:
+					for sz in [-1.0, 1.0]:
+						_add_cylinder(
+							root,
+							Vector3(sx * ww * 0.22, 0.12, -0.22 + sz * 0.04),
+							0.022, 0.2, MAHOGANY, false
+						)
+						_add_cylinder(
+							root,
+							Vector3(sx * ww * 0.22, 0.02, -0.22 + sz * 0.04),
+							0.03, 0.04, MAHOGANY.lightened(0.04), false
+						)
 			else:
 				_add_box(root, Vector3(0, 0.4, -0.36), Vector3(ww * 0.9, 0.1, 0.22), MAHOGANY_DARK, false, 0.45)
 				_add_box(root, Vector3(0, 0.5, -0.34), Vector3(ww * 0.78, 0.1, 0.18), fab, false, 0.9)
@@ -4238,13 +4251,26 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 				for sx in [-1.0, 1.0]:
 					_add_cylinder(root, Vector3(sx * ww * 0.24, 0.1, -0.28), 0.024, 0.12, MAHOGANY, false)
 		"chair":
-			# Loop 147: cross_planes → seat cushion only (green pad = intentional, not plant scrap)
-			# Legs stay off — gallery rug L-junk from stretchers (loop 143).
+			# Loop 153: cross_planes → seat cushion + short stub feet (edge-on volume).
+			# No stretchers / long free legs (those read as gallery rug L-junk).
 			var cw: float = clampf(width * 0.48, 0.36, 0.52)
 			if cross_planes:
 				_add_box(root, Vector3(0, 0.44, -0.22), Vector3(cw * 0.95, 0.04, 0.2), MAHOGANY, false, 0.48)
 				_add_box(root, Vector3(0, 0.5, -0.2), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
 				_add_box(root, Vector3(0, 0.56, -0.2), Vector3(cw * 0.82, 0.025, 0.16), VELVET_GREEN.lightened(0.06), false, 0.88)
+				# Four vertical feet under seat (no horizontal stretchers → rug L-junk)
+				for sx in [-1.0, 1.0]:
+					for sz in [-1.0, 1.0]:
+						_add_cylinder(
+							root,
+							Vector3(sx * cw * 0.28, 0.22, -0.2 + sz * 0.04),
+							0.015, 0.4, MAHOGANY, false
+						)
+						_add_cylinder(
+							root,
+							Vector3(sx * cw * 0.28, 0.02, -0.2 + sz * 0.04),
+							0.022, 0.035, MAHOGANY.lightened(0.05), false
+						)
 			else:
 				_add_box(root, Vector3(0, 0.46, -0.32), Vector3(cw, 0.05, 0.22), MAHOGANY, false, 0.48)
 				_add_box(root, Vector3(0, 0.52, -0.3), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)

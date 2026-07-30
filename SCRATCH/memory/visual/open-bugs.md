@@ -96,3 +96,8 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Whole-house residual spacing:** hall plants no longer under demi-lune; freestanding lamps off runner. Workshop lamps/scrap/crates clear of iron path centre. Kitchen door approach wall-side only. Conservatory lamp beside table not under apron.  
 
+## Status update 2026-07-29 (loop 153)
+
+- **Chair edge-on:** cross_plane chairs/wings get four vertical stub feet under seat pad (no horizontal stretchers — those were rug L-junk).  
+- **Door UX:** prompt is `[E] Enter <room>` (closed-leaf teleport). Door test nudge amount aligned to fps_main 0.65.  
+

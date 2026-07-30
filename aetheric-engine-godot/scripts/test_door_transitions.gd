@@ -52,11 +52,11 @@ func _init() -> void:
 			if label == "":
 				push_error("%s→%s missing label (prompt text)" % [rid, target])
 				failed += 1
-			# Nudge contract (mirrors fps_main._nudge_spawn_inward 0.55)
+			# Nudge contract (mirrors fps_main._nudge_spawn_inward 0.65 — loop 153 align)
 			var sp: Array = door.get("spawn", [0, 0, 0])
 			var sx := float(sp[0]) if sp.size() > 0 else 0.0
 			var sz := float(sp[2]) if sp.size() > 2 else 0.0
-			var nudged := _nudge(sx, sz, 0.55)
+			var nudged := _nudge(sx, sz, 0.65)
 			var troom: Dictionary = Rooms.get_room(target)
 			var tsize: Array = troom.get("size", [8, 8, 3])
 			var thw: float = float(tsize[0]) * 0.5 - 0.25

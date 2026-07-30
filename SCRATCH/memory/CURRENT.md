@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~17:50 (overnight goal active)  
-**HEAD:** `6049b28` visual loop 152  
+**Updated:** 2026-07-29 ~overnight loop 153  
+**HEAD:** (pending) visual loop 153  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -14,33 +14,32 @@
 | 5 | Geometric / surface detail | **ADVANCED 72–116** paths |
 | 6 | Victorian wall art | **ADVANCED 69+96+97+133** kitchen |
 | 7 | Plant diversity / side volume | **ADVANCED 74–146** hall clear |
-| 8 | Side-view mesh furniture | **ADVANCED 70–147** seat bulk |
-| 9 | Door transition safety | **DONE tests** 76+98+125+137 |
+| 8 | Side-view mesh furniture | **ADVANCED 70–153** stub feet |
+| 9 | Door transition safety | **DONE tests** 76+98+125+137+153 |
 | 10 | Wallpaper contrast | **ADVANCED 72–142** morning stripes |
 | 11 | Hall / prep still-life | **ADVANCED 73–152** kitchen floor |
 | 12–23 | Conservatory / gallery / workshop densify | **ADVANCED 116–151** paths |
 | 24–52 | Materials…stools | **DONE 89–127+138** |
 | 53–62 | Copper…stools/sconces | **DONE 118–127+140** |
 | 63–72 | Plants…tight bulk | **DONE 128–137** |
-| 73–86 | Sofa…path spacing | **DONE 138–151** |
-| 87 | Kitchen floor trugs + declutter | **DONE 152** |
+| 73–87 | Sofa…kitchen trugs | **DONE 138–152** |
+| 88 | Chair stub feet + door Enter prompt | **DONE 153** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 150 | Conservatory declutter — clear path plants benches urns |
 | 151 | Whole-house residual path spacing |
-| 152 | **Kitchen:** wide low wicker trugs (not barrels); thin floor copper/crates/lamps; clear sink–range walk. |
+| 152 | Kitchen floor trugs + declutter |
+| 153 | **Chairs:** vertical stub feet under seat (no stretchers). **Door:** "[E] Enter %s". **Test:** nudge 0.65 = fps_main. |
 
 ## Still high-value if continuing
 
-- Human E-door playtest confirmation (automated suite PASS)  
-- Optional: paper-thin chair legs edge-on (tradeoff accepted)  
+- Human E-door playtest confirmation (automated suite PASS + prompt clearer)  
 - Optional: residual oil-lamp mass at extreme close FOV  
 - Optional: user-driven residual notes after playtest  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_152/`  
+- Shots: `auto_loop_67/` … `auto_loop_153/`  
