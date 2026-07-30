@@ -74,8 +74,18 @@ func _build_room(room: Dictionary) -> void:
 	for door in doors:
 		_add_door_trigger(door, w, d)
 
+func _solid_trim_mat(color: Color, roughness: float = 0.72) -> StandardMaterial3D:
+	## Loop 208: solid-mat architectural trim — no furniture_wood.jpg washout mid-FOV.
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.metallic = 0.0
+	mat.roughness = roughness
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	return mat
+
+
 func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
-	## Period baseboard — double-step (plinth + cap) + corner blocks (loop 72).
+	## Period baseboard — double-step + corner blocks; solid-mat mahogany (loop 208).
 	var board_h := 0.2
 	var thick := 0.08
 	var half_w := w * 0.5 - 0.05
@@ -86,26 +96,21 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		[Vector3(-half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.12)],
 		[Vector3(half_w, board_h * 0.5, 0), Vector3(thick, board_h, d - 0.12)],
 	]
-	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	var mat_base := _solid_trim_mat(Color(0.22, 0.12, 0.07), 0.75)
+	var mat_cap := _solid_trim_mat(Color(0.28, 0.15, 0.09), 0.7)
+	var mat_corner := _solid_trim_mat(Color(0.18, 0.1, 0.06), 0.78)
+	var mat_rail := _solid_trim_mat(Color(0.26, 0.14, 0.08), 0.72)
+	var mat_crown := _solid_trim_mat(Color(0.24, 0.13, 0.07), 0.74)
+	var mat_step := _solid_trim_mat(Color(0.3, 0.16, 0.09), 0.7)
 	for i in boards.size():
 		var mi := MeshInstance3D.new()
 		mi.name = "Skirting_%d" % i
 		var mesh := BoxMesh.new()
 		mesh.size = boards[i][1]
 		mi.mesh = mesh
-		var mat := StandardMaterial3D.new()
-		mat.roughness = 0.55
-		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-		if wood_tex:
-			mat.albedo_texture = wood_tex
-			mat.albedo_color = Color(0.75, 0.62, 0.5)
-			mat.uv1_scale = Vector3(2.5, 0.6, 1.0)
-		else:
-			mat.albedo_color = Color(0.16, 0.09, 0.05)
-		mi.material_override = mat
+		mi.material_override = mat_base
 		mi.position = boards[i][0]
 		add_child(mi)
-		# Cap moulding step on each skirting run
 		var cap := MeshInstance3D.new()
 		cap.name = "SkirtingCap_%d" % i
 		var cm := BoxMesh.new()
@@ -115,17 +120,9 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		else:
 			cm.size = Vector3(bs.x + 0.03, 0.04, bs.z * 0.98)
 		cap.mesh = cm
-		var cmat := StandardMaterial3D.new()
-		cmat.roughness = 0.5
-		if wood_tex:
-			cmat.albedo_texture = wood_tex
-			cmat.albedo_color = Color(0.82, 0.7, 0.55)
-		else:
-			cmat.albedo_color = Color(0.2, 0.12, 0.07)
-		cap.material_override = cmat
+		cap.material_override = mat_cap
 		cap.position = boards[i][0] + Vector3(0, board_h * 0.45, 0)
 		add_child(cap)
-	# Corner plinth blocks
 	for corner in [
 		Vector3(-half_w, 0.1, -half_d), Vector3(half_w, 0.1, -half_d),
 		Vector3(-half_w, 0.1, half_d), Vector3(half_w, 0.1, half_d),
@@ -135,17 +132,9 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		var bm := BoxMesh.new()
 		bm.size = Vector3(0.14, 0.2, 0.14)
 		blk.mesh = bm
-		var bmat := StandardMaterial3D.new()
-		bmat.roughness = 0.55
-		if wood_tex:
-			bmat.albedo_texture = wood_tex
-			bmat.albedo_color = Color(0.7, 0.58, 0.45)
-		else:
-			bmat.albedo_color = Color(0.16, 0.09, 0.05)
-		blk.material_override = bmat
+		blk.material_override = mat_corner
 		blk.position = corner
 		add_child(blk)
-	# Picture rail (period hang-line) — loop 113: scale to room height (was fixed 2.55)
 	var crown_y := clampf(room_h * 0.72, 2.2, room_h - 0.55)
 	var rails := [
 		[Vector3(0, crown_y, -half_d), Vector3(w - 0.25, 0.045, 0.035)],
@@ -159,17 +148,9 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		var cm := BoxMesh.new()
 		cm.size = rails[i][1]
 		cmi.mesh = cm
-		var cmat := StandardMaterial3D.new()
-		cmat.roughness = 0.5
-		if wood_tex:
-			cmat.albedo_texture = wood_tex
-			cmat.albedo_color = Color(0.8, 0.68, 0.55)
-		else:
-			cmat.albedo_color = Color(0.16, 0.09, 0.05)
-		cmi.material_override = cmat
+		cmi.material_override = mat_rail
 		cmi.position = rails[i][0]
 		add_child(cmi)
-	# Crown moulding just under ceiling (breaks blank ceiling/wall join)
 	var mould_y := room_h - 0.12
 	var moulds := [
 		[Vector3(0, mould_y, -half_d + 0.05), Vector3(w - 0.08, 0.14, 0.16)],
@@ -183,17 +164,9 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		var mm := BoxMesh.new()
 		mm.size = moulds[i][1]
 		mmi.mesh = mm
-		var mmat := StandardMaterial3D.new()
-		mmat.roughness = 0.55
-		if wood_tex:
-			mmat.albedo_texture = wood_tex
-			mmat.albedo_color = Color(0.72, 0.6, 0.48)
-		else:
-			mmat.albedo_color = Color(0.2, 0.12, 0.07)
-		mmi.material_override = mmat
+		mmi.material_override = mat_crown
 		mmi.position = moulds[i][0]
 		add_child(mmi)
-	# Second thinner crown step (period cornice depth)
 	var step_y := room_h - 0.22
 	for i in moulds.size():
 		var smi := MeshInstance3D.new()
@@ -204,14 +177,7 @@ func _add_skirting(w: float, d: float, room_h: float = 3.5) -> void:
 		if s.x < s.z:
 			sm.size = Vector3(s.x * 0.7, 0.06, s.z * 0.98)
 		smi.mesh = sm
-		var smat := StandardMaterial3D.new()
-		smat.roughness = 0.5
-		if wood_tex:
-			smat.albedo_texture = wood_tex
-			smat.albedo_color = Color(0.78, 0.66, 0.52)
-		else:
-			smat.albedo_color = Color(0.25, 0.16, 0.1)
-		smi.material_override = smat
+		smi.material_override = mat_step
 		smi.position = Vector3(moulds[i][0].x, step_y, moulds[i][0].z)
 		add_child(smi)
 
@@ -407,45 +373,53 @@ func _add_door_portal(door: Dictionary, room_w: float, room_d: float, room_h: fl
 	else:
 		root.rotation_degrees.y = 0.0
 	add_child(root)
-	var wood_tex: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
-	# Threshold board (loop 98: thicker saddle so portal leaf never floats)
-	_add_portal_box(root, Vector3(0, 0.03, -depth * 0.5), Vector3(door_w + 0.14, 0.06, depth), floor_col, wood_tex, Vector3(1.2, 1.0, 1.0))
-	_add_portal_box(root, Vector3(0, 0.05, 0.02), Vector3(door_w * 0.92, 0.08, 0.1), Color(0.24, 0.15, 0.09), wood_tex, Vector3(1.0, 0.5, 1.0))
-	# Jamb returns (full height from floor)
+	# Loop 208: solid-mat portal wood (no furniture_wood.jpg washout at thresholds)
+	var seed0: int = int(absf(px * 7.0 + pz * 3.0 + float(hash(str(door.get("target", ""))) % 97)))
+	var wood: Color
+	var wood_d: Color
+	var wood_p: Color
+	match seed0 % 3:
+		0:
+			wood = Color(0.42, 0.28, 0.16)
+			wood_d = Color(0.3, 0.18, 0.1)
+			wood_p = Color(0.36, 0.24, 0.14)
+		1:
+			wood = Color(0.28, 0.16, 0.1)
+			wood_d = Color(0.18, 0.1, 0.06)
+			wood_p = Color(0.24, 0.14, 0.09)
+		_:
+			wood = Color(0.5, 0.36, 0.2)
+			wood_d = Color(0.36, 0.24, 0.12)
+			wood_p = Color(0.45, 0.32, 0.18)
+	var brass := Color(0.72, 0.56, 0.28)
+	var brass_d := Color(0.55, 0.42, 0.2)
+	# Threshold + jambs (solid mats, null tex)
+	_add_portal_box(root, Vector3(0, 0.03, -depth * 0.5), Vector3(door_w + 0.14, 0.06, depth), wood_d, null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, 0.05, 0.02), Vector3(door_w * 0.92, 0.08, 0.1), wood, null, Vector3.ONE)
 	var side_x := door_w * 0.5 + 0.04
 	for sx in [-side_x, side_x]:
-		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.1, door_h + 0.05, depth), Color(0.3, 0.2, 0.12), wood_tex, Vector3(0.5, 2.0, 1.0))
-	# Solid backstop — blocks void; closed leaf also collides
-	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), Color(0.28, 0.18, 0.12), wood_tex, Vector3(1.0, 2.0, 1.0), true)
-	# Loop 167: warm light strip under leaf → "room beyond" not closet void
-	_add_portal_glow(root, Vector3(0, 0.035, -depth + 0.02), Vector3(door_w * 0.72, 0.018, 0.04))
-	# Loop 167: closed leaf(s) — double for wide doors (hall/gallery scale)
+		_add_portal_box(root, Vector3(sx, door_h * 0.5, -depth * 0.5), Vector3(0.1, door_h + 0.05, depth), wood, null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, door_h * 0.5, -depth), Vector3(door_w + 0.2, door_h + 0.1, 0.12), wood_d, null, Vector3.ONE, true)
+	# Stronger warm leak under leaf (closet residual — next-room light)
+	_add_portal_glow(root, Vector3(0, 0.035, -depth + 0.02), Vector3(door_w * 0.78, 0.022, 0.05))
 	var leaf_h := door_h - 0.06
 	var leaf_cy := 0.04 + leaf_h * 0.5
 	var lz := -depth + 0.07
-	var wood := Color(0.34, 0.22, 0.12)
-	var wood_d := Color(0.26, 0.16, 0.09)
-	var wood_p := Color(0.3, 0.18, 0.1)
-	var brass := Color(0.74, 0.58, 0.28)
 	var double_leaf := door_w >= 1.55
 	if double_leaf:
-		# Pair of 4-panel leaves with centre meeting stile
 		var leaf_half := door_w * 0.44
 		for side in [-1.0, 1.0]:
 			var cx: float = float(side) * (leaf_half * 0.52 + 0.02)
-			_add_portal_leaf(root, cx, leaf_cy, lz, leaf_half, leaf_h, wood, wood_d, wood_p, brass, wood_tex, side > 0.0)
-		# Meeting stile strip
-		_add_portal_box(root, Vector3(0, leaf_cy, lz + 0.03), Vector3(0.04, leaf_h * 0.96, 0.03), wood_d, wood_tex, Vector3(0.4, 2.0, 1.0))
+			_add_portal_leaf(root, cx, leaf_cy, lz, leaf_half, leaf_h, wood, wood_d, wood_p, brass, null, side > 0.0)
+		_add_portal_box(root, Vector3(0, leaf_cy, lz + 0.03), Vector3(0.04, leaf_h * 0.96, 0.03), wood_d, null, Vector3.ONE)
 	else:
-		_add_portal_leaf(root, 0.0, leaf_cy, lz, door_w * 0.9, leaf_h, wood, wood_d, wood_p, brass, wood_tex, true)
-	# Overdoor cornice + pediment (reads as formal entrance, not closet frame)
-	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.22, 0.1, depth + 0.06), Color(0.32, 0.22, 0.14), wood_tex, Vector3(1.0, 0.5, 1.0))
-	_add_portal_box(root, Vector3(0, door_h + 0.12, -depth * 0.35), Vector3(door_w + 0.1, 0.06, depth * 0.6), Color(0.36, 0.24, 0.14), wood_tex, Vector3(1.0, 0.4, 1.0))
-	_add_portal_box(root, Vector3(0, door_h + 0.18, -depth * 0.3), Vector3(door_w * 0.35, 0.05, 0.08), brass.darkened(0.2), null, Vector3.ONE)
-	# Destination plaque on leaf face (eye height) — not buried in cornice
+		_add_portal_leaf(root, 0.0, leaf_cy, lz, door_w * 0.9, leaf_h, wood, wood_d, wood_p, brass, null, true)
+	_add_portal_box(root, Vector3(0, door_h + 0.04, -depth * 0.5), Vector3(door_w + 0.22, 0.1, depth + 0.06), wood, null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, door_h + 0.12, -depth * 0.35), Vector3(door_w + 0.1, 0.06, depth * 0.6), wood_p, null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, door_h + 0.18, -depth * 0.3), Vector3(door_w * 0.35, 0.05, 0.08), brass_d, null, Vector3.ONE)
 	var label_txt := str(door.get("label", "next room"))
 	var plaque_y: float = clampf(leaf_cy + leaf_h * 0.18, 1.35, 1.85)
-	_add_portal_box(root, Vector3(0, plaque_y, lz + 0.055), Vector3(minf(door_w * 0.55, 0.95), 0.11, 0.025), brass.darkened(0.22), null, Vector3.ONE)
+	_add_portal_box(root, Vector3(0, plaque_y, lz + 0.055), Vector3(minf(door_w * 0.55, 0.95), 0.11, 0.025), brass_d, null, Vector3.ONE)
 	_add_portal_box(root, Vector3(0, plaque_y, lz + 0.07), Vector3(minf(door_w * 0.48, 0.85), 0.08, 0.018), Color(0.16, 0.1, 0.06), null, Vector3.ONE)
 	var lbl := Label3D.new()
 	lbl.name = "DoorDestination"
@@ -502,30 +476,37 @@ func _add_portal_leaf(
 
 
 func _add_portal_glow(parent: Node3D, pos: Vector3, size: Vector3) -> void:
-	## Warm strip under closed leaf — next-room light leak (not a void closet).
+	## Loop 208: stronger warm leak under closed leaf — next-room light, not closet void.
 	var mi := MeshInstance3D.new()
 	mi.name = "DoorLightLeak"
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mi.mesh = mesh
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.78, 0.45, 0.85)
+	mat.albedo_color = Color(1.0, 0.8, 0.48, 0.9)
 	mat.emission_enabled = true
-	mat.emission = Color(1.0, 0.72, 0.35)
-	mat.emission_energy_multiplier = 1.4
-	mat.roughness = 0.6
+	mat.emission = Color(1.0, 0.75, 0.4)
+	mat.emission_energy_multiplier = 2.0
+	mat.roughness = 0.55
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mi.material_override = mat
 	mi.position = pos
 	parent.add_child(mi)
-	# Soft fill omni just behind leaf
 	var light := OmniLight3D.new()
 	light.name = "DoorBeyondLight"
-	light.light_color = Color(1.0, 0.85, 0.6)
-	light.light_energy = 0.35
-	light.omni_range = 1.2
-	light.position = pos + Vector3(0, 0.4, -0.08)
+	light.light_color = Color(1.0, 0.86, 0.62)
+	light.light_energy = 0.55
+	light.omni_range = 1.8
+	light.position = pos + Vector3(0, 0.55, -0.06)
 	parent.add_child(light)
+	# Secondary soft fill higher on leaf (reads as room glow through panels)
+	var light2 := OmniLight3D.new()
+	light2.name = "DoorBeyondLight2"
+	light2.light_color = Color(1.0, 0.82, 0.55)
+	light2.light_energy = 0.28
+	light2.omni_range = 1.4
+	light2.position = pos + Vector3(0, 1.1, -0.05)
+	parent.add_child(light2)
 
 func _add_portal_box(
 	parent: Node3D,
@@ -727,7 +708,6 @@ func _add_ceiling_rose(x: float, z: float, height: float, room_span: float) -> v
 	var r_outer := clampf(room_span * 0.09, 0.55, 1.15)
 	var plaster := Color(0.88, 0.84, 0.76)
 	var plaster_d := Color(0.78, 0.72, 0.62)
-	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
 	# Outer disc
 	var outer := MeshInstance3D.new()
 	outer.name = "CeilingRoseOuter"
@@ -792,13 +772,9 @@ func _add_ceiling_rose(x: float, z: float, height: float, room_span: float) -> v
 	sm.height = 0.03
 	stud.mesh = sm
 	var smat := StandardMaterial3D.new()
-	if wood:
-		smat.albedo_texture = wood
-		smat.albedo_color = Color(0.85, 0.7, 0.45)
-	else:
-		smat.albedo_color = Color(0.7, 0.55, 0.3)
-	smat.roughness = 0.4
-	smat.metallic = 0.35
+	smat.albedo_color = Color(0.72, 0.56, 0.28)
+	smat.roughness = 0.35
+	smat.metallic = 0.45
 	stud.material_override = smat
 	stud.position = Vector3(x, y - 0.05, z)
 	add_child(stud)
@@ -811,30 +787,24 @@ func _add_chair_rail(
 	join_y: float,
 	inward: Vector3,
 ) -> void:
-	## Period dado rail: main cap + thinner under-moulding + top bead (loop 72 geometry).
-	var wood: Texture2D = _load_texture("res://assets/rooms/textures/victorian/furniture_wood.jpg")
+	## Period dado rail — solid-mat mahogany (loop 208; no pale wood-tex washout).
 	var yaw_rad := deg_to_rad(yaw_deg)
 	var extra := Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.022
 	var base := Vector3(wall_pos.x, join_y, wall_pos.z) + inward + extra
-	# Main rail body
-	_add_trim_strip(wall_name + "ChairRail", base, yaw_deg, Vector3(cover_w - 0.1, 0.09, 0.055), wood, Color(0.9, 0.82, 0.72))
-	# Lower under-mould (step)
+	_add_trim_strip(wall_name + "ChairRail", base, yaw_deg, Vector3(cover_w - 0.1, 0.09, 0.055), Color(0.28, 0.15, 0.09))
 	_add_trim_strip(
 		wall_name + "ChairRailUnder",
 		base + Vector3(0, -0.06, 0) + Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.01,
 		yaw_deg,
 		Vector3(cover_w - 0.14, 0.035, 0.04),
-		wood,
-		Color(0.78, 0.66, 0.52)
+		Color(0.2, 0.11, 0.06)
 	)
-	# Upper bead
 	_add_trim_strip(
 		wall_name + "ChairRailBead",
 		base + Vector3(0, 0.055, 0) + Vector3(sin(yaw_rad), 0.0, cos(yaw_rad)) * 0.008,
 		yaw_deg,
 		Vector3(cover_w - 0.12, 0.02, 0.035),
-		wood,
-		Color(0.95, 0.88, 0.76)
+		Color(0.34, 0.18, 0.1)
 	)
 
 
@@ -843,23 +813,14 @@ func _add_trim_strip(
 	pos: Vector3,
 	yaw_deg: float,
 	size: Vector3,
-	wood: Texture2D,
-	tint: Color,
+	color: Color,
 ) -> void:
 	var mi := MeshInstance3D.new()
 	mi.name = name
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mi.mesh = mesh
-	var mat := StandardMaterial3D.new()
-	mat.roughness = 0.5
-	if wood:
-		mat.albedo_texture = wood
-		mat.albedo_color = tint
-		mat.uv1_scale = Vector3(size.x * 0.3, 0.4, 1.0)
-	else:
-		mat.albedo_color = Color(0.22, 0.12, 0.07)
-	mi.material_override = mat
+	mi.material_override = _solid_trim_mat(color, 0.7)
 	mi.position = pos
 	mi.rotation_degrees = Vector3(0, yaw_deg, 0)
 	add_child(mi)

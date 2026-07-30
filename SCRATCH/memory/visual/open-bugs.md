@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 208)
+
+- **Architectural trim residual:** skirting/crown/picture rail/chair rail used pale `furniture_wood.jpg` tint → washed pink-brown mid-FOV. Solid-mat mahogany tones matching furniture language.  
+- **Door portal residual:** portal jambs/leaves used wood texture washout vs solid door frames. Seed-toned solid-mat wood + solid brass; stronger dual omni beyond-light leak (closet residual). Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 207)
 
 - **Billboard bulk residual:** sofa/desk/wing/chair card edge bulk still `_mat_for` wood/velvet washout. Full solid-mat bulk (mahogany + fabric seats). No remaining `_add_box`/`_add_cylinder`/`_add_sphere_blob` in prop makers.  
