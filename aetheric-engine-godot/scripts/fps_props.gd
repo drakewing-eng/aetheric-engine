@@ -2999,58 +2999,84 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 
 static func _make_copper_scrap(prop: Dictionary) -> Node3D:
 	## Loop 203: Rooke scrap heap — solid-mat wood tray + solid-metal copper/iron (no washout).
+	## Loop 222: mid-FOV stick residual — tray with lip + fat spool / plate stack / pipe elbows
+	## (not thin blue bar cross or anonymous metal nubs workshop_from_south).
 	var root := Node3D.new()
 	root.name = "CopperScrap"
 	var s: float = float(prop.get("scale", 1.0))
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
-	var mat_cu := _solid_metal(COPPER.lightened(0.08), 0.3)
-	var mat_cu_d := _solid_metal(COPPER.darkened(0.04), 0.34)
-	var mat_cu_hi := _solid_metal(COPPER.lightened(0.16), 0.28)
-	var mat_iron := _solid_metal(Color(0.38, 0.38, 0.4), 0.48)
-	var mat_iron_l := _solid_metal(Color(0.46, 0.46, 0.48), 0.45)
-	var mat_br := _solid_metal(BRASS.lightened(0.05), 0.28)
+	# Warm copper (g≤0.42 so solid_metal stays copper, not clay/iron)
+	var mat_cu := _solid_metal(Color(0.72, 0.42, 0.18), 0.3)
+	var mat_cu_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.34)
+	var mat_cu_hi := _solid_metal(Color(0.8, 0.5, 0.24), 0.28)
+	var mat_cu_dd := _solid_metal(Color(0.48, 0.28, 0.12), 0.38)
+	var mat_iron := _solid_metal(Color(0.32, 0.3, 0.28), 0.5)
+	var mat_iron_l := _solid_metal(Color(0.42, 0.4, 0.36), 0.48)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.28)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.32)
 	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
 	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
 	var mat_oak_l := _solid_matte(Color(0.56, 0.42, 0.26), 0.75)
-	_add_mesh_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.58 * s, 0.05 * s, 0.42 * s), mat_oak_d)
-	_add_mesh_box(root, Vector3(0, 0.055 * s, 0), Vector3(0.52 * s, 0.015 * s, 0.36 * s), mat_oak_l)
+	# Raised-lip oak tray (readable base, not floating metal pile)
+	_add_mesh_box(root, Vector3(0, 0.025 * s, 0), Vector3(0.62 * s, 0.04 * s, 0.46 * s), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, 0.05 * s, 0), Vector3(0.56 * s, 0.02 * s, 0.4 * s), mat_oak_l)
+	_add_mesh_box(root, Vector3(0, 0.07 * s, 0.2 * s), Vector3(0.58 * s, 0.035 * s, 0.03 * s), mat_oak)
+	_add_mesh_box(root, Vector3(0, 0.07 * s, -0.2 * s), Vector3(0.58 * s, 0.035 * s, 0.03 * s), mat_oak)
+	_add_mesh_box(root, Vector3(0.28 * s, 0.07 * s, 0), Vector3(0.03 * s, 0.035 * s, 0.4 * s), mat_oak_d)
+	_add_mesh_box(root, Vector3(-0.28 * s, 0.07 * s, 0), Vector3(0.03 * s, 0.035 * s, 0.4 * s), mat_oak_d)
 	if style == 0:
-		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.14 * s, 0.0), 0.14 * s, 0.025 * s, mat_oak, false)
-		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.28 * s, 0.0), 0.14 * s, 0.025 * s, mat_oak, false)
-		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.09 * s, 0.12 * s, mat_cu_d, false)
-		for wi in 6:
-			var wa := float(wi) * TAU / 6.0
-			_add_mesh_box(root, Vector3(-0.06 * s + cos(wa) * 0.09 * s, 0.21 * s, sin(wa) * 0.09 * s), Vector3(0.02 * s, 0.1 * s, 0.03 * s), mat_cu_hi)
-		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.02 * s, 0.2 * s, mat_iron, false)
-		_add_mesh_box(root, Vector3(0.1 * s, 0.21 * s, 0.0), Vector3(0.08 * s, 0.025 * s, 0.025 * s), mat_iron)
-		_add_mesh_box(root, Vector3(0.14 * s, 0.28 * s, 0.0), Vector3(0.025 * s, 0.12 * s, 0.025 * s), mat_iron_l)
-		_add_mesh_box(root, Vector3(0.16 * s, 0.09 * s, -0.08 * s), Vector3(0.16 * s, 0.02 * s, 0.12 * s), mat_cu_hi)
-		_add_mesh_cyl(root, Vector3(0.18 * s, 0.1 * s, 0.1 * s), 0.015 * s, 0.22 * s, mat_cu, false)
-		_add_mesh_box(root, Vector3(0.05 * s, 0.08 * s, 0.14 * s), Vector3(0.06 * s, 0.04 * s, 0.05 * s), mat_cu_d)
+		# Wire spool — fat drum with visible winding mass (not stick axle)
+		_add_mesh_cyl(root, Vector3(-0.08 * s, 0.1 * s, 0.0), 0.13 * s, 0.03 * s, mat_oak_d, false)
+		_add_mesh_cyl(root, Vector3(-0.08 * s, 0.32 * s, 0.0), 0.13 * s, 0.03 * s, mat_oak, false)
+		# Copper winding bulk (overlapping bands)
+		_add_mesh_cyl(root, Vector3(-0.08 * s, 0.21 * s, 0.0), 0.11 * s, 0.18 * s, mat_cu_d, false)
+		_add_mesh_cyl(root, Vector3(-0.08 * s, 0.21 * s, 0.0), 0.12 * s, 0.14 * s, mat_cu, false)
+		for wi in 5:
+			var wy := (0.12 + float(wi) * 0.035) * s
+			_add_mesh_cyl(root, Vector3(-0.08 * s, wy, 0.0), 0.125 * s, 0.012 * s, mat_cu_hi if wi % 2 == 0 else mat_cu_d, false)
+		# Axle + crank handle
+		_add_mesh_cyl(root, Vector3(-0.08 * s, 0.21 * s, 0.0), 0.025 * s, 0.28 * s, mat_iron, false)
+		_add_mesh_box(root, Vector3(0.08 * s, 0.28 * s, 0.0), Vector3(0.1 * s, 0.022 * s, 0.022 * s), mat_iron_l)
+		_add_mesh_box(root, Vector3(0.12 * s, 0.34 * s, 0.0), Vector3(0.022 * s, 0.1 * s, 0.022 * s), mat_iron)
+		# Loose U-bend pipe + flat plate scrap
+		_add_mesh_cyl_rot(root, Vector3(0.18 * s, 0.1 * s, -0.08 * s), 0.028 * s, 0.22 * s, mat_cu_hi, Vector3(0, 0.3, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0.22 * s, 0.14 * s, 0.02 * s), 0.028 * s, 0.12 * s, mat_cu, Vector3(0.4, 0, 0))
+		_add_mesh_box(root, Vector3(0.14 * s, 0.09 * s, 0.12 * s), Vector3(0.16 * s, 0.018 * s, 0.12 * s), mat_cu_d)
+		_add_mesh_box(root, Vector3(0.0, 0.09 * s, 0.14 * s), Vector3(0.08 * s, 0.03 * s, 0.06 * s), mat_br_d)
 	elif style == 1:
-		for i in 4:
-			var py := (0.07 + float(i) * 0.028) * s
-			var pw := (0.3 - float(i) * 0.02) * s
-			var mat_pl := _solid_metal(COPPER.darkened(float(i) * 0.03), 0.32)
-			_add_mesh_box(root, Vector3(-0.06 * s, py, 0.0), Vector3(pw, 0.018 * s, 0.24 * s), mat_pl)
-			_add_mesh_box(root, Vector3(-0.06 * s + pw * 0.45, py, 0.0), Vector3(0.015 * s, 0.03 * s, 0.22 * s), mat_cu_hi)
-		_add_mesh_cyl(root, Vector3(0.18 * s, 0.14 * s, 0.06 * s), 0.022 * s, 0.32 * s, mat_cu_hi, false)
-		_add_mesh_box(root, Vector3(0.18 * s, 0.14 * s, 0.18 * s), Vector3(0.04 * s, 0.04 * s, 0.08 * s), mat_cu_d)
-		_add_mesh_cyl(root, Vector3(0.1 * s, 0.12 * s, -0.12 * s), 0.018 * s, 0.2 * s, mat_br, false)
-		_add_mesh_box(root, Vector3(0.0, 0.16 * s, 0.12 * s), Vector3(0.14 * s, 0.04 * s, 0.08 * s), mat_iron_l)
-	else:
+		# Stacked copper plate sheets — thick mass, rolled edges
 		for i in 5:
-			var ox := (-0.14 + float(i) * 0.07) * s
-			var oz := (-0.06 + float(i % 3) * 0.04) * s
-			var mat_t := _solid_metal(COPPER.darkened(float(i % 3) * 0.03), 0.32)
-			_add_mesh_cyl(root, Vector3(ox, 0.1 * s, oz), 0.018 * s, 0.36 * s, mat_t, false)
-		_add_mesh_cyl(root, Vector3(0.05 * s, 0.16 * s, 0.02 * s), 0.02 * s, 0.28 * s, mat_cu_hi, false)
-		_add_mesh_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.38 * s, 0.03 * s, 0.06 * s), mat_iron)
-		_add_mesh_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.06 * s, 0.03 * s, 0.28 * s), mat_iron_l)
-		_add_mesh_box(root, Vector3(0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.035 * s, 0.08 * s), mat_cu_d)
-		_add_mesh_box(root, Vector3(-0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), mat_br)
-	_add_contact_shadow(root, 0.32 * s, 0.24 * s)
+			var py := (0.08 + float(i) * 0.032) * s
+			var pw := (0.36 - float(i) * 0.015) * s
+			var pd := (0.28 - float(i) * 0.01) * s
+			var ox := (float(i % 2) * 0.02 - 0.01) * s
+			var mat_pl := mat_cu if i % 2 == 0 else mat_cu_d
+			_add_mesh_box(root, Vector3(-0.04 * s + ox, py, 0.0), Vector3(pw, 0.022 * s, pd), mat_pl)
+			# Rolled near edge
+			_add_mesh_cyl_rot(root, Vector3(-0.04 * s + ox + pw * 0.48, py, 0.0), 0.012 * s, pd * 0.9, mat_cu_hi, Vector3(PI * 0.5, 0, 0))
+		# Thick bar stock + brass rod
+		_add_mesh_box(root, Vector3(0.2 * s, 0.14 * s, 0.05 * s), Vector3(0.05 * s, 0.05 * s, 0.32 * s), mat_cu_dd)
+		_add_mesh_cyl(root, Vector3(0.18 * s, 0.12 * s, -0.12 * s), 0.022 * s, 0.28 * s, mat_br, false)
+		_add_mesh_box(root, Vector3(0.0, 0.18 * s, 0.12 * s), Vector3(0.12 * s, 0.035 * s, 0.08 * s), mat_iron_l)
+		# Corner clamp scrap
+		_add_mesh_box(root, Vector3(0.16 * s, 0.1 * s, 0.14 * s), Vector3(0.08 * s, 0.04 * s, 0.04 * s), mat_iron)
+	else:
+		# Pipe elbows + short heavy tubes (mass, not thin stick cross)
+		# Three short fat tubes lying in tray
+		_add_mesh_cyl_rot(root, Vector3(-0.1 * s, 0.1 * s, -0.05 * s), 0.035 * s, 0.28 * s, mat_cu, Vector3(0, 0.2, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0.05 * s, 0.11 * s, 0.06 * s), 0.04 * s, 0.24 * s, mat_cu_d, Vector3(0, -0.35, PI * 0.5))
+		_add_mesh_cyl_rot(root, Vector3(0.12 * s, 0.1 * s, -0.08 * s), 0.03 * s, 0.2 * s, mat_cu_hi, Vector3(0, 0.5, PI * 0.5))
+		# Elbow fittings (L-shape from two short cyls)
+		_add_mesh_cyl_rot(root, Vector3(-0.18 * s, 0.14 * s, 0.1 * s), 0.032 * s, 0.12 * s, mat_cu_d, Vector3(0, 0, PI * 0.5))
+		_add_mesh_cyl(root, Vector3(-0.18 * s, 0.2 * s, 0.1 * s), 0.032 * s, 0.12 * s, mat_cu, false)
+		_add_mesh_cyl_rot(root, Vector3(0.16 * s, 0.14 * s, 0.1 * s), 0.028 * s, 0.1 * s, mat_cu_hi, Vector3(0, 0.4, PI * 0.5))
+		_add_mesh_cyl(root, Vector3(0.2 * s, 0.18 * s, 0.14 * s), 0.028 * s, 0.1 * s, mat_cu_d, false)
+		# Coupling collar + brass fitting
+		_add_mesh_cyl(root, Vector3(0.0, 0.12 * s, 0.0), 0.045 * s, 0.05 * s, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0.0, 0.15 * s, 0.0), 0.05 * s, 0.02 * s, mat_br, false)
+		_add_mesh_box(root, Vector3(0.08 * s, 0.1 * s, -0.14 * s), Vector3(0.1 * s, 0.035 * s, 0.08 * s), mat_cu_dd)
+	_add_contact_shadow(root, 0.34 * s, 0.26 * s)
 	return root
 
 

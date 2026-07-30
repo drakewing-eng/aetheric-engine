@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 222)
+
+- **Copper scrap stick residual:** workshop/gallery floor heaps still thin bar cross / cool-metal nubs mid-FOV (workshop_from_south). Rewrote raised-lip oak tray + 3 styles: fat wire spool + U-bend, stacked plate sheets with rolled edges, fat pipe elbows + coupling (warm copper g≤0.42). Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 221)
 
 - **Gallery style-2 Leyden residual:** unused seed-2 was iron fridge + 5-coil copper stack if ever placed. Rewrote open Leyden-jar battery — oak table plinth + 4 legs, 3 glass jars with lower foil + brass caps, bus bar, single mast + one ring + spark gap (no dense coil fridge). Placed east mid-gallery (`seed: 2`). Art + door suite PASS.  
