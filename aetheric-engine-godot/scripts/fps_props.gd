@@ -1085,33 +1085,22 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
 		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Loop 172: glazed earthenware pot (not white wedding-cake tiers).
-		# Warm CLAY/stone body + blue band; dense low bloom crown.
-		# Clay gate: r>0.65 g≥0.45 g<0.56 b<0.38 (terracotta before copper).
-		var pot := Color(0.72, 0.5, 0.32)      # terracotta
-		var pot_d := Color(0.58, 0.4, 0.24)
-		var pot_l := Color(0.78, 0.56, 0.36)
-		var glaze := Color(0.22, 0.32, 0.42)    # blue-grey band (not metal)
-		# Foot + ONE wide belly (pot, not stacked cups)
-		_add_cylinder(root, Vector3(0, top_y + 0.015, 0), 0.05, 0.022, pot_d, false, 0.78)
-		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.085, 0.11, pot, false, 0.78)
-		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.072, 0.04, pot_l, false, 0.78)
-		# Decorative band
-		_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.088, 0.018, glaze, false, 0.55)
-		# Short neck + rim
-		_add_cylinder(root, Vector3(0, top_y + 0.175, 0), 0.048, 0.03, pot_d, false, 0.75)
-		_add_cylinder(root, Vector3(0, top_y + 0.195, 0), 0.062, 0.018, pot_l, false, 0.75)
-		# Soil
-		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.04, 0.014, Color(0.16, 0.1, 0.06), false, 0.9)
-		# Dense bloom crown (low mass)
-		for bi in 5:
-			var bang := float(bi) * TAU / 5.0 + 0.35
-			var bx := cos(bang) * 0.028
-			var bz := sin(bang) * 0.028
-			_add_cylinder(root, Vector3(bx, top_y + 0.235, bz), 0.007, 0.05, Color(0.16, 0.3, 0.1), false, 0.85)
-			var bloom := Color(0.58, 0.16, 0.18) if bi % 2 == 0 else Color(0.68, 0.42, 0.18)
-			_add_cylinder(root, Vector3(bx * 1.15, top_y + 0.27, bz * 1.15), 0.022, 0.02, bloom, false, 0.78)
-		_add_cylinder(root, Vector3(0, top_y + 0.275, 0), 0.02, 0.022, Color(0.52, 0.14, 0.16), false, 0.78)
+		# Loop 173: ONE clay body (floor plant pots prove CLAY reads terracotta, not cake).
+		# Stacked multi-color cylinders were the cake residual — single body + flush blooms.
+		var pot := CLAY
+		var pot_d := Color(0.62, 0.4, 0.22)
+		var glaze := Color(0.14, 0.24, 0.36)
+		# Foot + ONE belly (same clay as plant pots)
+		_add_cylinder(root, Vector3(0, top_y + 0.012, 0), 0.055, 0.018, pot_d, false, 0.85)
+		_add_cylinder(root, Vector3(0, top_y + 0.085, 0), 0.09, 0.14, pot, false, 0.82)
+		# Glaze band ON body surface
+		_add_cylinder(root, Vector3(0, top_y + 0.095, 0), 0.092, 0.018, glaze, false, 0.65)
+		# Thin dark rim
+		_add_cylinder(root, Vector3(0, top_y + 0.16, 0), 0.078, 0.014, pot_d, false, 0.85)
+		# Soil + flush flower (in mouth, not tier above)
+		_add_cylinder(root, Vector3(0, top_y + 0.165, 0), 0.055, 0.01, Color(0.14, 0.09, 0.05), false, 0.95)
+		_add_cylinder(root, Vector3(0, top_y + 0.178, 0), 0.048, 0.022, Color(0.48, 0.14, 0.12), false, 0.88)
+		_add_cylinder(root, Vector3(0.01, top_y + 0.185, 0.008), 0.02, 0.012, Color(0.55, 0.28, 0.1), false, 0.88)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
@@ -1798,70 +1787,81 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
 			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), OAK.darkened(0.18), false, 0.55)
 		else:
-			# Loop 170: stone flags — colors MUST hit TEX_STONE (r>0.45,g>0.42,b>0.36,|r−g|<0.1).
-			# Prior greys hit iron/wood paths → metal plates + board look on conservatory path.
-			var pw := width * (0.78 + float(i % 3) * 0.06)
-			var pd := 0.48 + float((i + seed0) % 2) * 0.06
+			# Loop 173: irregular flagstones (loop 170 still pale aligned boards mid-FOV).
+			# TEX_STONE gate preserved; stagger X + size jitter + darker grit gaps.
+			var pw := width * (0.62 + float(i % 4) * 0.08)
+			var pd := 0.38 + float((i + seed0) % 4) * 0.07
 			var col: Color
 			match (i + seed0) % 5:
 				0:
-					col = Color(0.55, 0.52, 0.46)
+					col = Color(0.52, 0.49, 0.43)
 				1:
-					col = Color(0.5, 0.48, 0.42)
+					col = Color(0.46, 0.44, 0.39)
 				2:
-					col = Color(0.58, 0.54, 0.48)
+					col = Color(0.56, 0.52, 0.46)
 				3:
-					col = Color(0.52, 0.5, 0.44)
+					col = Color(0.48, 0.47, 0.41)
 				_:
-					col = Color(0.54, 0.51, 0.45)
-			var grit := Color(0.48, 0.46, 0.4)
-			# Continuous gravel bed under each flag
-			_add_box(root, Vector3(ox, 0.008, z), Vector3(pw * 1.12, 0.014, pd * 1.12), grit, false, 0.88)
-			# Raised flag (slight height jitter) + dark lip
-			var hy := 0.024 + float((i + seed0) % 3) * 0.005
-			_add_box(root, Vector3(ox, hy, z), Vector3(pw, 0.04, pd), col, false, 0.78)
-			_add_box(root, Vector3(ox, hy - 0.01, z), Vector3(pw * 1.05, 0.012, pd * 1.05), grit.darkened(0.08), false, 0.85)
-			# Mortar seam between flags
-			_add_box(root, Vector3(ox, 0.012, z + pd * 0.52), Vector3(pw * 0.95, 0.01, 0.04), grit.darkened(0.05), false, 0.88)
-			# Wear groove (not brass rivet — that read as iron plate)
+					col = Color(0.5, 0.48, 0.42)
+			var grit := Color(0.42, 0.4, 0.36)
+			# Lateral stagger so flags don't form a continuous board strip
+			var stagger: float = ((float((i * 3 + seed0) % 5) - 2.0) * 0.06)
+			var fx: float = ox + stagger
+			# Gravel bed under flag (wider than stone)
+			_add_box(root, Vector3(fx, 0.006, z), Vector3(pw * 1.18, 0.012, pd * 1.2), grit, false, 0.9)
+			# Raised flag + dark lip
+			var hy := 0.02 + float((i + seed0) % 4) * 0.006
+			_add_box(root, Vector3(fx, hy, z), Vector3(pw, 0.038, pd), col, false, 0.8)
+			_add_box(root, Vector3(fx, hy - 0.01, z), Vector3(pw * 1.06, 0.012, pd * 1.06), grit.darkened(0.1), false, 0.88)
+			# Wide mortar gap (breaks board continuity)
+			_add_box(root, Vector3(fx, 0.01, z + pd * 0.55), Vector3(pw * 0.98, 0.01, 0.06), grit.darkened(0.08), false, 0.9)
+			# Diagonal wear + edge chip
+			if (i + seed0) % 2 == 0:
+				_add_box(
+					root,
+					Vector3(fx + pw * 0.12, hy + 0.02, z - pd * 0.1),
+					Vector3(pw * 0.35, 0.005, 0.016),
+					col.darkened(0.14), false, 0.85
+				)
 			if (i + seed0) % 3 == 0:
 				_add_box(
 					root,
-					Vector3(ox + pw * 0.08, hy + 0.022, z - pd * 0.08),
-					Vector3(pw * 0.4, 0.005, 0.018),
-					col.darkened(0.12), false, 0.82
+					Vector3(fx - pw * 0.35, hy + 0.018, z + pd * 0.2),
+					Vector3(0.08, 0.012, 0.1),
+					grit.darkened(0.05), false, 0.88
 				)
-			# Moss tufts (damp conservatory grit)
+			# Moss (damp)
 			if (i + seed0) % 3 != 1:
 				_add_box(
 					root,
-					Vector3(ox + pw * 0.28, hy + 0.018, z - pd * 0.2),
-					Vector3(0.09, 0.012, 0.06),
-					Color(0.2, 0.36, 0.16), false, 0.92
+					Vector3(fx + pw * 0.3, hy + 0.016, z - pd * 0.22),
+					Vector3(0.1, 0.012, 0.06),
+					Color(0.18, 0.34, 0.14), false, 0.92
 				)
 			if (i + seed0) % 2 == 0:
 				_add_box(
 					root,
-					Vector3(ox - pw * 0.26, hy + 0.016, z + pd * 0.16),
-					Vector3(0.07, 0.01, 0.05),
-					Color(0.24, 0.38, 0.18), false, 0.92
+					Vector3(fx - pw * 0.28, hy + 0.014, z + pd * 0.18),
+					Vector3(0.08, 0.01, 0.05),
+					Color(0.22, 0.36, 0.16), false, 0.92
 				)
-			# Pebble (stone-class color, not brass bolt)
+			# Pebbles at gaps
 			if (i + seed0) % 2 == 1:
 				_add_cylinder(
 					root,
-					Vector3(ox + pw * 0.18, hy + 0.018, z + pd * 0.12),
-					0.022, 0.018, Color(0.5, 0.48, 0.42), false, 0.8
+					Vector3(fx + pw * 0.2, hy + 0.016, z + pd * 0.15),
+					0.02, 0.016, Color(0.46, 0.44, 0.39), false, 0.85
 				)
-	# Continuous gravel bed full length + side curbs (loop 170)
+	# Continuous gravel + rough curbs (loop 173: chunkier, darker)
 	if surface == "stone":
-		_add_box(root, Vector3(0, 0.006, 0), Vector3(width * 0.95, 0.01, length * 0.96), Color(0.48, 0.46, 0.4), false, 0.88)
-		_add_box(root, Vector3(-width * 0.5, 0.014, 0), Vector3(0.14, 0.028, length * 0.96), Color(0.5, 0.48, 0.42), false, 0.82)
-		_add_box(root, Vector3(width * 0.5, 0.014, 0), Vector3(0.14, 0.028, length * 0.96), Color(0.5, 0.48, 0.42), false, 0.82)
-		for gi in 10:
-			var gz := -length * 0.4 + float(gi) * (length * 0.8 / 9.0)
-			_add_cylinder(root, Vector3(-width * 0.5, 0.028, gz), 0.028, 0.022, Color(0.52, 0.5, 0.44), false, 0.8)
-			_add_cylinder(root, Vector3(width * 0.5, 0.028, gz), 0.026, 0.02, Color(0.5, 0.48, 0.42), false, 0.8)
+		_add_box(root, Vector3(0, 0.005, 0), Vector3(width * 0.98, 0.01, length * 0.96), Color(0.42, 0.4, 0.36), false, 0.9)
+		_add_box(root, Vector3(-width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), Color(0.46, 0.44, 0.39), false, 0.85)
+		_add_box(root, Vector3(width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), Color(0.46, 0.44, 0.39), false, 0.85)
+		for gi in 12:
+			var gz := -length * 0.42 + float(gi) * (length * 0.84 / 11.0)
+			var gx_off: float = 0.02 if gi % 2 == 0 else -0.02
+			_add_cylinder(root, Vector3(-width * 0.52 + gx_off, 0.028, gz), 0.03, 0.024, Color(0.48, 0.46, 0.4), false, 0.82)
+			_add_cylinder(root, Vector3(width * 0.52 - gx_off, 0.028, gz), 0.028, 0.022, Color(0.46, 0.44, 0.39), false, 0.82)
 	return root
 
 
@@ -2026,56 +2026,46 @@ static func _make_urn(prop: Dictionary) -> Node3D:
 
 
 static func _make_watering_can(prop: Dictionary) -> Node3D:
-	## Loop 171: Victorian copper Haws can — readable mid-FOV (not 5-prim stick).
-	## Body + collar, long spout with rose, C-handle, top bail, seam bands.
+	## Loop 173: Haws can — bright copper body (loop 171 still read as wicker next to trug).
+	## One continuous belly (no weave-band seams), long spout+rose, C-handle, wire bail.
 	var root := Node3D.new()
 	root.name = "WateringCan"
 	var s: float = float(prop.get("scale", 1.0))
 	var seed0: int = int(prop.get("seed", 0))
-	# Stay in copper gate (g≈0.42). Prefer base COPPER — lightened can wash toward brass.
-	var cop := COPPER if seed0 % 2 == 0 else Color(0.68, 0.4, 0.2)
-	var cop_l := Color(0.78, 0.46, 0.24)  # bright copper highlight, still g<0.48
-	var cop_d := Color(0.58, 0.34, 0.16)
-	# Foot ring + squat stacked body (metal-tex copper — not untextured plastic)
-	_add_cylinder(root, Vector3(0, 0.02 * s, 0), 0.1 * s, 0.035 * s, cop_d, true, 0.38, true)
-	_add_cylinder(root, Vector3(0, 0.1 * s, 0), 0.12 * s, 0.13 * s, cop, true, 0.34, true)
-	_add_cylinder(root, Vector3(0, 0.2 * s, 0), 0.11 * s, 0.09 * s, cop_l, true, 0.32, true)
-	# Shoulder seam + everted rim collar
-	_add_cylinder(root, Vector3(0, 0.15 * s, 0), 0.125 * s, 0.018 * s, cop_d, false, 0.35, true)
-	_add_cylinder(root, Vector3(0, 0.26 * s, 0), 0.105 * s, 0.03 * s, cop_l, false, 0.32, true)
-	_add_cylinder(root, Vector3(0, 0.28 * s, 0), 0.09 * s, 0.02 * s, cop_d, false, 0.34, true)
-	# Interior dark (open mouth)
-	_add_cylinder(root, Vector3(0, 0.275 * s, 0), 0.07 * s, 0.018 * s, Color(0.22, 0.14, 0.08), false, 0.9)
-	# Long spout (thick horizontal pipe + droop tip + rose) — must read mid-FOV
-	_add_box(root, Vector3(0.12 * s, 0.19 * s, 0), Vector3(0.1 * s, 0.055 * s, 0.055 * s), cop, false, 0.34)
-	# Cylinder default Y-up → rotate Z so axis runs along +X
-	_add_cylinder_rotated(root, Vector3(0.24 * s, 0.17 * s, 0), 0.035 * s, 0.22 * s, cop, Vector3(0, 0, PI * 0.5), 0.34)
-	_add_cylinder_rotated(root, Vector3(0.38 * s, 0.13 * s, 0), 0.028 * s, 0.1 * s, cop_d, Vector3(0, 0, PI * 0.58), 0.34)
-	# Rose (perforated spray head) — large disc so silhouette is not a stick
-	_add_cylinder(root, Vector3(0.45 * s, 0.1 * s, 0), 0.055 * s, 0.024 * s, cop_l, false, 0.32, true)
-	_add_cylinder(root, Vector3(0.45 * s, 0.085 * s, 0), 0.048 * s, 0.014 * s, cop_d, false, 0.38, true)
-	for di in 6:
-		var dang := float(di) * TAU / 6.0
+	# Bright copper: r high, g≈0.42–0.45, b low — metal_copper, not wood
+	var cop := Color(0.8, 0.44, 0.2) if seed0 % 2 == 0 else Color(0.76, 0.42, 0.18)
+	var cop_l := Color(0.88, 0.5, 0.24)
+	var cop_d := Color(0.62, 0.34, 0.14)
+	# Foot + ONE continuous belly (stacked seams looked like basket weave)
+	_add_cylinder(root, Vector3(0, 0.02 * s, 0), 0.1 * s, 0.03 * s, cop_d, true, 0.32, true)
+	_add_cylinder(root, Vector3(0, 0.14 * s, 0), 0.125 * s, 0.22 * s, cop, true, 0.3, true)
+	# Single rim collar only
+	_add_cylinder(root, Vector3(0, 0.26 * s, 0), 0.13 * s, 0.028 * s, cop_l, false, 0.28, true)
+	_add_cylinder(root, Vector3(0, 0.28 * s, 0), 0.1 * s, 0.018 * s, cop_d, false, 0.32, true)
+	# Open mouth dark
+	_add_cylinder(root, Vector3(0, 0.275 * s, 0), 0.075 * s, 0.016 * s, Color(0.2, 0.1, 0.05), false, 0.9)
+	# Spout — thick copper pipe + rose (silhouette hero)
+	_add_box(root, Vector3(0.12 * s, 0.18 * s, 0), Vector3(0.1 * s, 0.05 * s, 0.05 * s), cop, false, 0.3)
+	_add_cylinder_rotated(root, Vector3(0.26 * s, 0.16 * s, 0), 0.038 * s, 0.24 * s, cop_l, Vector3(0, 0, PI * 0.5), 0.28)
+	_add_cylinder_rotated(root, Vector3(0.4 * s, 0.12 * s, 0), 0.03 * s, 0.1 * s, cop, Vector3(0, 0, PI * 0.58), 0.3)
+	_add_cylinder(root, Vector3(0.48 * s, 0.09 * s, 0), 0.058 * s, 0.026 * s, cop_l, false, 0.28, true)
+	_add_cylinder(root, Vector3(0.48 * s, 0.075 * s, 0), 0.05 * s, 0.014 * s, cop_d, false, 0.35, true)
+	for di in 5:
+		var dang := float(di) * TAU / 5.0
 		_add_cylinder(
 			root,
-			Vector3(0.45 * s + cos(dang) * 0.022 * s, 0.078 * s, sin(dang) * 0.022 * s),
-			0.007 * s, 0.008 * s, Color(0.2, 0.12, 0.07), false, 0.9
+			Vector3(0.48 * s + cos(dang) * 0.024 * s, 0.068 * s, sin(dang) * 0.024 * s),
+			0.007 * s, 0.008 * s, Color(0.18, 0.1, 0.05), false, 0.9
 		)
-	# Side C-handle (rear of body) — upright posts + grip
-	_add_box(root, Vector3(-0.1 * s, 0.14 * s, 0), Vector3(0.03 * s, 0.05 * s, 0.04 * s), cop_d, false, 0.34)
-	_add_box(root, Vector3(-0.16 * s, 0.2 * s, 0), Vector3(0.03 * s, 0.14 * s, 0.035 * s), cop, false, 0.34)
-	_add_box(root, Vector3(-0.12 * s, 0.28 * s, 0), Vector3(0.08 * s, 0.03 * s, 0.035 * s), cop_l, false, 0.32)
-	_add_box(root, Vector3(-0.08 * s, 0.26 * s, 0), Vector3(0.03 * s, 0.05 * s, 0.03 * s), cop_d, false, 0.34)
-	# Top bail arch (two posts + crossbar) — reads over mouth at mid FOV
-	_add_cylinder(root, Vector3(-0.04 * s, 0.36 * s, 0), 0.012 * s, 0.12 * s, cop_d, false, 0.35, true)
-	_add_cylinder(root, Vector3(0.04 * s, 0.36 * s, 0), 0.012 * s, 0.12 * s, cop_d, false, 0.35, true)
-	_add_box(root, Vector3(0, 0.42 * s, 0), Vector3(0.1 * s, 0.02 * s, 0.025 * s), cop, false, 0.32)
-	_add_cylinder(root, Vector3(0, 0.43 * s, 0), 0.02 * s, 0.025 * s, cop_l, false, 0.3, true)
-	# Vertical seam rivets (identity, not iron plate — copper class only)
-	for ri in 3:
-		var ry := (0.08 + float(ri) * 0.07) * s
-		_add_cylinder(root, Vector3(0.0, ry, 0.11 * s), 0.01 * s, 0.012 * s, cop_l, false, 0.3, true)
-	_add_contact_shadow(root, 0.2 * s, 0.14 * s)
+	# C-handle (rear) — solid copper posts
+	_add_box(root, Vector3(-0.11 * s, 0.14 * s, 0), Vector3(0.035 * s, 0.05 * s, 0.04 * s), cop_d, false, 0.3)
+	_add_box(root, Vector3(-0.17 * s, 0.2 * s, 0), Vector3(0.035 * s, 0.14 * s, 0.04 * s), cop, false, 0.3)
+	_add_box(root, Vector3(-0.13 * s, 0.28 * s, 0), Vector3(0.09 * s, 0.035 * s, 0.04 * s), cop_l, false, 0.28)
+	# Wire bail (thin brass-copper arch — not basket handles)
+	_add_cylinder(root, Vector3(-0.045 * s, 0.36 * s, 0), 0.01 * s, 0.12 * s, cop_d, false, 0.3, true)
+	_add_cylinder(root, Vector3(0.045 * s, 0.36 * s, 0), 0.01 * s, 0.12 * s, cop_d, false, 0.3, true)
+	_add_box(root, Vector3(0, 0.43 * s, 0), Vector3(0.11 * s, 0.016 * s, 0.02 * s), cop, false, 0.28)
+	_add_contact_shadow(root, 0.22 * s, 0.15 * s)
 	return root
 
 

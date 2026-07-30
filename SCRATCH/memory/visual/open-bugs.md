@@ -117,6 +117,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 173)
+
+- **Botanical pot residual after 172:** multi-tier cylinders + TEX_STONE/wood washout still read as wedding cake mid-FOV. Single CLAY body (matches floor plant pots) + blue glaze band + flush red bloom disc in mouth.  
+- **Stone path residual:** pale aligned boards. Staggered irregular flags, darker grit gaps, chunkier curbs.  
+- **Watering can:** continuous bright copper belly (fewer weave-like seam bands).  
+
 ## Status update 2026-07-29 (loop 171)
 
 - **Watering can residual:** 5-prim stick read as brown lump mid-FOV. Rewrote Haws-style can — stacked copper body + collar, long horizontal spout + rose head, C-handle, top bail, seam rivets; larger scale + yaw so spout reads from spawn.  
