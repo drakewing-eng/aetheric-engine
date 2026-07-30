@@ -810,9 +810,9 @@ const ROOMS := {
 			{"kind": "urn", "pos": [-3.45, 0.0, -0.9], "scale": 0.9, "seed": 1},
 			{"kind": "urn", "pos": [-3.35, 0.0, 2.9], "scale": 0.75, "seed": 2},
 			{"kind": "urn", "pos": [3.35, 0.0, 2.9], "scale": 0.75, "seed": 0},
-			# Garden work props off-path (one can + one trug)
-			{"kind": "watering_can", "pos": [2.2, 0.0, -1.8], "scale": 0.95, "yaw": 35.0},
-			{"kind": "wicker_basket", "pos": [2.5, 0.0, -1.4], "yaw": 20.0, "seed": 4, "scale": 0.9, "fill": "veg"},
+			# Loop 171: garden work props — larger mid-FOV; can yaw shows full spout from spawn
+			{"kind": "watering_can", "pos": [2.0, 0.0, -1.5], "scale": 1.25, "yaw": -55.0, "seed": 0},
+			{"kind": "wicker_basket", "pos": [2.6, 0.0, -1.05], "yaw": 35.0, "seed": 4, "scale": 1.2, "fill": "veg"},
 			{"kind": "floor_path", "pos": [0.0, 0.0, 0.2], "yaw": 0.0, "length": 5.5, "width": 1.3,
 				"surface": "stone", "seed": 1},
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 3.5], "yaw": -90.0, "height": 2.2},

@@ -2016,16 +2016,56 @@ static func _make_urn(prop: Dictionary) -> Node3D:
 
 
 static func _make_watering_can(prop: Dictionary) -> Node3D:
-	## Copper watering can — conservatory service prop.
+	## Loop 171: Victorian copper Haws can — readable mid-FOV (not 5-prim stick).
+	## Body + collar, long spout with rose, C-handle, top bail, seam bands.
 	var root := Node3D.new()
 	root.name = "WateringCan"
-	var scale: float = float(prop.get("scale", 1.0))
-	_add_cylinder(root, Vector3(0, 0.12 * scale, 0), 0.1 * scale, 0.2 * scale, COPPER, true, 0.35, true)
-	_add_cylinder(root, Vector3(0, 0.24 * scale, 0), 0.11 * scale, 0.04 * scale, COPPER.lightened(0.08), false, 0.32, true)
-	_add_box(root, Vector3(0.14 * scale, 0.16 * scale, 0), Vector3(0.16 * scale, 0.04 * scale, 0.04 * scale), COPPER, false, 0.35)
-	_add_cylinder(root, Vector3(0.22 * scale, 0.14 * scale, 0), 0.03 * scale, 0.06 * scale, COPPER.darkened(0.05), false, 0.35, true)
-	_add_box(root, Vector3(-0.02 * scale, 0.28 * scale, 0), Vector3(0.04 * scale, 0.12 * scale, 0.03 * scale), COPPER.darkened(0.08), false, 0.35)
-	_add_contact_shadow(root, 0.14 * scale, 0.12 * scale)
+	var s: float = float(prop.get("scale", 1.0))
+	var seed0: int = int(prop.get("seed", 0))
+	# Stay in copper gate (g≈0.42). Prefer base COPPER — lightened can wash toward brass.
+	var cop := COPPER if seed0 % 2 == 0 else Color(0.68, 0.4, 0.2)
+	var cop_l := Color(0.78, 0.46, 0.24)  # bright copper highlight, still g<0.48
+	var cop_d := Color(0.58, 0.34, 0.16)
+	# Foot ring + squat stacked body (metal-tex copper — not untextured plastic)
+	_add_cylinder(root, Vector3(0, 0.02 * s, 0), 0.1 * s, 0.035 * s, cop_d, true, 0.38, true)
+	_add_cylinder(root, Vector3(0, 0.1 * s, 0), 0.12 * s, 0.13 * s, cop, true, 0.34, true)
+	_add_cylinder(root, Vector3(0, 0.2 * s, 0), 0.11 * s, 0.09 * s, cop_l, true, 0.32, true)
+	# Shoulder seam + everted rim collar
+	_add_cylinder(root, Vector3(0, 0.15 * s, 0), 0.125 * s, 0.018 * s, cop_d, false, 0.35, true)
+	_add_cylinder(root, Vector3(0, 0.26 * s, 0), 0.105 * s, 0.03 * s, cop_l, false, 0.32, true)
+	_add_cylinder(root, Vector3(0, 0.28 * s, 0), 0.09 * s, 0.02 * s, cop_d, false, 0.34, true)
+	# Interior dark (open mouth)
+	_add_cylinder(root, Vector3(0, 0.275 * s, 0), 0.07 * s, 0.018 * s, Color(0.22, 0.14, 0.08), false, 0.9)
+	# Long spout (thick horizontal pipe + droop tip + rose) — must read mid-FOV
+	_add_box(root, Vector3(0.12 * s, 0.19 * s, 0), Vector3(0.1 * s, 0.055 * s, 0.055 * s), cop, false, 0.34)
+	# Cylinder default Y-up → rotate Z so axis runs along +X
+	_add_cylinder_rotated(root, Vector3(0.24 * s, 0.17 * s, 0), 0.035 * s, 0.22 * s, cop, Vector3(0, 0, PI * 0.5), 0.34)
+	_add_cylinder_rotated(root, Vector3(0.38 * s, 0.13 * s, 0), 0.028 * s, 0.1 * s, cop_d, Vector3(0, 0, PI * 0.58), 0.34)
+	# Rose (perforated spray head) — large disc so silhouette is not a stick
+	_add_cylinder(root, Vector3(0.45 * s, 0.1 * s, 0), 0.055 * s, 0.024 * s, cop_l, false, 0.32, true)
+	_add_cylinder(root, Vector3(0.45 * s, 0.085 * s, 0), 0.048 * s, 0.014 * s, cop_d, false, 0.38, true)
+	for di in 6:
+		var dang := float(di) * TAU / 6.0
+		_add_cylinder(
+			root,
+			Vector3(0.45 * s + cos(dang) * 0.022 * s, 0.078 * s, sin(dang) * 0.022 * s),
+			0.007 * s, 0.008 * s, Color(0.2, 0.12, 0.07), false, 0.9
+		)
+	# Side C-handle (rear of body) — upright posts + grip
+	_add_box(root, Vector3(-0.1 * s, 0.14 * s, 0), Vector3(0.03 * s, 0.05 * s, 0.04 * s), cop_d, false, 0.34)
+	_add_box(root, Vector3(-0.16 * s, 0.2 * s, 0), Vector3(0.03 * s, 0.14 * s, 0.035 * s), cop, false, 0.34)
+	_add_box(root, Vector3(-0.12 * s, 0.28 * s, 0), Vector3(0.08 * s, 0.03 * s, 0.035 * s), cop_l, false, 0.32)
+	_add_box(root, Vector3(-0.08 * s, 0.26 * s, 0), Vector3(0.03 * s, 0.05 * s, 0.03 * s), cop_d, false, 0.34)
+	# Top bail arch (two posts + crossbar) — reads over mouth at mid FOV
+	_add_cylinder(root, Vector3(-0.04 * s, 0.36 * s, 0), 0.012 * s, 0.12 * s, cop_d, false, 0.35, true)
+	_add_cylinder(root, Vector3(0.04 * s, 0.36 * s, 0), 0.012 * s, 0.12 * s, cop_d, false, 0.35, true)
+	_add_box(root, Vector3(0, 0.42 * s, 0), Vector3(0.1 * s, 0.02 * s, 0.025 * s), cop, false, 0.32)
+	_add_cylinder(root, Vector3(0, 0.43 * s, 0), 0.02 * s, 0.025 * s, cop_l, false, 0.3, true)
+	# Vertical seam rivets (identity, not iron plate — copper class only)
+	for ri in 3:
+		var ry := (0.08 + float(ri) * 0.07) * s
+		_add_cylinder(root, Vector3(0.0, ry, 0.11 * s), 0.01 * s, 0.012 * s, cop_l, false, 0.3, true)
+	_add_contact_shadow(root, 0.2 * s, 0.14 * s)
 	return root
 
 
@@ -2596,8 +2636,8 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:
-	## Loop 152: low wide trug (not tall barrel) — oval weave + clear handles/fill.
-	## fill: "apples" | "linen" | "veg" | "" empty
+	## Loop 171: garden trug — oval weave, arched end handles, readable mid-FOV.
+	## Not a packing drum or brown Minecraft brick. fill: apples|linen|veg|""
 	var root := Node3D.new()
 	root.name = "WickerBasket"
 	var s: float = float(prop.get("scale", 1.0))
@@ -2607,49 +2647,74 @@ static func _make_wicker_basket(prop: Dictionary) -> Node3D:
 		fill = "apples"
 	elif fill == "" and seed0 % 3 == 1:
 		fill = "linen"
-	var wick := Color(0.58, 0.42, 0.24) if seed0 % 2 == 0 else Color(0.5, 0.36, 0.2)
-	var wick_d := wick.darkened(0.14)
-	var wick_l := wick.lightened(0.1)
-	# Wide low profile — trug, not drum
-	var rx: float = 0.22 * s
-	var rz: float = 0.16 * s
-	var h: float = 0.14 * s
-	# Flattened oval body (box core + rounded ends)
-	_add_box(root, Vector3(0, h * 0.45, 0), Vector3(rx * 1.6, h * 0.85, rz * 1.5), wick, true, 0.75)
-	_add_cylinder(root, Vector3(rx * 0.55, h * 0.45, 0), rz * 0.75, h * 0.85, wick, true, 0.75)
-	_add_cylinder(root, Vector3(-rx * 0.55, h * 0.45, 0), rz * 0.75, h * 0.85, wick, true, 0.75)
-	# Base + interior dark
-	_add_box(root, Vector3(0, 0.02 * s, 0), Vector3(rx * 1.65, 0.03 * s, rz * 1.55), wick_d, true, 0.7)
-	_add_box(root, Vector3(0, h * 0.55, 0), Vector3(rx * 1.3, 0.02 * s, rz * 1.2), Color(0.22, 0.15, 0.08), false, 0.85)
-	# Horizontal weave bands
-	for bi in 3:
-		var by := 0.04 * s + float(bi) * (h * 0.28)
-		_add_box(root, Vector3(0, by, 0), Vector3(rx * 1.68, 0.015 * s, rz * 1.58), wick_d if bi % 2 == 0 else wick_l, false, 0.72)
-	# Vertical ribs on long sides
-	for vi in 5:
-		var t := (float(vi) / 4.0 - 0.5) * rx * 1.4
-		_add_box(root, Vector3(t, h * 0.45, rz * 0.72), Vector3(0.015 * s, h * 0.7, 0.015 * s), wick_d, false, 0.7)
-		_add_box(root, Vector3(t, h * 0.45, -rz * 0.72), Vector3(0.015 * s, h * 0.7, 0.015 * s), wick_d, false, 0.7)
-	# Rim + two end handles (trug)
-	_add_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.7, 0.025 * s, rz * 1.6), wick_l, false, 0.7)
-	_add_box(root, Vector3(rx * 0.85, h * 0.95, 0), Vector3(0.05 * s, 0.1 * s, 0.06 * s), wick, false, 0.65)
-	_add_box(root, Vector3(-rx * 0.85, h * 0.95, 0), Vector3(0.05 * s, 0.1 * s, 0.06 * s), wick, false, 0.65)
-	_add_box(root, Vector3(0, h * 1.05, 0), Vector3(rx * 1.5, 0.02 * s, 0.03 * s), wick_d, false, 0.65)
-	# Fill
+	# Willow: warm brown, not copper (g too high for metal) and not scrubbed oak
+	var wick := Color(0.62, 0.48, 0.3) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.26)
+	var wick_d := wick.darkened(0.16)
+	var wick_l := wick.lightened(0.12)
+	# Wider low trug (loop 171: slightly taller walls for mid-FOV silhouette)
+	var rx: float = 0.26 * s
+	var rz: float = 0.17 * s
+	var h: float = 0.18 * s
+	# Flattened oval body (box core + rounded ends) — solid so walk-into collides
+	_add_box(root, Vector3(0, h * 0.42, 0), Vector3(rx * 1.7, h * 0.82, rz * 1.55), wick, true, 0.78)
+	_add_cylinder(root, Vector3(rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, wick, true, 0.78)
+	_add_cylinder(root, Vector3(-rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, wick, true, 0.78)
+	# Raised foot rail + dark interior soil bed
+	_add_box(root, Vector3(0, 0.018 * s, 0), Vector3(rx * 1.75, 0.03 * s, rz * 1.6), wick_d, true, 0.72)
+	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(rx * 1.35, 0.025 * s, rz * 1.2), Color(0.2, 0.14, 0.08), false, 0.9)
+	# Horizontal weave bands (alternating light/dark)
+	for bi in 4:
+		var by := 0.035 * s + float(bi) * (h * 0.22)
+		_add_box(root, Vector3(0, by, 0), Vector3(rx * 1.78, 0.016 * s, rz * 1.62), wick_d if bi % 2 == 0 else wick_l, false, 0.74)
+	# Vertical ribs on long sides + ends
+	for vi in 6:
+		var t := (float(vi) / 5.0 - 0.5) * rx * 1.5
+		_add_box(root, Vector3(t, h * 0.42, rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), wick_d, false, 0.72)
+		_add_box(root, Vector3(t, h * 0.42, -rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), wick_d, false, 0.72)
+	for ei in 3:
+		var ez := (float(ei) / 2.0 - 0.5) * rz * 1.1
+		_add_box(root, Vector3(rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), wick_d, false, 0.72)
+		_add_box(root, Vector3(-rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), wick_d, false, 0.72)
+	# Thick rim
+	_add_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.82, 0.03 * s, rz * 1.68), wick_l, false, 0.7)
+	_add_box(root, Vector3(0, h * 0.92, 0), Vector3(rx * 1.7, 0.018 * s, rz * 1.55), wick_d, false, 0.72)
+	# Arched end handles (trug signature — rise above rim, not end nubs)
+	for sx in [-1.0, 1.0]:
+		var hx: float = sx * rx * 0.9
+		_add_box(root, Vector3(hx, h * 0.95, 0), Vector3(0.045 * s, 0.08 * s, 0.07 * s), wick, false, 0.68)
+		_add_box(root, Vector3(hx, h * 1.12, 0), Vector3(0.04 * s, 0.12 * s, 0.05 * s), wick_d, false, 0.68)
+		_add_box(root, Vector3(hx, h * 1.22, 0), Vector3(0.055 * s, 0.035 * s, 0.08 * s), wick_l, false, 0.65)
+	# Cross grip bar (optional seed) — long trug carry
+	if seed0 % 2 == 0:
+		_add_box(root, Vector3(0, h * 1.18, 0), Vector3(rx * 1.65, 0.022 * s, 0.028 * s), wick_d, false, 0.68)
+	# Fill (no foliage sphere blobs that read as plant scrap)
 	if fill == "apples":
-		for ai in 5:
-			var ax := cos(float(ai) * 1.4) * rx * 0.4
-			var az := sin(float(ai) * 1.4) * rz * 0.35
+		for ai in 6:
+			var ax := cos(float(ai) * 1.15) * rx * 0.42
+			var az := sin(float(ai) * 1.15) * rz * 0.38
 			var acol := Color(0.55, 0.18, 0.12) if ai % 2 == 0 else Color(0.48, 0.22, 0.1)
-			_add_sphere_blob(root, Vector3(ax, h * 0.7, az), 0.04 * s, acol)
+			# Small squat cylinders (apple mass without foliage path)
+			_add_cylinder(root, Vector3(ax, h * 0.72, az), 0.038 * s, 0.045 * s, acol, false, 0.85)
+			_add_cylinder(root, Vector3(ax, h * 0.78, az), 0.03 * s, 0.02 * s, acol.lightened(0.08), false, 0.85)
 	elif fill == "linen":
-		_add_box(root, Vector3(0, h * 0.7, 0), Vector3(rx * 1.2, 0.05 * s, rz * 1.1), Color(0.82, 0.78, 0.68), false, 0.9)
-		_add_box(root, Vector3(0.02 * s, h * 0.78, 0.02 * s), Vector3(rx * 1.0, 0.035 * s, rz * 0.9), Color(0.78, 0.74, 0.64), false, 0.9)
+		# Folded cloth stack — cream g high enough for linen, not scrubbed wood
+		_add_box(root, Vector3(0, h * 0.68, 0), Vector3(rx * 1.25, 0.055 * s, rz * 1.15), Color(0.84, 0.8, 0.7), false, 0.9)
+		_add_box(root, Vector3(0.02 * s, h * 0.78, 0.015 * s), Vector3(rx * 1.05, 0.04 * s, rz * 0.95), Color(0.8, 0.76, 0.66), false, 0.9)
+		_add_box(root, Vector3(-0.015 * s, h * 0.86, -0.01 * s), Vector3(rx * 0.9, 0.03 * s, rz * 0.8), Color(0.78, 0.74, 0.64), false, 0.9)
 	elif fill == "veg":
-		_add_box(root, Vector3(0, h * 0.65, 0), Vector3(rx * 1.0, 0.04 * s, rz * 0.8), Color(0.28, 0.4, 0.16), false, 0.85)
-		_add_sphere_blob(root, Vector3(rx * 0.3, h * 0.72, 0), 0.035 * s, Color(0.85, 0.45, 0.15))
-		_add_sphere_blob(root, Vector3(-rx * 0.25, h * 0.7, rz * 0.2), 0.03 * s, Color(0.75, 0.25, 0.15))
-	_add_contact_shadow(root, rx * 1.2, rz * 1.2)
+		# Conservatory trug: soil cake + root veg + leaf fronds (thin boxes, not green brick)
+		_add_box(root, Vector3(0, h * 0.58, 0), Vector3(rx * 1.2, 0.04 * s, rz * 1.05), Color(0.28, 0.2, 0.1), false, 0.9)
+		# Carrots / roots (orange cylinders, miss copper via higher g)
+		for ci in 4:
+			var cx := (float(ci) / 3.0 - 0.5) * rx * 0.9
+			_add_cylinder(root, Vector3(cx, h * 0.7, rz * 0.15), 0.018 * s, 0.09 * s, Color(0.78, 0.42, 0.18), false, 0.8)
+			_add_box(root, Vector3(cx, h * 0.78, rz * 0.15), Vector3(0.04 * s, 0.02 * s, 0.03 * s), Color(0.22, 0.4, 0.14), false, 0.9)
+		# Leaf fronds (flat, horizontal — not upright plant scrap)
+		_add_box(root, Vector3(0.05 * s, h * 0.76, -rz * 0.2), Vector3(0.12 * s, 0.012 * s, 0.08 * s), Color(0.24, 0.42, 0.16), false, 0.9)
+		_add_box(root, Vector3(-0.08 * s, h * 0.74, -rz * 0.1), Vector3(0.1 * s, 0.01 * s, 0.07 * s), Color(0.2, 0.38, 0.14), false, 0.9)
+		# Turnip / potato mass
+		_add_cylinder(root, Vector3(rx * 0.25, h * 0.68, -rz * 0.15), 0.035 * s, 0.04 * s, Color(0.72, 0.62, 0.4), false, 0.85)
+	_add_contact_shadow(root, rx * 1.25, rz * 1.25)
 	return root
 
 
