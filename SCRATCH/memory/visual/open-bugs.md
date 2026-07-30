@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 237)
+
+- **Oil lamp stick residual:** freestanding Argands still thin gold sticks mid-FOV (workshop_from_south/spawn). Fatter wide font, very short stem, thick brass gallery, short wide amber glass bell (not tall pencil chimney). Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 236)
 
 - **Ottoman wedding-cake residual:** seed-1 oxblood drum read as stacked red barrel rings mid-FOV (morning_room_center). Rewrote continuous low velvet body + soft dome + dark button ring; square chesterfield no pale top pad. Art + door suite PASS.  

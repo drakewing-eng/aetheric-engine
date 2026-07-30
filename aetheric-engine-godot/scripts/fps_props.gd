@@ -2815,16 +2815,17 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 
 static func _make_oil_lamp(prop: Dictionary) -> Node3D:
 	## Loop 198: freestanding Argand — solid-mat stem/font + amber glass (no wood/brass washout).
-	## Loop 219: mid-FOV stick residual — wider squat font, short stem, brass gallery ring,
-	## tapered chimney (not cream pencil column on kitchen floor).
+	## Loop 219: mid-FOV stick residual — wider squat font, short stem, brass gallery ring.
+	## Loop 237: still thin gold stick mid-FOV (workshop_from_south) — fatter font + short
+	## amber bell (not pencil chimney), thick brass gallery, wider base footprint.
 	var root := Node3D.new()
 	root.name = "OilLamp"
 	var h: float = float(prop.get("height", 1.0))
 	var ppos: Array = prop.get("pos", [0, 0, 0])
 	var seed0: int = int(prop.get("seed", int(absf(h * 17.0 + float(ppos[0]) * 7.0 + float(ppos[2]) * 11.0))))
 	var style := seed0 % 3
-	# Shorter stem so font + glass dominate silhouette (not tall stick)
-	var stem_top: float = clampf(h * 0.16, 0.12, 0.2)
+	# Very short stem — font + glass own the silhouette
+	var stem_top: float = clampf(h * 0.12, 0.1, 0.16)
 	var mat_wd := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
 	var mat_w := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
 	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
@@ -2834,92 +2835,92 @@ static func _make_oil_lamp(prop: Dictionary) -> Node3D:
 	var mat_font_d := _solid_metal(Color(0.38, 0.26, 0.12), 0.45)
 	var mat_font_l := _solid_metal(Color(0.58, 0.42, 0.22), 0.38)
 	if style == 0:
-		# Wide turned base disc + short column
-		_add_mesh_cyl(root, Vector3(0, 0.02, 0), 0.11, 0.04, mat_wd, true)
-		_add_mesh_cyl(root, Vector3(0, 0.05, 0), 0.075, 0.025, mat_w, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.028, stem_top * 0.65, mat_w, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.04, 0.03, mat_br_d, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.88, 0), 0.035, 0.025, mat_br_d, false)
+		# Wide turned base disc + short thick column
+		_add_mesh_cyl(root, Vector3(0, 0.02, 0), 0.13, 0.045, mat_wd, true)
+		_add_mesh_cyl(root, Vector3(0, 0.055, 0), 0.09, 0.03, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.04, stem_top * 0.55, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.5, 0), 0.055, 0.035, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.9, 0), 0.045, 0.03, mat_br_d, false)
 	elif style == 1:
-		# Tripod feet — ground presence without stick pole
-		_add_mesh_cyl(root, Vector3(0, 0.022, 0), 0.055, 0.028, mat_wd, true)
+		# Tripod feet — ground presence
+		_add_mesh_cyl(root, Vector3(0, 0.025, 0), 0.07, 0.032, mat_wd, true)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_mesh_box(root, Vector3(cos(rad) * 0.09, 0.016, sin(rad) * 0.09), Vector3(0.11, 0.02, 0.032), mat_w)
-			_add_mesh_cyl(root, Vector3(cos(rad) * 0.13, 0.012, sin(rad) * 0.13), 0.018, 0.022, mat_wd, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.026, stem_top * 0.65, mat_w, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.88, 0), 0.035, 0.025, mat_br_d, false)
+			_add_mesh_box(root, Vector3(cos(rad) * 0.1, 0.018, sin(rad) * 0.1), Vector3(0.13, 0.022, 0.036), mat_w)
+			_add_mesh_cyl(root, Vector3(cos(rad) * 0.15, 0.014, sin(rad) * 0.15), 0.022, 0.024, mat_wd, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.038, stem_top * 0.55, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.9, 0), 0.045, 0.03, mat_br_d, false)
 	else:
 		# Square plinth base
-		_add_mesh_box(root, Vector3(0, 0.02, 0), Vector3(0.15, 0.04, 0.15), mat_wd)
-		_add_mesh_box(root, Vector3(0, 0.05, 0), Vector3(0.1, 0.025, 0.1), mat_w)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.025, stem_top * 0.62, mat_w, false)
-		_add_mesh_cyl(root, Vector3(0, stem_top * 0.88, 0), 0.035, 0.025, mat_br_d, false)
-	# Squat bulbous font (oil reservoir — hero mid-FOV mass, not thin neck)
+		_add_mesh_box(root, Vector3(0, 0.022, 0), Vector3(0.18, 0.045, 0.18), mat_wd)
+		_add_mesh_box(root, Vector3(0, 0.055, 0), Vector3(0.12, 0.028, 0.12), mat_w)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.55, 0), 0.036, stem_top * 0.52, mat_w, false)
+		_add_mesh_cyl(root, Vector3(0, stem_top * 0.9, 0), 0.045, 0.03, mat_br_d, false)
+	# Wide squat font (oil reservoir — primary mid-FOV mass)
 	var fy: float = stem_top + 0.01
-	_add_mesh_cyl(root, Vector3(0, fy, 0), 0.06, 0.025, mat_font_d, false)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.04, 0), 0.085, 0.065, mat_font, false)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.08, 0), 0.075, 0.03, mat_font_l, false)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.1, 0), 0.055, 0.02, mat_font_d, false)
+	_add_mesh_cyl(root, Vector3(0, fy, 0), 0.075, 0.03, mat_font_d, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.05, 0), 0.11, 0.08, mat_font, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.1, 0), 0.095, 0.035, mat_font_l, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.125, 0), 0.07, 0.025, mat_font_d, false)
 	# Side fill cap
-	_add_mesh_cyl(root, Vector3(0.07, fy + 0.04, 0), 0.016, 0.025, mat_font_d, false)
-	_add_mesh_cyl(root, Vector3(0.07, fy + 0.055, 0), 0.012, 0.012, mat_br, false)
-	# Brass burner gallery ring (wide — breaks cream-column read)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.115, 0), 0.06, 0.022, mat_br, false)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.135, 0), 0.048, 0.018, mat_br_d, false)
-	_add_mesh_cyl(root, Vector3(0, fy + 0.15, 0), 0.038, 0.014, mat_br_l, false)
-	# Amber glass chimney — moderate height, clear taper (not full-height cream stick)
-	var glass_h: float = clampf(h * 0.36, 0.28, 0.4)
-	var cy: float = fy + 0.16 + glass_h * 0.5
+	_add_mesh_cyl(root, Vector3(0.09, fy + 0.05, 0), 0.02, 0.03, mat_font_d, false)
+	_add_mesh_cyl(root, Vector3(0.09, fy + 0.07, 0), 0.015, 0.015, mat_br, false)
+	# Thick brass burner gallery (breaks stick read)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.14, 0), 0.08, 0.03, mat_br, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.165, 0), 0.065, 0.025, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.185, 0), 0.05, 0.018, mat_br_l, false)
+	# Amber glass — SHORT wide bell (not tall pencil chimney)
+	var glass_h: float = clampf(h * 0.28, 0.2, 0.3)
+	var cy: float = fy + 0.2 + glass_h * 0.45
 	var mat_g := StandardMaterial3D.new()
-	mat_g.albedo_color = Color(1.0, 0.78, 0.42, 0.5)
+	mat_g.albedo_color = Color(1.0, 0.72, 0.35, 0.55)
 	mat_g.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat_g.emission_enabled = true
-	mat_g.emission = Color(1.0, 0.68, 0.32)
-	mat_g.emission_energy_multiplier = 1.55
+	mat_g.emission = Color(1.0, 0.62, 0.28)
+	mat_g.emission_energy_multiplier = 1.7
 	mat_g.roughness = 0.15
 	mat_g.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-	# Slight bottom-wider taper via stacked shells
-	_add_mesh_cyl(root, Vector3(0, cy - glass_h * 0.15, 0), 0.055, glass_h * 0.55, mat_g, false)
-	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.1, 0), 0.048, glass_h * 0.55, mat_g, false)
+	# Wide bottom → narrower top (bell, not column)
+	_add_mesh_cyl(root, Vector3(0, cy - glass_h * 0.2, 0), 0.07, glass_h * 0.5, mat_g, false)
+	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.05, 0), 0.055, glass_h * 0.5, mat_g, false)
 	var mat_ghi := StandardMaterial3D.new()
-	mat_ghi.albedo_color = Color(1.0, 0.9, 0.55, 0.32)
+	mat_ghi.albedo_color = Color(1.0, 0.85, 0.48, 0.35)
 	mat_ghi.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat_ghi.emission_enabled = true
-	mat_ghi.emission = Color(1.0, 0.82, 0.42)
-	mat_ghi.emission_energy_multiplier = 1.85
+	mat_ghi.emission = Color(1.0, 0.78, 0.38)
+	mat_ghi.emission_energy_multiplier = 2.0
 	mat_ghi.roughness = 0.1
-	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.05, 0), 0.032, glass_h * 0.7, mat_ghi, false)
+	_add_mesh_cyl(root, Vector3(0, cy, 0), 0.04, glass_h * 0.55, mat_ghi, false)
 	# Chimney top lip + brass gallery
-	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.48, 0), 0.05, 0.018, mat_g, false)
-	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.52, 0), 0.042, 0.014, mat_br_d, false)
-	# Three cage rods (Argand cage — mid-FOV structure)
+	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.4, 0), 0.055, 0.02, mat_g, false)
+	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.45, 0), 0.048, 0.016, mat_br_d, false)
+	# Three cage rods
 	var mat_iron := _solid_metal(Color(0.34, 0.34, 0.36), 0.5)
 	for i in 3:
 		var ang := float(i) * TAU / 3.0 + 0.2
 		_add_mesh_box(
 			root,
-			Vector3(cos(ang) * 0.052, cy, sin(ang) * 0.052),
-			Vector3(0.01, glass_h * 0.75, 0.01),
+			Vector3(cos(ang) * 0.06, cy, sin(ang) * 0.06),
+			Vector3(0.012, glass_h * 0.65, 0.012),
 			mat_iron
 		)
-	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.38, 0), 0.035, 0.014, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(0, cy + glass_h * 0.28, 0), 0.04, 0.014, mat_iron, false)
 	# Flame glow
 	var mat_flame := StandardMaterial3D.new()
 	mat_flame.albedo_color = Color(1.0, 0.88, 0.5, 0.7)
 	mat_flame.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat_flame.emission_enabled = true
 	mat_flame.emission = Color(1.0, 0.8, 0.4)
-	mat_flame.emission_energy_multiplier = 2.2
+	mat_flame.emission_energy_multiplier = 2.4
 	mat_flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_add_mesh_cyl(root, Vector3(0, fy + 0.16, 0), 0.024, 0.035, mat_flame, false)
+	_add_mesh_cyl(root, Vector3(0, fy + 0.2, 0), 0.028, 0.04, mat_flame, false)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.86, 0.58)
-	light.light_energy = 0.9 + float(style) * 0.06
-	light.omni_range = 4.0 + float(style) * 0.2
+	light.light_energy = 1.0 + float(style) * 0.06
+	light.omni_range = 4.2 + float(style) * 0.2
 	light.position = Vector3(0, cy, 0)
 	root.add_child(light)
-	_add_contact_shadow(root, 0.12, 0.12)
+	_add_contact_shadow(root, 0.14, 0.14)
 	return root
 
 
