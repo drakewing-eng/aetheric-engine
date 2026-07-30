@@ -117,6 +117,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 165)
+
+- **Wing side residual:** nested back/wing boxes still read as green stairs from morning side FOV after 164. Single deep shell + full-height wing envelope; front pad coplanar; arms under wing.  
+- **Tea tray:** pot/lid/sugar no longer use untextured sphere_blob (stacked china cylinders only).  
+
 ## Status update 2026-07-29 (loop 163)
 
 - **Prep flour sack residual:** kit 0 used untextured `_add_sphere_blob` → beige snowman on doorway FOV. Cloth bag via linen cylinders + top folds + twine neck; oval loaf is cylinders only (no foliage end-blobs).  

@@ -331,8 +331,8 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Loop 164: Victorian wing — continuous side shell (no stepped wing boxes).
-	## Side FOV must read as one upholstered ear + arm, not a green stair stack.
+	## Loop 165: Victorian wing — single side envelope (no nested depth stairs).
+	## Side FOV must be ONE tall plane + leading roll; front detail is inset only.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -342,60 +342,54 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	var fabric_dd := fabric.darkened(0.2)
 	var fabric_l := fabric.lightened(0.05)
 	# Slim mahogany seat rail
-	_add_box(root, Vector3(0, 0.22, 0.02), Vector3(0.76, 0.055, 0.68), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.26, 0.02), Vector3(0.8, 0.022, 0.7), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 0.22, 0.02), Vector3(0.78, 0.055, 0.7), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.26, 0.02), Vector3(0.82, 0.022, 0.72), MAHOGANY, false, 0.45)
 	# Seat + front bolster
-	_add_box(root, Vector3(0, 0.4, 0.06), Vector3(0.68, 0.15, 0.54), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.49, 0.08), Vector3(0.6, 0.045, 0.46), fabric_d, false, 0.92)
-	_add_cylinder_rotated(root, Vector3(0, 0.43, 0.32), 0.065, 0.64, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+	_add_box(root, Vector3(0, 0.4, 0.08), Vector3(0.7, 0.16, 0.56), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.5, 0.1), Vector3(0.62, 0.04, 0.48), fabric_d, false, 0.92)
+	_add_cylinder_rotated(root, Vector3(0, 0.44, 0.34), 0.065, 0.66, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
 	for bx in [-0.14, 0.0, 0.14]:
-		for bz in [-0.05, 0.1]:
-			_add_cylinder(root, Vector3(bx, 0.52, bz), 0.011, 0.01, fabric_dd, false, 0.95)
-	# Continuous back shell
-	_add_box(root, Vector3(0, 0.92, -0.2), Vector3(0.56, 0.9, 0.2), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.94, -0.1), Vector3(0.46, 0.8, 0.09), fabric_d, false, 0.9)
-	_add_box(root, Vector3(0, 0.98, -0.04), Vector3(0.38, 0.6, 0.05), fabric_l, false, 0.92)
-	# Rounded crown roll
-	_add_cylinder_rotated(root, Vector3(0, 1.36, -0.12), 0.09, 0.52, fabric, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_cylinder_rotated(root, Vector3(0, 1.4, -0.16), 0.06, 0.36, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_box(root, Vector3(0, 1.42, -0.22), Vector3(0.28, 0.04, 0.08), MAHOGANY, false, 0.45)
-	# Wings: ONE continuous side mass + leading roll (no upper/lower stair boxes)
+		for bz in [-0.04, 0.1]:
+			_add_cylinder(root, Vector3(bx, 0.53, bz), 0.011, 0.01, fabric_dd, false, 0.95)
+	# Back: ONE deep shell (not 3 nested stairs). Front pad is coplanar inset only.
+	_add_box(root, Vector3(0, 0.95, -0.12), Vector3(0.62, 0.95, 0.28), fabric, true, 0.9)
+	# Front-facing pad only (same Z extent as shell face — no extra depth step)
+	_add_box(root, Vector3(0, 0.96, 0.0), Vector3(0.5, 0.78, 0.06), fabric_d, false, 0.9)
+	_add_box(root, Vector3(0, 0.98, 0.02), Vector3(0.4, 0.55, 0.03), fabric_l, false, 0.92)
+	# Crown roll (horizontal, sits on shell top — not a third terrace slab)
+	_add_cylinder_rotated(root, Vector3(0, 1.38, -0.1), 0.09, 0.55, fabric, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_cylinder_rotated(root, Vector3(0, 1.42, -0.14), 0.055, 0.38, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_box(root, Vector3(0, 1.44, -0.2), Vector3(0.26, 0.035, 0.07), MAHOGANY, false, 0.45)
+	# Wings: full-height outer envelope (same depth as back shell so side is continuous)
 	for sx in [-1.0, 1.0]:
-		# Main wing ear — single tall slab from arm to crown
-		_add_box(root, Vector3(sx * 0.34, 0.95, 0.02), Vector3(0.18, 0.88, 0.44), fabric, true, 0.88)
-		# Soft inner face (slight inset)
-		_add_box(root, Vector3(sx * 0.28, 0.98, -0.02), Vector3(0.08, 0.78, 0.32), fabric_d, false, 0.9)
-		# Rounded leading edge (full wing height)
-		_add_cylinder(root, Vector3(sx * 0.34, 0.95, 0.2), 0.09, 0.82, fabric, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.34, 1.15, 0.12), 0.07, 0.4, fabric_d, false, 0.88)
-		# Outer thin bevel only
-		_add_box(root, Vector3(sx * 0.43, 0.95, 0.0), Vector3(0.022, 0.78, 0.36), fabric_dd, false, 0.9)
-		# Fillet into back
-		_add_box(root, Vector3(sx * 0.22, 0.98, -0.14), Vector3(0.1, 0.7, 0.1), fabric, false, 0.9)
-	# Diamond button tufts
+		# Outer ear — tall + deep enough to mask arm/seat as separate steps from side
+		_add_box(root, Vector3(sx * 0.36, 0.92, 0.0), Vector3(0.2, 0.95, 0.52), fabric, true, 0.88)
+		# Leading vertical roll (full height of ear)
+		_add_cylinder(root, Vector3(sx * 0.36, 0.92, 0.24), 0.1, 0.9, fabric, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.36, 1.1, 0.18), 0.075, 0.5, fabric_d, false, 0.88)
+		# Outer bevel (thin, same height)
+		_add_box(root, Vector3(sx * 0.46, 0.92, 0.0), Vector3(0.02, 0.88, 0.42), fabric_dd, false, 0.9)
+		# Arm integrated under wing (not a separate side box)
+		_add_cylinder_rotated(root, Vector3(sx * 0.36, 0.56, 0.1), 0.055, 0.42, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
+		_add_cylinder(root, Vector3(sx * 0.36, 0.56, 0.32), 0.045, 0.06, fabric, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.36, 0.34, 0.18), 0.022, 0.14, MAHOGANY_DARK, true, 0.45)
+		_add_cylinder(root, Vector3(sx * 0.36, 0.27, 0.24), 0.03, 0.05, MAHOGANY, false, 0.45)
+	# Diamond button tufts on front pad only
 	for row in 4:
-		var by := 0.7 + float(row) * 0.16
+		var by := 0.72 + float(row) * 0.15
 		var odd := row % 2 == 1
 		var cols: Array = [-0.09, 0.09] if odd else [-0.13, 0.0, 0.13]
 		for bx_v in cols:
-			_add_cylinder(root, Vector3(float(bx_v), by, -0.01), 0.011, 0.01, fabric_dd, false, 0.95)
-	# Rolled arms under wings
-	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.33, 0.52, 0.08), Vector3(0.14, 0.11, 0.4), fabric, true, 0.88)
-		_add_cylinder_rotated(root, Vector3(sx * 0.33, 0.56, 0.08), 0.05, 0.38, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
-		_add_cylinder_rotated(root, Vector3(sx * 0.33, 0.56, 0.28), 0.045, 0.1, fabric_d, Vector3(PI * 0.5, 0, 0), 0.88)
-		_add_cylinder(root, Vector3(sx * 0.33, 0.56, 0.32), 0.04, 0.05, fabric, false, 0.88)
-		_add_cylinder(root, Vector3(sx * 0.33, 0.35, 0.16), 0.02, 0.16, MAHOGANY_DARK, true, 0.45)
-		_add_cylinder(root, Vector3(sx * 0.33, 0.28, 0.22), 0.028, 0.055, MAHOGANY, false, 0.45)
+			_add_cylinder(root, Vector3(float(bx_v), by, 0.04), 0.011, 0.01, fabric_dd, false, 0.95)
 	# Turned legs + slim H-stretcher
 	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.27, 0.1, 0.22), 0.026, 0.17, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.27, 0.02, 0.22), 0.036, 0.022, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.25, 0.1, -0.2), 0.024, 0.17, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.25, 0.02, -0.2), 0.034, 0.022, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.1, 0.01), Vector3(0.48, 0.016, 0.016), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(-0.25, 0.1, 0.01), Vector3(0.016, 0.016, 0.36), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(0.25, 0.1, 0.01), Vector3(0.016, 0.016, 0.36), MAHOGANY, false, 0.48)
+		_add_cylinder(root, Vector3(sx * 0.28, 0.1, 0.24), 0.026, 0.17, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.28, 0.02, 0.24), 0.036, 0.022, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.26, 0.1, -0.2), 0.024, 0.17, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.26, 0.02, -0.2), 0.034, 0.022, MAHOGANY, true)
+	_add_box(root, Vector3(0, 0.1, 0.02), Vector3(0.5, 0.016, 0.016), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(-0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(0.26, 0.1, 0.02), Vector3(0.016, 0.016, 0.38), MAHOGANY, false, 0.48)
 	_add_contact_shadow(root, 0.55, 0.5)
 	return root
 
@@ -584,24 +578,24 @@ static func _make_tea_tray(prop: Dictionary) -> Node3D:
 	for sx in [-1.0, 1.0]:
 		_add_box(root, Vector3(sx * 0.26, 0.04, 0), Vector3(0.03, 0.022, 0.08), silver_d, false, 0.28)
 		_add_cylinder_rotated(root, Vector3(sx * 0.275, 0.05, 0), 0.014, 0.05, silver_hi, Vector3(0, 0, PI * 0.5), 0.25)
-	# ── Teapot hero ──
+	# ── Teapot hero (loop 165: cylinders only — no foliage sphere_blob balloons) ──
 	var tx := -0.09
 	var tz := 0.01
 	var by0 := 0.05
 	# Foot ring
 	_add_cylinder(root, Vector3(tx, by0 + 0.01, tz), 0.04, 0.012, china_d, false, 0.55)
-	# Round belly (sphere mass + cylinder shoulder)
-	_add_sphere_blob(root, Vector3(tx, by0 + 0.06, tz), 0.07, china)
-	_add_cylinder(root, Vector3(tx, by0 + 0.055, tz), 0.068, 0.055, china, false, 0.55)
-	_add_cylinder(root, Vector3(tx, by0 + 0.09, tz), 0.055, 0.03, china_d, false, 0.55)
+	# Round belly via stacked radii (textured china, not untextured spheres)
+	_add_cylinder(root, Vector3(tx, by0 + 0.045, tz), 0.072, 0.04, china, false, 0.55)
+	_add_cylinder(root, Vector3(tx, by0 + 0.07, tz), 0.068, 0.04, china, false, 0.55)
+	_add_cylinder(root, Vector3(tx, by0 + 0.095, tz), 0.055, 0.028, china_d, false, 0.55)
 	# Decorative band
-	_add_cylinder(root, Vector3(tx, by0 + 0.07, tz), 0.072, 0.01, band, false, 0.45)
+	_add_cylinder(root, Vector3(tx, by0 + 0.072, tz), 0.074, 0.01, band, false, 0.45)
 	# Dome lid + knop
-	_add_sphere_blob(root, Vector3(tx, by0 + 0.12, tz), 0.04, china)
-	_add_cylinder(root, Vector3(tx, by0 + 0.13, tz), 0.042, 0.02, china_d, false, 0.52)
-	_add_cylinder(root, Vector3(tx, by0 + 0.15, tz), 0.016, 0.018, trim, false, 0.32)
-	_add_sphere_blob(root, Vector3(tx, by0 + 0.165, tz), 0.012, trim.lightened(0.08))
-	# Curved spout (stepped + tip)
+	_add_cylinder(root, Vector3(tx, by0 + 0.12, tz), 0.045, 0.028, china, false, 0.52)
+	_add_cylinder(root, Vector3(tx, by0 + 0.138, tz), 0.032, 0.016, china_d, false, 0.52)
+	_add_cylinder(root, Vector3(tx, by0 + 0.155, tz), 0.014, 0.016, trim, false, 0.32)
+	_add_cylinder(root, Vector3(tx, by0 + 0.168, tz), 0.01, 0.01, trim.lightened(0.08), false, 0.3)
+	# Curved spout
 	_add_box(root, Vector3(tx + 0.055, by0 + 0.06, tz), Vector3(0.05, 0.024, 0.024), china_d, false, 0.55)
 	_add_cylinder_rotated(root, Vector3(tx + 0.1, by0 + 0.075, tz), 0.014, 0.07, china.darkened(0.06), Vector3(0, 0, -0.55), 0.55)
 	_add_cylinder(root, Vector3(tx + 0.13, by0 + 0.09, tz), 0.011, 0.018, china_d, false, 0.55)
@@ -630,12 +624,12 @@ static func _make_tea_tray(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(jx, by0 + 0.055, jz), 0.022, 0.01, band, false, 0.45)
 	_add_box(root, Vector3(jx + 0.025, by0 + 0.045, jz), Vector3(0.024, 0.014, 0.016), china_d, false, 0.55)
 	_add_box(root, Vector3(jx - 0.02, by0 + 0.038, jz), Vector3(0.01, 0.028, 0.012), china_d, false, 0.55)
-	# Sugar bowl + lid
+	# Sugar bowl + lid (cylinders only)
 	var sx2 := -0.02
 	var sz2 := -0.07
 	_add_cylinder(root, Vector3(sx2, by0 + 0.028, sz2), 0.028, 0.032, china, false, 0.55)
 	_add_cylinder(root, Vector3(sx2, by0 + 0.048, sz2), 0.03, 0.01, band, false, 0.45)
-	_add_sphere_blob(root, Vector3(sx2, by0 + 0.058, sz2), 0.022, china)
+	_add_cylinder(root, Vector3(sx2, by0 + 0.058, sz2), 0.024, 0.016, china, false, 0.52)
 	_add_cylinder(root, Vector3(sx2, by0 + 0.07, sz2), 0.01, 0.014, trim, false, 0.32)
 	# Teaspoons
 	_add_box(root, Vector3(0.15, by0 + 0.01, -0.02), Vector3(0.08, 0.005, 0.01), silver_hi, false, 0.22)
