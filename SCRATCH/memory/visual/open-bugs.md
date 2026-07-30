@@ -81,3 +81,8 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen prep still-life:** doorway read was stacked barrel/copper cylinders. Rewrote kits — flour sack as cloth box, wide dough board + loaf, cold apples (novel cue), knife, shallow copper basin; baking/veg/herb variants; lower shelf boxes not towers.  
 
+## Status update 2026-07-29 (loop 147)
+
+- **Hall chair green scrap:** seat-only velvet pad bulk behind cross_plane cards (intentional cushion, not plant bleed); furniture alpha scissor raised to 0.58. Legs stay off (rug L-junk).  
+- **Floor baskets:** new `wicker_basket` (weave ribs, handles, apples/linen/veg) in kitchen + conservatory replacing packing-crate clutter.  
+

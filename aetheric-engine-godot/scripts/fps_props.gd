@@ -147,6 +147,8 @@ static func _build(prop: Dictionary) -> Node3D:
 			node = _make_tool_rack(prop)
 		"crate":
 			node = _make_crate(prop)
+		"wicker_basket":
+			node = _make_wicker_basket(prop)
 		"stool":
 			node = _make_stool(prop)
 		"copper_pot":
@@ -2387,6 +2389,63 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0.5, 0.62, 0.1), Vector3(0.08, 0.04, 0.06), BRASS.darkened(0.1), false, 0.3)
 	return root
 
+static func _make_wicker_basket(prop: Dictionary) -> Node3D:
+	## Loop 147: kitchen/service wicker — weave ribs + handles (not plain wood barrels).
+	## fill: "apples" | "linen" | "veg" | "" empty
+	var root := Node3D.new()
+	root.name = "WickerBasket"
+	var s: float = float(prop.get("scale", 1.0))
+	var seed0: int = int(prop.get("seed", 0))
+	var fill: String = str(prop.get("fill", ""))
+	if fill == "" and seed0 % 3 == 0:
+		fill = "apples"
+	elif fill == "" and seed0 % 3 == 1:
+		fill = "linen"
+	var wick := Color(0.55, 0.4, 0.22) if seed0 % 2 == 0 else Color(0.48, 0.34, 0.18)
+	var wick_d := wick.darkened(0.12)
+	var wick_l := wick.lightened(0.08)
+	var r: float = 0.16 * s
+	var h: float = 0.22 * s
+	# Body + base ring
+	_add_cylinder(root, Vector3(0, h * 0.45, 0), r * 0.92, h * 0.85, wick, true, 0.75)
+	_add_cylinder(root, Vector3(0, 0.03 * s, 0), r * 0.95, 0.04 * s, wick_d, true, 0.7)
+	_add_cylinder(root, Vector3(0, h * 0.05, 0), r * 0.7, 0.03 * s, Color(0.25, 0.18, 0.1), false, 0.85)
+	# Horizontal weave bands
+	for bi in 4:
+		var by := 0.06 * s + float(bi) * (h * 0.18)
+		_add_cylinder(root, Vector3(0, by, 0), r * 1.02, 0.018 * s, wick_d if bi % 2 == 0 else wick_l, false, 0.72)
+	# Vertical stave ribs (weave read at distance)
+	for vi in 8:
+		var ang := float(vi) * TAU / 8.0
+		_add_box(
+			root,
+			Vector3(cos(ang) * r * 0.95, h * 0.45, sin(ang) * r * 0.95),
+			Vector3(0.018 * s, h * 0.75, 0.018 * s),
+			wick_d, false, 0.7
+		)
+	# Top rim + bail handles
+	_add_cylinder(root, Vector3(0, h * 0.9, 0), r * 1.05, 0.03 * s, wick_l, false, 0.7)
+	_add_box(root, Vector3(0, h * 1.05, 0), Vector3(0.02 * s, 0.14 * s, r * 1.7), wick_d, false, 0.65)
+	_add_box(root, Vector3(r * 0.95, h * 0.95, 0), Vector3(0.04 * s, 0.08 * s, 0.04 * s), wick, false, 0.65)
+	_add_box(root, Vector3(-r * 0.95, h * 0.95, 0), Vector3(0.04 * s, 0.08 * s, 0.04 * s), wick, false, 0.65)
+	# Fill
+	if fill == "apples":
+		for ai in 5:
+			var ax := cos(float(ai) * 1.4) * r * 0.35
+			var az := sin(float(ai) * 1.4) * r * 0.35
+			var acol := Color(0.55, 0.18, 0.12) if ai % 2 == 0 else Color(0.48, 0.22, 0.1)
+			_add_sphere_blob(root, Vector3(ax, h * 0.75, az), 0.04 * s, acol)
+	elif fill == "linen":
+		_add_box(root, Vector3(0, h * 0.75, 0), Vector3(r * 1.1, 0.06 * s, r * 1.1), Color(0.82, 0.78, 0.68), false, 0.9)
+		_add_box(root, Vector3(0.02 * s, h * 0.82, 0.02 * s), Vector3(r * 0.9, 0.04 * s, r * 0.85), Color(0.78, 0.74, 0.64), false, 0.9)
+	elif fill == "veg":
+		_add_box(root, Vector3(0, h * 0.72, 0), Vector3(r * 0.9, 0.05 * s, r * 0.7), Color(0.28, 0.4, 0.16), false, 0.85)
+		_add_sphere_blob(root, Vector3(r * 0.25, h * 0.78, 0), 0.035 * s, Color(0.85, 0.45, 0.15))
+		_add_sphere_blob(root, Vector3(-r * 0.2, h * 0.76, r * 0.15), 0.03 * s, Color(0.75, 0.25, 0.15))
+	_add_contact_shadow(root, r * 1.1, r * 1.1)
+	return root
+
+
 static func _make_crate(prop: Dictionary) -> Node3D:
 	## Packing crates: closed / open-lid / stenciled / rope-handled by seed.
 	var root := Node3D.new()
@@ -4073,9 +4132,9 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	else:
 		mat.albedo_color = MAHOGANY
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	# Plants: low scissor keeps stem links; furniture cards keep cleaner cutouts
+	# Plants: low scissor keeps stem links; furniture cards higher (loop 147: less fringe scrap)
 	var is_plant_card := tex_path.find("plant_") >= 0
-	mat.alpha_scissor_threshold = 0.28 if is_plant_card else 0.48
+	mat.alpha_scissor_threshold = 0.28 if is_plant_card else 0.58
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -4173,23 +4232,27 @@ static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, h
 			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
 			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
 		"wing", "wing_green":
-			# Loop 143: cross_planes = no mesh bulk at all (green side cubes killed)
+			# Loop 147: cross_planes → seat-only pad (no tall side cubes / legs)
+			var ww: float = clampf(width * 0.42, 0.42, 0.58)
+			var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
 			if cross_planes:
-				pass
+				_add_box(root, Vector3(0, 0.42, -0.28), Vector3(ww * 0.85, 0.08, 0.2), MAHOGANY_DARK, false, 0.45)
+				_add_box(root, Vector3(0, 0.5, -0.26), Vector3(ww * 0.72, 0.1, 0.16), fab, false, 0.9)
 			else:
-				var ww: float = clampf(width * 0.42, 0.42, 0.58)
-				var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
 				_add_box(root, Vector3(0, 0.4, -0.36), Vector3(ww * 0.9, 0.1, 0.22), MAHOGANY_DARK, false, 0.45)
 				_add_box(root, Vector3(0, 0.5, -0.34), Vector3(ww * 0.78, 0.1, 0.18), fab, false, 0.9)
 				_add_box(root, Vector3(0, 0.7, -0.44), Vector3(ww * 0.3, 0.22, 0.07), fab.darkened(0.15), false, 0.9)
 				for sx in [-1.0, 1.0]:
 					_add_cylinder(root, Vector3(sx * ww * 0.24, 0.1, -0.28), 0.024, 0.12, MAHOGANY, false)
 		"chair":
-			# Loop 143: cross_planes = no mesh bulk (legs were gallery rug L-junk)
+			# Loop 147: cross_planes → seat cushion only (green pad = intentional, not plant scrap)
+			# Legs stay off — gallery rug L-junk from stretchers (loop 143).
+			var cw: float = clampf(width * 0.48, 0.36, 0.52)
 			if cross_planes:
-				pass
+				_add_box(root, Vector3(0, 0.44, -0.22), Vector3(cw * 0.95, 0.04, 0.2), MAHOGANY, false, 0.48)
+				_add_box(root, Vector3(0, 0.5, -0.2), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
+				_add_box(root, Vector3(0, 0.56, -0.2), Vector3(cw * 0.82, 0.025, 0.16), VELVET_GREEN.lightened(0.06), false, 0.88)
 			else:
-				var cw: float = clampf(width * 0.48, 0.36, 0.52)
 				_add_box(root, Vector3(0, 0.46, -0.32), Vector3(cw, 0.05, 0.22), MAHOGANY, false, 0.48)
 				_add_box(root, Vector3(0, 0.52, -0.3), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
 				for sx in [-1.0, 1.0]:
