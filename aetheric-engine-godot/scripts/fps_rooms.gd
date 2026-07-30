@@ -378,6 +378,8 @@ const ROOMS := {
 			# Secondary apparatus only (not a forest of machines)
 			{"kind": "machine", "pos": [4.5, 0.0, -4.2], "yaw": -20.0, "height": 1.9, "seed": 0},
 			{"kind": "machine", "pos": [-4.8, 0.0, -4.5], "yaw": 25.0, "height": 1.65, "seed": 1},
+			# Loop 221: open Leyden-jar battery (style-2) — east mid-room, clears aisle
+			{"kind": "machine", "pos": [5.5, 0.0, 0.8], "yaw": -90.0, "height": 1.55, "seed": 2},
 			# Ledger desk for Amara/Bell notes (novel: desk, ledger)
 			{"kind": "desk", "pos": [-5.2, 0.0, -1.5], "yaw": 90.0},
 			# Loop 157: mesh desk chair (gallery — solid edge-on)
@@ -401,7 +403,7 @@ const ROOMS := {
 			{"kind": "oil_lamp", "pos": [-5.5, 0.0, 0.4], "yaw": 20.0, "height": 1.15},
 			{"kind": "oil_lamp", "pos": [3.5, 0.0, -2.2], "yaw": -15.0, "height": 0.95},
 			{"kind": "oil_lamp", "pos": [-2.0, 0.0, -4.5], "yaw": 10.0, "height": 1.05},
-			{"kind": "oil_lamp", "pos": [5.2, 0.0, 1.5], "yaw": -40.0, "height": 1.0},
+			{"kind": "oil_lamp", "pos": [4.4, 0.0, 1.8], "yaw": -40.0, "height": 1.0},
 			{"kind": "wall_sconce", "pos": [-7.5, 0.0, 1.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [7.5, 0.0, 1.0], "yaw": -90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [-7.5, 0.0, -3.5], "yaw": 90.0, "height": 2.35},

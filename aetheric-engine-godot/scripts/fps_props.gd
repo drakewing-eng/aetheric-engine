@@ -3669,50 +3669,94 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			fork_core.position = Vector3(0, 1.72, 0.02)
 			root.add_child(fork_core)
 		_:
-			# Leyden / glass-stack apparatus — solid mats + warm amber terminal (not cyan hat)
+			# Loop 221: OPEN Leyden-jar battery — not iron fridge + dense copper coil stack mid-FOV.
+			# Oak table plinth + 3 glass jars with foil bands (air between) + brass bus bar +
+			# single mast with spark gap (no 5-shelf fridge coil tower).
 			var mat_glass := StandardMaterial3D.new()
-			mat_glass.albedo_color = Color(0.55, 0.72, 0.7, 0.55)
+			mat_glass.albedo_color = Color(0.62, 0.78, 0.74, 0.42)
 			mat_glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mat_glass.metallic = 0.05
-			mat_glass.roughness = 0.25
+			mat_glass.roughness = 0.2
 			mat_glass.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-			_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(1.05, 0.2, 1.0), mat_oak_sd)
-			_add_mesh_box(root, Vector3(0, 0.24, 0), Vector3(0.92, 0.1, 0.88), mat_oak_s)
-			_add_mesh_box(root, Vector3(0, 0.3, 0), Vector3(0.78, 0.04, 0.74), mat_iron_s)
+			var mat_glass_d := StandardMaterial3D.new()
+			mat_glass_d.albedo_color = Color(0.48, 0.65, 0.62, 0.5)
+			mat_glass_d.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mat_glass_d.metallic = 0.05
+			mat_glass_d.roughness = 0.25
+			mat_glass_d.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+			var mat_foil := _solid_metal(Color(0.62, 0.38, 0.16), 0.34)
+			var mat_foil_l := _solid_metal(Color(0.72, 0.46, 0.2), 0.3)
+			var mat_foil_d := _solid_metal(Color(0.48, 0.28, 0.12), 0.38)
+			# Furniture plinth — open apron, not iron slab
+			_add_mesh_box(root, Vector3(0, 0.06, 0), Vector3(1.1, 0.1, 0.72), mat_oak_sd)
+			_add_mesh_box(root, Vector3(0, 0.14, 0), Vector3(1.0, 0.05, 0.62), mat_oak_s)
+			# Four turned oak legs (air under table)
+			for sx in [-1.0, 1.0]:
+				for sz in [-1.0, 1.0]:
+					_add_mesh_cyl(root, Vector3(sx * 0.42, 0.18, sz * 0.24), 0.04, 0.08, mat_oak_sd, false)
+					_add_mesh_cyl(root, Vector3(sx * 0.42, 0.0, sz * 0.24), 0.035, 0.12, mat_oak_s, true)
+					_add_mesh_cyl(root, Vector3(sx * 0.42, 0.01, sz * 0.24), 0.05, 0.02, mat_oak_sdd, false)
+			# Thin brass rail edge on table top
+			_add_mesh_box(root, Vector3(0, 0.175, 0.3), Vector3(0.95, 0.015, 0.02), mat_br_sd)
+			_add_mesh_box(root, Vector3(0, 0.175, -0.3), Vector3(0.95, 0.015, 0.02), mat_br_sd)
+			# THREE Leyden jars — spaced with air (not solid glass wall)
 			for i in 3:
-				var jx := -0.28 + float(i) * 0.28
-				var jh := 0.85 + float(i % 2) * 0.15
-				_add_mesh_cyl(root, Vector3(jx, 0.35 + jh * 0.5, 0.05), 0.12, jh, mat_glass, false)
-				_add_mesh_cyl(root, Vector3(jx, 0.55, 0.05), 0.125, 0.08, mat_cop_s, false)
-				_add_mesh_cyl(root, Vector3(jx, 0.85, 0.05), 0.125, 0.06, mat_cop_sd, false)
-				_add_mesh_cyl(root, Vector3(jx, 0.35 + jh, 0.05), 0.08, 0.04, mat_br_s, false)
-				_add_mesh_cyl(root, Vector3(jx, 0.4 + jh, 0.05), 0.02, 0.12, mat_br_sd, false)
-			_add_mesh_cyl(root, Vector3(0, 1.0, -0.25), 0.04, 1.2, mat_br_s, true)
-			for i in 5:
-				var y: float = 0.55 + float(i) * 0.18
-				var r: float = 0.22 - float(i) * 0.02
-				_add_mesh_cyl(root, Vector3(0, y, -0.25), r, 0.04, mat_cop_s if i % 2 == 0 else mat_cop_sd, false)
-			_add_mesh_cyl(root, Vector3(0, 1.7, -0.25), 0.1, 0.12, mat_br_sl, false)
-			_add_mesh_box(root, Vector3(0, 1.15, -0.08), Vector3(0.55, 0.03, 0.03), mat_br_sd)
-			_add_mesh_box(root, Vector3(0, 0.9, 0.0), Vector3(0.6, 0.025, 0.025), mat_cop_s)
-			_add_mesh_box(root, Vector3(0.45, 0.55, 0.25), Vector3(0.25, 0.4, 0.28), mat_iron_sd)
-			_add_mesh_cyl(root, Vector3(0.45, 0.7, 0.38), 0.06, 0.03, mat_br_s, false)
-			_add_mesh_cyl(root, Vector3(0.45, 0.85, 0.38), 0.05, 0.025, mat_br_sd, false)
-			top_y = 1.65
-			# Warm amber terminal (matches house aether language — not cyan game orb)
+				var jx := -0.32 + float(i) * 0.32
+				var jh := 0.72 + float(i % 2) * 0.08
+				var jy: float = 0.2 + jh * 0.5
+				# Jar body (taper hint: wider belly)
+				_add_mesh_cyl(root, Vector3(jx, 0.22, 0.0), 0.09, 0.04, mat_glass_d, false)
+				_add_mesh_cyl(root, Vector3(jx, jy, 0.0), 0.1, jh, mat_glass, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.22 + jh * 0.55, 0.0), 0.095, jh * 0.35, mat_glass_d, false)
+				# Outer foil coating (lower half only — classic Leyden)
+				_add_mesh_cyl(root, Vector3(jx, 0.28 + jh * 0.22, 0.0), 0.105, jh * 0.42, mat_foil, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.28 + jh * 0.22, 0.0), 0.11, 0.02, mat_foil_l, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.28 + jh * 0.4, 0.0), 0.11, 0.016, mat_foil_d, false)
+				# Neck + brass cap
+				_add_mesh_cyl(root, Vector3(jx, 0.2 + jh, 0.0), 0.06, 0.04, mat_glass, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.24 + jh, 0.0), 0.07, 0.025, mat_br_s, false)
+				# Conducting rod through cork + knob
+				_add_mesh_cyl(root, Vector3(jx, 0.32 + jh, 0.0), 0.014, 0.16, mat_br_sd, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.42 + jh, 0.0), 0.035, 0.03, mat_br_s, false)
+				_add_mesh_cyl(root, Vector3(jx, 0.45 + jh, 0.0), 0.022, 0.02, mat_br_sl, false)
+				# Short chain / link to bus
+				_add_mesh_box(root, Vector3(jx, 0.48 + jh, 0.0), Vector3(0.02, 0.08, 0.02), mat_br_sd)
+			# Horizontal brass bus bar linking jar rods (air below — open silhouette)
+			_add_mesh_box(root, Vector3(0, 1.18, 0.0), Vector3(0.78, 0.02, 0.02), mat_br_s)
+			_add_mesh_box(root, Vector3(0, 1.22, 0.0), Vector3(0.12, 0.04, 0.04), mat_br_sd)
+			# Single slender mast (not 5-coil fridge tower)
+			_add_mesh_cyl(root, Vector3(0, 0.9, -0.28), 0.028, 1.0, mat_br_sd, true)
+			_add_mesh_cyl(root, Vector3(0, 0.35, -0.28), 0.05, 0.06, mat_br_s, false)
+			# One thin induction ring only (instrument, not shelf stack)
+			_add_mesh_cyl(root, Vector3(0, 0.85, -0.28), 0.18, 0.025, mat_cop_s, false)
+			_add_mesh_cyl(root, Vector3(0, 0.86, -0.28), 0.14, 0.012, mat_cop_sl, false)
+			_add_mesh_cyl(root, Vector3(0, 0.85, -0.28), 0.04, 0.02, mat_br_sd, false)
+			# Cross link from bus to mast
+			_add_mesh_box(root, Vector3(0, 1.18, -0.14), Vector3(0.02, 0.02, 0.28), mat_br_sd)
+			# Spark gap arms + amber terminal
+			_add_mesh_box(root, Vector3(-0.06, 1.45, -0.28), Vector3(0.02, 0.12, 0.02), mat_br_sl)
+			_add_mesh_box(root, Vector3(0.06, 1.45, -0.28), Vector3(0.02, 0.12, 0.02), mat_br_sl)
+			_add_mesh_cyl(root, Vector3(0, 1.52, -0.28), 0.08, 0.04, mat_br_s, false)
+			_add_mesh_cyl(root, Vector3(0, 1.58, -0.28), 0.05, 0.06, mat_br_sd, false)
+			# Compact oak notebook shelf (not iron fridge cheek)
+			_add_mesh_box(root, Vector3(0.48, 0.45, 0.18), Vector3(0.16, 0.22, 0.2), mat_oak_sd)
+			_add_mesh_box(root, Vector3(0.48, 0.55, 0.18), Vector3(0.12, 0.04, 0.16), mat_oak_s)
+			_add_mesh_cyl(root, Vector3(0.48, 0.58, 0.28), 0.035, 0.015, mat_br_s, false)
+			top_y = 1.55
+			# Warm amber spark (house aether language — not cyan orb)
 			var leyden_g := MeshInstance3D.new()
 			var lsm := SphereMesh.new()
-			lsm.radius = 0.05
-			lsm.height = 0.1
+			lsm.radius = 0.04
+			lsm.height = 0.08
 			leyden_g.mesh = lsm
 			var lmat := StandardMaterial3D.new()
 			lmat.albedo_color = Color(0.95, 0.75, 0.4)
 			lmat.emission_enabled = true
 			lmat.emission = Color(0.9, 0.65, 0.3)
-			lmat.emission_energy_multiplier = 1.5
+			lmat.emission_energy_multiplier = 1.6
 			lmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			leyden_g.material_override = lmat
-			leyden_g.position = Vector3(0, 1.72, -0.25)
+			leyden_g.position = Vector3(0, 1.55, -0.28)
 			root.add_child(leyden_g)
 	# Shared: warm brass-energy accent (style 0)
 	if style == 0:

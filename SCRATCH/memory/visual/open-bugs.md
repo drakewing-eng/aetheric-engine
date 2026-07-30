@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 221)
+
+- **Gallery style-2 Leyden residual:** unused seed-2 was iron fridge + 5-coil copper stack if ever placed. Rewrote open Leyden-jar battery — oak table plinth + 4 legs, 3 glass jars with lower foil + brass caps, bus bar, single mast + one ring + spark gap (no dense coil fridge). Placed east mid-gallery (`seed: 2`). Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 220)
 
 - **Sofa fridge residual:** olive chesterfield still read as green rectangular slab mid-FOV (drawing_room_spawn). Rewrote roll-dominant arms, three deep channelled cushions, arched dual-roll crown, soft skirt drape.  
