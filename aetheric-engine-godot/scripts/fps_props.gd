@@ -332,12 +332,18 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 			_add_mesh_box(root, Vector3(0, 1.05, -0.17), Vector3(0.28, 0.022, 0.022), mat_md)
 			_add_mesh_box(root, Vector3(0, 1.22, -0.16), Vector3(0.3, 0.02, 0.02), mat_m)
 		1:
-			# Upholstered balloon pad (reception only — hall uses style:"hall")
-			_add_mesh_box(root, Vector3(0, 0.98, -0.16), Vector3(0.28, 0.5, 0.04), mat_fab)
-			_add_mesh_box(root, Vector3(0, 1.0, -0.13), Vector3(0.22, 0.42, 0.03), mat_fab_d)
-			_add_mesh_cyl(root, Vector3(0, 1.05, -0.12), 0.1, 0.28, mat_fab_l, false)
-			for bi in 2:
-				_add_mesh_cyl(root, Vector3((float(bi) - 0.5) * 0.08, 1.05, -0.1), 0.01, 0.012, mat_fab_dd, false)
+			# Loop 238: soft balloon cushion (not flat green fridge pad mid-FOV)
+			# Continuous plush mass within balloon frame — same fabric family only
+			_add_mesh_box(root, Vector3(0, 0.98, -0.15), Vector3(0.26, 0.48, 0.06), mat_fab)
+			_add_mesh_box(root, Vector3(0, 1.0, -0.11), Vector3(0.2, 0.38, 0.05), mat_fab_d)
+			# Soft crown roll + side rolls (continuous cushion, not slab)
+			_add_mesh_cyl_rot(root, Vector3(0, 1.2, -0.12), 0.045, 0.22, mat_fab, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl(root, Vector3(0, 1.0, -0.1), 0.09, 0.32, mat_fab, false)
+			for sx in [-1.0, 1.0]:
+				_add_mesh_cyl(root, Vector3(sx * 0.1, 1.0, -0.12), 0.04, 0.38, mat_fab_d, false)
+			# Dark buttons only
+			for bi in 3:
+				_add_mesh_cyl(root, Vector3(0, 0.82 + float(bi) * 0.14, -0.08), 0.01, 0.01, mat_fab_dd, false)
 		_:
 			# Central vase splat (mid-Victorian)
 			_add_mesh_cyl(root, Vector3(0, 0.95, -0.17), 0.025, 0.55, mat_md, false)
@@ -4320,6 +4326,7 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
 	## Loop 206: solid-mat frond side volume — no wood/clay washout on stems/leaves.
 	## Loop 210: denser radial blades + thicker leaf pads so extreme side FOV isn't paper-thin.
+	## Loop 238: even denser crown bulk + thicker blades for walk-around mid-FOV side read.
 	var pot_top := ph * 0.30
 	var crown := ph * 0.78
 	var mat_leaf_a := _solid_matte(Color(0.22, 0.42, 0.16), 0.92)
@@ -4330,69 +4337,80 @@ static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: 
 	var mat_clay_l := _solid_matte(Color(0.76, 0.48, 0.28), 0.9)
 	var mat_soil := _solid_matte(Color(0.16, 0.1, 0.06), 0.95)
 	# Mesh pot ring under card pot — side volume for terracotta (card still paints front)
-	_add_mesh_cyl(root, Vector3(0, pot_top * 0.42, 0), pw * 0.16, pot_top * 0.72, mat_clay, false)
-	_add_mesh_cyl(root, Vector3(0, pot_top * 0.78, 0), pw * 0.18, pot_top * 0.12, mat_clay_l, false)
-	_add_mesh_cyl(root, Vector3(0, pot_top * 0.82, 0), pw * 0.13, pot_top * 0.08, mat_soil, false)
-	var n_stems := 10 if is_fern else 9
+	_add_mesh_cyl(root, Vector3(0, pot_top * 0.42, 0), pw * 0.18, pot_top * 0.75, mat_clay, false)
+	_add_mesh_cyl(root, Vector3(0, pot_top * 0.78, 0), pw * 0.2, pot_top * 0.14, mat_clay_l, false)
+	_add_mesh_cyl(root, Vector3(0, pot_top * 0.84, 0), pw * 0.14, pot_top * 0.08, mat_soil, false)
+	var n_stems := 12 if is_fern else 11
 	for i in n_stems:
 		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.41
-		var r := pw * (0.07 + float(i % 3) * 0.025)
+		var r := pw * (0.08 + float(i % 3) * 0.03)
 		var sx: float = cos(ang) * r
 		var sz: float = sin(ang) * r
-		var sh: float = (crown - pot_top) * (0.5 + float((i + seed0) % 4) * 0.1)
-		_add_mesh_cyl(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.01 * pw + 0.006, sh, mat_stem, false)
+		var sh: float = (crown - pot_top) * (0.55 + float((i + seed0) % 4) * 0.1)
+		_add_mesh_cyl(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.012 * pw + 0.008, sh, mat_stem, false)
 		var tip_y: float = pot_top + sh
 		if is_fern:
-			for j in 6:
-				var t := float(j) / 5.0
+			for j in 7:
+				var t := float(j) / 6.0
 				var fang := ang + (float(j % 2) * 2.0 - 1.0) * (0.55 + t * 0.28)
-				var fl := pw * (0.18 + (1.0 - t) * 0.1)
+				var fl := pw * (0.2 + (1.0 - t) * 0.12)
 				var fy := tip_y - t * sh * 0.55
 				_add_mesh_box(
 					root,
 					Vector3(sx + cos(fang) * fl * 0.42, fy, sz + sin(fang) * fl * 0.42),
-					Vector3(fl, 0.016 * ph, 0.04 * pw),
+					Vector3(fl, 0.022 * ph, 0.05 * pw),
 					mat_leaf_a if j % 2 == 0 else mat_leaf_b
 				)
 				var fang2 := fang + PI * 0.92
 				_add_mesh_box(
 					root,
 					Vector3(sx + cos(fang2) * fl * 0.35, fy - 0.008 * ph, sz + sin(fang2) * fl * 0.35),
-					Vector3(fl * 0.85, 0.014 * ph, 0.032 * pw),
+					Vector3(fl * 0.85, 0.018 * ph, 0.04 * pw),
 					mat_leaf_c if j % 2 == 0 else mat_leaf_a
 				)
 		else:
-			for j in 6:
-				var pang := ang + float(j - 2.5) * 0.3
-				var bl := pw * (0.24 + float(j % 3) * 0.055)
-				var drop := 0.02 * ph + float(j) * 0.018 * ph
+			for j in 7:
+				var pang := ang + float(j - 3.0) * 0.28
+				var bl := pw * (0.26 + float(j % 3) * 0.06)
+				var drop := 0.02 * ph + float(j) * 0.016 * ph
 				_add_mesh_box(
 					root,
 					Vector3(sx + cos(pang) * bl * 0.55, tip_y - drop, sz + sin(pang) * bl * 0.55),
-					Vector3(bl * 0.95, 0.018 * ph, 0.042 * pw),
+					Vector3(bl * 0.95, 0.024 * ph, 0.05 * pw),
 					mat_leaf_c if j % 2 == 0 else mat_leaf_a
 				)
 				_add_mesh_box(
 					root,
 					Vector3(sx + cos(pang) * bl * 0.35, tip_y - drop - 0.01 * ph, sz + sin(pang) * bl * 0.35),
-					Vector3(bl * 0.5, 0.014 * ph, 0.028 * pw),
+					Vector3(bl * 0.55, 0.018 * ph, 0.035 * pw),
 					mat_leaf_b
 				)
 	# Dense mid-crown radial collar (fills side silhouette)
-	for k in 14:
-		var kang := float(k) * TAU / 14.0 + 0.15 + float(seed0 % 5) * 0.05
-		var kr: float = pw * (0.14 + float(k % 3) * 0.04)
-		var ky: float = pot_top + (crown - pot_top) * (0.28 + float(k % 5) * 0.11)
-		var blade_len: float = pw * (0.14 + float(k % 2) * 0.05)
+	for k in 18:
+		var kang := float(k) * TAU / 18.0 + 0.15 + float(seed0 % 5) * 0.05
+		var kr: float = pw * (0.15 + float(k % 3) * 0.045)
+		var ky: float = pot_top + (crown - pot_top) * (0.25 + float(k % 5) * 0.12)
+		var blade_len: float = pw * (0.16 + float(k % 2) * 0.06)
 		_add_mesh_box(
 			root,
 			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
-			Vector3(blade_len, 0.018 * ph, 0.038 * pw),
+			Vector3(blade_len, 0.024 * ph, 0.048 * pw),
 			mat_leaf_b if k % 2 == 0 else mat_leaf_a
 		)
-	for k in 8:
-		var kang := float(k) * TAU / 8.0 + 0.4
-		var kr: float = pw * 0.11
+	# Outer ring of hanging blades (side FOV volume)
+	for k in 12:
+		var kang := float(k) * TAU / 12.0 + 0.4
+		var kr: float = pw * 0.22
+		var ky: float = pot_top + (crown - pot_top) * 0.45
+		_add_mesh_box(
+			root,
+			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
+			Vector3(pw * 0.18, 0.02 * ph, 0.045 * pw),
+			mat_leaf_c if k % 2 == 0 else mat_leaf_b
+		)
+	for k in 10:
+		var kang := float(k) * TAU / 10.0 + 0.4
+		var kr: float = pw * 0.12
 		var ky: float = crown * 0.88
 		_add_mesh_box(
 			root,
