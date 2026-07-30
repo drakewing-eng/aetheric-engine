@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 219)
+
+- **Prep lower shelf residual:** bread tin box + crock nubs mid-FOV under table (kitchen_spawn). Rewrote loaf tin with crust peek + end handles, lidded stoneware crock with glaze band + ear + knob, nested copper pans with bail, folded linen + jam jar.  
+- **Oil lamp stick residual:** cream pencil columns on kitchen floor mid-FOV. Rewrote Argand — squat bulbous font, short stem, wide brass gallery, tapered chimney + 3-rod cage. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 218)
 
 - **Prep kit 0 flour sack residual:** horizontal hessian cylinder still read as brown log mid-FOV. Rewrote standing plump bag — wide base, cinched neck + ear, brand stamp, cheek folds, flour spill.  
