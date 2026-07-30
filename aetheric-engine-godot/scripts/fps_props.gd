@@ -1468,36 +1468,40 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_mesh_cyl(root, Vector3(1.05, 1.3, -0.05), 0.19, 0.06, mat_br_d, false)
 	_add_mesh_cyl(root, Vector3(1.05, 0.45, -0.05), 0.19, 0.06, mat_iron_d, false)
 	_add_mesh_cyl(root, Vector3(1.05, 1.0, 0.12), 0.03, 0.04, mat_br, false)
-	# Loop 176: continuous flue shaft (not grey ziggurat crown mid-FOV).
-	# Period range: tall rectangular flue + iron bands + one cornice cap only.
-	var mat_flue := _solid_matte(Color(0.3, 0.3, 0.32), 0.55)
-	var mat_flue_d := _solid_matte(Color(0.2, 0.2, 0.22), 0.58)
-	var mat_flue_l := _solid_matte(Color(0.42, 0.42, 0.44), 0.5)
-	var mat_brass_f := _solid_copper_mat(Color(0.62, 0.48, 0.22), 0.35)  # darkened brass-ish
-	# Throat plate on range top (joins body to flue — wide, low)
-	_add_mesh_box(root, Vector3(0, 1.68, -0.08), Vector3(0.9, 0.1, 0.55), mat_flue)
-	_add_mesh_box(root, Vector3(0, 1.74, -0.08), Vector3(0.78, 0.04, 0.48), mat_brass_f)
-	# ONE continuous shaft (constant section — bands are surface only)
-	_add_mesh_box(root, Vector3(0, 2.2, -0.1), Vector3(0.48, 0.95, 0.4), mat_flue_d)
-	# Horizontal iron bands (identity, not width steps)
-	for bi in 4:
-		var by := 1.9 + float(bi) * 0.18
-		_add_mesh_box(root, Vector3(0, by, -0.1), Vector3(0.52, 0.035, 0.44), mat_flue_l)
-	# Corner rivets along front edges
-	for ri in 5:
-		var ry := 1.85 + float(ri) * 0.15
-		_add_mesh_cyl(root, Vector3(-0.22, ry, 0.1), 0.016, 0.02, mat_flue_l, false)
-		_add_mesh_cyl(root, Vector3(0.22, ry, 0.1), 0.016, 0.02, mat_flue_l, false)
-	# Front smoke plate + brass damper pull
-	_add_mesh_box(root, Vector3(0, 2.05, 0.12), Vector3(0.28, 0.4, 0.035), mat_flue)
-	_add_mesh_box(root, Vector3(0, 2.05, 0.14), Vector3(0.18, 0.28, 0.02), mat_flue_d)
-	_add_mesh_cyl(root, Vector3(0, 2.0, 0.16), 0.018, 0.07, mat_brass_f, false)
-	# Single cornice cap (one moulding, not Minecraft steps)
-	_add_mesh_box(root, Vector3(0, 2.7, -0.1), Vector3(0.58, 0.06, 0.48), mat_flue_l)
-	_add_mesh_box(root, Vector3(0, 2.76, -0.1), Vector3(0.42, 0.05, 0.36), mat_flue_d)
-	# Tiny chimney pot (cylinder — period cue)
-	_add_mesh_cyl(root, Vector3(0, 2.88, -0.1), 0.08, 0.16, mat_flue, false)
-	_add_mesh_cyl(root, Vector3(0, 2.96, -0.1), 0.1, 0.04, mat_flue_l, false)
+	# Loop 213: continuous cast-iron flue matching range body (not pale grey banded ziggurat mid-FOV).
+	# Same metal iron mats as body — proud pale bands were reading as Minecraft steps.
+	var mat_flue := mat_body
+	var mat_flue_d := mat_iron_d
+	var mat_flue_band := mat_iron  # same family, thin flush band only
+	var mat_brass_f := mat_br_d
+	# Throat: same width as shaft (no wide base step)
+	_add_mesh_box(root, Vector3(0, 1.62, -0.08), Vector3(0.55, 0.12, 0.42), mat_flue_d)
+	_add_mesh_box(root, Vector3(0, 1.7, -0.08), Vector3(0.5, 0.06, 0.4), mat_brass_f)
+	# ONE continuous rectangular shaft — constant section full height
+	var shaft_w := 0.46
+	var shaft_d := 0.38
+	_add_mesh_box(root, Vector3(0, 2.25, -0.1), Vector3(shaft_w, 1.05, shaft_d), mat_flue)
+	# Flush/inset horizontal seams (slightly SMALLER than shaft — no proud steps)
+	for bi in 3:
+		var by := 1.95 + float(bi) * 0.28
+		_add_mesh_box(root, Vector3(0, by, -0.1), Vector3(shaft_w * 0.96, 0.022, shaft_d * 0.96), mat_flue_band)
+	# Sparse dark rivets (recessed, not bright stud grid)
+	for ri in 4:
+		var ry := 1.9 + float(ri) * 0.22
+		_add_mesh_cyl(root, Vector3(-shaft_w * 0.42, ry, shaft_d * 0.48), 0.012, 0.014, mat_iron_d, false)
+		_add_mesh_cyl(root, Vector3(shaft_w * 0.42, ry, shaft_d * 0.48), 0.012, 0.014, mat_iron_d, false)
+	# Front damper door flush on shaft face
+	_add_mesh_box(root, Vector3(0, 2.1, shaft_d * 0.48), Vector3(0.22, 0.32, 0.03), mat_iron_d)
+	_add_mesh_box(root, Vector3(0, 2.1, shaft_d * 0.52), Vector3(0.14, 0.22, 0.018), mat_flue)
+	_add_mesh_cyl(root, Vector3(0, 2.05, shaft_d * 0.58), 0.016, 0.05, mat_brass_f, false)
+	# Single thin cornice lip only (not double-step crown)
+	_add_mesh_box(root, Vector3(0, 2.78, -0.1), Vector3(shaft_w * 1.08, 0.04, shaft_d * 1.08), mat_iron_l)
+	# Period chimney pot — continuous dark iron cylinder with slight flare rim
+	_add_mesh_cyl(root, Vector3(0, 2.95, -0.1), 0.09, 0.28, mat_iron_d, false)
+	_add_mesh_cyl(root, Vector3(0, 2.88, -0.1), 0.1, 0.04, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(0, 3.1, -0.1), 0.11, 0.04, mat_iron_l, false)
+	# Thin soot lip under pot
+	_add_mesh_cyl(root, Vector3(0, 2.82, -0.1), 0.12, 0.025, mat_soot, false)
 	# Short hanging rail under mantel
 	_add_mesh_box(root, Vector3(0, 1.62, 0.38), Vector3(1.4, 0.03, 0.04), mat_log)
 	_add_mesh_cyl(root, Vector3(-0.4, 1.48, 0.4), 0.09, 0.05, mat_cop, false)

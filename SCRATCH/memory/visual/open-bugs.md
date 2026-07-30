@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 213)
+
+- **Kitchen range flue residual:** pale grey matte shaft + proud light bands + double cornice read as Minecraft ziggurat mid-FOV (kitchen_spawn). Rewrote continuous cast-iron matching range body mats, inset seams only, single thin lip, period cylinder pot. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 212)
 
 - **Conservatory stone path residual:** pale aligned slabs + bright green moss dots read as game rivet path mid-FOV. Rewrote irregular staggered warm flags, dark grit bed, muted joint moss, low irregular curbs.  
