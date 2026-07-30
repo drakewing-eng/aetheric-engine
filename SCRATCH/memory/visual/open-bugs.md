@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 183)
+
+- **Classical urn residual:** amphora cylinder stack still read as milk-churn mid-FOV after 180. Rewrote Victorian pedestal garden urn — round base disc, narrow turned stem, wide bowl + rolled rim, dark sandstone (not pale cream), small loop handles, trailing ivy drape.  
+
 ## Status update 2026-07-29 (loop 182)
 
 - **Gallery secondary machine residual:** style-1 harmonic resonator was solid iron side cheeks + back panel + cyan glass hat = iron fridge mid-FOV. Open oak plinth, two posts, air-spaced copper diaphragms, thin rear rail, small glass jar + tuning-fork prongs.  

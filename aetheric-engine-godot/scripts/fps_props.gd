@@ -2034,52 +2034,54 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 
 
 static func _make_urn(prop: Dictionary) -> Node3D:
-	## Loop 180: classical amphora — ONE solid body color (no light/dark tier bands =
-	## milk-churn stack mid-FOV). Overlapping same-mat cylinders; plinth only darker.
+	## Loop 183: Victorian pedestal garden urn — bowl on turned stem (not amphora
+	## cylinder stack / milk-churn mid-FOV). ONE dark stone mat throughout.
 	var root := Node3D.new()
 	root.name = "Urn"
 	var seed0: int = int(prop.get("seed", 0))
 	var scale: float = float(prop.get("scale", 1.0))
-	# Warm limestone / cool ashlar — mid grey-stone (pale cream washed to white under glass)
-	var body_c := Color(0.5, 0.46, 0.4) if seed0 % 2 == 0 else Color(0.52, 0.47, 0.4)
-	var plinth_c := Color(0.36, 0.32, 0.28) if seed0 % 2 == 0 else Color(0.38, 0.33, 0.28)
-	var mat := _solid_matte(body_c, 0.9)
-	var mat_plinth := _solid_matte(plinth_c, 0.92)
-	# Low square plinth only (separate from body)
-	_add_mesh_box(root, Vector3(0, 0.035 * scale, 0), Vector3(0.36 * scale, 0.07 * scale, 0.36 * scale), mat_plinth)
-	_add_mesh_box(root, Vector3(0, 0.075 * scale, 0), Vector3(0.28 * scale, 0.025 * scale, 0.28 * scale), mat)
-	# Continuous amphora silhouette — ALL body mat (overlapping, no color steps)
-	_add_mesh_cyl(root, Vector3(0, 0.14 * scale, 0), 0.12 * scale, 0.08 * scale, mat, true)
-	_add_mesh_cyl(root, Vector3(0, 0.28 * scale, 0), 0.18 * scale, 0.2 * scale, mat, true)
-	_add_mesh_cyl(root, Vector3(0, 0.44 * scale, 0), 0.2 * scale, 0.18 * scale, mat, true)
-	_add_mesh_cyl(root, Vector3(0, 0.56 * scale, 0), 0.16 * scale, 0.12 * scale, mat, true)
-	_add_mesh_cyl(root, Vector3(0, 0.64 * scale, 0), 0.1 * scale, 0.1 * scale, mat, false)
-	# Everted rim (same body color — light rim was a white crown band)
-	_add_mesh_cyl(root, Vector3(0, 0.7 * scale, 0), 0.12 * scale, 0.03 * scale, mat, false)
-	# C-handles (same body color)
+	# Dark warm sandstone (pale cream washes white under conservatory glass)
+	var body_c := Color(0.42, 0.36, 0.28) if seed0 % 2 == 0 else Color(0.4, 0.35, 0.3)
+	var mat := _solid_matte(body_c, 0.92)
+	var mat_soil := _solid_matte(Color(0.14, 0.09, 0.05), 0.95)
+	var mat_la := _solid_matte(Color(0.18, 0.34, 0.12), 0.9)
+	var mat_lb := _solid_matte(Color(0.12, 0.26, 0.08), 0.9)
+	# Round base disc (not square Minecraft plinth)
+	_add_mesh_cyl(root, Vector3(0, 0.03 * scale, 0), 0.2 * scale, 0.06 * scale, mat, true)
+	_add_mesh_cyl(root, Vector3(0, 0.07 * scale, 0), 0.16 * scale, 0.03 * scale, mat, false)
+	# Turned pedestal stem (narrow — reads as stem, not barrel stack)
+	_add_mesh_cyl(root, Vector3(0, 0.16 * scale, 0), 0.07 * scale, 0.12 * scale, mat, true)
+	_add_mesh_cyl(root, Vector3(0, 0.28 * scale, 0), 0.09 * scale, 0.1 * scale, mat, true)
+	_add_mesh_cyl(root, Vector3(0, 0.36 * scale, 0), 0.06 * scale, 0.08 * scale, mat, false)
+	# Cup/bowl (wide mouth — garden urn identity)
+	_add_mesh_cyl(root, Vector3(0, 0.48 * scale, 0), 0.14 * scale, 0.14 * scale, mat, true)
+	_add_mesh_cyl(root, Vector3(0, 0.56 * scale, 0), 0.2 * scale, 0.1 * scale, mat, true)
+	# Rolled rim
+	_add_mesh_cyl(root, Vector3(0, 0.62 * scale, 0), 0.22 * scale, 0.035 * scale, mat, false)
+	# Inner soil
+	_add_mesh_cyl(root, Vector3(0, 0.6 * scale, 0), 0.14 * scale, 0.025 * scale, mat_soil, false)
+	# Two loop handles on bowl (small C — not long vertical bars)
 	for sx in [-1.0, 1.0]:
-		_add_mesh_box(root, Vector3(sx * 0.17 * scale, 0.48 * scale, 0), Vector3(0.032 * scale, 0.18 * scale, 0.045 * scale), mat)
-		_add_mesh_box(root, Vector3(sx * 0.19 * scale, 0.58 * scale, 0), Vector3(0.055 * scale, 0.03 * scale, 0.045 * scale), mat)
-		_add_mesh_box(root, Vector3(sx * 0.13 * scale, 0.4 * scale, 0), Vector3(0.045 * scale, 0.03 * scale, 0.045 * scale), mat)
-	# Sparse trailing ivy only (no upright knob crown)
-	var mat_soil := _solid_matte(Color(0.16, 0.11, 0.07), 0.95)
-	_add_mesh_cyl(root, Vector3(0, 0.72 * scale, 0), 0.08 * scale, 0.02 * scale, mat_soil, false)
-	var mat_la := _solid_matte(Color(0.2, 0.38, 0.14), 0.92)
-	var mat_lb := _solid_matte(Color(0.14, 0.3, 0.1), 0.92)
-	var mat_stem := _solid_matte(Color(0.24, 0.2, 0.1), 0.9)
+		_add_mesh_box(root, Vector3(sx * 0.2 * scale, 0.52 * scale, 0), Vector3(0.03 * scale, 0.1 * scale, 0.04 * scale), mat)
+		_add_mesh_box(root, Vector3(sx * 0.22 * scale, 0.58 * scale, 0), Vector3(0.04 * scale, 0.025 * scale, 0.04 * scale), mat)
+		_add_mesh_box(root, Vector3(sx * 0.18 * scale, 0.46 * scale, 0), Vector3(0.035 * scale, 0.025 * scale, 0.04 * scale), mat)
+	# Trailing ivy from rim (side drape, not upright crown)
 	for i in 3:
-		var ang := float(i) * TAU / 3.0 + float(seed0) * 0.35
-		var lx: float = cos(ang) * 0.1 * scale
-		var lz: float = sin(ang) * 0.1 * scale
-		_add_mesh_cyl(root, Vector3(lx, 0.58 * scale, lz), 0.007 * scale, 0.16 * scale, mat_stem, false)
-		for j in 2:
-			var jy: float = 0.64 * scale - float(j) * 0.06 * scale
-			_add_mesh_box(
-				root,
-				Vector3(lx + cos(ang) * 0.03 * scale, jy, lz + sin(ang) * 0.03 * scale),
-				Vector3(0.04 * scale, 0.01 * scale, 0.018 * scale),
-				mat_la if j % 2 == 0 else mat_lb
-			)
+		var ang := float(i) * TAU / 3.0 + float(seed0) * 0.4
+		var lx: float = cos(ang) * 0.14 * scale
+		var lz: float = sin(ang) * 0.14 * scale
+		_add_mesh_box(
+			root,
+			Vector3(lx, 0.55 * scale, lz),
+			Vector3(0.05 * scale, 0.012 * scale, 0.03 * scale),
+			mat_la if i % 2 == 0 else mat_lb
+		)
+		_add_mesh_box(
+			root,
+			Vector3(lx * 1.1, 0.5 * scale, lz * 1.1),
+			Vector3(0.04 * scale, 0.01 * scale, 0.025 * scale),
+			mat_lb if i % 2 == 0 else mat_la
+		)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
 
