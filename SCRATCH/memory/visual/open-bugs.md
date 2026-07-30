@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 179)
+
+- **Kitchen sink residual:** butler sink read as pure white Minecraft slab + T-pipe mid-FOV. Rewrote fireclay oval basin (not rim-wall box), scrubbed oak drain board with groove ribs, solid-metal brass hand-pump (barrel + curved spout + side lever), tiled backsplash with grout. Warm ware colors (not CREAM white). Helper `_solid_metal` for untextured brass/copper.  
+
 ## Status update 2026-07-29 (loop 178)
 
 - **Garden bench residual:** cast-iron park bench read as black fridge slab mid-FOV (solid end panels + dense back). Open iron ends (legs + arm + braces, air under armrest), thin spindle back, 6 oak seat slats with gaps, solid matte iron greys.  

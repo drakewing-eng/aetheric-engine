@@ -1495,67 +1495,115 @@ static func _make_dresser(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_sink(prop: Dictionary) -> Node3D:
-	## Scullery butler sink — deep stoneware well + drain board + pump (loop 119).
+	## Loop 179: Victorian butler sink — fireclay oval basin + scrubbed drain board +
+	## brass hand-pump (not white Minecraft slab / T-pipe mid-FOV).
 	var root := Node3D.new()
 	root.name = "Sink"
 	var seed0: int = int(prop.get("seed", 0))
-	var wood := OAK if seed0 % 2 == 0 else Color(0.48, 0.34, 0.2)
-	var ware := Color(0.88, 0.86, 0.8)
-	var ware_d := Color(0.72, 0.7, 0.64)
-	var well := Color(0.38, 0.44, 0.48)
-	# Cabinet body + plinth
-	_add_box(root, Vector3(0, 0.42, 0), Vector3(1.15, 0.78, 0.58), wood, true, 0.5)
-	_add_box(root, Vector3(0, 0.06, 0.02), Vector3(1.2, 0.1, 0.62), wood.darkened(0.1), true, 0.5)
-	# Fielded double doors + brass knobs
-	_add_box(root, Vector3(-0.26, 0.4, 0.28), Vector3(0.5, 0.68, 0.04), wood.darkened(0.06), false, 0.5)
-	_add_box(root, Vector3(0.26, 0.4, 0.28), Vector3(0.5, 0.68, 0.04), wood.darkened(0.06), false, 0.5)
-	_add_box(root, Vector3(-0.26, 0.4, 0.3), Vector3(0.38, 0.48, 0.012), wood.darkened(0.14), false, 0.55)
-	_add_box(root, Vector3(0.26, 0.4, 0.3), Vector3(0.38, 0.48, 0.012), wood.darkened(0.14), false, 0.55)
-	_add_cylinder(root, Vector3(-0.1, 0.4, 0.32), 0.018, 0.05, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.1, 0.4, 0.32), 0.018, 0.05, BRASS, false, 0.3, true)
-	# Deep butler basin: outer apron + raised rim walls + recessed wet well (not flat slab)
-	_add_box(root, Vector3(0.12, 0.88, 0.02), Vector3(0.78, 0.12, 0.52), ware_d, false, 0.55)
-	# Four rim walls
-	_add_box(root, Vector3(0.12, 1.0, 0.24), Vector3(0.76, 0.12, 0.05), ware, false, 0.5)
-	_add_box(root, Vector3(0.12, 1.0, -0.2), Vector3(0.76, 0.12, 0.05), ware, false, 0.5)
-	_add_box(root, Vector3(-0.24, 1.0, 0.02), Vector3(0.05, 0.12, 0.48), ware, false, 0.5)
-	_add_box(root, Vector3(0.48, 1.0, 0.02), Vector3(0.05, 0.12, 0.48), ware, false, 0.5)
-	# Inner wet well (recessed, darker)
-	_add_box(root, Vector3(0.12, 0.92, 0.02), Vector3(0.62, 0.06, 0.36), well, false, 0.35)
-	# Drain hole
-	_add_cylinder(root, Vector3(0.12, 0.95, 0.02), 0.04, 0.02, IRON.lightened(0.15), false, 0.4)
-	# Drain board (sloped scrubbed wood) left of basin + groove ribs
-	_add_box(root, Vector3(-0.42, 0.96, 0.02), Vector3(0.38, 0.05, 0.48), OAK.lightened(0.18), false, 0.65)
-	for gi in 4:
-		var gz := -0.16 + float(gi) * 0.1
-		_add_box(root, Vector3(-0.42, 0.99, gz), Vector3(0.32, 0.01, 0.02), OAK.lightened(0.05), false, 0.6)
-	# Backsplash tile strip with grout lines
-	_add_box(root, Vector3(0, 1.2, -0.24), Vector3(1.12, 0.42, 0.04), CREAM.darkened(0.02), false, 0.75)
+	var wood := Color(0.42, 0.28, 0.16) if seed0 % 2 == 0 else Color(0.48, 0.32, 0.18)
+	var wood_d := Color(0.32, 0.2, 0.1) if seed0 % 2 == 0 else Color(0.36, 0.22, 0.12)
+	# Warm fireclay / stoneware (not pure white CREAM slab)
+	var ware := Color(0.78, 0.74, 0.64)
+	var ware_d := Color(0.62, 0.58, 0.5)
+	var ware_l := Color(0.84, 0.8, 0.7)
+	var well := Color(0.32, 0.38, 0.42)
+	var mat_ware := _solid_matte(ware, 0.55)
+	var mat_ware_d := _solid_matte(ware_d, 0.6)
+	var mat_ware_l := _solid_matte(ware_l, 0.5)
+	var mat_well := _solid_matte(well, 0.45)
+	var mat_wood := _solid_matte(wood, 0.72)
+	var mat_wood_d := _solid_matte(wood_d, 0.75)
+	var mat_board := _solid_matte(Color(0.7, 0.6, 0.42), 0.78)
+	var mat_board_d := _solid_matte(Color(0.58, 0.48, 0.32), 0.8)
+	var mat_brass := _solid_metal(BRASS, 0.28)
+	var mat_brass_d := _solid_metal(BRASS.darkened(0.12), 0.32)
+	var mat_iron := _solid_matte(IRON.lightened(0.12), 0.55)
+	# —— Base cabinet (mahogany service) ——
+	_add_mesh_box(root, Vector3(0, 0.42, 0), Vector3(1.18, 0.78, 0.6), mat_wood)
+	_add_mesh_box(root, Vector3(0, 0.06, 0.02), Vector3(1.24, 0.1, 0.64), mat_wood_d)
+	# Fielded double doors + recessed panels + brass knobs
+	_add_mesh_box(root, Vector3(-0.28, 0.4, 0.3), Vector3(0.52, 0.7, 0.04), mat_wood_d)
+	_add_mesh_box(root, Vector3(0.28, 0.4, 0.3), Vector3(0.52, 0.7, 0.04), mat_wood_d)
+	_add_mesh_box(root, Vector3(-0.28, 0.4, 0.32), Vector3(0.4, 0.5, 0.014), mat_wood)
+	_add_mesh_box(root, Vector3(0.28, 0.4, 0.32), Vector3(0.4, 0.5, 0.014), mat_wood)
+	_add_mesh_cyl(root, Vector3(-0.1, 0.4, 0.34), 0.02, 0.05, mat_brass, false)
+	_add_mesh_cyl(root, Vector3(0.1, 0.4, 0.34), 0.02, 0.05, mat_brass, false)
+	# —— Counter apron (stoneware lip, not flat white box) ——
+	_add_mesh_box(root, Vector3(0.08, 0.86, 0.02), Vector3(1.12, 0.1, 0.56), mat_ware_d)
+	_add_mesh_box(root, Vector3(0.08, 0.92, 0.28), Vector3(1.08, 0.05, 0.04), mat_ware)
+	# —— Scrubbed oak drain board (LEFT) with groove ribs ——
+	_add_mesh_box(root, Vector3(-0.38, 0.95, 0.02), Vector3(0.42, 0.05, 0.5), mat_board)
+	_add_mesh_box(root, Vector3(-0.38, 0.98, 0.02), Vector3(0.38, 0.012, 0.46), mat_board_d)
+	for gi in 5:
+		var gz := -0.18 + float(gi) * 0.09
+		_add_mesh_box(root, Vector3(-0.38, 0.99, gz), Vector3(0.34, 0.01, 0.018), mat_board)
+	# Slope lip toward basin
+	_add_mesh_box(root, Vector3(-0.16, 0.96, 0.02), Vector3(0.06, 0.03, 0.48), mat_board_d)
+	# —— Fireclay butler basin (RIGHT) — oval well via cylinders, not rim-wall slab ——
+	# Outer oval shell
+	_add_mesh_cyl(root, Vector3(0.22, 0.96, 0.02), 0.22, 0.14, mat_ware, false)
+	_add_mesh_cyl(root, Vector3(0.22, 0.96, 0.02), 0.18, 0.14, mat_ware, false)
+	# Stretch oval with side cheek walls
+	_add_mesh_box(root, Vector3(0.22, 0.96, 0.02), Vector3(0.5, 0.12, 0.36), mat_ware)
+	# Thick rolled rim (reads ceramic lip, not Minecraft wall)
+	_add_mesh_cyl(root, Vector3(0.22, 1.04, 0.02), 0.24, 0.035, mat_ware_l, false)
+	_add_mesh_box(root, Vector3(0.22, 1.04, 0.02), Vector3(0.54, 0.03, 0.4), mat_ware_l)
+	# Deep wet well (recessed, darker, not coplanar white)
+	_add_mesh_cyl(root, Vector3(0.22, 0.92, 0.02), 0.16, 0.08, mat_well, false)
+	_add_mesh_box(root, Vector3(0.22, 0.9, 0.02), Vector3(0.38, 0.05, 0.26), mat_well)
+	# Drain grate
+	_add_mesh_cyl(root, Vector3(0.22, 0.94, 0.02), 0.035, 0.015, mat_iron, false)
+	_add_mesh_box(root, Vector3(0.22, 0.945, 0.02), Vector3(0.05, 0.008, 0.012), mat_ware_d)
+	_add_mesh_box(root, Vector3(0.22, 0.945, 0.02), Vector3(0.012, 0.008, 0.05), mat_ware_d)
+	# —— Backsplash: glazed tile field + dark rail (not single cream slab) ——
+	var mat_tile := _solid_matte(Color(0.82, 0.78, 0.68), 0.45)
+	var mat_grout := _solid_matte(Color(0.5, 0.48, 0.42), 0.85)
+	var mat_rail := _solid_matte(Color(0.42, 0.28, 0.16), 0.7)
+	_add_mesh_box(root, Vector3(0, 1.22, -0.26), Vector3(1.16, 0.48, 0.035), mat_tile)
+	for ti in 4:
+		_add_mesh_box(
+			root,
+			Vector3(-0.42 + float(ti) * 0.28, 1.22, -0.24),
+			Vector3(0.24, 0.4, 0.02),
+			mat_tile if ti % 2 == 0 else _solid_matte(Color(0.78, 0.74, 0.64), 0.5)
+		)
+	# Horizontal grout + vertical seams
+	_add_mesh_box(root, Vector3(0, 1.22, -0.235), Vector3(1.1, 0.012, 0.01), mat_grout)
 	for ti in 3:
-		_add_box(root, Vector3(-0.35 + float(ti) * 0.35, 1.2, -0.22), Vector3(0.3, 0.36, 0.02), CREAM.lightened(0.04), false, 0.72)
-	_add_box(root, Vector3(0, 1.05, -0.21), Vector3(1.08, 0.03, 0.02), Color(0.55, 0.58, 0.52), false, 0.7)
-	# Hand pump + spout + handle (clearer silhouette)
-	_add_cylinder(root, Vector3(0.35, 1.22, -0.1), 0.04, 0.38, BRASS.darkened(0.05), false, 0.3, true)
-	_add_cylinder(root, Vector3(0.35, 1.42, -0.1), 0.055, 0.07, BRASS, false, 0.28, true)
-	_add_box(root, Vector3(0.18, 1.38, 0.02), Vector3(0.32, 0.04, 0.04), BRASS, false, 0.3)
-	_add_cylinder(root, Vector3(0.02, 1.32, 0.08), 0.025, 0.1, BRASS, false, 0.3, true)
-	_add_box(root, Vector3(0.48, 1.28, -0.08), Vector3(0.05, 0.2, 0.05), BRASS.darkened(0.08), false, 0.3)
-	_add_box(root, Vector3(0.58, 1.36, -0.08), Vector3(0.14, 0.035, 0.035), BRASS, false, 0.3)
-	# Still-life fork (soap, cloth, crock / copper vessel)
+		_add_mesh_box(root, Vector3(-0.28 + float(ti) * 0.28, 1.22, -0.235), Vector3(0.012, 0.42, 0.01), mat_grout)
+	_add_mesh_box(root, Vector3(0, 1.02, -0.23), Vector3(1.14, 0.035, 0.025), mat_rail)
+	# —— Brass hand-pump (column + curved spout + lever — not T-pipe) ——
+	# Base flange on rim
+	_add_mesh_cyl(root, Vector3(0.38, 1.08, -0.08), 0.06, 0.03, mat_brass_d, false)
+	# Vertical pump barrel
+	_add_mesh_cyl(root, Vector3(0.38, 1.28, -0.08), 0.038, 0.38, mat_brass, false)
+	_add_mesh_cyl(root, Vector3(0.38, 1.28, -0.08), 0.045, 0.08, mat_brass_d, false)
+	# Cap + finial
+	_add_mesh_cyl(root, Vector3(0.38, 1.5, -0.08), 0.055, 0.05, mat_brass, false)
+	_add_mesh_cyl(root, Vector3(0.38, 1.54, -0.08), 0.02, 0.04, mat_brass_d, false)
+	# Curved spout: horizontal arm + downturn nozzle into basin
+	_add_mesh_cyl_rot(root, Vector3(0.22, 1.42, -0.02), 0.022, 0.28, mat_brass, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl(root, Vector3(0.08, 1.36, 0.04), 0.02, 0.12, mat_brass, false)
+	_add_mesh_cyl(root, Vector3(0.08, 1.28, 0.06), 0.028, 0.04, mat_brass_d, false)
+	# Pump lever (side arm + grip)
+	_add_mesh_box(root, Vector3(0.5, 1.32, -0.08), Vector3(0.04, 0.18, 0.04), mat_brass_d)
+	_add_mesh_cyl_rot(root, Vector3(0.6, 1.4, -0.08), 0.016, 0.16, mat_brass, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl(root, Vector3(0.68, 1.4, -0.08), 0.022, 0.05, mat_brass_d, false)
+	# —— Drain-board still-life (soap, cloth, crock — not mystery cubes) ——
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(-0.45, 1.02, 0.18), Vector3(0.12, 0.035, 0.08), CREAM, false, 0.85)
-		_add_box(root, Vector3(-0.3, 1.0, 0.2), Vector3(0.18, 0.02, 0.12), Color(0.72, 0.76, 0.78), false, 0.7)
-		_add_cylinder(root, Vector3(0.55, 1.08, 0.14), 0.05, 0.12, CREAM.darkened(0.1), false, 0.8)
-		_add_cylinder(root, Vector3(0.55, 1.16, 0.14), 0.03, 0.04, CREAM.darkened(0.15), false, 0.8)
+		# Soap cake + folded cloth + small stoneware crock
+		_add_mesh_box(root, Vector3(-0.42, 1.02, 0.16), Vector3(0.1, 0.03, 0.07), _solid_matte(Color(0.86, 0.82, 0.7), 0.9))
+		_add_mesh_box(root, Vector3(-0.28, 1.0, 0.18), Vector3(0.16, 0.015, 0.1), _solid_matte(Color(0.62, 0.68, 0.7), 0.85))
+		_add_mesh_cyl(root, Vector3(-0.48, 1.05, -0.1), 0.04, 0.08, mat_ware_d, false)
+		_add_mesh_cyl(root, Vector3(-0.48, 1.1, -0.1), 0.03, 0.025, mat_ware, false)
 	else:
-		# Mini copper bowl with rim (not plain cylinder)
-		_add_cylinder(root, Vector3(-0.4, 1.02, 0.12), 0.05, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.4, 1.06, 0.12), 0.065, 0.08, COPPER, false, 0.35, true)
-		_add_cylinder(root, Vector3(-0.4, 1.11, 0.12), 0.07, 0.02, COPPER.lightened(0.08), false, 0.32, true)
-		_add_box(root, Vector3(0.4, 1.0, 0.16), Vector3(0.16, 0.02, 0.1), CREAM.darkened(0.05), false, 0.85)
-		_add_cylinder(root, Vector3(0.42, 1.05, 0.12), 0.04, 0.08, CLAY, false, 0.8)
-		_add_box(root, Vector3(-0.15, 0.99, 0.22), Vector3(0.14, 0.015, 0.1), Color(0.65, 0.7, 0.72), false, 0.7)
-	_add_contact_shadow(root, 0.62, 0.36)
+		# Copper scrub bowl + clay jar + cloth
+		_add_mesh_cyl(root, Vector3(-0.4, 1.02, 0.1), 0.055, 0.02, _solid_metal(COPPER.darkened(0.1), 0.4), false)
+		_add_mesh_cyl(root, Vector3(-0.4, 1.06, 0.1), 0.065, 0.07, _solid_metal(COPPER, 0.38), false)
+		_add_mesh_cyl(root, Vector3(-0.4, 1.1, 0.1), 0.07, 0.018, _solid_metal(COPPER.lightened(0.08), 0.35), false)
+		_add_mesh_cyl(root, Vector3(-0.48, 1.04, -0.12), 0.035, 0.07, _solid_matte(CLAY, 0.85), false)
+		_add_mesh_box(root, Vector3(-0.22, 0.995, 0.18), Vector3(0.14, 0.012, 0.09), _solid_matte(Color(0.6, 0.66, 0.68), 0.85))
+	_add_contact_shadow(root, 0.64, 0.38)
 	return root
 
 static func _make_prep_table(prop: Dictionary) -> Node3D:
@@ -2079,9 +2127,14 @@ static func _make_watering_can(prop: Dictionary) -> Node3D:
 
 static func _solid_copper_mat(color: Color, roughness: float = 0.28) -> StandardMaterial3D:
 	## Smooth copper (no metal_copper.jpg grain → no basket-weave read).
+	return _solid_metal(color, roughness)
+
+
+static func _solid_metal(color: Color, roughness: float = 0.28) -> StandardMaterial3D:
+	## Smooth untextured metal (brass/copper/iron) — no metal_*.jpg grain washout.
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color
-	mat.metallic = 0.88
+	mat.metallic = 0.82
 	mat.roughness = roughness
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	return mat
