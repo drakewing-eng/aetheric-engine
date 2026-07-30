@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 181)
+
+- **Botanical table pot residual:** blue glaze band + red disc lid still read as wedding cake mid-FOV (conservatory side table). Classic tapered terracotta + saucer, leaf mound, irregular geranium cluster (red/pink/cream) — no contrasting band or lid disc.  
+
 ## Status update 2026-07-29 (loop 180)
 
 - **Prep flour sack residual:** pale cream box stack still Minecraft cube mid-FOV after 174. Hessian jute plump bag (same-mat cylinders + oval cheek), dark twine cinch, brand stamp — not white fridge/crate stack.  
