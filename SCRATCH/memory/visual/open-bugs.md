@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 207)
+
+- **Billboard bulk residual:** sofa/desk/wing/chair card edge bulk still `_mat_for` wood/velvet washout. Full solid-mat bulk (mahogany + fabric seats). No remaining `_add_box`/`_add_cylinder`/`_add_sphere_blob` in prop makers.  
+- **Automated solid-mat queue:** prop washout conversion largely exhausted. Intentional textures remain (wallpaper, floors, rug plates, oil canvases, exterior views, plant cards).  
+
 ## Status update 2026-07-30 (loop 206)
 
 - **Plant residual:** fallback mesh pot/fronds + billboard mesh_pot + side fronds still `_mat_for`. Solid-mat clay pots + solid-mat stems/leaves (fern/palm fronds).  

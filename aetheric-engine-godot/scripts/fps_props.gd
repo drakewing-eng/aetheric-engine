@@ -4991,94 +4991,78 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 
 
 static func _add_billboard_mesh_bulk(root: Node3D, bulk: String, width: float, height: float, cross_planes: bool = false) -> void:
-	## Low-poly solid volume *behind* the painted card (card faces +Z at z≈0).
+	## Loop 207: solid-mat bulk behind painted cards (no wood/velvet washout mid-FOV).
 	## Keep all bulk z-max ≤ -0.04 so front hero art is never covered.
-	## Loop 143: with cross_planes, never add free-standing legs/stretchers (read as rug junk).
+	## Loop 143: with cross_planes, never add free-standing legs/stretchers (rug L-junk).
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_ml := _solid_matte(Color(0.36, 0.18, 0.1), 0.7)
 	match bulk:
 		"sofa":
-			# Loop 144: low dark bulk only — no green slab peeks above chesterfield crest
 			var sw: float = clampf(width * 0.68, 1.3, 1.9)
-			var seat_g := Color(0.22, 0.26, 0.16)  # near-shadow olive, not bright green
-			_add_box(root, Vector3(0, 0.2, -0.34), Vector3(sw, 0.12, 0.28), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.36, -0.32), Vector3(sw * 0.85, 0.14, 0.24), seat_g, false, 0.88)
-			# Back mass stays low + deep (y top ≈ 0.72 — under painted crest)
-			_add_box(root, Vector3(0, 0.58, -0.44), Vector3(sw * 0.82, 0.28, 0.12), seat_g.darkened(0.08), false, 0.9)
+			var mat_seat := _solid_matte(Color(0.22, 0.26, 0.16), 0.9)
+			var mat_seat_d := _solid_matte(Color(0.16, 0.2, 0.12), 0.92)
+			var mat_seat_dd := _solid_matte(Color(0.18, 0.22, 0.14), 0.9)
+			_add_mesh_box(root, Vector3(0, 0.2, -0.34), Vector3(sw, 0.12, 0.28), mat_md)
+			_add_mesh_box(root, Vector3(0, 0.36, -0.32), Vector3(sw * 0.85, 0.14, 0.24), mat_seat)
+			_add_mesh_box(root, Vector3(0, 0.58, -0.44), Vector3(sw * 0.82, 0.28, 0.12), mat_seat_d)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * (sw * 0.36), 0.42, -0.34),
-					Vector3(0.12, 0.18, 0.22), seat_g.darkened(0.05), false, 0.88)
+				_add_mesh_box(root, Vector3(sx * (sw * 0.36), 0.42, -0.34), Vector3(0.12, 0.18, 0.22), mat_seat_dd)
 				if not cross_planes:
-					_add_cylinder(root, Vector3(sx * (sw * 0.34), 0.08, -0.2), 0.03, 0.12, MAHOGANY, false)
-					_add_cylinder(root, Vector3(sx * (sw * 0.34), 0.08, -0.4), 0.028, 0.12, MAHOGANY, false)
+					_add_mesh_cyl(root, Vector3(sx * (sw * 0.34), 0.08, -0.2), 0.03, 0.12, mat_m, false)
+					_add_mesh_cyl(root, Vector3(sx * (sw * 0.34), 0.08, -0.4), 0.028, 0.12, mat_m, false)
 		"desk":
-			# Loop 138: pedestals tucked behind card
 			var dw: float = clampf(width * 0.75, 1.0, 1.45)
-			_add_box(root, Vector3(0, 0.78, -0.28), Vector3(dw, 0.05, 0.32), MAHOGANY, false, 0.45)
-			_add_box(root, Vector3(0, 0.81, -0.28), Vector3(dw * 0.88, 0.012, 0.28), Color(0.1, 0.16, 0.1), false, 0.72)
-			_add_box(root, Vector3(-0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), MAHOGANY_DARK, false, 0.42)
-			_add_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), MAHOGANY, false, 0.45)
+			var mat_leather := _solid_matte(Color(0.1, 0.16, 0.1), 0.88)
+			_add_mesh_box(root, Vector3(0, 0.78, -0.28), Vector3(dw, 0.05, 0.32), mat_m)
+			_add_mesh_box(root, Vector3(0, 0.81, -0.28), Vector3(dw * 0.88, 0.012, 0.28), mat_leather)
+			_add_mesh_box(root, Vector3(-0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), mat_md)
+			_add_mesh_box(root, Vector3(0.38, 0.38, -0.28), Vector3(0.32, 0.7, 0.3), mat_md)
+			_add_mesh_box(root, Vector3(0, 0.95, -0.4), Vector3(dw * 0.85, 0.22, 0.05), mat_m)
 		"wing", "wing_green":
-			# Loop 147/153: cross_planes → seat pad + short feet (no tall legs/stretchers)
 			var ww: float = clampf(width * 0.42, 0.42, 0.58)
 			var fab: Color = Color(0.38, 0.44, 0.34) if bulk == "wing_green" else Color(0.4, 0.14, 0.14)
+			var mat_fab := _solid_matte(fab, 0.92)
+			var mat_fab_d := _solid_matte(fab.darkened(0.08), 0.94)
+			var mat_fab_dd := _solid_matte(fab.darkened(0.12), 0.94)
+			var mat_fab_a := _solid_matte(fab.darkened(0.05), 0.9)
 			if cross_planes:
-				_add_box(root, Vector3(0, 0.42, -0.28), Vector3(ww * 0.85, 0.08, 0.2), MAHOGANY_DARK, false, 0.45)
-				_add_box(root, Vector3(0, 0.5, -0.26), Vector3(ww * 0.72, 0.1, 0.16), fab, false, 0.9)
-				# Short stub feet under pad only — not free bars on the rug
+				_add_mesh_box(root, Vector3(0, 0.42, -0.28), Vector3(ww * 0.85, 0.08, 0.2), mat_md)
+				_add_mesh_box(root, Vector3(0, 0.5, -0.26), Vector3(ww * 0.72, 0.1, 0.16), mat_fab)
 				for sx in [-1.0, 1.0]:
 					for sz in [-1.0, 1.0]:
-						_add_cylinder(
-							root,
-							Vector3(sx * ww * 0.22, 0.12, -0.22 + sz * 0.04),
-							0.022, 0.2, MAHOGANY, false
-						)
-						_add_cylinder(
-							root,
-							Vector3(sx * ww * 0.22, 0.02, -0.22 + sz * 0.04),
-							0.03, 0.04, MAHOGANY.lightened(0.04), false
-						)
+						_add_mesh_cyl(root, Vector3(sx * ww * 0.22, 0.12, -0.22 + sz * 0.04), 0.022, 0.2, mat_m, false)
+						_add_mesh_cyl(root, Vector3(sx * ww * 0.22, 0.02, -0.22 + sz * 0.04), 0.03, 0.04, mat_ml, false)
 			else:
-				# Loop 156: fuller wing bulk when no cross_planes (side volume without card ghost)
-				_add_box(root, Vector3(0, 0.38, -0.32), Vector3(ww * 0.95, 0.1, 0.28), MAHOGANY_DARK, false, 0.45)
-				_add_box(root, Vector3(0, 0.5, -0.28), Vector3(ww * 0.82, 0.14, 0.26), fab, false, 0.9)
-				_add_box(root, Vector3(0, 0.78, -0.42), Vector3(ww * 0.72, 0.5, 0.14), fab.darkened(0.08), false, 0.9)
-				_add_box(root, Vector3(0, 0.95, -0.38), Vector3(ww * 0.55, 0.18, 0.12), fab.darkened(0.12), false, 0.9)
+				_add_mesh_box(root, Vector3(0, 0.38, -0.32), Vector3(ww * 0.95, 0.1, 0.28), mat_md)
+				_add_mesh_box(root, Vector3(0, 0.5, -0.28), Vector3(ww * 0.82, 0.14, 0.26), mat_fab)
+				_add_mesh_box(root, Vector3(0, 0.78, -0.42), Vector3(ww * 0.72, 0.5, 0.14), mat_fab_d)
+				_add_mesh_box(root, Vector3(0, 0.95, -0.38), Vector3(ww * 0.55, 0.18, 0.12), mat_fab_dd)
 				for sx in [-1.0, 1.0]:
-					# Wings / arms
-					_add_box(root, Vector3(sx * ww * 0.38, 0.62, -0.28), Vector3(0.1, 0.36, 0.22), fab.darkened(0.05), false, 0.88)
-					_add_cylinder(root, Vector3(sx * ww * 0.28, 0.12, -0.18), 0.026, 0.18, MAHOGANY, false)
-					_add_cylinder(root, Vector3(sx * ww * 0.28, 0.12, -0.38), 0.024, 0.18, MAHOGANY.darkened(0.05), false)
+					_add_mesh_box(root, Vector3(sx * ww * 0.38, 0.62, -0.28), Vector3(0.1, 0.36, 0.22), mat_fab_a)
+					_add_mesh_cyl(root, Vector3(sx * ww * 0.28, 0.12, -0.18), 0.026, 0.18, mat_m, false)
+					_add_mesh_cyl(root, Vector3(sx * ww * 0.28, 0.12, -0.38), 0.024, 0.18, mat_md, false)
 		"chair":
-			# Loop 153: cross_planes → seat cushion + short stub feet (edge-on volume).
-			# No stretchers / long free legs (those read as gallery rug L-junk).
 			var cw: float = clampf(width * 0.48, 0.36, 0.52)
+			var mat_vel := _solid_matte(Color(0.22, 0.4, 0.18), 0.92)
+			var mat_vel_l := _solid_matte(Color(0.28, 0.46, 0.24), 0.9)
 			if cross_planes:
-				_add_box(root, Vector3(0, 0.44, -0.22), Vector3(cw * 0.95, 0.04, 0.2), MAHOGANY, false, 0.48)
-				_add_box(root, Vector3(0, 0.5, -0.2), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
-				_add_box(root, Vector3(0, 0.56, -0.2), Vector3(cw * 0.82, 0.025, 0.16), VELVET_GREEN.lightened(0.06), false, 0.88)
-				# Four vertical feet under seat (no horizontal stretchers → rug L-junk)
+				_add_mesh_box(root, Vector3(0, 0.44, -0.22), Vector3(cw * 0.95, 0.04, 0.2), mat_m)
+				_add_mesh_box(root, Vector3(0, 0.5, -0.2), Vector3(cw * 0.88, 0.09, 0.18), mat_vel)
+				_add_mesh_box(root, Vector3(0, 0.56, -0.2), Vector3(cw * 0.82, 0.025, 0.16), mat_vel_l)
 				for sx in [-1.0, 1.0]:
 					for sz in [-1.0, 1.0]:
-						_add_cylinder(
-							root,
-							Vector3(sx * cw * 0.28, 0.22, -0.2 + sz * 0.04),
-							0.015, 0.4, MAHOGANY, false
-						)
-						_add_cylinder(
-							root,
-							Vector3(sx * cw * 0.28, 0.02, -0.2 + sz * 0.04),
-							0.022, 0.035, MAHOGANY.lightened(0.05), false
-						)
+						_add_mesh_cyl(root, Vector3(sx * cw * 0.28, 0.22, -0.2 + sz * 0.04), 0.015, 0.4, mat_m, false)
+						_add_mesh_cyl(root, Vector3(sx * cw * 0.28, 0.02, -0.2 + sz * 0.04), 0.022, 0.035, mat_ml, false)
 			else:
-				_add_box(root, Vector3(0, 0.46, -0.32), Vector3(cw, 0.05, 0.22), MAHOGANY, false, 0.48)
-				_add_box(root, Vector3(0, 0.52, -0.3), Vector3(cw * 0.88, 0.09, 0.18), VELVET_GREEN, false, 0.9)
+				_add_mesh_box(root, Vector3(0, 0.46, -0.32), Vector3(cw, 0.05, 0.22), mat_m)
+				_add_mesh_box(root, Vector3(0, 0.52, -0.3), Vector3(cw * 0.88, 0.09, 0.18), mat_vel)
 				for sx in [-1.0, 1.0]:
-					_add_cylinder(root, Vector3(sx * cw * 0.28, 0.2, -0.24), 0.018, 0.32, MAHOGANY, false)
-					_add_cylinder(root, Vector3(sx * cw * 0.28, 0.2, -0.36), 0.016, 0.32, MAHOGANY.darkened(0.06), false)
-				_add_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.6, 0.025, 0.025), MAHOGANY, false, 0.5)
+					_add_mesh_cyl(root, Vector3(sx * cw * 0.28, 0.2, -0.24), 0.018, 0.32, mat_m, false)
+					_add_mesh_cyl(root, Vector3(sx * cw * 0.28, 0.2, -0.36), 0.016, 0.32, mat_md, false)
+				_add_mesh_box(root, Vector3(0, 0.12, -0.28), Vector3(cw * 0.6, 0.025, 0.025), mat_m)
 		_:
-			_add_box(root, Vector3(0, height * 0.35, -0.22),
-				Vector3(width * 0.7, height * 0.55, 0.28), MAHOGANY_DARK, false, 0.5)
+			_add_mesh_box(root, Vector3(0, height * 0.35, -0.22), Vector3(width * 0.7, height * 0.55, 0.28), mat_md)
 
 
 # ─── Materials / primitives ──────────────────────────────────────────────────
