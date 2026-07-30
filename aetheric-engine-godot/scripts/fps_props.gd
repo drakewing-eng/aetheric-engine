@@ -206,59 +206,64 @@ static func _build_feature(feat: Dictionary) -> Node3D:
 # ─── Drawing-room / gentry furniture ─────────────────────────────────────────
 
 static func _make_desk(prop: Dictionary) -> Node3D:
-	## Partner-style writing desk: leather top, pedestals, brass pulls, full still-life.
+	## Loop 194: partner writing desk — solid-mat mahogany + leather + brass (not iron/wood washout).
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Desk"
 	var top_y := 0.78
-	# Top + edge banding
-	_add_box(root, Vector3(0, top_y, 0), Vector3(1.55, 0.055, 0.82), MAHOGANY, true, 0.45)
-	_add_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.42, 0.014, 0.7), Color(0.10, 0.16, 0.10), false, 0.72)
-	_add_box(root, Vector3(0, top_y - 0.04, 0), Vector3(1.52, 0.03, 0.8), MAHOGANY_DARK, false, 0.4)
-	# Kneehole + twin pedestals
-	_add_box(root, Vector3(-0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), MAHOGANY_DARK, true, 0.42)
-	# Drawers (3 per pedestal)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_leather := _solid_matte(Color(0.12, 0.18, 0.1), 0.88)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_paper := _solid_matte(Color(0.84, 0.78, 0.62), 0.92)
+	var mat_paper_d := _solid_matte(Color(0.76, 0.7, 0.54), 0.92)
+	var mat_ink := _solid_matte(Color(0.1, 0.1, 0.14), 0.85)
+	var mat_pen := _solid_matte(Color(0.28, 0.14, 0.08), 0.75)
+	var mat_candle := _solid_matte(Color(0.95, 0.82, 0.45), 0.7)
+	var mat_seal := _solid_matte(Color(0.55, 0.12, 0.1), 0.85)
+	# Top + leather + apron
+	_add_mesh_box(root, Vector3(0, top_y, 0), Vector3(1.55, 0.055, 0.82), mat_m)
+	_add_mesh_box(root, Vector3(0, top_y + 0.03, 0), Vector3(1.42, 0.014, 0.7), mat_leather)
+	_add_mesh_box(root, Vector3(0, top_y - 0.04, 0), Vector3(1.52, 0.03, 0.8), mat_md)
+	# Twin pedestals
+	_add_mesh_box(root, Vector3(-0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), mat_md)
+	_add_mesh_box(root, Vector3(0.52, 0.38, 0), Vector3(0.42, 0.72, 0.74), mat_md)
 	for side in [-1.0, 1.0]:
 		for i in 3:
 			var dy := 0.18 + i * 0.2
-			_add_box(root, Vector3(side * 0.52, dy, 0.35), Vector3(0.36, 0.16, 0.05), MAHOGANY, false, 0.48)
-			_add_cylinder(root, Vector3(side * 0.52, dy, 0.39), 0.014, 0.022, BRASS, false, 0.3, true)
-	# Center drawer over kneehole
-	_add_box(root, Vector3(0, top_y - 0.12, 0.34), Vector3(0.55, 0.12, 0.05), MAHOGANY, false, 0.48)
-	_add_cylinder(root, Vector3(0, top_y - 0.12, 0.38), 0.014, 0.022, BRASS, false, 0.3, true)
-	# Turned legs under pedestals
+			_add_mesh_box(root, Vector3(side * 0.52, dy, 0.35), Vector3(0.36, 0.16, 0.05), mat_m)
+			_add_mesh_cyl(root, Vector3(side * 0.52, dy, 0.39), 0.014, 0.022, mat_br, false)
+	_add_mesh_box(root, Vector3(0, top_y - 0.12, 0.34), Vector3(0.55, 0.12, 0.05), mat_m)
+	_add_mesh_cyl(root, Vector3(0, top_y - 0.12, 0.38), 0.014, 0.022, mat_br, false)
 	for lx in [-0.62, -0.42, 0.42, 0.62]:
 		for lz in [-0.28, 0.28]:
-			_add_cylinder(root, Vector3(lx, 0.08, lz), 0.035, 0.14, MAHOGANY_DARK, true)
-			_add_cylinder(root, Vector3(lx, 0.02, lz), 0.05, 0.035, MAHOGANY, true)
-	# Loop 88: open pigeonhole gallery (not solid black slab from behind)
-	_add_box(root, Vector3(0, top_y + 0.08, -0.3), Vector3(1.38, 0.04, 0.22), MAHOGANY_DARK, false, 0.45)
-	_add_box(root, Vector3(0, top_y + 0.38, -0.32), Vector3(1.4, 0.05, 0.08), MAHOGANY, false, 0.45)
-	# Side uprights + open compartments
+			_add_mesh_cyl(root, Vector3(lx, 0.08, lz), 0.035, 0.14, mat_md, true)
+			_add_mesh_cyl(root, Vector3(lx, 0.02, lz), 0.05, 0.035, mat_m, false)
+	# Pigeonhole gallery
+	_add_mesh_box(root, Vector3(0, top_y + 0.08, -0.3), Vector3(1.38, 0.04, 0.22), mat_md)
+	_add_mesh_box(root, Vector3(0, top_y + 0.38, -0.32), Vector3(1.4, 0.05, 0.08), mat_m)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.68, top_y + 0.23, -0.3), Vector3(0.05, 0.3, 0.2), MAHOGANY, false, 0.45)
+		_add_mesh_box(root, Vector3(sx * 0.68, top_y + 0.23, -0.3), Vector3(0.05, 0.3, 0.2), mat_m)
 	for i in 3:
 		var gx := -0.4 + float(i) * 0.4
-		_add_box(root, Vector3(gx, top_y + 0.23, -0.32), Vector3(0.03, 0.28, 0.06), MAHOGANY_DARK, false, 0.48)
-	# Letters / ink in pigeonholes (low so not a dark wall)
-	_add_box(root, Vector3(-0.4, top_y + 0.14, -0.28), Vector3(0.12, 0.08, 0.08), PAPER.darkened(0.05), false)
-	_add_box(root, Vector3(0.0, top_y + 0.14, -0.28), Vector3(0.1, 0.06, 0.08), PAPER, false)
-	_add_box(root, Vector3(0.4, top_y + 0.14, -0.28), Vector3(0.08, 0.1, 0.08), Color(0.35, 0.18, 0.1), false, 0.6)
-	# Loop 126 still-life: papers + ink + proper candlestick (not brass disc + stick)
-	_add_box(root, Vector3(0.28, top_y + 0.04, 0.12), Vector3(0.34, 0.012, 0.24), PAPER, false)
-	_add_box(root, Vector3(0.32, top_y + 0.05, 0.08), Vector3(0.22, 0.01, 0.16), PAPER.darkened(0.05), false)
-	_add_box(root, Vector3(-0.25, top_y + 0.04, -0.05), Vector3(0.28, 0.01, 0.2), PAPER, false)
-	_add_box(root, Vector3(0.05, top_y + 0.06, -0.12), Vector3(0.055, 0.05, 0.055), INK, false)
-	_add_cylinder(root, Vector3(0.12, top_y + 0.09, -0.08), 0.012, 0.14, MAHOGANY, false)
-	# Candlestick: wood base + drip pan + cream taper
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.02, 0.15), 0.055, 0.035, MAHOGANY_DARK, false, 0.5)
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.028, 0.09, MAHOGANY, false, 0.48)
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.13, 0.15), 0.045, 0.02, BRASS.darkened(0.2), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.35, top_y + 0.26, 0.15), 0.02, 0.22, CANDLE, false, 0.6)
+		_add_mesh_box(root, Vector3(gx, top_y + 0.23, -0.32), Vector3(0.03, 0.28, 0.06), mat_md)
+	_add_mesh_box(root, Vector3(-0.4, top_y + 0.14, -0.28), Vector3(0.12, 0.08, 0.08), mat_paper_d)
+	_add_mesh_box(root, Vector3(0.0, top_y + 0.14, -0.28), Vector3(0.1, 0.06, 0.08), mat_paper)
+	_add_mesh_box(root, Vector3(0.4, top_y + 0.14, -0.28), Vector3(0.08, 0.1, 0.08), mat_pen)
+	# Still-life: papers + ink + candlestick
+	_add_mesh_box(root, Vector3(0.28, top_y + 0.04, 0.12), Vector3(0.34, 0.012, 0.24), mat_paper)
+	_add_mesh_box(root, Vector3(0.32, top_y + 0.05, 0.08), Vector3(0.22, 0.01, 0.16), mat_paper_d)
+	_add_mesh_box(root, Vector3(-0.25, top_y + 0.04, -0.05), Vector3(0.28, 0.01, 0.2), mat_paper)
+	_add_mesh_box(root, Vector3(0.05, top_y + 0.06, -0.12), Vector3(0.055, 0.05, 0.055), mat_ink)
+	_add_mesh_cyl(root, Vector3(0.12, top_y + 0.09, -0.08), 0.012, 0.14, mat_pen, false)
+	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.02, 0.15), 0.055, 0.035, mat_md, false)
+	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.028, 0.09, mat_m, false)
+	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.13, 0.15), 0.045, 0.02, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.26, 0.15), 0.02, 0.22, mat_candle, false)
 	_add_sphere_blob(root, Vector3(-0.35, top_y + 0.38, 0.15), 0.028, Color(1.0, 0.78, 0.4))
-	_add_box(root, Vector3(0.45, top_y + 0.05, -0.15), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
+	_add_mesh_box(root, Vector3(0.45, top_y + 0.05, -0.15), Vector3(0.12, 0.04, 0.08), mat_seal)
 	_add_contact_shadow(root, 0.9, 0.55)
 	var flame := OmniLight3D.new()
 	flame.light_color = Color(1.0, 0.78, 0.42)
@@ -970,42 +975,55 @@ static func _make_crock_shelf(prop: Dictionary) -> Node3D:
 
 
 static func _make_tool_shelf(prop: Dictionary) -> Node3D:
-	## Workshop shelf: timber, parts, tools — not books. seed forks mix.
+	## Loop 194: workshop tool case — solid-mat oak + iron/copper parts (not washed wood cubes).
 	var root := Node3D.new()
 	root.name = "ToolShelf"
 	var width: float = float(prop.get("width", 1.3))
 	var height: float = float(prop.get("height", 1.9))
 	var depth: float = float(prop.get("depth", 0.34))
 	var seed0: int = int(prop.get("seed", 2))
-	_add_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), OAK.darkened(0.12), true, 0.55)
-	_add_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.18), true, 0.55)
-	_add_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), OAK.darkened(0.18), true, 0.55)
-	_add_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), MAHOGANY_DARK, true, 0.5)
-	# Peg rail under top shelf (distinct from library case)
-	_add_box(root, Vector3(0, height - 0.2, 0.12), Vector3(width * 0.85, 0.03, 0.04), OAK, false, 0.55)
+	var mat_oak := _solid_matte(Color(0.4, 0.26, 0.12), 0.8)
+	var mat_oak_d := _solid_matte(Color(0.28, 0.16, 0.08), 0.84)
+	var mat_oak_l := _solid_matte(Color(0.5, 0.36, 0.2), 0.78)
+	var mat_plinth := _solid_matte(Color(0.2, 0.12, 0.07), 0.82)
+	var mat_iron := _solid_metal(Color(0.38, 0.38, 0.4), 0.48)
+	var mat_iron_l := _solid_metal(Color(0.48, 0.48, 0.5), 0.45)
+	var mat_iron_d := _solid_metal(Color(0.28, 0.28, 0.3), 0.52)
+	var mat_cop := _solid_metal(Color(0.65, 0.38, 0.16), 0.34)
+	var mat_wood_part := _solid_matte(Color(0.42, 0.28, 0.14), 0.75)
+	_add_mesh_box(root, Vector3(0, height * 0.5, -depth * 0.35), Vector3(width, height, 0.04), mat_oak_d)
+	_add_mesh_box(root, Vector3(-width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), mat_oak)
+	_add_mesh_box(root, Vector3(width * 0.48, height * 0.5, 0), Vector3(0.05, height, depth), mat_oak)
+	_add_mesh_box(root, Vector3(0, 0.05, 0.01), Vector3(width + 0.04, 0.1, depth + 0.04), mat_plinth)
+	_add_mesh_box(root, Vector3(0, height - 0.04, 0.01), Vector3(width + 0.04, 0.06, depth + 0.04), mat_oak_l)
+	# Peg rail
+	_add_mesh_box(root, Vector3(0, height - 0.2, 0.12), Vector3(width * 0.85, 0.03, 0.04), mat_oak_l)
 	for i in 4:
 		var y: float = 0.32 + float(i) * ((height - 0.45) / 3.0)
-		_add_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), OAK, false, 0.55)
+		_add_mesh_box(root, Vector3(0, y, 0.02), Vector3(width * 0.9, 0.035, depth * 0.88), mat_oak)
 		var n := 2 + (i + seed0) % 2
 		for j in n:
 			var x := -width * 0.28 + float(j) * (width * 0.55 / float(maxi(n - 1, 1)))
 			var kind := (i + j + seed0) % 4
 			if kind == 0:
-				_add_box(root, Vector3(x, y + 0.06, 0.04), Vector3(0.28, 0.06, 0.12), OAK.lightened(0.1), false, 0.6)
+				# Timber offcut board
+				_add_mesh_box(root, Vector3(x, y + 0.06, 0.04), Vector3(0.28, 0.06, 0.12), mat_oak_l)
 			elif kind == 1:
-				# Rooke wrench language
-				_add_box(root, Vector3(x, y + 0.1, 0.04), Vector3(0.22, 0.04, 0.04), IRON, false, 0.4)
-				_add_box(root, Vector3(x + 0.1, y + 0.1, 0.04), Vector3(0.06, 0.08, 0.05), IRON.lightened(0.1), false, 0.4)
+				# Rooke wrench
+				_add_mesh_box(root, Vector3(x, y + 0.1, 0.04), Vector3(0.22, 0.04, 0.04), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.1, y + 0.1, 0.04), Vector3(0.06, 0.08, 0.05), mat_iron_l)
 			elif kind == 2:
-				_add_box(root, Vector3(x, y + 0.08, 0.04), Vector3(0.16, 0.1, 0.12), MAHOGANY, false, 0.5)
-				_add_cylinder(root, Vector3(x, y + 0.14, 0.1), 0.02, 0.16, IRON, false, 0.4)
+				# Tool block + upright bit
+				_add_mesh_box(root, Vector3(x, y + 0.08, 0.04), Vector3(0.16, 0.1, 0.12), mat_wood_part)
+				_add_mesh_cyl(root, Vector3(x, y + 0.14, 0.1), 0.02, 0.16, mat_iron_d, false)
 			else:
-				_add_cylinder(root, Vector3(x, y + 0.1, 0.04), 0.06, 0.14, COPPER.darkened(0.1), false, 0.4, true)
-	# Hanging tools on peg rail
+				# Copper stock tube
+				_add_mesh_cyl(root, Vector3(x, y + 0.1, 0.04), 0.06, 0.14, mat_cop, false)
+	# Hanging tools on peg rail (handles + heads)
 	for i in 3 + seed0 % 2:
 		var px := -width * 0.3 + float(i) * 0.2
-		_add_cylinder(root, Vector3(px, height - 0.35, 0.14), 0.012, 0.28, IRON.darkened(0.05), false, 0.45)
-		_add_box(root, Vector3(px, height - 0.5, 0.14), Vector3(0.06, 0.04, 0.03), IRON, false, 0.4)
+		_add_mesh_cyl(root, Vector3(px, height - 0.35, 0.14), 0.012, 0.28, mat_iron_d, false)
+		_add_mesh_box(root, Vector3(px, height - 0.5, 0.14), Vector3(0.08, 0.05, 0.04), mat_iron)
 	_add_contact_shadow(root, width * 0.5, depth * 0.6)
 	return root
 
@@ -1460,74 +1478,74 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_dresser(prop: Dictionary) -> Node3D:
-	## Welsh dresser / plate rack — kitchen identity; seed varies plate/crock mix.
+	## Loop 194: Welsh dresser — solid-mat oak base + plate rack + ware (not washed cubes).
 	var root := Node3D.new()
 	root.name = "Dresser"
 	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.7
-	# Kitchen oak (lighter service wood, not drawing-room mahogany)
-	var oak_l := Color(0.52, 0.38, 0.2)
-	var oak_d := Color(0.4, 0.28, 0.14)
-	# Base cupboard
-	_add_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), oak_l, true, 0.55)
-	_add_box(root, Vector3(-0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), oak_d, false, 0.55)
-	_add_box(root, Vector3(0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), oak_d, false, 0.55)
-	_add_cylinder(root, Vector3(-0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.35, 0.55, 0.24), 0.02, 0.08, BRASS, false, 0.3, true)
-	# Upper plate rack open shelves
-	_add_box(root, Vector3(0, 1.55, -0.05), Vector3(w, 0.08, 0.36), OAK, true, 0.5)
-	_add_box(root, Vector3(0, 2.0, -0.05), Vector3(w, 0.08, 0.36), OAK, true, 0.5)
-	_add_box(root, Vector3(0, 2.4, -0.05), Vector3(w, 0.1, 0.38), OAK, true, 0.5)
-	_add_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
-	_add_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), OAK, true, 0.5)
-	_add_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), OAK.darkened(0.15), false, 0.55)
-	# Loop 87: plate stacks with rims + crocks/jugs (clear kitchen, never book spines)
+	var mat_oak_l := _solid_matte(Color(0.52, 0.38, 0.2), 0.78)
+	var mat_oak_d := _solid_matte(Color(0.4, 0.28, 0.14), 0.82)
+	var mat_oak := _solid_matte(Color(0.46, 0.32, 0.16), 0.8)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_cream := _solid_matte(Color(0.84, 0.78, 0.66), 0.9)
+	var mat_cream_d := _solid_matte(Color(0.74, 0.68, 0.56), 0.9)
+	var mat_clay := _solid_matte(Color(0.72, 0.46, 0.28), 0.9)
+	var mat_clay_d := _solid_matte(Color(0.58, 0.36, 0.22), 0.9)
+	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
+	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
+	var mat_cop_l := _solid_metal(Color(0.78, 0.5, 0.24), 0.28)
+	var mat_cloth := _solid_matte(Color(0.78, 0.72, 0.6), 0.92)
+	# Base cupboard + doors + knobs
+	_add_mesh_box(root, Vector3(0, 0.55, 0), Vector3(w, 1.05, 0.42), mat_oak_l)
+	_add_mesh_box(root, Vector3(-0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), mat_oak_d)
+	_add_mesh_box(root, Vector3(0.35, 0.55, 0.2), Vector3(0.7, 0.85, 0.04), mat_oak_d)
+	_add_mesh_cyl(root, Vector3(-0.35, 0.55, 0.24), 0.02, 0.08, mat_br, false)
+	_add_mesh_cyl(root, Vector3(0.35, 0.55, 0.24), 0.02, 0.08, mat_br, false)
+	# Upper plate rack
+	_add_mesh_box(root, Vector3(0, 1.55, -0.05), Vector3(w, 0.08, 0.36), mat_oak)
+	_add_mesh_box(root, Vector3(0, 2.0, -0.05), Vector3(w, 0.08, 0.36), mat_oak)
+	_add_mesh_box(root, Vector3(0, 2.4, -0.05), Vector3(w, 0.1, 0.38), mat_oak_l)
+	_add_mesh_box(root, Vector3(-w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), mat_oak)
+	_add_mesh_box(root, Vector3(w * 0.48, 1.75, -0.05), Vector3(0.06, 1.3, 0.36), mat_oak)
+	_add_mesh_box(root, Vector3(0, 1.75, -0.2), Vector3(w * 0.95, 1.3, 0.04), mat_oak_d)
 	for i in 5:
 		var px := -0.6 + i * 0.3
 		var kind := (i + seed0) % 4
 		if kind == 0:
-			# Plate stack
-			_add_cylinder(root, Vector3(px, 1.6, 0.04), 0.1, 0.025, CREAM, false, 0.75)
-			_add_cylinder(root, Vector3(px, 1.625, 0.04), 0.09, 0.02, CREAM.darkened(0.06), false, 0.75)
-			_add_cylinder(root, Vector3(px, 1.645, 0.04), 0.08, 0.018, CREAM.lightened(0.04), false, 0.75)
+			_add_mesh_cyl(root, Vector3(px, 1.6, 0.04), 0.1, 0.025, mat_cream, false)
+			_add_mesh_cyl(root, Vector3(px, 1.625, 0.04), 0.09, 0.02, mat_cream_d, false)
+			_add_mesh_cyl(root, Vector3(px, 1.645, 0.04), 0.08, 0.018, mat_cream, false)
 		elif kind == 1:
-			# Crock with lid
-			_add_cylinder(root, Vector3(px, 1.7, 0.04), 0.065, 0.16, CLAY if (i + seed0) % 2 == 0 else CLAY.lightened(0.08), false, 0.8)
-			_add_cylinder(root, Vector3(px, 1.8, 0.04), 0.055, 0.035, CLAY.darkened(0.1), false, 0.8)
+			_add_mesh_cyl(root, Vector3(px, 1.7, 0.04), 0.065, 0.16, mat_clay if (i + seed0) % 2 == 0 else mat_clay_d, false)
+			_add_mesh_cyl(root, Vector3(px, 1.8, 0.04), 0.055, 0.035, mat_clay_d, false)
 		elif kind == 2:
-			# Copper bowl: bottom + belly + flared rim + handle (loop 119)
-			_add_cylinder(root, Vector3(px, 1.62, 0.04), 0.065, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(px, 1.68, 0.04), 0.085, 0.1, COPPER, false, 0.35, true)
-			_add_cylinder(root, Vector3(px, 1.74, 0.04), 0.095, 0.02, COPPER.lightened(0.08), false, 0.32, true)
-			_add_box(root, Vector3(px + 0.09, 1.68, 0.04), Vector3(0.05, 0.035, 0.03), COPPER, false, 0.35)
+			_add_mesh_cyl(root, Vector3(px, 1.62, 0.04), 0.065, 0.02, mat_cop_d, false)
+			_add_mesh_cyl(root, Vector3(px, 1.68, 0.04), 0.085, 0.1, mat_cop, false)
+			_add_mesh_cyl(root, Vector3(px, 1.74, 0.04), 0.095, 0.02, mat_cop_l, false)
+			_add_mesh_box(root, Vector3(px + 0.09, 1.68, 0.04), Vector3(0.05, 0.035, 0.03), mat_cop)
 		else:
-			# Jug
-			_add_cylinder(root, Vector3(px, 1.68, 0.04), 0.05, 0.14, CREAM.darkened(0.08), false, 0.75)
-			_add_box(root, Vector3(px + 0.05, 1.7, 0.04), Vector3(0.035, 0.08, 0.03), CREAM.darkened(0.12), false, 0.75)
-		# Mid shelf: plate / bowl row
-		_add_cylinder(root, Vector3(px + 0.02, 2.06, 0.04), 0.085, 0.025, CREAM.darkened(0.04 * float((i + seed0) % 3)), false, 0.75)
+			_add_mesh_cyl(root, Vector3(px, 1.68, 0.04), 0.05, 0.14, mat_cream_d, false)
+			_add_mesh_box(root, Vector3(px + 0.05, 1.7, 0.04), Vector3(0.035, 0.08, 0.03), mat_cream_d)
+		_add_mesh_cyl(root, Vector3(px + 0.02, 2.06, 0.04), 0.085, 0.025, mat_cream_d, false)
 		if (i + seed0) % 2 == 0:
-			_add_cylinder(root, Vector3(px, 2.46, 0.02), 0.09, 0.022, CREAM.darkened(0.08), false, 0.75)
-			_add_cylinder(root, Vector3(px, 2.48, 0.02), 0.08, 0.018, CREAM, false, 0.75)
+			_add_mesh_cyl(root, Vector3(px, 2.46, 0.02), 0.09, 0.022, mat_cream_d, false)
+			_add_mesh_cyl(root, Vector3(px, 2.48, 0.02), 0.08, 0.018, mat_cream, false)
 		else:
-			_add_cylinder(root, Vector3(px, 2.52, 0.02), 0.055, 0.12, CLAY.lightened(0.05), false, 0.8)
-			_add_cylinder(root, Vector3(px, 2.6, 0.02), 0.04, 0.03, CLAY.darkened(0.08), false, 0.8)
-	# Work-top: jars + bulbous copper (loop 119 vessels, not coil stacks)
-	_add_cylinder(root, Vector3(0.5, 1.18, 0.08), 0.07, 0.18, CLAY if seed0 % 2 == 0 else CLAY.darkened(0.08), false, 0.8)
-	_add_cylinder(root, Vector3(0.5, 1.28, 0.08), 0.05, 0.04, CLAY.darkened(0.1), false, 0.8)
-	_add_cylinder(root, Vector3(0.65, 1.14, 0.02), 0.06, 0.14, CLAY.lightened(0.1), false, 0.8)
-	# Copper stockpot: belly + rim + side handle
-	var dcop := COPPER if seed0 % 2 == 0 else COPPER.darkened(0.1)
-	_add_cylinder(root, Vector3(-0.5, 1.12, 0.08), 0.065, 0.04, dcop.darkened(0.08), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.5, 1.18, 0.08), 0.09, 0.12, dcop, false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.5, 1.26, 0.08), 0.095, 0.025, dcop.lightened(0.08), false, 0.32, true)
-	_add_box(root, Vector3(-0.38, 1.18, 0.08), Vector3(0.05, 0.06, 0.04), dcop, false, 0.35)
-	# Copper skillet: shallow bowl + handle
-	_add_cylinder(root, Vector3(-0.25, 1.12, 0.02), 0.07, 0.02, COPPER.darkened(0.1), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.25, 1.15, 0.02), 0.085, 0.06, COPPER.darkened(0.05), false, 0.35, true)
-	_add_cylinder(root, Vector3(-0.25, 1.19, 0.02), 0.09, 0.02, COPPER.lightened(0.06), false, 0.32, true)
-	_add_box(root, Vector3(-0.1, 1.15, 0.02), Vector3(0.14, 0.02, 0.035), COPPER.darkened(0.05), false, 0.35)
-	_add_box(root, Vector3(0.1, 1.1, 0.1), Vector3(0.2, 0.03, 0.14), CREAM.darkened(0.05), false, 0.85)
+			_add_mesh_cyl(root, Vector3(px, 2.52, 0.02), 0.055, 0.12, mat_clay, false)
+			_add_mesh_cyl(root, Vector3(px, 2.6, 0.02), 0.04, 0.03, mat_clay_d, false)
+	# Work-top ware
+	_add_mesh_cyl(root, Vector3(0.5, 1.18, 0.08), 0.07, 0.18, mat_clay if seed0 % 2 == 0 else mat_clay_d, false)
+	_add_mesh_cyl(root, Vector3(0.5, 1.28, 0.08), 0.05, 0.04, mat_clay_d, false)
+	_add_mesh_cyl(root, Vector3(0.65, 1.14, 0.02), 0.06, 0.14, mat_clay, false)
+	_add_mesh_cyl(root, Vector3(-0.5, 1.12, 0.08), 0.065, 0.04, mat_cop_d, false)
+	_add_mesh_cyl(root, Vector3(-0.5, 1.18, 0.08), 0.09, 0.12, mat_cop, false)
+	_add_mesh_cyl(root, Vector3(-0.5, 1.26, 0.08), 0.095, 0.025, mat_cop_l, false)
+	_add_mesh_box(root, Vector3(-0.38, 1.18, 0.08), Vector3(0.05, 0.06, 0.04), mat_cop)
+	_add_mesh_cyl(root, Vector3(-0.25, 1.12, 0.02), 0.07, 0.02, mat_cop_d, false)
+	_add_mesh_cyl(root, Vector3(-0.25, 1.15, 0.02), 0.085, 0.06, mat_cop, false)
+	_add_mesh_cyl(root, Vector3(-0.25, 1.19, 0.02), 0.09, 0.02, mat_cop_l, false)
+	_add_mesh_box(root, Vector3(-0.1, 1.15, 0.02), Vector3(0.14, 0.02, 0.035), mat_cop)
+	_add_mesh_box(root, Vector3(0.1, 1.1, 0.1), Vector3(0.2, 0.03, 0.14), mat_cloth)
 	_add_contact_shadow(root, 0.9, 0.3)
 	return root
 
