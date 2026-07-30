@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 239)
+
+- **Square ottoman Minecraft residual:** seed-0 chesterfield still green cushion box mid-FOV (morning_room_from_north / drawing_room_spawn). Rewrote soft continuous pillow — cylinder body + dome crown, perimeter bolster rolls, corner puffs, slim plinth + bun feet (no stacked body boxes).  
+- **Wing armchair rear fridge residual:** morning_room_corner still green monolith. Curved rear shell (horizontal half-rolls), shorter wing ears, no full-height outer vertical pipes, soft seat dome. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 238)
 
 - **Plant paper-thin residual:** extreme side FOV still flat cards (open-bugs §4). Denser mesh fronds — more stems, thicker blades, outer hanging ring, compass side pads.  
