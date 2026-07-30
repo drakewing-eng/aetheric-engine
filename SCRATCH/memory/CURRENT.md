@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~overnight loop 151  
-**HEAD:** `77479fd` visual loop 151  
+**Updated:** 2026-07-29 ~17:50 (overnight goal active)  
+**HEAD:** `6049b28` visual loop 152  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -17,30 +17,30 @@
 | 8 | Side-view mesh furniture | **ADVANCED 70–147** seat bulk |
 | 9 | Door transition safety | **DONE tests** 76+98+125+137 |
 | 10 | Wallpaper contrast | **ADVANCED 72–142** morning stripes |
-| 11 | Hall / prep still-life | **ADVANCED 73–145** prep kits |
+| 11 | Hall / prep still-life | **ADVANCED 73–152** kitchen floor |
 | 12–23 | Conservatory / gallery / workshop densify | **ADVANCED 116–151** paths |
 | 24–52 | Materials…stools | **DONE 89–127+138** |
 | 53–62 | Copper…stools/sconces | **DONE 118–127+140** |
 | 63–72 | Plants…tight bulk | **DONE 128–137** |
-| 73–85 | Sofa…conservatory declutter | **DONE 138–150** |
-| 86 | Whole-house residual path spacing | **DONE 151** |
+| 73–86 | Sofa…path spacing | **DONE 138–151** |
+| 87 | Kitchen floor trugs + declutter | **DONE 152** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 149 | Terracotta mat fix + classical urns + slim lamps |
 | 150 | Conservatory declutter — clear path plants benches urns |
-| 151 | **Spacing:** hall plants/lamps off runner+table; workshop path clear; kitchen door approach thin; conservatory lamp beside table. |
+| 151 | Whole-house residual path spacing |
+| 152 | **Kitchen:** wide low wicker trugs (not barrels); thin floor copper/crates/lamps; clear sink–range walk. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation (automated suite PASS)  
 - Optional: paper-thin chair legs edge-on (tradeoff accepted)  
-- Optional: residual oil-lamp under-table mass at extreme close FOV  
+- Optional: residual oil-lamp mass at extreme close FOV  
 - Optional: user-driven residual notes after playtest  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_151/`  
+- Shots: `auto_loop_67/` … `auto_loop_152/`  
