@@ -1011,13 +1011,14 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, 3.5], "yaw": 90.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [2.2, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
 			{"kind": "wall_sconce", "pos": [-2.2, 0.0, 3.7], "yaw": 180.0, "height": 2.3},
-			{"kind": "oil_lamp", "pos": [0.0, 0.0, -2.0], "height": 0.95},
+			# Loop 149: shorter glass-hero lamps (not barrel stacks in glass light)
+			{"kind": "oil_lamp", "pos": [0.0, 0.0, -2.0], "height": 0.85, "seed": 0},
 			# Loop 91: centre/side volume so glass room doesn't feel empty mid-floor
 			{"kind": "side_table", "pos": [-1.8, 0.0, 0.4], "yaw": 25.0, "seed": 6},
 			{"kind": "watering_can", "pos": [-1.4, 0.0, 0.7], "scale": 0.85, "yaw": -30.0},
 			{"kind": "plant", "pos": [1.8, 0.0, 0.3], "scale": 0.55, "seed": 11,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
-			{"kind": "oil_lamp", "pos": [1.5, 0.0, 1.6], "height": 0.95},
+			{"kind": "oil_lamp", "pos": [1.5, 0.0, 1.6], "height": 0.8, "seed": 1},
 			# Loop 99: path-side still-life + plant near south glass (bench was the only read)
 			{"kind": "plant", "pos": [-0.6, 0.0, -2.0], "scale": 0.5, "seed": 12,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.45, "height": 0.55},

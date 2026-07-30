@@ -1756,59 +1756,60 @@ static func _make_garden_bench(prop: Dictionary) -> Node3D:
 
 
 static func _make_urn(prop: Dictionary) -> Node3D:
-	## Stone / terracotta pedestal urn — loop 102/116: fluted body + rim (not stacked Minecraft pots).
+	## Loop 149: classical stone/terracotta urn — stone grit (not wood/copper barrel).
+	## Sparse trailing ivy; no green knob crown.
 	var root := Node3D.new()
 	root.name = "Urn"
 	var seed0: int = int(prop.get("seed", 0))
 	var scale: float = float(prop.get("scale", 1.0))
-	var body := STONE if seed0 % 2 == 0 else CLAY
-	var body_d := body.darkened(0.08)
-	# Pedestal plinth
-	_add_box(root, Vector3(0, 0.06 * scale, 0), Vector3(0.38 * scale, 0.1 * scale, 0.38 * scale), body_d, true, 0.68)
-	_add_cylinder(root, Vector3(0, 0.14 * scale, 0), 0.2 * scale, 0.08 * scale, body, true, 0.7)
-	# Tapered body (stacked radii)
-	_add_cylinder(root, Vector3(0, 0.28 * scale, 0), 0.14 * scale, 0.16 * scale, body, true, 0.7)
-	_add_cylinder(root, Vector3(0, 0.42 * scale, 0), 0.16 * scale, 0.14 * scale, body.lightened(0.03), true, 0.68)
-	_add_cylinder(root, Vector3(0, 0.54 * scale, 0), 0.18 * scale, 0.1 * scale, body, false, 0.7)
-	# Fluting ribs
-	for fi in 6:
-		var fang := float(fi) * TAU / 6.0
+	# Prefer cool stone greys; terracotta only when seed odd (now classifies as clay not copper)
+	var body := Color(0.58, 0.55, 0.48) if seed0 % 2 == 0 else Color(0.72, 0.46, 0.28)
+	var body_d := body.darkened(0.1)
+	var body_l := body.lightened(0.06)
+	# Square plinth + moulded foot
+	_add_box(root, Vector3(0, 0.05 * scale, 0), Vector3(0.42 * scale, 0.08 * scale, 0.42 * scale), body_d, true, 0.78)
+	_add_box(root, Vector3(0, 0.1 * scale, 0), Vector3(0.34 * scale, 0.04 * scale, 0.34 * scale), body, true, 0.75)
+	_add_cylinder(root, Vector3(0, 0.16 * scale, 0), 0.16 * scale, 0.08 * scale, body_d, true, 0.78)
+	# Classical amphora belly (wide mid, narrow neck)
+	_add_cylinder(root, Vector3(0, 0.32 * scale, 0), 0.15 * scale, 0.18 * scale, body, true, 0.78)
+	_add_cylinder(root, Vector3(0, 0.48 * scale, 0), 0.18 * scale, 0.16 * scale, body_l, true, 0.76)
+	_add_cylinder(root, Vector3(0, 0.6 * scale, 0), 0.12 * scale, 0.1 * scale, body, true, 0.78)
+	# Neck + everted rim
+	_add_cylinder(root, Vector3(0, 0.7 * scale, 0), 0.09 * scale, 0.1 * scale, body_d, false, 0.78)
+	_add_cylinder(root, Vector3(0, 0.78 * scale, 0), 0.14 * scale, 0.04 * scale, body_l, false, 0.72)
+	_add_cylinder(root, Vector3(0, 0.81 * scale, 0), 0.11 * scale, 0.03 * scale, body_d, false, 0.75)
+	# Two side handles (reads as urn, not barrel)
+	for sx in [-1.0, 1.0]:
+		_add_box(root, Vector3(sx * 0.17 * scale, 0.55 * scale, 0), Vector3(0.04 * scale, 0.16 * scale, 0.05 * scale), body_d, false, 0.75)
+		_add_box(root, Vector3(sx * 0.2 * scale, 0.62 * scale, 0), Vector3(0.06 * scale, 0.04 * scale, 0.05 * scale), body, false, 0.75)
+	# Sparse fluting (3 ribs, not weave bands)
+	for fi in 3:
+		var fang := float(fi) * TAU / 3.0 + 0.2
 		_add_box(
 			root,
-			Vector3(cos(fang) * 0.15 * scale, 0.4 * scale, sin(fang) * 0.15 * scale),
-			Vector3(0.025 * scale, 0.28 * scale, 0.025 * scale),
-			body_d, false, 0.65
+			Vector3(cos(fang) * 0.16 * scale, 0.45 * scale, sin(fang) * 0.16 * scale),
+			Vector3(0.02 * scale, 0.22 * scale, 0.02 * scale),
+			body_d, false, 0.72
 		)
-	# Lip / rim
-	_add_cylinder(root, Vector3(0, 0.62 * scale, 0), 0.2 * scale, 0.05 * scale, body.lightened(0.06), false, 0.65)
-	_add_cylinder(root, Vector3(0, 0.66 * scale, 0), 0.17 * scale, 0.03 * scale, body_d, false, 0.7)
-	# Soil pad
-	_add_cylinder(root, Vector3(0, 0.68 * scale, 0), 0.14 * scale, 0.04 * scale, Color(0.18, 0.12, 0.08), false, 0.9)
-	var leaf_a := Color(0.18, 0.4, 0.14)
-	var leaf_b := Color(0.12, 0.32, 0.1)
-	var stem_c := Color(0.26, 0.22, 0.1)
-	# Thin upright stems
-	for si in 4:
-		var sa := float(si) * 0.9 + float(seed0) * 0.25
-		var sx: float = cos(sa) * 0.04 * scale
-		var sz: float = sin(sa) * 0.04 * scale
-		_add_cylinder(root, Vector3(sx, 0.78 * scale, sz), 0.008 * scale, 0.24 * scale, stem_c, false, 0.85)
-	# Trailing vines down urn sides (thin stems + tiny leaves)
-	for i in 5:
-		var ang := float(i) * TAU / 5.0 + float(seed0) * 0.4
-		var lx: float = cos(ang) * 0.14 * scale
-		var lz: float = sin(ang) * 0.14 * scale
-		# Vine stem hanging down
-		_add_cylinder(root, Vector3(lx, 0.55 * scale, lz), 0.008 * scale, 0.28 * scale, stem_c, false, 0.85)
-		# Tiny leaf pairs along vine (thin, not cubes)
-		for j in 3:
-			var jy: float = 0.68 * scale - float(j) * 0.08 * scale
-			_add_box(root, Vector3(lx + cos(ang) * 0.03 * scale, jy, lz + sin(ang) * 0.03 * scale),
-				Vector3(0.05 * scale, 0.012 * scale, 0.02 * scale), leaf_a if j % 2 == 0 else leaf_b, false, 0.92)
-		# Crown tip fronds (very thin vertical blades)
-		_add_box(root, Vector3(lx * 0.4, 0.88 * scale, lz * 0.4),
-			Vector3(0.015 * scale, 0.12 * scale, 0.04 * scale), leaf_b, false, 0.92)
-	_add_contact_shadow(root, 0.25 * scale, 0.25 * scale)
+	# Soil + sparse trailing ivy only (no upright green knobs)
+	_add_cylinder(root, Vector3(0, 0.82 * scale, 0), 0.1 * scale, 0.03 * scale, Color(0.16, 0.11, 0.07), false, 0.92)
+	var leaf_a := Color(0.2, 0.38, 0.14)
+	var leaf_b := Color(0.14, 0.3, 0.1)
+	var stem_c := Color(0.24, 0.2, 0.1)
+	for i in 3:
+		var ang := float(i) * TAU / 3.0 + float(seed0) * 0.35
+		var lx: float = cos(ang) * 0.12 * scale
+		var lz: float = sin(ang) * 0.12 * scale
+		_add_cylinder(root, Vector3(lx, 0.65 * scale, lz), 0.007 * scale, 0.22 * scale, stem_c, false, 0.88)
+		for j in 2:
+			var jy: float = 0.72 * scale - float(j) * 0.08 * scale
+			_add_box(
+				root,
+				Vector3(lx + cos(ang) * 0.025 * scale, jy, lz + sin(ang) * 0.025 * scale),
+				Vector3(0.04 * scale, 0.01 * scale, 0.018 * scale),
+				leaf_a if j % 2 == 0 else leaf_b, false, 0.92
+			)
+	_add_contact_shadow(root, 0.24 * scale, 0.24 * scale)
 	return root
 
 
@@ -1866,87 +1867,82 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 
 
 static func _make_oil_lamp(prop: Dictionary) -> Node3D:
-	## Loop 148 Argand: wood base + single font + tall amber glass —
-	## never stacked copper barrels at room distance.
+	## Loop 149 Argand: slim wood stem + small font + tall glass hero —
+	## glass should dominate silhouette (not metal barrel stack).
 	var root := Node3D.new()
 	root.name = "OilLamp"
-	var h: float = float(prop.get("height", 1.05))
+	var h: float = float(prop.get("height", 1.0))
 	var ppos: Array = prop.get("pos", [0, 0, 0])
 	var seed0: int = int(prop.get("seed", int(absf(h * 17.0 + float(ppos[0]) * 7.0 + float(ppos[2]) * 11.0))))
 	var style := seed0 % 3
-	var stem_top: float = clampf(h * 0.38, 0.28, 0.45)
+	var stem_top: float = clampf(h * 0.32, 0.24, 0.38)
 	var wood_d := MAHOGANY_DARK
 	var wood := MAHOGANY
-	var iron_mid := Color(0.32, 0.32, 0.34)
+	var iron_mid := Color(0.34, 0.34, 0.36)
 	if style == 0:
-		# Mahogany pedestal foot
-		_add_cylinder(root, Vector3(0, 0.03, 0), 0.14, 0.06, wood_d, true, 0.55)
-		_add_cylinder(root, Vector3(0, 0.08, 0), 0.11, 0.04, wood, true, 0.52)
-		_add_cylinder(root, Vector3(0, 0.12, 0), 0.07, 0.04, wood_d, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.5, 0), 0.022, stem_top * 0.55, wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.75, 0), 0.035, 0.03, BRASS.darkened(0.12), false, 0.35, true)
+		# Slim mahogany foot + thin stem
+		_add_cylinder(root, Vector3(0, 0.025, 0), 0.11, 0.05, wood_d, true, 0.55)
+		_add_cylinder(root, Vector3(0, 0.06, 0), 0.08, 0.03, wood, true, 0.52)
+		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.018, stem_top * 0.55, wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.72, 0), 0.028, 0.025, BRASS.darkened(0.15), false, 0.35, true)
 	elif style == 1:
 		# Tripod wood feet
-		_add_cylinder(root, Vector3(0, 0.035, 0), 0.07, 0.04, wood_d, true, 0.5)
+		_add_cylinder(root, Vector3(0, 0.03, 0), 0.06, 0.035, wood_d, true, 0.5)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_box(root, Vector3(cos(rad) * 0.1, 0.025, sin(rad) * 0.1), Vector3(0.14, 0.025, 0.035), wood, true, 0.5)
-			_add_cylinder(root, Vector3(cos(rad) * 0.14, 0.018, sin(rad) * 0.14), 0.022, 0.03, wood_d.lightened(0.08), true, 0.52)
-		_add_cylinder(root, Vector3(0, stem_top * 0.48, 0), 0.022, stem_top * 0.6, wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.72, 0), 0.032, 0.028, BRASS.darkened(0.12), false, 0.35, true)
+			_add_box(root, Vector3(cos(rad) * 0.09, 0.02, sin(rad) * 0.09), Vector3(0.12, 0.022, 0.03), wood, true, 0.5)
+			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.015, sin(rad) * 0.13), 0.02, 0.025, wood_d.lightened(0.08), true, 0.52)
+		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.018, stem_top * 0.55, wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.7, 0), 0.026, 0.022, BRASS.darkened(0.12), false, 0.35, true)
 	else:
-		# Square wood base + thin brass riser (no copper stack)
-		_add_box(root, Vector3(0, 0.03, 0), Vector3(0.2, 0.06, 0.2), wood_d, true, 0.52)
-		_add_box(root, Vector3(0, 0.08, 0), Vector3(0.13, 0.04, 0.13), wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.5, 0), 0.02, stem_top * 0.55, BRASS.darkened(0.15), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, stem_top * 0.72, 0), 0.035, 0.028, BRASS.darkened(0.1), false, 0.32, true)
-	# Single oil font (one belly) — brass or bronze, not stacked discs
-	var font_c := Color(0.5, 0.36, 0.18) if style != 2 else Color(0.55, 0.4, 0.2)
-	var fy: float = stem_top + 0.02
-	_add_cylinder(root, Vector3(0, fy, 0), 0.08, 0.035, font_c.darkened(0.1), false, 0.4, true)
-	_add_cylinder(root, Vector3(0, fy + 0.06, 0), 0.11, 0.09, font_c, false, 0.38, true)
-	_add_cylinder(root, Vector3(0, fy + 0.11, 0), 0.09, 0.03, font_c.lightened(0.05), false, 0.36, true)
-	# Bail handle
-	_add_box(root, Vector3(0.1, fy + 0.05, 0), Vector3(0.035, 0.07, 0.025), font_c.darkened(0.08), false, 0.38)
-	_add_box(root, Vector3(0.08, fy + 0.1, 0), Vector3(0.07, 0.02, 0.025), font_c.darkened(0.08), false, 0.38)
-	# Burner ring
-	_add_cylinder(root, Vector3(0, fy + 0.14, 0), 0.06, 0.025, BRASS.darkened(0.1), false, 0.32, true)
-	# Tall amber glass chimney — the lamp's silhouette hero (not metal mass)
-	var glass := Color(0.88, 0.68, 0.32)
-	var glass_hi := Color(0.98, 0.82, 0.48)
+		# Square wood base + thin brass riser
+		_add_box(root, Vector3(0, 0.025, 0), Vector3(0.16, 0.05, 0.16), wood_d, true, 0.52)
+		_add_box(root, Vector3(0, 0.06, 0), Vector3(0.1, 0.03, 0.1), wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.016, stem_top * 0.5, BRASS.darkened(0.18), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, stem_top * 0.7, 0), 0.028, 0.022, BRASS.darkened(0.12), false, 0.32, true)
+	# Compact oil font (small mass under glass)
+	var font_c := Color(0.48, 0.34, 0.16)
+	var fy: float = stem_top + 0.01
+	_add_cylinder(root, Vector3(0, fy, 0), 0.06, 0.025, font_c.darkened(0.1), false, 0.42, true)
+	_add_cylinder(root, Vector3(0, fy + 0.04, 0), 0.08, 0.06, font_c, false, 0.4, true)
+	_add_cylinder(root, Vector3(0, fy + 0.08, 0), 0.065, 0.02, font_c.lightened(0.05), false, 0.38, true)
+	_add_box(root, Vector3(0.08, fy + 0.04, 0), Vector3(0.03, 0.05, 0.02), font_c.darkened(0.08), false, 0.4)
+	_add_cylinder(root, Vector3(0, fy + 0.1, 0), 0.05, 0.02, BRASS.darkened(0.12), false, 0.32, true)
+	# Tall amber glass chimney — dominant silhouette
+	var glass := Color(0.9, 0.7, 0.35)
+	var glass_hi := Color(0.98, 0.84, 0.5)
 	var cy: float = fy + 0.28
-	_add_cylinder(root, Vector3(0, cy, 0), 0.048, 0.2, glass, false, 0.35)
-	_add_cylinder(root, Vector3(0, cy, 0), 0.035, 0.16, glass_hi, false, 0.32)
+	_add_cylinder(root, Vector3(0, cy, 0), 0.042, 0.26, glass, false, 0.35)
+	_add_cylinder(root, Vector3(0, cy, 0), 0.03, 0.22, glass_hi, false, 0.32)
 	var glass_em := MeshInstance3D.new()
 	var gem := CylinderMesh.new()
-	gem.top_radius = 0.028
-	gem.bottom_radius = 0.028
-	gem.height = 0.12
+	gem.top_radius = 0.024
+	gem.bottom_radius = 0.024
+	gem.height = 0.16
 	glass_em.mesh = gem
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(1.0, 0.78, 0.4)
+	gmat.albedo_color = Color(1.0, 0.8, 0.42)
 	gmat.emission_enabled = true
-	gmat.emission = Color(1.0, 0.7, 0.3)
-	gmat.emission_energy_multiplier = 1.2
+	gmat.emission = Color(1.0, 0.72, 0.32)
+	gmat.emission_energy_multiplier = 1.35
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	glass_em.material_override = gmat
 	glass_em.position = Vector3(0, cy, 0)
 	root.add_child(glass_em)
-	# Iron cage ribs
-	for i in 4:
-		var ang := float(i) * TAU / 4.0 + 0.15
-		_add_box(root, Vector3(cos(ang) * 0.05, cy, sin(ang) * 0.05), Vector3(0.01, 0.16, 0.01), iron_mid, false, 0.45)
-	_add_cylinder(root, Vector3(0, cy + 0.11, 0), 0.04, 0.025, iron_mid.lightened(0.08), false, 0.4)
-	_add_cylinder(root, Vector3(0, cy - 0.11, 0), 0.055, 0.018, BRASS.darkened(0.18), false, 0.35, true)
-	# Flame
-	_add_sphere_blob(root, Vector3(0, cy - 0.02, 0), 0.028, Color(1.0, 0.82, 0.4))
+	# Thin iron cage (sparse)
+	for i in 3:
+		var ang := float(i) * TAU / 3.0 + 0.2
+		_add_box(root, Vector3(cos(ang) * 0.042, cy, sin(ang) * 0.042), Vector3(0.008, 0.2, 0.008), iron_mid, false, 0.45)
+	_add_cylinder(root, Vector3(0, cy + 0.14, 0), 0.035, 0.02, iron_mid.lightened(0.08), false, 0.4)
+	_add_cylinder(root, Vector3(0, cy - 0.14, 0), 0.048, 0.015, BRASS.darkened(0.2), false, 0.35, true)
+	_add_sphere_blob(root, Vector3(0, cy - 0.04, 0), 0.025, Color(1.0, 0.84, 0.42))
 	var light := OmniLight3D.new()
-	light.light_color = Color(1.0, 0.84, 0.55)
-	light.light_energy = 0.7 + float(style) * 0.06
-	light.omni_range = 3.6 + float(style) * 0.2
+	light.light_color = Color(1.0, 0.86, 0.58)
+	light.light_energy = 0.65 + float(style) * 0.05
+	light.omni_range = 3.4 + float(style) * 0.15
 	light.position = Vector3(0, cy, 0)
 	root.add_child(light)
-	_add_contact_shadow(root, 0.15, 0.15)
+	_add_contact_shadow(root, 0.12, 0.12)
 	return root
 
 
@@ -4325,19 +4321,29 @@ static func _wood_path_for_color(color: Color, size: Vector3) -> String:
 static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardMaterial3D:
 	## Auto-pick wood/fabric/metal texture so furniture isn't flat Minecraft blocks.
 	## Wood species vary so boards ≠ tables ≠ shelves.
+	## Loop 149: CLAY/terracotta must not match copper or scrubbed wood (urns → barrel look).
 	var mat := StandardMaterial3D.new()
 	mat.roughness = roughness
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 	var tex_path := ""
 	var metallic := 0.0
 	var wood_tint := 0.32
-	# Copper
-	if color.r > 0.55 and color.g > 0.25 and color.g < 0.55 and color.b < 0.35 and color.r > color.g:
+	# Terracotta / clay FIRST — g≥0.45 (CLAY 0.48). COPPER const g=0.42 stays metal.
+	if (
+		color.r > 0.65 and color.g >= 0.45 and color.g < 0.56 and color.b < 0.38
+		and color.r > color.g + 0.18 and color.r - color.b > 0.28
+	):
+		tex_path = TEX_STONE
+		metallic = 0.0
+		mat.roughness = maxf(roughness, 0.82)
+		wood_tint = 0.55
+	# Copper metal (g typically <0.45 — COPPER const 0.42)
+	elif color.r > 0.55 and color.g > 0.25 and color.g < 0.48 and color.b < 0.32 and color.r > color.g + 0.12:
 		tex_path = TEX_COPPER
 		metallic = 0.75
 		mat.roughness = minf(roughness, 0.4)
 	# Brass / gold
-	elif color.r > 0.55 and color.g > 0.4 and color.b < 0.4 and color.r >= color.g:
+	elif color.r > 0.55 and color.g > 0.4 and color.b < 0.4 and color.r >= color.g and color.r - color.g < 0.22:
 		tex_path = TEX_BRASS
 		metallic = 0.7
 		mat.roughness = minf(roughness, 0.4)
@@ -4355,8 +4361,8 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		# Lower metallic: without env probes high metal reads as pure black
 		metallic = 0.42
 		mat.roughness = minf(roughness, 0.58)
-	# Mahogany / wood browns / oak FIRST — dark red-browns are wood, not velvet.
-	# Exclude terracotta/clay (g around 0.45–0.55 with high r).
+	# Mahogany / wood browns / oak — dark red-browns are wood, not velvet.
+	# Exclude terracotta (caught above) and stone greys.
 	elif (
 		color.r > 0.12 and color.r >= color.g * 0.85 and color.r > color.b
 		and color.g < 0.42 and color.g > 0.08
@@ -4365,8 +4371,11 @@ static func _mat_for(color: Color, roughness: float, size: Vector3) -> StandardM
 		tex_path = _wood_path_for_color(color, size)
 		# Larger furniture: coarser UV; small boards: finer grain
 		wood_tint = 0.38 if size.x * size.z < 0.4 else 0.26
-	# Light scrubbed oak / pale wood (prep tops)
-	elif color.r > 0.55 and color.g > 0.4 and color.b > 0.2 and color.r < 0.85 and color.g < 0.7:
+	# Light scrubbed oak / pale wood (prep tops) — exclude orange clay (r−g large)
+	elif (
+		color.r > 0.55 and color.g > 0.4 and color.b > 0.2 and color.r < 0.85 and color.g < 0.7
+		and color.r - color.g < 0.2
+	):
 		tex_path = TEX_WOOD_SCRUBBED if color.v > 0.55 else TEX_WOOD_PINE
 		wood_tint = 0.42
 	# Red velvet (true fabric reds — high r, low g relative, not brown wood)

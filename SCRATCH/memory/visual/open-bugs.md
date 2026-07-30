@@ -86,3 +86,9 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Hall chair green scrap:** seat-only velvet pad bulk behind cross_plane cards (intentional cushion, not plant bleed); furniture alpha scissor raised to 0.58. Legs stay off (rug L-junk).  
 - **Floor baskets:** new `wicker_basket` (weave ribs, handles, apples/linen/veg) in kitchen + conservatory replacing packing-crate clutter.  
 
+## Status update 2026-07-29 (loop 149)
+
+- **Material bug:** CLAY/terracotta matched copper (then wood) → conservatory urns read as woven metal barrels. Fixed: terracotta class (g≥0.45) before copper; scrubbed wood excludes orange clay; copper stays g≈0.42.  
+- **Urns:** classical amphora + handles, stone grit, sparse ivy (no green knob crown).  
+- **Oil lamps:** slim stem, smaller font, taller amber glass hero.  
+
