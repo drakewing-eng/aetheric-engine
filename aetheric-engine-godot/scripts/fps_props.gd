@@ -1881,9 +1881,7 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 
 
 static func _make_floor_path(prop: Dictionary) -> Node3D:
-	## Walk path — surface: stone (conservatory), iron (workshop/gallery), wood (service).
-	## Loop 89: iron plates are riveted diamond-tread with curbs — not flat black slabs.
-	## Never stamp pale stone on a finished hall runner (hall uses rug alone).
+	## Loop 203: walk path solid mats — iron tread / wood boards / stone flags (no washout).
 	var root := Node3D.new()
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
@@ -1891,75 +1889,61 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	var seed0: int = int(prop.get("seed", 0))
 	var surface: String = str(prop.get("surface", "stone"))
 	var n := int(clampf(length / 0.55, 3.0, 14.0))
-	# Mid-grey iron that reads under filmic tonemap (pure dark metal → black void)
-	var iron_mid := Color(0.34, 0.34, 0.36)
-	var iron_light := Color(0.42, 0.42, 0.44)
-	var iron_dark := Color(0.26, 0.26, 0.28)
-	var iron_edge := Color(0.48, 0.46, 0.42)  # slight brass-worn lip
+	var mat_iron_mid := _solid_metal(Color(0.34, 0.34, 0.36), 0.5)
+	var mat_iron_light := _solid_metal(Color(0.42, 0.42, 0.44), 0.48)
+	var mat_iron_dark := _solid_metal(Color(0.26, 0.26, 0.28), 0.55)
+	var mat_iron_edge := _solid_metal(Color(0.48, 0.46, 0.42), 0.45)
+	var mat_iron_hi := _solid_metal(Color(0.48, 0.48, 0.5), 0.48)
+	var mat_riv := _solid_metal(Color(0.5, 0.5, 0.52), 0.42)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_cop_scuff := _solid_metal(Color(0.55, 0.32, 0.14), 0.4)
+	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
+	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
+	var mat_oak_dd := _solid_matte(Color(0.3, 0.2, 0.1), 0.85)
+	var mat_grit := _solid_matte(Color(0.42, 0.4, 0.36), 0.9)
+	var mat_grit_d := _solid_matte(Color(0.34, 0.32, 0.28), 0.92)
+	var mat_moss := _solid_matte(Color(0.18, 0.34, 0.14), 0.92)
+	var mat_moss_l := _solid_matte(Color(0.22, 0.36, 0.16), 0.92)
+	var mat_peb := _solid_matte(Color(0.46, 0.44, 0.39), 0.85)
 	if surface == "iron":
-		# Continuous bed so gaps aren't void
-		_add_box(root, Vector3(0, 0.01, 0), Vector3(width * 0.98, 0.014, length * 0.98), iron_dark, false, 0.55)
-		# Side curbs (coach-house / experiment floor language)
-		_add_box(root, Vector3(-width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), iron_mid, false, 0.5)
-		_add_box(root, Vector3(width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), iron_mid, false, 0.5)
-		# Brass corner finials at path ends
+		_add_mesh_box(root, Vector3(0, 0.01, 0), Vector3(width * 0.98, 0.014, length * 0.98), mat_iron_dark)
+		_add_mesh_box(root, Vector3(-width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), mat_iron_mid)
+		_add_mesh_box(root, Vector3(width * 0.48, 0.035, 0), Vector3(0.06, 0.05, length * 0.96), mat_iron_mid)
 		for ez in [-1.0, 1.0]:
 			for ex in [-1.0, 1.0]:
-				_add_cylinder(
-					root,
-					Vector3(ex * width * 0.48, 0.06, ez * length * 0.46),
-					0.03, 0.05, BRASS.darkened(0.15), false, 0.35, true
-				)
+				_add_mesh_cyl(root, Vector3(ex * width * 0.48, 0.06, ez * length * 0.46), 0.03, 0.05, mat_br_d, false)
 	for i in n:
 		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
 		var ox := 0.03 * float(((i + seed0) % 3) - 1)
 		if surface == "iron":
 			var pw := width * (0.82 + float(i % 2) * 0.05)
 			var pd := 0.48
-			var icol := iron_light if (i + seed0) % 2 == 0 else iron_mid
-			# Raised plate body
-			_add_box(root, Vector3(ox, 0.028, z), Vector3(pw, 0.028, pd), icol, false, 0.48)
-			# Raised perimeter lip (reads as plate edge, not Minecraft block)
-			_add_box(root, Vector3(ox, 0.044, z - pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), iron_edge, false, 0.45)
-			_add_box(root, Vector3(ox, 0.044, z + pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), iron_edge, false, 0.45)
-			_add_box(root, Vector3(ox - pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), iron_edge, false, 0.45)
-			_add_box(root, Vector3(ox + pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), iron_edge, false, 0.45)
-			# Diamond-tread ridges (seed forks orientation)
+			var mat_pl := mat_iron_light if (i + seed0) % 2 == 0 else mat_iron_mid
+			_add_mesh_box(root, Vector3(ox, 0.028, z), Vector3(pw, 0.028, pd), mat_pl)
+			_add_mesh_box(root, Vector3(ox, 0.044, z - pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox, 0.044, z + pd * 0.42), Vector3(pw * 0.96, 0.012, 0.03), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox - pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox + pw * 0.45, 0.044, z), Vector3(0.03, 0.012, pd * 0.88), mat_iron_edge)
 			if (i + seed0) % 2 == 0:
 				for r in 3:
 					var rx := ox - pw * 0.25 + float(r) * (pw * 0.25)
-					_add_box(root, Vector3(rx, 0.042, z), Vector3(0.04, 0.01, pd * 0.7), iron_light.lightened(0.06), false, 0.5)
+					_add_mesh_box(root, Vector3(rx, 0.042, z), Vector3(0.04, 0.01, pd * 0.7), mat_iron_hi)
 			else:
 				for r2 in 2:
 					var rz := z - pd * 0.18 + float(r2) * (pd * 0.36)
-					_add_box(root, Vector3(ox, 0.042, rz), Vector3(pw * 0.7, 0.01, 0.035), iron_light.lightened(0.05), false, 0.5)
-			# Four corner rivets + mid-edge bolts
-			var riv := IRON.lightened(0.22)
+					_add_mesh_box(root, Vector3(ox, 0.042, rz), Vector3(pw * 0.7, 0.01, 0.035), mat_iron_hi)
 			for cx in [-1.0, 1.0]:
 				for cz in [-1.0, 1.0]:
-					_add_cylinder(
-						root,
-						Vector3(ox + cx * pw * 0.38, 0.05, z + cz * pd * 0.35),
-						0.018, 0.016, riv, false, 0.4
-					)
-			_add_cylinder(root, Vector3(ox, 0.05, z), 0.016, 0.014, BRASS.darkened(0.25), false, 0.35, true)
-			# Dark seam gap between plates
-			_add_box(root, Vector3(ox, 0.02, z + pd * 0.5), Vector3(pw * 0.9, 0.01, 0.04), iron_dark.darkened(0.1), false, 0.55)
-			# Occasional copper wear scuff (experiment floor history)
+					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.38, 0.05, z + cz * pd * 0.35), 0.018, 0.016, mat_riv, false)
+			_add_mesh_cyl(root, Vector3(ox, 0.05, z), 0.016, 0.014, mat_br_d, false)
+			_add_mesh_box(root, Vector3(ox, 0.02, z + pd * 0.5), Vector3(pw * 0.9, 0.01, 0.04), mat_iron_dark)
 			if (i + seed0) % 4 == 0:
-				_add_box(
-					root,
-					Vector3(ox + pw * 0.15, 0.046, z - 0.05),
-					Vector3(0.12, 0.008, 0.08),
-					COPPER.darkened(0.2), false, 0.45
-				)
+				_add_mesh_box(root, Vector3(ox + pw * 0.15, 0.046, z - 0.05), Vector3(0.12, 0.008, 0.08), mat_cop_scuff)
 		elif surface == "wood":
-			var wcol := OAK.darkened(0.05) if (i + seed0) % 2 == 0 else OAK.darkened(0.12)
-			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
-			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), OAK.darkened(0.18), false, 0.55)
+			var mat_w := mat_oak if (i + seed0) % 2 == 0 else mat_oak_d
+			_add_mesh_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), mat_w)
+			_add_mesh_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), mat_oak_dd)
 		else:
-			# Loop 173: irregular flagstones (loop 170 still pale aligned boards mid-FOV).
-			# TEX_STONE gate preserved; stagger X + size jitter + darker grit gaps.
 			var pw := width * (0.62 + float(i % 4) * 0.08)
 			var pd := 0.38 + float((i + seed0) % 4) * 0.07
 			var col: Color
@@ -1974,65 +1958,36 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 					col = Color(0.48, 0.47, 0.41)
 				_:
 					col = Color(0.5, 0.48, 0.42)
-			var grit := Color(0.42, 0.4, 0.36)
-			# Lateral stagger so flags don't form a continuous board strip
+			var mat_flag := _solid_matte(col, 0.85)
+			var mat_flag_d := _solid_matte(col.darkened(0.14), 0.88)
 			var stagger: float = ((float((i * 3 + seed0) % 5) - 2.0) * 0.06)
 			var fx: float = ox + stagger
-			# Gravel bed under flag (wider than stone)
-			_add_box(root, Vector3(fx, 0.006, z), Vector3(pw * 1.18, 0.012, pd * 1.2), grit, false, 0.9)
-			# Raised flag + dark lip
+			_add_mesh_box(root, Vector3(fx, 0.006, z), Vector3(pw * 1.18, 0.012, pd * 1.2), mat_grit)
 			var hy := 0.02 + float((i + seed0) % 4) * 0.006
-			_add_box(root, Vector3(fx, hy, z), Vector3(pw, 0.038, pd), col, false, 0.8)
-			_add_box(root, Vector3(fx, hy - 0.01, z), Vector3(pw * 1.06, 0.012, pd * 1.06), grit.darkened(0.1), false, 0.88)
-			# Wide mortar gap (breaks board continuity)
-			_add_box(root, Vector3(fx, 0.01, z + pd * 0.55), Vector3(pw * 0.98, 0.01, 0.06), grit.darkened(0.08), false, 0.9)
-			# Diagonal wear + edge chip
+			_add_mesh_box(root, Vector3(fx, hy, z), Vector3(pw, 0.038, pd), mat_flag)
+			_add_mesh_box(root, Vector3(fx, hy - 0.01, z), Vector3(pw * 1.06, 0.012, pd * 1.06), mat_grit_d)
+			_add_mesh_box(root, Vector3(fx, 0.01, z + pd * 0.55), Vector3(pw * 0.98, 0.01, 0.06), mat_grit_d)
 			if (i + seed0) % 2 == 0:
-				_add_box(
-					root,
-					Vector3(fx + pw * 0.12, hy + 0.02, z - pd * 0.1),
-					Vector3(pw * 0.35, 0.005, 0.016),
-					col.darkened(0.14), false, 0.85
-				)
+				_add_mesh_box(root, Vector3(fx + pw * 0.12, hy + 0.02, z - pd * 0.1), Vector3(pw * 0.35, 0.005, 0.016), mat_flag_d)
 			if (i + seed0) % 3 == 0:
-				_add_box(
-					root,
-					Vector3(fx - pw * 0.35, hy + 0.018, z + pd * 0.2),
-					Vector3(0.08, 0.012, 0.1),
-					grit.darkened(0.05), false, 0.88
-				)
-			# Moss (damp)
+				_add_mesh_box(root, Vector3(fx - pw * 0.35, hy + 0.018, z + pd * 0.2), Vector3(0.08, 0.012, 0.1), mat_grit)
 			if (i + seed0) % 3 != 1:
-				_add_box(
-					root,
-					Vector3(fx + pw * 0.3, hy + 0.016, z - pd * 0.22),
-					Vector3(0.1, 0.012, 0.06),
-					Color(0.18, 0.34, 0.14), false, 0.92
-				)
+				_add_mesh_box(root, Vector3(fx + pw * 0.3, hy + 0.016, z - pd * 0.22), Vector3(0.1, 0.012, 0.06), mat_moss)
 			if (i + seed0) % 2 == 0:
-				_add_box(
-					root,
-					Vector3(fx - pw * 0.28, hy + 0.014, z + pd * 0.18),
-					Vector3(0.08, 0.01, 0.05),
-					Color(0.22, 0.36, 0.16), false, 0.92
-				)
-			# Pebbles at gaps
+				_add_mesh_box(root, Vector3(fx - pw * 0.28, hy + 0.014, z + pd * 0.18), Vector3(0.08, 0.01, 0.05), mat_moss_l)
 			if (i + seed0) % 2 == 1:
-				_add_cylinder(
-					root,
-					Vector3(fx + pw * 0.2, hy + 0.016, z + pd * 0.15),
-					0.02, 0.016, Color(0.46, 0.44, 0.39), false, 0.85
-				)
-	# Continuous gravel + rough curbs (loop 173: chunkier, darker)
+				_add_mesh_cyl(root, Vector3(fx + pw * 0.2, hy + 0.016, z + pd * 0.15), 0.02, 0.016, mat_peb, false)
 	if surface == "stone":
-		_add_box(root, Vector3(0, 0.005, 0), Vector3(width * 0.98, 0.01, length * 0.96), Color(0.42, 0.4, 0.36), false, 0.9)
-		_add_box(root, Vector3(-width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), Color(0.46, 0.44, 0.39), false, 0.85)
-		_add_box(root, Vector3(width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), Color(0.46, 0.44, 0.39), false, 0.85)
+		var mat_curb := _solid_matte(Color(0.46, 0.44, 0.39), 0.85)
+		var mat_peb2 := _solid_matte(Color(0.48, 0.46, 0.4), 0.82)
+		_add_mesh_box(root, Vector3(0, 0.005, 0), Vector3(width * 0.98, 0.01, length * 0.96), mat_grit)
+		_add_mesh_box(root, Vector3(-width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), mat_curb)
+		_add_mesh_box(root, Vector3(width * 0.52, 0.014, 0), Vector3(0.16, 0.03, length * 0.96), mat_curb)
 		for gi in 12:
 			var gz := -length * 0.42 + float(gi) * (length * 0.84 / 11.0)
 			var gx_off: float = 0.02 if gi % 2 == 0 else -0.02
-			_add_cylinder(root, Vector3(-width * 0.52 + gx_off, 0.028, gz), 0.03, 0.024, Color(0.48, 0.46, 0.4), false, 0.82)
-			_add_cylinder(root, Vector3(width * 0.52 - gx_off, 0.028, gz), 0.028, 0.022, Color(0.46, 0.44, 0.39), false, 0.82)
+			_add_mesh_cyl(root, Vector3(-width * 0.52 + gx_off, 0.028, gz), 0.03, 0.024, mat_peb2, false)
+			_add_mesh_cyl(root, Vector3(width * 0.52 - gx_off, 0.028, gz), 0.028, 0.022, mat_curb, false)
 	return root
 
 
@@ -2720,58 +2675,58 @@ static func _make_copper_pot(prop: Dictionary) -> Node3D:
 
 
 static func _make_copper_scrap(prop: Dictionary) -> Node3D:
-	## Rooke scrap heap — loop 120/140: wire spool / plate stack / tube bundle.
-	## Bright copper read at distance (not black Minecraft floor junk).
+	## Loop 203: Rooke scrap heap — solid-mat wood tray + solid-metal copper/iron (no washout).
 	var root := Node3D.new()
 	root.name = "CopperScrap"
 	var s: float = float(prop.get("scale", 1.0))
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
-	var cu := COPPER.lightened(0.08)
-	var cu_d := COPPER.darkened(0.04)
-	var cu_hi := COPPER.lightened(0.16)
-	var iron_mid := Color(0.38, 0.38, 0.4)  # mid grey iron, not near-black
-	# Low wood tray / board under scrap
-	_add_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.58 * s, 0.05 * s, 0.42 * s), OAK.darkened(0.08), true, 0.65)
-	_add_box(root, Vector3(0, 0.055 * s, 0), Vector3(0.52 * s, 0.015 * s, 0.36 * s), OAK.lightened(0.08), false, 0.6)
+	var mat_cu := _solid_metal(COPPER.lightened(0.08), 0.3)
+	var mat_cu_d := _solid_metal(COPPER.darkened(0.04), 0.34)
+	var mat_cu_hi := _solid_metal(COPPER.lightened(0.16), 0.28)
+	var mat_iron := _solid_metal(Color(0.38, 0.38, 0.4), 0.48)
+	var mat_iron_l := _solid_metal(Color(0.46, 0.46, 0.48), 0.45)
+	var mat_br := _solid_metal(BRASS.lightened(0.05), 0.28)
+	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
+	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
+	var mat_oak_l := _solid_matte(Color(0.56, 0.42, 0.26), 0.75)
+	_add_mesh_box(root, Vector3(0, 0.03 * s, 0), Vector3(0.58 * s, 0.05 * s, 0.42 * s), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, 0.055 * s, 0), Vector3(0.52 * s, 0.015 * s, 0.36 * s), mat_oak_l)
 	if style == 0:
-		# Wire spool on wood arbor: flange discs + wound barrel + loose end
-		_add_cylinder(root, Vector3(-0.06 * s, 0.14 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.05), false, 0.55)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.28 * s, 0.0), 0.14 * s, 0.025 * s, OAK.darkened(0.05), false, 0.55)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.09 * s, 0.12 * s, cu_d, false, 0.32, true)
+		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.14 * s, 0.0), 0.14 * s, 0.025 * s, mat_oak, false)
+		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.28 * s, 0.0), 0.14 * s, 0.025 * s, mat_oak, false)
+		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.09 * s, 0.12 * s, mat_cu_d, false)
 		for wi in 6:
 			var wa := float(wi) * TAU / 6.0
-			_add_box(root, Vector3(-0.06 * s + cos(wa) * 0.09 * s, 0.21 * s, sin(wa) * 0.09 * s),
-				Vector3(0.02 * s, 0.1 * s, 0.03 * s), cu_hi, false, 0.3)
-		_add_cylinder(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.02 * s, 0.2 * s, iron_mid, false, 0.45)
-		_add_box(root, Vector3(0.1 * s, 0.21 * s, 0.0), Vector3(0.08 * s, 0.025 * s, 0.025 * s), iron_mid, false, 0.45)
-		_add_box(root, Vector3(0.14 * s, 0.28 * s, 0.0), Vector3(0.025 * s, 0.12 * s, 0.025 * s), iron_mid.lightened(0.08), false, 0.45)
-		# Loose copper plate + tube (not dark blob)
-		_add_box(root, Vector3(0.16 * s, 0.09 * s, -0.08 * s), Vector3(0.16 * s, 0.02 * s, 0.12 * s), cu_hi, false, 0.3)
-		_add_cylinder(root, Vector3(0.18 * s, 0.1 * s, 0.1 * s), 0.015 * s, 0.22 * s, cu, false, 0.32, true)
-		_add_box(root, Vector3(0.05 * s, 0.08 * s, 0.14 * s), Vector3(0.06 * s, 0.04 * s, 0.05 * s), cu_d, false, 0.32)
+			_add_mesh_box(root, Vector3(-0.06 * s + cos(wa) * 0.09 * s, 0.21 * s, sin(wa) * 0.09 * s), Vector3(0.02 * s, 0.1 * s, 0.03 * s), mat_cu_hi)
+		_add_mesh_cyl(root, Vector3(-0.06 * s, 0.21 * s, 0.0), 0.02 * s, 0.2 * s, mat_iron, false)
+		_add_mesh_box(root, Vector3(0.1 * s, 0.21 * s, 0.0), Vector3(0.08 * s, 0.025 * s, 0.025 * s), mat_iron)
+		_add_mesh_box(root, Vector3(0.14 * s, 0.28 * s, 0.0), Vector3(0.025 * s, 0.12 * s, 0.025 * s), mat_iron_l)
+		_add_mesh_box(root, Vector3(0.16 * s, 0.09 * s, -0.08 * s), Vector3(0.16 * s, 0.02 * s, 0.12 * s), mat_cu_hi)
+		_add_mesh_cyl(root, Vector3(0.18 * s, 0.1 * s, 0.1 * s), 0.015 * s, 0.22 * s, mat_cu, false)
+		_add_mesh_box(root, Vector3(0.05 * s, 0.08 * s, 0.14 * s), Vector3(0.06 * s, 0.04 * s, 0.05 * s), mat_cu_d)
 	elif style == 1:
-		# Flattened plate stack with edge lip + bent tube + iron clamp
 		for i in 4:
 			var py := (0.07 + float(i) * 0.028) * s
 			var pw := (0.3 - float(i) * 0.02) * s
-			_add_box(root, Vector3(-0.06 * s, py, 0.0), Vector3(pw, 0.018 * s, 0.24 * s), cu.darkened(float(i) * 0.03), false, 0.3)
-			_add_box(root, Vector3(-0.06 * s + pw * 0.45, py, 0.0), Vector3(0.015 * s, 0.03 * s, 0.22 * s), cu_hi, false, 0.28)
-		_add_cylinder(root, Vector3(0.18 * s, 0.14 * s, 0.06 * s), 0.022 * s, 0.32 * s, cu_hi, false, 0.3, true)
-		_add_box(root, Vector3(0.18 * s, 0.14 * s, 0.18 * s), Vector3(0.04 * s, 0.04 * s, 0.08 * s), cu_d, false, 0.3)
-		_add_cylinder(root, Vector3(0.1 * s, 0.12 * s, -0.12 * s), 0.018 * s, 0.2 * s, BRASS.lightened(0.05), false, 0.28, true)
-		_add_box(root, Vector3(0.0, 0.16 * s, 0.12 * s), Vector3(0.14 * s, 0.04 * s, 0.08 * s), iron_mid.lightened(0.05), false, 0.42)
+			var mat_pl := _solid_metal(COPPER.darkened(float(i) * 0.03), 0.32)
+			_add_mesh_box(root, Vector3(-0.06 * s, py, 0.0), Vector3(pw, 0.018 * s, 0.24 * s), mat_pl)
+			_add_mesh_box(root, Vector3(-0.06 * s + pw * 0.45, py, 0.0), Vector3(0.015 * s, 0.03 * s, 0.22 * s), mat_cu_hi)
+		_add_mesh_cyl(root, Vector3(0.18 * s, 0.14 * s, 0.06 * s), 0.022 * s, 0.32 * s, mat_cu_hi, false)
+		_add_mesh_box(root, Vector3(0.18 * s, 0.14 * s, 0.18 * s), Vector3(0.04 * s, 0.04 * s, 0.08 * s), mat_cu_d)
+		_add_mesh_cyl(root, Vector3(0.1 * s, 0.12 * s, -0.12 * s), 0.018 * s, 0.2 * s, mat_br, false)
+		_add_mesh_box(root, Vector3(0.0, 0.16 * s, 0.12 * s), Vector3(0.14 * s, 0.04 * s, 0.08 * s), mat_iron_l)
 	else:
-		# Angled tube bundle + strap + offcut (no dark sphere nugget)
 		for i in 5:
 			var ox := (-0.14 + float(i) * 0.07) * s
 			var oz := (-0.06 + float(i % 3) * 0.04) * s
-			_add_cylinder(root, Vector3(ox, 0.1 * s, oz), 0.018 * s, 0.36 * s, cu.darkened(float(i % 3) * 0.03), false, 0.3, true)
-		_add_cylinder(root, Vector3(0.05 * s, 0.16 * s, 0.02 * s), 0.02 * s, 0.28 * s, cu_hi, false, 0.3, true)
-		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.38 * s, 0.03 * s, 0.06 * s), iron_mid, false, 0.42)
-		_add_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.06 * s, 0.03 * s, 0.28 * s), iron_mid.lightened(0.06), false, 0.42)
-		_add_box(root, Vector3(0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.035 * s, 0.08 * s), cu_d, false, 0.3)
-		_add_box(root, Vector3(-0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), BRASS.lightened(0.04), false, 0.28)
+			var mat_t := _solid_metal(COPPER.darkened(float(i % 3) * 0.03), 0.32)
+			_add_mesh_cyl(root, Vector3(ox, 0.1 * s, oz), 0.018 * s, 0.36 * s, mat_t, false)
+		_add_mesh_cyl(root, Vector3(0.05 * s, 0.16 * s, 0.02 * s), 0.02 * s, 0.28 * s, mat_cu_hi, false)
+		_add_mesh_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.38 * s, 0.03 * s, 0.06 * s), mat_iron)
+		_add_mesh_box(root, Vector3(0.0, 0.2 * s, 0.0), Vector3(0.06 * s, 0.03 * s, 0.28 * s), mat_iron_l)
+		_add_mesh_box(root, Vector3(0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.035 * s, 0.08 * s), mat_cu_d)
+		_add_mesh_box(root, Vector3(-0.16 * s, 0.09 * s, 0.12 * s), Vector3(0.1 * s, 0.04 * s, 0.08 * s), mat_br)
 	_add_contact_shadow(root, 0.32 * s, 0.24 * s)
 	return root
 
@@ -2961,8 +2916,7 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:
-	## Loop 171: garden trug — oval weave, arched end handles, readable mid-FOV.
-	## Not a packing drum or brown Minecraft brick. fill: apples|linen|veg|""
+	## Loop 203: garden trug — solid-mat willow weave + fills (no wood/clay washout).
 	var root := Node3D.new()
 	root.name = "WickerBasket"
 	var s: float = float(prop.get("scale", 1.0))
@@ -2972,73 +2926,69 @@ static func _make_wicker_basket(prop: Dictionary) -> Node3D:
 		fill = "apples"
 	elif fill == "" and seed0 % 3 == 1:
 		fill = "linen"
-	# Willow: warm brown, not copper (g too high for metal) and not scrubbed oak
 	var wick := Color(0.62, 0.48, 0.3) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.26)
-	var wick_d := wick.darkened(0.16)
-	var wick_l := wick.lightened(0.12)
-	# Wider low trug (loop 171: slightly taller walls for mid-FOV silhouette)
+	var mat_w := _solid_matte(wick, 0.9)
+	var mat_wd := _solid_matte(wick.darkened(0.16), 0.92)
+	var mat_wl := _solid_matte(wick.lightened(0.12), 0.88)
+	var mat_soil := _solid_matte(Color(0.2, 0.14, 0.08), 0.94)
 	var rx: float = 0.26 * s
 	var rz: float = 0.17 * s
 	var h: float = 0.18 * s
-	# Flattened oval body (box core + rounded ends) — solid so walk-into collides
-	_add_box(root, Vector3(0, h * 0.42, 0), Vector3(rx * 1.7, h * 0.82, rz * 1.55), wick, true, 0.78)
-	_add_cylinder(root, Vector3(rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, wick, true, 0.78)
-	_add_cylinder(root, Vector3(-rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, wick, true, 0.78)
-	# Raised foot rail + dark interior soil bed
-	_add_box(root, Vector3(0, 0.018 * s, 0), Vector3(rx * 1.75, 0.03 * s, rz * 1.6), wick_d, true, 0.72)
-	_add_box(root, Vector3(0, h * 0.5, 0), Vector3(rx * 1.35, 0.025 * s, rz * 1.2), Color(0.2, 0.14, 0.08), false, 0.9)
-	# Horizontal weave bands (alternating light/dark)
+	_add_mesh_box(root, Vector3(0, h * 0.42, 0), Vector3(rx * 1.7, h * 0.82, rz * 1.55), mat_w)
+	_add_mesh_cyl(root, Vector3(rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, mat_w, true)
+	_add_mesh_cyl(root, Vector3(-rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, mat_w, true)
+	_add_mesh_box(root, Vector3(0, 0.018 * s, 0), Vector3(rx * 1.75, 0.03 * s, rz * 1.6), mat_wd)
+	_add_mesh_box(root, Vector3(0, h * 0.5, 0), Vector3(rx * 1.35, 0.025 * s, rz * 1.2), mat_soil)
 	for bi in 4:
 		var by := 0.035 * s + float(bi) * (h * 0.22)
-		_add_box(root, Vector3(0, by, 0), Vector3(rx * 1.78, 0.016 * s, rz * 1.62), wick_d if bi % 2 == 0 else wick_l, false, 0.74)
-	# Vertical ribs on long sides + ends
+		_add_mesh_box(root, Vector3(0, by, 0), Vector3(rx * 1.78, 0.016 * s, rz * 1.62), mat_wd if bi % 2 == 0 else mat_wl)
 	for vi in 6:
 		var t := (float(vi) / 5.0 - 0.5) * rx * 1.5
-		_add_box(root, Vector3(t, h * 0.42, rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), wick_d, false, 0.72)
-		_add_box(root, Vector3(t, h * 0.42, -rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), wick_d, false, 0.72)
+		_add_mesh_box(root, Vector3(t, h * 0.42, rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), mat_wd)
+		_add_mesh_box(root, Vector3(t, h * 0.42, -rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), mat_wd)
 	for ei in 3:
 		var ez := (float(ei) / 2.0 - 0.5) * rz * 1.1
-		_add_box(root, Vector3(rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), wick_d, false, 0.72)
-		_add_box(root, Vector3(-rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), wick_d, false, 0.72)
-	# Thick rim
-	_add_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.82, 0.03 * s, rz * 1.68), wick_l, false, 0.7)
-	_add_box(root, Vector3(0, h * 0.92, 0), Vector3(rx * 1.7, 0.018 * s, rz * 1.55), wick_d, false, 0.72)
-	# Arched end handles (trug signature — rise above rim, not end nubs)
+		_add_mesh_box(root, Vector3(rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), mat_wd)
+		_add_mesh_box(root, Vector3(-rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), mat_wd)
+	_add_mesh_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.82, 0.03 * s, rz * 1.68), mat_wl)
+	_add_mesh_box(root, Vector3(0, h * 0.92, 0), Vector3(rx * 1.7, 0.018 * s, rz * 1.55), mat_wd)
 	for sx in [-1.0, 1.0]:
 		var hx: float = sx * rx * 0.9
-		_add_box(root, Vector3(hx, h * 0.95, 0), Vector3(0.045 * s, 0.08 * s, 0.07 * s), wick, false, 0.68)
-		_add_box(root, Vector3(hx, h * 1.12, 0), Vector3(0.04 * s, 0.12 * s, 0.05 * s), wick_d, false, 0.68)
-		_add_box(root, Vector3(hx, h * 1.22, 0), Vector3(0.055 * s, 0.035 * s, 0.08 * s), wick_l, false, 0.65)
-	# Cross grip bar (optional seed) — long trug carry
+		_add_mesh_box(root, Vector3(hx, h * 0.95, 0), Vector3(0.045 * s, 0.08 * s, 0.07 * s), mat_w)
+		_add_mesh_box(root, Vector3(hx, h * 1.12, 0), Vector3(0.04 * s, 0.12 * s, 0.05 * s), mat_wd)
+		_add_mesh_box(root, Vector3(hx, h * 1.22, 0), Vector3(0.055 * s, 0.035 * s, 0.08 * s), mat_wl)
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(0, h * 1.18, 0), Vector3(rx * 1.65, 0.022 * s, 0.028 * s), wick_d, false, 0.68)
-	# Fill (no foliage sphere blobs that read as plant scrap)
+		_add_mesh_box(root, Vector3(0, h * 1.18, 0), Vector3(rx * 1.65, 0.022 * s, 0.028 * s), mat_wd)
 	if fill == "apples":
 		for ai in 6:
 			var ax := cos(float(ai) * 1.15) * rx * 0.42
 			var az := sin(float(ai) * 1.15) * rz * 0.38
 			var acol := Color(0.55, 0.18, 0.12) if ai % 2 == 0 else Color(0.48, 0.22, 0.1)
-			# Small squat cylinders (apple mass without foliage path)
-			_add_cylinder(root, Vector3(ax, h * 0.72, az), 0.038 * s, 0.045 * s, acol, false, 0.85)
-			_add_cylinder(root, Vector3(ax, h * 0.78, az), 0.03 * s, 0.02 * s, acol.lightened(0.08), false, 0.85)
+			var mat_a := _solid_matte(acol, 0.9)
+			var mat_al := _solid_matte(acol.lightened(0.08), 0.9)
+			_add_mesh_cyl(root, Vector3(ax, h * 0.72, az), 0.038 * s, 0.045 * s, mat_a, false)
+			_add_mesh_cyl(root, Vector3(ax, h * 0.78, az), 0.03 * s, 0.02 * s, mat_al, false)
 	elif fill == "linen":
-		# Folded cloth stack — cream g high enough for linen, not scrubbed wood
-		_add_box(root, Vector3(0, h * 0.68, 0), Vector3(rx * 1.25, 0.055 * s, rz * 1.15), Color(0.84, 0.8, 0.7), false, 0.9)
-		_add_box(root, Vector3(0.02 * s, h * 0.78, 0.015 * s), Vector3(rx * 1.05, 0.04 * s, rz * 0.95), Color(0.8, 0.76, 0.66), false, 0.9)
-		_add_box(root, Vector3(-0.015 * s, h * 0.86, -0.01 * s), Vector3(rx * 0.9, 0.03 * s, rz * 0.8), Color(0.78, 0.74, 0.64), false, 0.9)
+		var mat_lin := _solid_matte(Color(0.84, 0.8, 0.7), 0.92)
+		var mat_lin_d := _solid_matte(Color(0.8, 0.76, 0.66), 0.92)
+		var mat_lin_dd := _solid_matte(Color(0.78, 0.74, 0.64), 0.92)
+		_add_mesh_box(root, Vector3(0, h * 0.68, 0), Vector3(rx * 1.25, 0.055 * s, rz * 1.15), mat_lin)
+		_add_mesh_box(root, Vector3(0.02 * s, h * 0.78, 0.015 * s), Vector3(rx * 1.05, 0.04 * s, rz * 0.95), mat_lin_d)
+		_add_mesh_box(root, Vector3(-0.015 * s, h * 0.86, -0.01 * s), Vector3(rx * 0.9, 0.03 * s, rz * 0.8), mat_lin_dd)
 	elif fill == "veg":
-		# Conservatory trug: soil cake + root veg + leaf fronds (thin boxes, not green brick)
-		_add_box(root, Vector3(0, h * 0.58, 0), Vector3(rx * 1.2, 0.04 * s, rz * 1.05), Color(0.28, 0.2, 0.1), false, 0.9)
-		# Carrots / roots (orange cylinders, miss copper via higher g)
+		var mat_soil2 := _solid_matte(Color(0.28, 0.2, 0.1), 0.92)
+		var mat_carrot := _solid_matte(Color(0.78, 0.42, 0.18), 0.88)
+		var mat_leaf := _solid_matte(Color(0.22, 0.4, 0.14), 0.9)
+		var mat_leaf_d := _solid_matte(Color(0.2, 0.38, 0.14), 0.9)
+		var mat_turnip := _solid_matte(Color(0.72, 0.62, 0.4), 0.9)
+		_add_mesh_box(root, Vector3(0, h * 0.58, 0), Vector3(rx * 1.2, 0.04 * s, rz * 1.05), mat_soil2)
 		for ci in 4:
 			var cx := (float(ci) / 3.0 - 0.5) * rx * 0.9
-			_add_cylinder(root, Vector3(cx, h * 0.7, rz * 0.15), 0.018 * s, 0.09 * s, Color(0.78, 0.42, 0.18), false, 0.8)
-			_add_box(root, Vector3(cx, h * 0.78, rz * 0.15), Vector3(0.04 * s, 0.02 * s, 0.03 * s), Color(0.22, 0.4, 0.14), false, 0.9)
-		# Leaf fronds (flat, horizontal — not upright plant scrap)
-		_add_box(root, Vector3(0.05 * s, h * 0.76, -rz * 0.2), Vector3(0.12 * s, 0.012 * s, 0.08 * s), Color(0.24, 0.42, 0.16), false, 0.9)
-		_add_box(root, Vector3(-0.08 * s, h * 0.74, -rz * 0.1), Vector3(0.1 * s, 0.01 * s, 0.07 * s), Color(0.2, 0.38, 0.14), false, 0.9)
-		# Turnip / potato mass
-		_add_cylinder(root, Vector3(rx * 0.25, h * 0.68, -rz * 0.15), 0.035 * s, 0.04 * s, Color(0.72, 0.62, 0.4), false, 0.85)
+			_add_mesh_cyl(root, Vector3(cx, h * 0.7, rz * 0.15), 0.018 * s, 0.09 * s, mat_carrot, false)
+			_add_mesh_box(root, Vector3(cx, h * 0.78, rz * 0.15), Vector3(0.04 * s, 0.02 * s, 0.03 * s), mat_leaf)
+		_add_mesh_box(root, Vector3(0.05 * s, h * 0.76, -rz * 0.2), Vector3(0.12 * s, 0.012 * s, 0.08 * s), mat_leaf)
+		_add_mesh_box(root, Vector3(-0.08 * s, h * 0.74, -rz * 0.1), Vector3(0.1 * s, 0.01 * s, 0.07 * s), mat_leaf_d)
+		_add_mesh_cyl(root, Vector3(rx * 0.25, h * 0.68, -rz * 0.15), 0.035 * s, 0.04 * s, mat_turnip, false)
 	_add_contact_shadow(root, rx * 1.25, rz * 1.25)
 	return root
 

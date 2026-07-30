@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 203)
+
+- **Copper scrap residual:** wood tray + copper/iron still `_mat_for` washout mid-FOV workshop. Solid-mat oak tray + solid-metal spool/plates/tubes all 3 styles.  
+- **Floor path residual:** iron plates / wood boards / stone flags used textured path. Full solid-mat iron tread + rivets, oak boards, stone flags + grit/moss.  
+- **Wicker basket residual:** willow + fills still washout. Solid-mat weave + apples/linen/veg fills.  
+
 ## Status update 2026-07-30 (loop 202)
 
 - **Secondary machine residual:** style 0 coil frame + style 2 Leyden still `_mat_for` washout mid-FOV. Full solid-mat bases/coils/jars; Leyden cyan terminal → warm amber. Style 1 already solid from 182.  
