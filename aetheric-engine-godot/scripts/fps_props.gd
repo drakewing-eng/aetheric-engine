@@ -262,7 +262,14 @@ static func _make_desk(prop: Dictionary) -> Node3D:
 	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.08, 0.15), 0.028, 0.09, mat_m, false)
 	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.13, 0.15), 0.045, 0.02, mat_br_d, false)
 	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.26, 0.15), 0.02, 0.22, mat_candle, false)
-	_add_sphere_blob(root, Vector3(-0.35, top_y + 0.38, 0.15), 0.028, Color(1.0, 0.78, 0.4))
+	var mat_flame_d := StandardMaterial3D.new()
+	mat_flame_d.albedo_color = Color(1.0, 0.78, 0.4, 0.9)
+	mat_flame_d.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_flame_d.emission_enabled = true
+	mat_flame_d.emission = Color(1.0, 0.72, 0.3)
+	mat_flame_d.emission_energy_multiplier = 1.8
+	mat_flame_d.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_add_mesh_cyl(root, Vector3(-0.35, top_y + 0.38, 0.15), 0.022, 0.035, mat_flame_d, false)
 	_add_mesh_box(root, Vector3(0.45, top_y + 0.05, -0.15), Vector3(0.12, 0.04, 0.08), mat_seal)
 	_add_contact_shadow(root, 0.9, 0.55)
 	var flame := OmniLight3D.new()
@@ -853,9 +860,9 @@ static func _make_bookshelf(prop: Dictionary) -> Node3D:
 		if i == (1 + seed0 % 3):
 			if seed0 % 2 == 0:
 				_add_mesh_cyl(root, Vector3(width * 0.22, y + 0.1, 0.04), 0.04, 0.12, mat_marble, false)
-				_add_sphere_blob(root, Vector3(width * 0.22, y + 0.2, 0.04), 0.045, Color(0.78, 0.76, 0.72))
+				_add_mesh_cyl(root, Vector3(width * 0.22, y + 0.2, 0.04), 0.045, 0.05, _solid_matte(Color(0.78, 0.76, 0.72), 0.55), false)
 			else:
-				_add_sphere_blob(root, Vector3(-width * 0.2, y + 0.12, 0.05), 0.055, Color(0.35, 0.42, 0.5))
+				_add_mesh_cyl(root, Vector3(-width * 0.2, y + 0.12, 0.05), 0.055, 0.06, _solid_matte(Color(0.35, 0.42, 0.5), 0.7), false)
 				_add_mesh_cyl(root, Vector3(-width * 0.2, y + 0.04, 0.05), 0.03, 0.04, mat_br, false)
 	if seed0 % 2 == 0:
 		_add_mesh_box(root, Vector3(-0.15, height + 0.02, 0.05), Vector3(0.18, 0.035, 0.12), _solid_matte(_book_color(seed0), 0.88))
@@ -1219,7 +1226,14 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 			_add_mesh_cyl(root, Vector3(sx, ty + 0.08, -0.05), 0.035, 0.08, mat_d_m, false)
 			_add_mesh_cyl(root, Vector3(sx, ty + 0.14, -0.05), 0.04, 0.03, mat_d_br_d, false)
 			_add_mesh_cyl(root, Vector3(sx, ty + 0.26, -0.05), 0.018, 0.22, mat_d_candle, false)
-			_add_sphere_blob(root, Vector3(sx, ty + 0.4, -0.05), 0.025, Color(1.0, 0.78, 0.35))
+			var _fl0 := StandardMaterial3D.new()
+			_fl0.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+			_fl0.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			_fl0.emission_enabled = true
+			_fl0.emission = Color(1.0, 0.72, 0.3)
+			_fl0.emission_energy_multiplier = 1.7
+			_fl0.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			_add_mesh_cyl(root, Vector3(sx, ty + 0.4, -0.05), 0.025, 0.0325, _fl0, false)
 		_add_mesh_box(root, Vector3(0.12, ty + 0.08, -0.12), Vector3(0.1, 0.14, 0.06), mat_d_br_d)
 		_add_mesh_box(root, Vector3(0.12, ty + 0.08, -0.09), Vector3(0.07, 0.1, 0.02), mat_d_clock)
 		_add_mesh_box(root, Vector3(0.12, ty + 0.16, -0.12), Vector3(0.08, 0.02, 0.05), mat_d_br)
@@ -1239,7 +1253,14 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		_add_mesh_cyl(root, Vector3(0.4, ty + 0.08, 0), 0.025, 0.1, mat_d_br_d, false)
 		_add_mesh_cyl(root, Vector3(0.4, ty + 0.14, 0), 0.05, 0.025, mat_d_br, false)
 		_add_mesh_cyl(root, Vector3(0.4, ty + 0.28, 0), 0.02, 0.24, mat_d_candle, false)
-		_add_sphere_blob(root, Vector3(0.4, ty + 0.42, 0), 0.028, Color(1.0, 0.78, 0.4))
+		var _fl1 := StandardMaterial3D.new()
+		_fl1.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl1.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl1.emission_enabled = true
+		_fl1.emission = Color(1.0, 0.72, 0.3)
+		_fl1.emission_energy_multiplier = 1.7
+		_fl1.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0.4, ty + 0.42, 0), 0.028, 0.0364, _fl1, false)
 		_add_mesh_box(root, Vector3(0.0, ty, -0.1), Vector3(0.22, 0.04, 0.14), mat_d_md)
 		var lamp1 := OmniLight3D.new()
 		lamp1.light_color = Color(1.0, 0.82, 0.5)
@@ -1299,7 +1320,14 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		glass.material_override = gmat
 		glass.position = Vector3(0.18, ty + 0.2, -0.05)
 		root.add_child(glass)
-		_add_sphere_blob(root, Vector3(0.18, ty + 0.12, -0.05), 0.014, Color(1.0, 0.8, 0.38))
+		var _fl2 := StandardMaterial3D.new()
+		_fl2.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl2.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl2.emission_enabled = true
+		_fl2.emission = Color(1.0, 0.72, 0.3)
+		_fl2.emission_energy_multiplier = 1.7
+		_fl2.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0.18, ty + 0.12, -0.05), 0.014, 0.0182, _fl2, false)
 		_add_mesh_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), mat_d_seal)
 		var lamp3 := OmniLight3D.new()
 		lamp3.light_color = Color(1.0, 0.85, 0.55)
@@ -1403,7 +1431,7 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	# Hotplate vessels
 	_add_mesh_cyl(root, Vector3(-0.7, 1.42, 0.05), 0.08, 0.04, mat_cop_d, false)
 	_add_mesh_cyl(root, Vector3(-0.7, 1.5, 0.05), 0.12, 0.12, mat_cop, false)
-	_add_sphere_blob(root, Vector3(-0.7, 1.52, 0.05), 0.1, Color(0.78, 0.48, 0.22))
+	_add_mesh_cyl(root, Vector3(-0.7, 1.52, 0.05), 0.1, 0.12, _solid_metal(Color(0.78, 0.48, 0.22), 0.32), false)
 	_add_mesh_cyl(root, Vector3(-0.7, 1.6, 0.05), 0.06, 0.04, mat_cop_d, false)
 	_add_mesh_cyl(root, Vector3(-0.7, 1.64, 0.05), 0.03, 0.03, mat_br, false)
 	_add_mesh_box(root, Vector3(-0.52, 1.5, 0.05), Vector3(0.12, 0.025, 0.03), mat_cop_d)
@@ -1425,7 +1453,14 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_mesh_cyl(root, Vector3(-0.4, 1.62, 0.15), 0.05, 0.1, _solid_matte(Color(0.55, 0.52, 0.48), 0.75), false)
 	_add_mesh_box(root, Vector3(-0.05, 1.6, 0.18), Vector3(0.2, 0.03, 0.1), mat_log_l)
 	_add_mesh_cyl(root, Vector3(0.25, 1.66, 0.15), 0.025, 0.14, _solid_matte(Color(0.95, 0.82, 0.45), 0.7), false)
-	_add_sphere_blob(root, Vector3(0.25, 1.75, 0.15), 0.022, Color(1.0, 0.75, 0.35))
+	var _fl3 := StandardMaterial3D.new()
+	_fl3.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+	_fl3.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_fl3.emission_enabled = true
+	_fl3.emission = Color(1.0, 0.72, 0.3)
+	_fl3.emission_energy_multiplier = 1.7
+	_fl3.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_add_mesh_cyl(root, Vector3(0.25, 1.75, 0.15), 0.022, 0.0286, _fl3, false)
 	_add_mesh_cyl(root, Vector3(0.65, 1.64, 0.12), 0.08, 0.12, _solid_matte(Color(0.72, 0.46, 0.28), 0.9), false)
 	_add_mesh_cyl(root, Vector3(0.65, 1.72, 0.12), 0.06, 0.03, _solid_matte(Color(0.58, 0.36, 0.22), 0.9), false)
 	# Side boiler
@@ -1761,13 +1796,15 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			_add_mesh_cyl(root, Vector3(0.55, 0.9, -0.15), 0.11, 0.05, mat_cop, false)
 			_add_mesh_cyl(root, Vector3(0.55, 0.935, -0.15), 0.12, 0.018, mat_cop_l, false)
 			_add_mesh_box(root, Vector3(0.52, 0.875, 0.14), Vector3(0.14, 0.012, 0.1), mat_cloth)
-			# Apples + salt crock
-			_add_sphere_blob(root, Vector3(0.25, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
-			_add_sphere_blob(root, Vector3(0.32, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
+			# Apples + salt crock (solid-mat squat cylinders — no sphere_blob)
+			var mat_apple_a := _solid_matte(Color(0.55, 0.18, 0.14), 0.9)
+			var mat_apple_b := _solid_matte(Color(0.48, 0.22, 0.12), 0.9)
+			_add_mesh_cyl(root, Vector3(0.25, 0.9, 0.18), 0.038, 0.045, mat_apple_a, false)
+			_add_mesh_cyl(root, Vector3(0.32, 0.9, 0.14), 0.033, 0.04, mat_apple_b, false)
 			_add_mesh_cyl(root, Vector3(0.38, 0.91, -0.22), 0.038, 0.07, mat_crock, false)
 			_add_mesh_cyl(root, Vector3(0.38, 0.955, -0.22), 0.03, 0.022, mat_crock_d, false)
 		1:
-			# Loop 192: baking kit — solid mats (no texture washout on dough/pie)
+			# Baking kit — solid mats including dough/butter mass
 			var mat_b_board := _solid_matte(Color(0.64, 0.52, 0.34), 0.85)
 			var mat_b_board_d := _solid_matte(Color(0.5, 0.38, 0.22), 0.88)
 			var mat_dough := _solid_matte(Color(0.82, 0.74, 0.58), 0.95)
@@ -1782,27 +1819,23 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			var mat_cut := _solid_metal(Color(0.48, 0.48, 0.5), 0.4)
 			var mat_cloth_b := _solid_matte(Color(0.7, 0.72, 0.68), 0.92)
 			_add_mesh_box(root, Vector3(-0.4, 0.875, 0.0), Vector3(0.55, 0.03, 0.38), mat_b_board)
-			# Dough slab (soft, low)
 			_add_mesh_box(root, Vector3(-0.4, 0.895, 0.0), Vector3(0.28, 0.03, 0.14), mat_dough)
-			_add_sphere_blob(root, Vector3(-0.4, 0.9, 0.0), 0.08, Color(0.8, 0.72, 0.55))
-			# Pie dish + crust
+			_add_mesh_cyl(root, Vector3(-0.4, 0.9, 0.0), 0.08, 0.05, mat_dough, false)
 			_add_mesh_cyl(root, Vector3(0.1, 0.89, 0.1), 0.12, 0.04, mat_pie, false)
 			_add_mesh_cyl(root, Vector3(0.1, 0.92, 0.1), 0.11, 0.025, mat_pie_l, false)
 			_add_mesh_cyl(root, Vector3(0.1, 0.935, 0.1), 0.08, 0.02, mat_crust_b, false)
-			# Rolling pin
 			_add_mesh_cyl_rot(root, Vector3(0.35, 0.9, -0.15), 0.028, 0.42, mat_pin, Vector3(0, 0, PI * 0.5))
 			_add_mesh_cyl_rot(root, Vector3(0.12, 0.9, -0.15), 0.018, 0.06, mat_pin_h, Vector3(0, 0, PI * 0.5))
 			_add_mesh_cyl_rot(root, Vector3(0.58, 0.9, -0.15), 0.018, 0.06, mat_pin_h, Vector3(0, 0, PI * 0.5))
-			# Mixing bowl + butter
 			_add_mesh_cyl(root, Vector3(0.5, 0.92, 0.15), 0.13, 0.08, mat_bowl, false)
 			_add_mesh_cyl(root, Vector3(0.5, 0.97, 0.15), 0.14, 0.02, mat_bowl_r, false)
 			_add_mesh_box(root, Vector3(-0.05, 0.875, 0.25), Vector3(0.14, 0.03, 0.1), mat_butter)
-			_add_sphere_blob(root, Vector3(-0.05, 0.895, 0.25), 0.035, Color(0.9, 0.85, 0.65))
+			_add_mesh_cyl(root, Vector3(-0.05, 0.895, 0.25), 0.035, 0.03, mat_butter, false)
 			_add_mesh_cyl(root, Vector3(0.25, 0.88, 0.22), 0.04, 0.012, mat_cut, false)
 			_add_mesh_cyl(root, Vector3(0.35, 0.88, 0.25), 0.032, 0.01, mat_cut, false)
 			_add_mesh_box(root, Vector3(-0.55, 0.875, 0.2), Vector3(0.16, 0.012, 0.12), mat_cloth_b)
 		2:
-			# Loop 193: market veg kit — solid-mat wicker tray + chop block (no washout)
+			# Market veg kit — solid-mat greens as low leaf pads (no sphere_blob)
 			var mat_wick := _solid_matte(Color(0.52, 0.38, 0.2), 0.92)
 			var mat_wick_d := _solid_matte(Color(0.4, 0.28, 0.14), 0.94)
 			var mat_chop := _solid_matte(Color(0.55, 0.42, 0.26), 0.82)
@@ -1813,32 +1846,34 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			var mat_crock_vd := _solid_matte(Color(0.58, 0.5, 0.4), 0.9)
 			var mat_cloth_v := _solid_matte(Color(0.72, 0.74, 0.7), 0.92)
 			var mat_carrot := _solid_matte(Color(0.85, 0.5, 0.18), 0.88)
-			# Shallow oval basket
+			var mat_green_a := _solid_matte(Color(0.26, 0.4, 0.16), 0.9)
+			var mat_green_b := _solid_matte(Color(0.3, 0.42, 0.18), 0.9)
+			var mat_green_c := _solid_matte(Color(0.22, 0.36, 0.14), 0.9)
+			var mat_root := _solid_matte(Color(0.85, 0.45, 0.15), 0.88)
+			var mat_root_b := _solid_matte(Color(0.9, 0.5, 0.18), 0.88)
+			var mat_apple_v := _solid_matte(Color(0.52, 0.16, 0.12), 0.9)
 			_add_mesh_cyl(root, Vector3(-0.38, 0.9, 0.0), 0.16, 0.08, mat_wick, false)
 			_add_mesh_cyl(root, Vector3(-0.38, 0.88, 0.0), 0.14, 0.03, mat_wick_d, false)
 			_add_mesh_cyl(root, Vector3(-0.38, 0.95, 0.0), 0.17, 0.025, mat_wick_d, false)
 			_add_mesh_box(root, Vector3(-0.38, 0.93, 0.12), Vector3(0.3, 0.04, 0.02), mat_wick_d)
 			_add_mesh_box(root, Vector3(-0.38, 0.93, -0.12), Vector3(0.3, 0.04, 0.02), mat_wick_d)
-			# Greens + roots
-			_add_sphere_blob(root, Vector3(-0.38, 0.98, 0.0), 0.08, Color(0.26, 0.4, 0.16))
-			_add_sphere_blob(root, Vector3(-0.32, 1.0, 0.06), 0.05, Color(0.3, 0.42, 0.18))
-			_add_sphere_blob(root, Vector3(-0.42, 0.99, -0.04), 0.045, Color(0.22, 0.36, 0.14))
-			_add_sphere_blob(root, Vector3(-0.34, 1.02, 0.04), 0.032, Color(0.85, 0.45, 0.15))
-			_add_sphere_blob(root, Vector3(-0.44, 1.0, 0.0), 0.028, Color(0.9, 0.5, 0.18))
+			_add_mesh_cyl(root, Vector3(-0.38, 0.98, 0.0), 0.08, 0.05, mat_green_a, false)
+			_add_mesh_cyl(root, Vector3(-0.32, 1.0, 0.06), 0.05, 0.035, mat_green_b, false)
+			_add_mesh_cyl(root, Vector3(-0.42, 0.99, -0.04), 0.045, 0.03, mat_green_c, false)
+			_add_mesh_cyl(root, Vector3(-0.34, 1.02, 0.04), 0.032, 0.028, mat_root, false)
+			_add_mesh_cyl(root, Vector3(-0.44, 1.0, 0.0), 0.028, 0.025, mat_root_b, false)
 			_add_mesh_cyl_rot(root, Vector3(-0.28, 0.98, -0.04), 0.015, 0.1, mat_carrot, Vector3(0, 0, PI * 0.35))
 			_add_mesh_cyl_rot(root, Vector3(-0.48, 0.98, 0.05), 0.012, 0.08, mat_carrot, Vector3(0, 0, -PI * 0.3))
-			# Chop block + cleaver
 			_add_mesh_box(root, Vector3(0.3, 0.9, -0.05), Vector3(0.42, 0.09, 0.3), mat_chop)
 			_add_mesh_box(root, Vector3(0.3, 0.86, -0.05), Vector3(0.46, 0.035, 0.33), mat_chop_d)
 			_add_mesh_box(root, Vector3(0.36, 0.96, 0.02), Vector3(0.2, 0.015, 0.04), mat_cleaver)
 			_add_mesh_cyl_rot(root, Vector3(0.22, 0.96, 0.02), 0.014, 0.07, mat_cleaver_h, Vector3(0, 0, PI * 0.5))
-			# Salt crock + towel + apple
 			_add_mesh_cyl(root, Vector3(0.52, 0.93, 0.16), 0.045, 0.09, mat_crock_v, false)
 			_add_mesh_cyl(root, Vector3(0.52, 0.99, 0.16), 0.036, 0.022, mat_crock_vd, false)
 			_add_mesh_box(root, Vector3(0.08, 0.875, 0.22), Vector3(0.18, 0.012, 0.12), mat_cloth_v)
-			_add_sphere_blob(root, Vector3(0.52, 0.9, -0.14), 0.038, Color(0.52, 0.16, 0.12))
+			_add_mesh_cyl(root, Vector3(0.52, 0.9, -0.14), 0.038, 0.04, mat_apple_v, false)
 		_:
-			# Loop 193: scullery kit — solid-mat mortar, colander, herbs
+			# Scullery kit — solid-mat pestle head + spoon bowl
 			var mat_herb_b := _solid_matte(Color(0.58, 0.46, 0.3), 0.85)
 			var mat_leaf_a := _solid_matte(Color(0.28, 0.4, 0.18), 0.92)
 			var mat_leaf_b := _solid_matte(Color(0.32, 0.38, 0.16), 0.92)
@@ -1857,21 +1892,18 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			_add_mesh_box(root, Vector3(-0.35, 0.875, 0.05), Vector3(0.48, 0.03, 0.32), mat_herb_b)
 			_add_mesh_box(root, Vector3(-0.4, 0.9, 0.05), Vector3(0.22, 0.03, 0.14), mat_leaf_a)
 			_add_mesh_box(root, Vector3(-0.28, 0.9, -0.05), Vector3(0.16, 0.025, 0.12), mat_leaf_b)
-			# Mortar + pestle
 			_add_mesh_cyl(root, Vector3(0.15, 0.92, 0.05), 0.09, 0.1, mat_stone_m, false)
 			_add_mesh_cyl(root, Vector3(0.15, 0.98, 0.05), 0.1, 0.03, mat_stone_r, false)
 			_add_mesh_cyl(root, Vector3(0.22, 1.05, 0.08), 0.02, 0.16, mat_pestle, false)
-			_add_sphere_blob(root, Vector3(0.22, 0.98, 0.08), 0.03, Color(0.42, 0.3, 0.16))
-			# Copper colander + holes
+			_add_mesh_cyl(root, Vector3(0.22, 0.98, 0.08), 0.03, 0.035, mat_pestle, false)
 			_add_mesh_cyl(root, Vector3(0.5, 0.9, -0.1), 0.12, 0.05, mat_col, false)
 			_add_mesh_cyl(root, Vector3(0.5, 0.94, -0.1), 0.13, 0.02, mat_col_l, false)
 			for hi in 4:
 				var hx := 0.45 + float(hi % 2) * 0.08
 				var hz := -0.14 + float(hi / 2) * 0.08
 				_add_mesh_cyl(root, Vector3(hx, 0.92, hz), 0.012, 0.01, mat_hole, false)
-			# Spoon + ladle
 			_add_mesh_box(root, Vector3(-0.1, 0.89, -0.2), Vector3(0.32, 0.015, 0.03), mat_spoon)
-			_add_sphere_blob(root, Vector3(-0.26, 0.89, -0.2), 0.028, Color(0.5, 0.38, 0.22))
+			_add_mesh_cyl(root, Vector3(-0.26, 0.89, -0.2), 0.028, 0.02, mat_spoon, false)
 			_add_mesh_box(root, Vector3(0.25, 0.89, 0.22), Vector3(0.28, 0.015, 0.025), mat_ladle)
 			_add_mesh_cyl(root, Vector3(0.08, 0.89, 0.22), 0.035, 0.025, mat_ladle_c, false)
 			_add_mesh_box(root, Vector3(0.5, 0.875, 0.2), Vector3(0.16, 0.015, 0.12), mat_cloth_s)
@@ -2319,7 +2351,14 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 		shade.position = Vector3(0, y - 0.08, 0.22)
 		root.add_child(shade)
 		_add_mesh_cyl(root, Vector3(0, y - 0.13, 0.22), 0.065, 0.012, mat_br_d, false)
-		_add_sphere_blob(root, Vector3(0, y - 0.04, 0.22), 0.025, Color(1.0, 0.82, 0.4))
+		var _fl4 := StandardMaterial3D.new()
+		_fl4.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl4.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl4.emission_enabled = true
+		_fl4.emission = Color(1.0, 0.72, 0.3)
+		_fl4.emission_energy_multiplier = 1.7
+		_fl4.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0, y - 0.04, 0.22), 0.025, 0.0325, _fl4, false)
 	elif style == 1:
 		# Double-curve arm + globe
 		_add_mesh_box(root, Vector3(0, y - 0.02, 0.1), Vector3(0.03, 0.03, 0.12), mat_br)
@@ -2334,7 +2373,14 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 		globe.material_override = mat_shade
 		globe.position = Vector3(0.02, y - 0.18, 0.24)
 		root.add_child(globe)
-		_add_sphere_blob(root, Vector3(0.02, y - 0.16, 0.24), 0.028, Color(1.0, 0.85, 0.45))
+		var _fl5 := StandardMaterial3D.new()
+		_fl5.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl5.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl5.emission_enabled = true
+		_fl5.emission = Color(1.0, 0.72, 0.3)
+		_fl5.emission_energy_multiplier = 1.7
+		_fl5.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0.02, y - 0.16, 0.24), 0.028, 0.0364, _fl5, false)
 	else:
 		# Candle plate with drip pan + glass chimney
 		_add_mesh_box(root, Vector3(0, y - 0.02, 0.12), Vector3(0.03, 0.03, 0.16), mat_br)
@@ -2351,7 +2397,14 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 		chim.material_override = mat_shade
 		chim.position = Vector3(0, y + 0.02, 0.2)
 		root.add_child(chim)
-		_add_sphere_blob(root, Vector3(0, y + 0.1, 0.2), 0.022, Color(1.0, 0.8, 0.4))
+		var _fl6 := StandardMaterial3D.new()
+		_fl6.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl6.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl6.emission_enabled = true
+		_fl6.emission = Color(1.0, 0.72, 0.3)
+		_fl6.emission_energy_multiplier = 1.7
+		_fl6.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(0, y + 0.1, 0.2), 0.022, 0.0286, _fl6, false)
 
 	var lamp := OmniLight3D.new()
 	lamp.light_color = Color(1.0, 0.86, 0.55)
@@ -3633,48 +3686,48 @@ static func _make_plant(prop: Dictionary) -> Node3D:
 			# Loop 74: denser mesh frond bulk ABOVE pot (~0.35*h) for walk-around sides
 			_add_plant_mesh_fronds(root_plant, pw, ph, tex_path.find("fern") >= 0, int(prop.get("seed", 0)))
 			return root_plant
-	# Fallback full mesh plant — loop 140: fronds only, no sphere crown (cactus)
+	# Fallback full mesh plant — loop 206 solid-mat clay pot + fronds
 	var root := Node3D.new()
 	root.name = "Plant"
 	var scale: float = prop.get("scale", 1.0)
 	var tall: bool = prop.get("tall", false)
-	var leaf_a := Color(0.26, 0.46, 0.2)
-	var leaf_b := Color(0.18, 0.36, 0.14)
-	var leaf_c := Color(0.32, 0.5, 0.24)
-	var stem_col := Color(0.2, 0.3, 0.12)
-	_add_cylinder(root, Vector3(0, 0.18 * scale, 0), 0.2 * scale, 0.34 * scale, CLAY, true, 0.88)
-	_add_cylinder(root, Vector3(0, 0.35 * scale, 0), 0.24 * scale, 0.05 * scale, CLAY.lightened(0.1), false, 0.88)
-	_add_cylinder(root, Vector3(0, 0.37 * scale, 0), 0.17 * scale, 0.04 * scale, Color(0.16, 0.1, 0.06), false, 0.9)
+	var mat_leaf_a := _solid_matte(Color(0.26, 0.46, 0.2), 0.92)
+	var mat_leaf_b := _solid_matte(Color(0.18, 0.36, 0.14), 0.92)
+	var mat_leaf_c := _solid_matte(Color(0.32, 0.5, 0.24), 0.9)
+	var mat_stem := _solid_matte(Color(0.2, 0.3, 0.12), 0.9)
+	var mat_clay := _solid_matte(Color(0.7, 0.4, 0.22), 0.92)
+	var mat_clay_l := _solid_matte(Color(0.78, 0.48, 0.28), 0.9)
+	var mat_soil := _solid_matte(Color(0.16, 0.1, 0.06), 0.95)
+	_add_mesh_cyl(root, Vector3(0, 0.18 * scale, 0), 0.2 * scale, 0.34 * scale, mat_clay, true)
+	_add_mesh_cyl(root, Vector3(0, 0.35 * scale, 0), 0.24 * scale, 0.05 * scale, mat_clay_l, false)
+	_add_mesh_cyl(root, Vector3(0, 0.37 * scale, 0), 0.17 * scale, 0.04 * scale, mat_soil, false)
 	var stem_h := 0.42 * scale if tall else 0.22 * scale
-	_add_cylinder(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, stem_col, false, 0.9)
+	_add_mesh_cyl(root, Vector3(0, 0.4 * scale + stem_h * 0.5, 0), 0.025 * scale, stem_h, mat_stem, false)
 	var crown_y := 0.42 * scale + stem_h
 	var n_f := 8 if tall else 6
 	for i in n_f:
 		var ang := float(i) * TAU / float(n_f)
 		var bl := (0.28 if tall else 0.2) * scale
 		var tip := Vector3(cos(ang) * bl * 0.55, crown_y + 0.08 * scale, sin(ang) * bl * 0.55)
-		_add_box(root, tip, Vector3(bl, 0.02 * scale, 0.04 * scale), leaf_a if i % 2 == 0 else leaf_b, false, 0.92)
-		_add_box(
+		_add_mesh_box(root, tip, Vector3(bl, 0.02 * scale, 0.04 * scale), mat_leaf_a if i % 2 == 0 else mat_leaf_b)
+		_add_mesh_box(
 			root,
 			Vector3(cos(ang) * bl * 0.3, crown_y + 0.02 * scale, sin(ang) * bl * 0.3),
 			Vector3(0.03 * scale, bl * 0.7, 0.025 * scale),
-			leaf_c if i % 2 == 0 else leaf_a,
-			false,
-			0.9
+			mat_leaf_c if i % 2 == 0 else mat_leaf_a
 		)
 	_add_contact_shadow(root, 0.22 * scale, 0.22 * scale)
 	return root
 
 
 static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: bool, seed0: int) -> void:
-	## Loop 140: frond-only side volume — NO sphere crowns (cactus/mushroom read).
-	## Flat ribbon leaves + thin stems for walk-around mass without ball tops.
+	## Loop 206: solid-mat frond side volume — no wood/clay washout on stems/leaves.
 	var pot_top := ph * 0.30
 	var crown := ph * 0.78
-	var leaf_a := Color(0.22, 0.42, 0.16)
-	var leaf_b := Color(0.16, 0.36, 0.12)
-	var leaf_c := Color(0.28, 0.48, 0.2)
-	var stem_c := Color(0.28, 0.24, 0.12)
+	var mat_leaf_a := _solid_matte(Color(0.22, 0.42, 0.16), 0.92)
+	var mat_leaf_b := _solid_matte(Color(0.16, 0.36, 0.12), 0.92)
+	var mat_leaf_c := _solid_matte(Color(0.28, 0.48, 0.2), 0.9)
+	var mat_stem := _solid_matte(Color(0.28, 0.24, 0.12), 0.88)
 	var n_stems := 8 if is_fern else 7
 	for i in n_stems:
 		var ang := float(i) * (TAU / float(n_stems)) + float(seed0) * 0.41
@@ -3682,83 +3735,64 @@ static func _add_plant_mesh_fronds(root: Node3D, pw: float, ph: float, is_fern: 
 		var sx: float = cos(ang) * r
 		var sz: float = sin(ang) * r
 		var sh: float = (crown - pot_top) * (0.48 + float((i + seed0) % 4) * 0.1)
-		_add_cylinder(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.008 * pw + 0.005, sh, stem_c, false, 0.88)
+		_add_mesh_cyl(root, Vector3(sx, pot_top + sh * 0.5, sz), 0.008 * pw + 0.005, sh, mat_stem, false)
 		var tip_y: float = pot_top + sh
 		if is_fern:
-			# Arching pinnae: long thin horizontal leaflets stepped down the rachis
 			for j in 5:
 				var t := float(j) / 4.0
 				var fang := ang + (float(j % 2) * 2.0 - 1.0) * (0.55 + t * 0.25)
 				var fl := pw * (0.16 + (1.0 - t) * 0.08)
 				var fy := tip_y - t * sh * 0.55
-				_add_box(
+				_add_mesh_box(
 					root,
 					Vector3(sx + cos(fang) * fl * 0.42, fy, sz + sin(fang) * fl * 0.42),
 					Vector3(fl, 0.012 * ph, 0.028 * pw),
-					leaf_a if j % 2 == 0 else leaf_b,
-					false,
-					0.92
+					mat_leaf_a if j % 2 == 0 else mat_leaf_b
 				)
-				# Second leaflet opposite side of rachis
 				var fang2 := fang + PI * 0.92
-				_add_box(
+				_add_mesh_box(
 					root,
 					Vector3(sx + cos(fang2) * fl * 0.35, fy - 0.008 * ph, sz + sin(fang2) * fl * 0.35),
 					Vector3(fl * 0.85, 0.01 * ph, 0.022 * pw),
-					leaf_c if j % 2 == 0 else leaf_a,
-					false,
-					0.92
+					mat_leaf_c if j % 2 == 0 else mat_leaf_a
 				)
 		else:
-			# Palm: drooping fronds (loop 141 — horizontal fans, not upright cactus sticks)
 			for j in 5:
 				var pang := ang + float(j - 2.0) * 0.28
 				var bl := pw * (0.22 + float(j % 3) * 0.05)
 				var drop := 0.02 * ph + float(j) * 0.018 * ph
-				# Long leaflet mostly horizontal/splayed
-				_add_box(
+				_add_mesh_box(
 					root,
 					Vector3(sx + cos(pang) * bl * 0.55, tip_y - drop, sz + sin(pang) * bl * 0.55),
 					Vector3(bl * 0.95, 0.014 * ph, 0.03 * pw),
-					leaf_c if j % 2 == 0 else leaf_a,
-					false,
-					0.9
+					mat_leaf_c if j % 2 == 0 else mat_leaf_a
 				)
-				# Slight mid-rib under leaf for thickness
-				_add_box(
+				_add_mesh_box(
 					root,
 					Vector3(sx + cos(pang) * bl * 0.35, tip_y - drop - 0.01 * ph, sz + sin(pang) * bl * 0.35),
 					Vector3(bl * 0.5, 0.01 * ph, 0.018 * pw),
-					leaf_b,
-					false,
-					0.92
+					mat_leaf_b
 				)
-	# Mid ring of thin blades (side volume, still leaf-shaped)
 	for k in 10:
 		var kang := float(k) * TAU / 10.0 + 0.15 + float(seed0 % 5) * 0.05
 		var kr: float = pw * (0.16 + float(k % 3) * 0.035)
 		var ky: float = pot_top + (crown - pot_top) * (0.3 + float(k % 4) * 0.12)
 		var blade_len: float = pw * (0.12 + float(k % 2) * 0.04)
-		_add_box(
+		_add_mesh_box(
 			root,
 			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
 			Vector3(blade_len, 0.014 * ph, 0.028 * pw),
-			leaf_b if k % 2 == 0 else leaf_a,
-			false,
-			0.92
+			mat_leaf_b if k % 2 == 0 else mat_leaf_a
 		)
-	# Upper fan of flat leaflets (replaces sphere canopy — no cactus balls)
 	for k in 6:
 		var kang := float(k) * TAU / 6.0 + 0.4
 		var kr: float = pw * 0.1
 		var ky: float = crown * 0.88
-		_add_box(
+		_add_mesh_box(
 			root,
 			Vector3(cos(kang) * kr, ky, sin(kang) * kr),
 			Vector3(pw * 0.14, 0.012 * ph, 0.03 * pw),
-			leaf_c if k % 2 == 0 else leaf_a,
-			false,
-			0.9
+			mat_leaf_c if k % 2 == 0 else mat_leaf_a
 		)
 
 
@@ -3972,7 +4006,14 @@ static func _make_chandelier(_prop: Dictionary) -> Node3D:
 		# Gallery ring at mouth
 		_add_mesh_cyl(root, Vector3(ax, hang - 0.32, az), 0.085, 0.012, mat_br_d, false)
 		# Flame
-		_add_sphere_blob(root, Vector3(ax, hang - 0.2, az), 0.022, Color(1.0, 0.8, 0.4))
+		var _fl7 := StandardMaterial3D.new()
+		_fl7.albedo_color = Color(1.0, 0.8, 0.4, 0.9)
+		_fl7.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_fl7.emission_enabled = true
+		_fl7.emission = Color(1.0, 0.72, 0.3)
+		_fl7.emission_energy_multiplier = 1.7
+		_fl7.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.2, az), 0.022, 0.0286, _fl7, false)
 	# Crystal pendants under bowl (subtle, not long sticks)
 	for j in 6:
 		var ja := float(j) * 60.0 + 20.0
@@ -4858,11 +4899,14 @@ static func _make_billboard_prop(prop: Dictionary) -> Node3D:
 	var mesh_pot: bool = bool(prop.get("mesh_pot", false))
 
 	if mesh_pot:
-		# Compact terracotta under card (not wood-textured barrels)
+		# Compact terracotta under card — solid-mat clay (loop 206)
 		var pot_r: float = clampf(width * 0.22, 0.16, 0.32)
-		_add_cylinder(root, Vector3(0, 0.16, 0), pot_r, 0.28, CLAY, true, 0.85)
-		_add_cylinder(root, Vector3(0, 0.3, 0), pot_r * 1.12, 0.04, CLAY.lightened(0.12), false, 0.85)
-		_add_cylinder(root, Vector3(0, 0.32, 0), pot_r * 0.85, 0.03, Color(0.2, 0.14, 0.08), false, 0.9)
+		var mat_clay := _solid_matte(Color(0.7, 0.4, 0.22), 0.92)
+		var mat_clay_l := _solid_matte(Color(0.78, 0.48, 0.28), 0.9)
+		var mat_soil := _solid_matte(Color(0.2, 0.14, 0.08), 0.95)
+		_add_mesh_cyl(root, Vector3(0, 0.16, 0), pot_r, 0.28, mat_clay, true)
+		_add_mesh_cyl(root, Vector3(0, 0.3, 0), pot_r * 1.12, 0.04, mat_clay_l, false)
+		_add_mesh_cyl(root, Vector3(0, 0.32, 0), pot_r * 0.85, 0.03, mat_soil, false)
 
 	var mesh := QuadMesh.new()
 	mesh.size = Vector2(width, height)

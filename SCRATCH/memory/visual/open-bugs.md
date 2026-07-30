@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 206)
+
+- **Plant residual:** fallback mesh pot/fronds + billboard mesh_pot + side fronds still `_mat_for`. Solid-mat clay pots + solid-mat stems/leaves (fern/palm fronds).  
+- **Prep fruit residual:** apples/dough/greens used `_add_sphere_blob`. Converted to solid-mat squat cylinders/leaf pads.  
+- **Flame residual:** desk/hall/sconce/range/chandelier flame blobs → emission solid mesh cyls (no sphere_blob call sites left in makers).  
+
 ## Status update 2026-07-30 (loop 205)
 
 - **Window residual:** mahogany sash + drapery still `_mat_for` washout. Solid-mat frame/mullion/sill + solid-mat curtains + brass tie-backs (view plate unshaded kept).  
