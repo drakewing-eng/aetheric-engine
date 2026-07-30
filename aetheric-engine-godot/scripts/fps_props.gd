@@ -2232,14 +2232,16 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	## Loop 212: stone = irregular garden flags (not pale game slabs + green rivet dots mid-FOV).
 	##          iron = darker worn tread, smaller recessed bolts (not bright rivet grid).
 	## Loop 230: iron = staggered diamond-tread checker plates (not dark Minecraft slab strip mid-FOV).
+	## Loop 234: stone = denser smaller irregular flags (not large Minecraft slab path mid-FOV).
 	var root := Node3D.new()
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
 	var width: float = float(prop.get("width", 0.9))
 	var seed0: int = int(prop.get("seed", 0))
 	var surface: String = str(prop.get("surface", "stone"))
-	# Iron uses denser plates; stone/wood keep prior spacing
-	var n := int(clampf(length / (0.36 if surface == "iron" else 0.55), 3.0, 20.0))
+	# Iron / stone denser plates; wood keeps prior spacing
+	var step: float = 0.36 if surface == "iron" else (0.32 if surface == "stone" else 0.55)
+	var n := int(clampf(length / step, 3.0, 24.0))
 	# Loop 230: warmer worn iron greys (not pure black fridge slabs)
 	var mat_iron_mid := _solid_metal(Color(0.34, 0.33, 0.32), 0.52)
 	var mat_iron_light := _solid_metal(Color(0.42, 0.4, 0.38), 0.48)
@@ -2339,62 +2341,63 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 			_add_mesh_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), mat_w)
 			_add_mesh_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), mat_oak_dd)
 		else:
-			# Loop 226: garden flags — DARKER warm stone under glass wash, broken grid
-			# (pale aligned boards mid-FOV conservatory_corner residual).
-			var pw := width * (0.42 + float((i * 3 + seed0) % 6) * 0.09)
-			var pd := 0.28 + float((i * 2 + seed0 * 3) % 6) * 0.07
+			# Loop 226/234: garden flags — denser, smaller, broken (not large Minecraft slabs mid-FOV)
+			var pw := width * (0.28 + float((i * 3 + seed0) % 7) * 0.06)
+			var pd := 0.16 + float((i * 2 + seed0 * 3) % 7) * 0.045
 			var col: Color
 			match (i + seed0) % 6:
 				0:
-					col = Color(0.38, 0.34, 0.26)
-				1:
-					col = Color(0.32, 0.28, 0.22)
-				2:
-					col = Color(0.42, 0.36, 0.28)
-				3:
-					col = Color(0.3, 0.26, 0.2)
-				4:
 					col = Color(0.36, 0.32, 0.24)
+				1:
+					col = Color(0.3, 0.26, 0.2)
+				2:
+					col = Color(0.4, 0.34, 0.26)
+				3:
+					col = Color(0.28, 0.24, 0.18)
+				4:
+					col = Color(0.34, 0.3, 0.22)
 				_:
-					col = Color(0.34, 0.3, 0.23)
+					col = Color(0.32, 0.28, 0.21)
 			var mat_flag := _solid_matte(col, 0.9)
-			var mat_flag_d := _solid_matte(col.darkened(0.15), 0.92)
-			var mat_flag_l := _solid_matte(col.lightened(0.05), 0.88)
-			# Heavy lateral stagger + yaw-ish offset via dual placement
-			var stagger: float = ((float((i * 7 + seed0 * 5) % 9) - 4.0) * 0.11)
-			var fz_off: float = ((float((i * 3 + seed0) % 5) - 2.0) * 0.04)
+			var mat_flag_d := _solid_matte(col.darkened(0.12), 0.92)
+			var mat_flag_l := _solid_matte(col.darkened(0.04), 0.88)  # not lightened pale wash
+			# Heavy lateral stagger + dual placement
+			var stagger: float = ((float((i * 7 + seed0 * 5) % 11) - 5.0) * 0.09)
+			var fz_off: float = ((float((i * 3 + seed0) % 7) - 3.0) * 0.03)
 			var fx: float = ox + stagger
-			var hy := 0.02 + float((i + seed0) % 4) * 0.006
+			var hy := 0.018 + float((i + seed0) % 5) * 0.005
 			# Dark grit under + around flag
-			_add_mesh_box(root, Vector3(fx, 0.006, z + fz_off), Vector3(pw * 1.3, 0.012, pd * 1.35), mat_grit_d)
-			# Main flag + offset second mass (broken rectangle, not board)
-			_add_mesh_box(root, Vector3(fx, hy, z + fz_off), Vector3(pw, 0.028, pd), mat_flag)
+			_add_mesh_box(root, Vector3(fx, 0.005, z + fz_off), Vector3(pw * 1.35, 0.01, pd * 1.4), mat_grit_d)
+			# Main flag (smaller) + broken secondary chip
+			_add_mesh_box(root, Vector3(fx, hy, z + fz_off), Vector3(pw, 0.024, pd), mat_flag)
 			_add_mesh_box(
 				root,
-				Vector3(fx + pw * 0.08, hy + 0.004, z + fz_off + pd * 0.05),
-				Vector3(pw * 0.72, 0.018, pd * 0.7),
+				Vector3(fx + pw * 0.1, hy + 0.003, z + fz_off + pd * 0.06),
+				Vector3(pw * 0.55, 0.014, pd * 0.55),
 				mat_flag_l
 			)
-			# Edge chips + worn corner
+			# Edge chips
 			if (i + seed0) % 2 == 0:
-				_add_mesh_box(root, Vector3(fx + pw * 0.38, hy + 0.01, z + fz_off - pd * 0.3), Vector3(pw * 0.25, 0.012, pd * 0.22), mat_flag_d)
+				_add_mesh_box(root, Vector3(fx + pw * 0.35, hy + 0.008, z + fz_off - pd * 0.28), Vector3(pw * 0.22, 0.01, pd * 0.2), mat_flag_d)
 			if (i + seed0) % 3 != 1:
-				_add_mesh_box(root, Vector3(fx - pw * 0.32, hy + 0.008, z + fz_off + pd * 0.28), Vector3(pw * 0.2, 0.01, pd * 0.2), mat_flag_d)
-			# Small filler stone beside main flag (breaks row read)
+				_add_mesh_box(root, Vector3(fx - pw * 0.3, hy + 0.006, z + fz_off + pd * 0.25), Vector3(pw * 0.18, 0.008, pd * 0.18), mat_flag_d)
+			# Filler cobble (cylinder) breaks box-slab row read
 			if (i + seed0) % 2 == 1:
-				var sw := pw * 0.35
-				var sx_f: float = fx + (pw * 0.55 if (i % 2 == 0) else -pw * 0.55)
-				_add_mesh_box(root, Vector3(sx_f, hy * 0.85, z + fz_off + 0.08), Vector3(sw, 0.022, pd * 0.45), mat_flag_d)
-			# Joint moss (dark only)
+				var sx_f: float = fx + (pw * 0.5 if (i % 2 == 0) else -pw * 0.5)
+				_add_mesh_cyl(root, Vector3(sx_f, hy * 0.9, z + fz_off + 0.05), 0.04 + float((i + seed0) % 3) * 0.01, 0.022, mat_flag_d, false)
+			# Second small flag offset
 			if (i + seed0) % 3 == 0:
-				_add_mesh_box(root, Vector3(fx + pw * 0.45, 0.014, z + fz_off), Vector3(0.07, 0.01, pd * 0.5), mat_moss)
-			if (i + seed0) % 2 == 0:
-				_add_mesh_box(root, Vector3(fx, 0.014, z + fz_off + pd * 0.5), Vector3(pw * 0.45, 0.01, 0.06), mat_moss_l)
-			# Pebbles
-			if (i + seed0) % 3 == 1:
-				_add_mesh_cyl(root, Vector3(fx - pw * 0.2, hy + 0.01, z + fz_off), 0.02, 0.014, mat_peb, false)
+				_add_mesh_box(root, Vector3(fx - pw * 0.4, hy * 0.85, z + fz_off - pd * 0.35), Vector3(pw * 0.35, 0.016, pd * 0.35), mat_flag_d)
+			# Joint moss (dark only, sparse)
 			if (i + seed0) % 4 == 0:
-				_add_mesh_cyl(root, Vector3(fx + pw * 0.15, hy + 0.01, z + fz_off - pd * 0.15), 0.015, 0.012, mat_peb, false)
+				_add_mesh_box(root, Vector3(fx + pw * 0.4, 0.012, z + fz_off), Vector3(0.05, 0.008, pd * 0.4), mat_moss)
+			if (i + seed0) % 3 == 1:
+				_add_mesh_box(root, Vector3(fx, 0.012, z + fz_off + pd * 0.45), Vector3(pw * 0.35, 0.008, 0.04), mat_moss_l)
+			# Pebbles
+			if (i + seed0) % 2 == 0:
+				_add_mesh_cyl(root, Vector3(fx - pw * 0.15, hy + 0.008, z + fz_off), 0.018, 0.012, mat_peb, false)
+			if (i + seed0) % 3 == 0:
+				_add_mesh_cyl(root, Vector3(fx + pw * 0.12, hy + 0.008, z + fz_off - pd * 0.12), 0.014, 0.01, mat_peb, false)
 	if surface == "stone":
 		# Continuous dark gravel bed + chunky irregular curbs
 		_add_mesh_box(root, Vector3(0, 0.003, 0), Vector3(width * 1.12, 0.012, length * 0.98), mat_grit_d)

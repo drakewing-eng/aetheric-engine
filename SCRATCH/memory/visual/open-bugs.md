@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 234)
+
+- **Kitchen quarry large-tile residual:** floor_uv 0.58 still large diamond game tiles mid-FOV. Regenerated fine diamond quarry plate (1024, cell 48) + UV **0.85**.  
+- **Garden path slab residual:** large flag boxes mid-FOV conservatory. Denser smaller irregular flags + cobble fillers + more grit (step 0.55→0.32). Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 233)
 
 - **Kitchen metro square-brick residual:** dens 1.15 still read as square Minecraft cream bricks mid-FOV (kitchen_spawn). Regenerated **horizontal subway** plate (20×8 running bond, 2:1 tiles, warm grout) + finer 32×32 cream check wallpaper; dens wainscot **1.25**, paper **1.2**. Art + door suite PASS.  
