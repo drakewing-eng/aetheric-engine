@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 180)
+
+- **Prep flour sack residual:** pale cream box stack still Minecraft cube mid-FOV after 174. Hessian jute plump bag (same-mat cylinders + oval cheek), dark twine cinch, brand stamp — not white fridge/crate stack.  
+- **Urn residual:** light/dark mat_l/mat_d body tiers read as milk-churn stack. Single solid body mat, overlapping amphora cylinders, darker plinth only; mid-stone colors (pale washed white under glass).  
+
 ## Status update 2026-07-29 (loop 179)
 
 - **Kitchen sink residual:** butler sink read as pure white Minecraft slab + T-pipe mid-FOV. Rewrote fireclay oval basin (not rim-wall box), scrubbed oak drain board with groove ribs, solid-metal brass hand-pump (barrel + curved spout + side lever), tiled backsplash with grout. Warm ware colors (not CREAM white). Helper `_solid_metal` for untextured brass/copper.  
