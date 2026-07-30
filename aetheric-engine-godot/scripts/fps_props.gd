@@ -1665,25 +1665,28 @@ static func _make_sink(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_prep_table(prop: Dictionary) -> Node3D:
-	## Scrubbed kitchen prep table — loop 145 still-life: boards/food/tools dominate
-	## (not stacked barrel cylinders that read Minecraft from the doorway).
+	## Loop 201: solid-mat scrubbed top + oak frame (kits already solid from 192+).
 	var root := Node3D.new()
 	root.name = "PrepTable"
 	var width: float = float(prop.get("width", 1.8))
 	var seed0: int = int(prop.get("seed", 0))
 	var kit := seed0 % 4
-	# Scrubbed pale work-top (board, not mahogany furniture)
 	var top_col := Color(0.74, 0.64, 0.44) if kit != 2 else Color(0.7, 0.6, 0.42)
-	_add_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), top_col, true, 0.72)
-	_add_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), Color(0.55, 0.42, 0.28), false, 0.55)
-	_add_box(root, Vector3(0, 0.86, 0.42), Vector3(width * 0.98, 0.025, 0.03), top_col.darkened(0.08), false, 0.7)
-	# Breadboard groove on top
-	_add_box(root, Vector3(0, 0.855, -0.15), Vector3(width * 0.55, 0.008, 0.35), top_col.darkened(0.12), false, 0.75)
+	var mat_top := _solid_matte(top_col, 0.82)
+	var mat_top_d := _solid_matte(top_col.darkened(0.08), 0.85)
+	var mat_top_dd := _solid_matte(top_col.darkened(0.12), 0.88)
+	var mat_apron := _solid_matte(Color(0.55, 0.42, 0.28), 0.78)
+	var mat_leg := _solid_matte(Color(0.38, 0.26, 0.14), 0.8)
+	var mat_brace := _solid_matte(Color(0.4, 0.28, 0.14), 0.82)
+	_add_mesh_box(root, Vector3(0, 0.82, 0), Vector3(width, 0.06, 0.85), mat_top)
+	_add_mesh_box(root, Vector3(0, 0.72, 0), Vector3(width - 0.1, 0.12, 0.78), mat_apron)
+	_add_mesh_box(root, Vector3(0, 0.86, 0.42), Vector3(width * 0.98, 0.025, 0.03), mat_top_d)
+	_add_mesh_box(root, Vector3(0, 0.855, -0.15), Vector3(width * 0.55, 0.008, 0.35), mat_top_dd)
 	for lx in [-width * 0.4, width * 0.4]:
 		for lz in [-0.32, 0.32]:
-			_add_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), Color(0.38, 0.26, 0.14), true, 0.55)
-	_add_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), OAK.darkened(0.08), false, 0.55)
-	# Loop 192: lower shelf — bread tin + crock + pan (not anonymous Minecraft cubes)
+			_add_mesh_box(root, Vector3(lx, 0.4, lz), Vector3(0.08, 0.78, 0.08), mat_leg)
+	_add_mesh_box(root, Vector3(0, 0.18, 0), Vector3(width * 0.75, 0.04, 0.7), mat_brace)
+	# Lower shelf — bread tin + crock + pan
 	var mat_sh_oak := _solid_matte(Color(0.52, 0.4, 0.24), 0.82)
 	var mat_sh_oak_d := _solid_matte(Color(0.38, 0.26, 0.14), 0.85)
 	var mat_sh_tin := _solid_matte(Color(0.55, 0.5, 0.4), 0.7)
@@ -3413,8 +3416,7 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
-	## Novel-true Aetheric Engine — loop 131: height-scaled coil stack, denser windings,
-	## stronger dome glow, plaque base. Mid-grey iron posts (not black under tonemap).
+	## Loop 201: full solid-mat pedestal/coils/frame + loop 191 amber terminal (no wood/brass washout).
 	var root := Node3D.new()
 	root.name = "AethericMachine"
 	var height: float = float(prop.get("height", 2.95))
@@ -3422,32 +3424,38 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	var oak_d := Color(0.26, 0.16, 0.09)
 	var iron_frame := Color(0.34, 0.34, 0.36)
 	var iron_dark := Color(0.26, 0.26, 0.28)
+	var mat_br := _solid_metal(BRASS, 0.28)
+	var mat_br_d := _solid_metal(BRASS.darkened(0.1), 0.32)
+	var mat_br_l := _solid_metal(BRASS.lightened(0.08), 0.26)
+	var mat_cop := _solid_metal(COPPER, 0.32)
+	var mat_cop_d := _solid_metal(COPPER.darkened(0.12), 0.36)
+	var mat_cop_l := _solid_metal(COPPER.lightened(0.08), 0.28)
+	var mat_oak_d := _solid_matte(oak_d, 0.72)
+	var mat_oak := _solid_matte(oak, 0.7)
+	var mat_oak_dd := _solid_matte(oak_d.darkened(0.05), 0.78)
+	var mat_iron := _solid_matte(iron_frame, 0.55)
+	var mat_iron_d := _solid_matte(iron_dark, 0.58)
 	# Square oak base with copper inlay plate + brass edge + name plaque
-	# Loop 148: darker pedestal metals so from-north views don't specular-bloom
-	_add_box(root, Vector3(0, 0.1, 0), Vector3(1.7, 0.2, 1.7), oak_d, true, 0.5)
-	_add_box(root, Vector3(0, 0.24, 0), Vector3(1.52, 0.1, 1.52), oak, true, 0.52)
-	_add_box(root, Vector3(0, 0.32, 0), Vector3(1.36, 0.06, 1.36), COPPER.darkened(0.22), false, 0.5)
-	_add_box(root, Vector3(0, 0.35, 0), Vector3(1.42, 0.02, 1.42), BRASS.darkened(0.22), false, 0.45)
-	# Front brass plaque strip
-	_add_box(root, Vector3(0, 0.28, 0.78), Vector3(0.55, 0.08, 0.04), BRASS.darkened(0.08), false, 0.3)
-	_add_box(root, Vector3(0, 0.28, 0.8), Vector3(0.42, 0.05, 0.02), BRASS.lightened(0.05), false, 0.28)
-	# Corner iron footings + brass bolts
+	_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(1.7, 0.2, 1.7), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, 0.24, 0), Vector3(1.52, 0.1, 1.52), mat_oak)
+	_add_mesh_box(root, Vector3(0, 0.32, 0), Vector3(1.36, 0.06, 1.36), mat_cop_d)
+	_add_mesh_box(root, Vector3(0, 0.35, 0), Vector3(1.42, 0.02, 1.42), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 0.28, 0.78), Vector3(0.55, 0.08, 0.04), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 0.28, 0.8), Vector3(0.42, 0.05, 0.02), mat_br_l)
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * 0.74, 0.06, sz * 0.74), Vector3(0.18, 0.12, 0.18), iron_dark, true, 0.45)
-			_add_cylinder(root, Vector3(sx * 0.74, 0.14, sz * 0.74), 0.032, 0.03, BRASS, false, 0.3, true)
-	# Frame posts — iron clad with brass caps + mid collars
+			_add_mesh_box(root, Vector3(sx * 0.74, 0.06, sz * 0.74), Vector3(0.18, 0.12, 0.18), mat_iron_d)
+			_add_mesh_cyl(root, Vector3(sx * 0.74, 0.14, sz * 0.74), 0.032, 0.03, mat_br, false)
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * 0.52, height * 0.45, sz * 0.52), Vector3(0.11, height * 0.78, 0.11), iron_frame, true, 0.45)
-			_add_box(root, Vector3(sx * 0.52, height * 0.45, sz * 0.52), Vector3(0.065, height * 0.72, 0.065), oak_d, false, 0.5)
-			_add_cylinder(root, Vector3(sx * 0.52, height * 0.86, sz * 0.52), 0.075, 0.06, BRASS, false, 0.28, true)
-			_add_cylinder(root, Vector3(sx * 0.52, height * 0.5, sz * 0.52), 0.07, 0.04, BRASS.darkened(0.1), false, 0.3, true)
-			_add_cylinder(root, Vector3(sx * 0.52, height * 0.28, sz * 0.52), 0.065, 0.035, BRASS.darkened(0.15), false, 0.3, true)
-	# Top ring beams (brass-capped oak)
-	_add_box(root, Vector3(0, height * 0.9, 0), Vector3(1.25, 0.08, 1.25), oak_d, false, 0.48)
-	_add_box(root, Vector3(0, height * 0.94, 0), Vector3(1.15, 0.04, 1.15), BRASS.darkened(0.1), false, 0.3)
-	_add_box(root, Vector3(0, height * 0.97, 0), Vector3(1.0, 0.03, 1.0), BRASS.lightened(0.05), false, 0.28)
+			_add_mesh_box(root, Vector3(sx * 0.52, height * 0.45, sz * 0.52), Vector3(0.11, height * 0.78, 0.11), mat_iron)
+			_add_mesh_box(root, Vector3(sx * 0.52, height * 0.45, sz * 0.52), Vector3(0.065, height * 0.72, 0.065), mat_oak_d)
+			_add_mesh_cyl(root, Vector3(sx * 0.52, height * 0.86, sz * 0.52), 0.075, 0.06, mat_br, false)
+			_add_mesh_cyl(root, Vector3(sx * 0.52, height * 0.5, sz * 0.52), 0.07, 0.04, mat_br_d, false)
+			_add_mesh_cyl(root, Vector3(sx * 0.52, height * 0.28, sz * 0.52), 0.065, 0.035, mat_br_d, false)
+	_add_mesh_box(root, Vector3(0, height * 0.9, 0), Vector3(1.25, 0.08, 1.25), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, height * 0.94, 0), Vector3(1.15, 0.04, 1.15), mat_br_d)
+	_add_mesh_box(root, Vector3(0, height * 0.97, 0), Vector3(1.0, 0.03, 1.0), mat_br_l)
 	# FIVE copper coils — Y scaled to height so stack fills the frame
 	var coil_fracs := [0.18, 0.32, 0.46, 0.58, 0.68]
 	var coil_rs := [0.74, 0.6, 0.48, 0.38, 0.28]
@@ -3456,35 +3464,26 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 		var y: float = height * coil_fracs[i]
 		var r: float = coil_rs[i]
 		var ch: float = coil_hs[i]
-		var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.1)
-		_add_cylinder(root, Vector3(0, y, 0), r, ch, copper_col, false, 0.3, true)
-		_add_cylinder(root, Vector3(0, y + ch * 0.35, 0), r * 0.9, ch * 0.22, copper_col.lightened(0.08), false, 0.28, true)
-		# Inner dark void so coils read as bands
-		_add_cylinder(root, Vector3(0, y, 0), r * 0.55, ch * 0.7, oak_d.darkened(0.05), false, 0.55)
+		var mat_coil := mat_cop if i % 2 == 0 else mat_cop_d
+		var mat_coil_l := mat_cop_l if i % 2 == 0 else mat_cop
+		_add_mesh_cyl(root, Vector3(0, y, 0), r, ch, mat_coil, false)
+		_add_mesh_cyl(root, Vector3(0, y + ch * 0.35, 0), r * 0.9, ch * 0.22, mat_coil_l, false)
+		_add_mesh_cyl(root, Vector3(0, y, 0), r * 0.55, ch * 0.7, mat_oak_dd, false)
 		var wind := 1.0 if i % 2 == 0 else -1.0
 		for s in 14:
 			var ang: float = float(s) * (TAU / 14.0) * wind
 			var bx: float = cos(ang) * r * 0.94
 			var bz: float = sin(ang) * r * 0.94
 			var by: float = y + (float(s) / 14.0 - 0.5) * ch * 0.9 * wind
-			var bar_c: Color = copper_col.lightened(0.06) if s % 2 == 0 else copper_col.darkened(0.04)
-			_add_box(root, Vector3(bx, by, bz), Vector3(0.05, 0.032, 0.085), bar_c, false, 0.28)
+			var mat_bar := mat_coil_l if s % 2 == 0 else mat_coil
+			_add_mesh_box(root, Vector3(bx, by, bz), Vector3(0.05, 0.032, 0.085), mat_bar)
 		var side := 1.0 if i % 2 == 0 else -1.0
-		_add_box(root, Vector3(side * r * 0.97, y, 0), Vector3(0.08, ch + 0.04, 0.11), BRASS, false, 0.28)
+		_add_mesh_box(root, Vector3(side * r * 0.97, y, 0), Vector3(0.08, ch + 0.04, 0.11), mat_br)
 	# Central spine + collars
-	_add_cylinder(root, Vector3(0, height * 0.48, 0), 0.085, height * 0.65, BRASS, true, 0.28, true)
-	_add_cylinder(root, Vector3(0, height * 0.55, 0), 0.14, 0.05, BRASS.darkened(0.05), false, 0.28, true)
-	_add_cylinder(root, Vector3(0, height * 0.78, 0), 0.22, 0.08, BRASS.lightened(0.08), false, 0.28, true)
-	# Loop 191: brass gallery terminal + warm amber chamber (not fat cyan hat mid-FOV).
-	# Scientific glass reads amber/brass under oil light — aether glow is warm copper, not cyan game orb.
-	var mat_br := _solid_metal(BRASS, 0.28)
-	var mat_br_d := _solid_metal(BRASS.darkened(0.1), 0.32)
-	var mat_br_l := _solid_metal(BRASS.lightened(0.08), 0.26)
-	var mat_cop := _solid_metal(COPPER, 0.32)
-	var mat_cop_d := _solid_metal(COPPER.darkened(0.12), 0.36)
-	var mat_oak_d := _solid_matte(oak_d, 0.72)
-	var mat_oak := _solid_matte(oak, 0.7)
-	var mat_iron := _solid_matte(iron_frame, 0.55)
+	_add_mesh_cyl(root, Vector3(0, height * 0.48, 0), 0.085, height * 0.65, mat_br, true)
+	_add_mesh_cyl(root, Vector3(0, height * 0.55, 0), 0.14, 0.05, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, height * 0.78, 0), 0.22, 0.08, mat_br_l, false)
+	# Brass gallery terminal + warm amber chamber
 	var mat_amber := _solid_matte(Color(0.72, 0.52, 0.28), 0.32)
 	var mat_amber_d := _solid_matte(Color(0.55, 0.38, 0.2), 0.38)
 	var dome_y: float = height * 0.82
@@ -4056,27 +4055,61 @@ static func _add_tapered_cylinder(
 
 
 static func _make_fireplace(prop: Dictionary) -> Node3D:
-	## Marble surround + firebox + seed mantel kit + fender/tools/overmantel (loop 144).
+	## Loop 201: marble surround + mantel kit + fender/tools — solid mats (no stone/brass/wood washout).
 	var root := Node3D.new()
 	root.name = "Fireplace"
 	var seed0: int = int(prop.get("seed", 0))
-	var grate_iron := Color(0.36, 0.36, 0.38)
-	var iron_tool := Color(0.28, 0.28, 0.3)
+	var mat_marble := _solid_matte(Color(0.82, 0.8, 0.76), 0.35)
+	var mat_marble_d := _solid_matte(Color(0.72, 0.7, 0.66), 0.38)
+	var mat_marble_dd := _solid_matte(Color(0.65, 0.63, 0.58), 0.4)
+	var mat_marble_l := _solid_matte(Color(0.88, 0.86, 0.82), 0.32)
+	var mat_soot := _solid_matte(Color(0.06, 0.05, 0.05), 0.92)
+	var mat_soot_l := _solid_matte(Color(0.1, 0.09, 0.09), 0.85)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_br_l := _solid_metal(Color(0.78, 0.62, 0.32), 0.28)
+	var mat_iron := _solid_metal(Color(0.36, 0.36, 0.38), 0.48)
+	var mat_iron_l := _solid_metal(Color(0.44, 0.44, 0.46), 0.45)
+	var mat_iron_d := _solid_metal(Color(0.28, 0.28, 0.3), 0.52)
+	var mat_tool := _solid_metal(Color(0.28, 0.28, 0.3), 0.5)
+	var mat_tool_l := _solid_metal(Color(0.36, 0.36, 0.38), 0.48)
+	var mat_stone := _solid_matte(Color(0.55, 0.52, 0.46), 0.85)
+	var mat_stone_d := _solid_matte(Color(0.45, 0.42, 0.36), 0.88)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_log := _solid_matte(Color(0.25, 0.12, 0.06), 0.85)
+	var mat_ash := _solid_matte(Color(0.22, 0.18, 0.14), 0.9)
+	var mat_candle := _solid_matte(Color(0.95, 0.82, 0.45), 0.7)
+	var mat_cream := _solid_matte(Color(0.82, 0.76, 0.64), 0.9)
+	var mat_cream_d := _solid_matte(Color(0.7, 0.64, 0.52), 0.9)
+	var mat_clock := _solid_matte(Color(0.88, 0.85, 0.78), 0.45)
+	var mat_clock_case := _solid_matte(Color(0.12, 0.1, 0.1), 0.55)
+	var mat_vase := _solid_matte(Color(0.35, 0.2, 0.15), 0.75)
+	var mat_coal := _solid_matte(Color(0.22, 0.2, 0.18), 0.7)
+	var mat_coal_l := _solid_matte(Color(0.28, 0.26, 0.24), 0.65)
+	var mat_coal_d := _solid_matte(Color(0.18, 0.14, 0.1), 0.8)
+	var mat_flame := StandardMaterial3D.new()
+	mat_flame.albedo_color = Color(1.0, 0.75, 0.35, 0.9)
+	mat_flame.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_flame.emission_enabled = true
+	mat_flame.emission = Color(1.0, 0.7, 0.3)
+	mat_flame.emission_energy_multiplier = 2.0
+	mat_flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	# Outer surround body + fielded lintel moulding stack
-	_add_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), MARBLE, true, 0.35)
-	_add_box(root, Vector3(0, 1.28, 0.1), Vector3(1.55, 0.06, 0.14), MARBLE.darkened(0.04), false, 0.32)
-	_add_box(root, Vector3(0, 1.35, 0.1), Vector3(1.6, 0.08, 0.16), MARBLE.darkened(0.06), false, 0.32)
+	_add_mesh_box(root, Vector3(0, 0.72, -0.05), Vector3(1.75, 1.45, 0.42), mat_marble)
+	_add_mesh_box(root, Vector3(0, 1.28, 0.1), Vector3(1.55, 0.06, 0.14), mat_marble_d)
+	_add_mesh_box(root, Vector3(0, 1.35, 0.1), Vector3(1.6, 0.08, 0.16), mat_marble_dd)
 	# Inner dark firebox recess + arched lintel lip
-	_add_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), Color(0.06, 0.05, 0.05), false, 0.9)
-	_add_box(root, Vector3(0, 0.95, 0.2), Vector3(0.88, 0.06, 0.1), Color(0.1, 0.09, 0.09), false, 0.7)
-	# Mantel shelf — deeper edge read from room
-	_add_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), MARBLE, true, 0.3)
-	_add_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), MARBLE.lightened(0.05), false, 0.3)
-	_add_box(root, Vector3(0, 1.42, 0.22), Vector3(1.9, 0.04, 0.08), MARBLE.darkened(0.05), false, 0.32)
-	# Loop 144: chimney-glass overmantel — silvered plate (period looking-glass above fire)
-	_add_box(root, Vector3(0, 1.95, 0.0), Vector3(1.05, 0.85, 0.08), BRASS.darkened(0.08), false, 0.32)
-	_add_box(root, Vector3(0, 1.95, 0.04), Vector3(0.92, 0.72, 0.04), BRASS.darkened(0.18), false, 0.35)
-	_add_box(root, Vector3(0, 1.95, 0.055), Vector3(0.82, 0.62, 0.02), Color(0.14, 0.12, 0.1), false, 0.55)
+	_add_mesh_box(root, Vector3(0, 0.55, 0.12), Vector3(0.95, 0.85, 0.28), mat_soot)
+	_add_mesh_box(root, Vector3(0, 0.95, 0.2), Vector3(0.88, 0.06, 0.1), mat_soot_l)
+	# Mantel shelf
+	_add_mesh_box(root, Vector3(0, 1.45, 0.02), Vector3(1.95, 0.1, 0.55), mat_marble)
+	_add_mesh_box(root, Vector3(0, 1.5, 0.05), Vector3(1.85, 0.03, 0.48), mat_marble_l)
+	_add_mesh_box(root, Vector3(0, 1.42, 0.22), Vector3(1.9, 0.04, 0.08), mat_marble_d)
+	# Chimney-glass overmantel — silvered plate
+	_add_mesh_box(root, Vector3(0, 1.95, 0.0), Vector3(1.05, 0.85, 0.08), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 1.95, 0.04), Vector3(0.92, 0.72, 0.04), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 1.95, 0.055), Vector3(0.82, 0.62, 0.02), mat_soot_l)
 	var om_plate := MeshInstance3D.new()
 	var om_mesh := QuadMesh.new()
 	om_mesh.size = Vector2(0.76, 0.56)
@@ -4098,94 +4131,88 @@ static func _make_fireplace(prop: Dictionary) -> Node3D:
 	om_plate.position = Vector3(0, 1.95, 0.07)
 	root.add_child(om_plate)
 	_add_unshaded_plate(root, Vector3(-0.18, 2.08, 0.075), Vector3(0.01, 0.16, 0.004), Color(0.88, 0.9, 0.92))
-	_add_box(root, Vector3(0, 2.42, 0.02), Vector3(0.28, 0.1, 0.05), BRASS.lightened(0.05), false, 0.3)
-	_add_cylinder(root, Vector3(0, 2.5, 0.03), 0.035, 0.04, BRASS, false, 0.28, true)
-	# Loop 126/144 mantel ornaments — taller readable candlesticks / urns / clock
+	_add_mesh_box(root, Vector3(0, 2.42, 0.02), Vector3(0.28, 0.1, 0.05), mat_br_l)
+	_add_mesh_cyl(root, Vector3(0, 2.5, 0.03), 0.035, 0.04, mat_br, false)
+	# Mantel ornaments by seed
 	match seed0 % 3:
 		0:
-			# Twin candlesticks + carriage clock
 			for sx in [-0.58, 0.58]:
-				_add_cylinder(root, Vector3(sx, 1.54, 0.08), 0.055, 0.035, MAHOGANY_DARK, false, 0.5)
-				_add_cylinder(root, Vector3(sx, 1.62, 0.08), 0.03, 0.12, MAHOGANY, false, 0.48)
-				_add_cylinder(root, Vector3(sx, 1.7, 0.08), 0.045, 0.025, BRASS.darkened(0.15), false, 0.35, true)
-				_add_cylinder(root, Vector3(sx, 1.88, 0.08), 0.02, 0.28, CANDLE, false, 0.6)
-				_add_sphere_blob(root, Vector3(sx, 2.04, 0.08), 0.03, Color(1.0, 0.75, 0.35))
-			_add_box(root, Vector3(0, 1.6, 0.1), Vector3(0.22, 0.18, 0.12), Color(0.12, 0.1, 0.1), false, 0.4)
-			_add_box(root, Vector3(0, 1.72, 0.12), Vector3(0.14, 0.12, 0.06), Color(0.88, 0.85, 0.78), false, 0.45)
-			_add_box(root, Vector3(0, 1.8, 0.1), Vector3(0.18, 0.03, 0.1), BRASS.darkened(0.12), false, 0.35)
+				_add_mesh_cyl(root, Vector3(sx, 1.54, 0.08), 0.055, 0.035, mat_md, false)
+				_add_mesh_cyl(root, Vector3(sx, 1.62, 0.08), 0.03, 0.12, mat_m, false)
+				_add_mesh_cyl(root, Vector3(sx, 1.7, 0.08), 0.045, 0.025, mat_br_d, false)
+				_add_mesh_cyl(root, Vector3(sx, 1.88, 0.08), 0.02, 0.28, mat_candle, false)
+				_add_mesh_cyl(root, Vector3(sx, 2.04, 0.08), 0.025, 0.035, mat_flame, false)
+			_add_mesh_box(root, Vector3(0, 1.6, 0.1), Vector3(0.22, 0.18, 0.12), mat_clock_case)
+			_add_mesh_box(root, Vector3(0, 1.72, 0.12), Vector3(0.14, 0.12, 0.06), mat_clock)
+			_add_mesh_box(root, Vector3(0, 1.8, 0.1), Vector3(0.18, 0.03, 0.1), mat_br_d)
 		1:
-			# Twin urns + centre candlesticks with bases
 			for sxu in [-0.55, 0.55]:
-				_add_cylinder(root, Vector3(sxu, 1.56, 0.08), 0.055, 0.045, CREAM.darkened(0.15), false, 0.7)
-				_add_cylinder(root, Vector3(sxu, 1.68, 0.08), 0.08, 0.2, CREAM.darkened(0.08), false, 0.7)
-				_add_cylinder(root, Vector3(sxu, 1.8, 0.08), 0.05, 0.04, CREAM, false, 0.7)
+				_add_mesh_cyl(root, Vector3(sxu, 1.56, 0.08), 0.055, 0.045, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(sxu, 1.68, 0.08), 0.08, 0.2, mat_cream, false)
+				_add_mesh_cyl(root, Vector3(sxu, 1.8, 0.08), 0.05, 0.04, mat_cream, false)
 			for sx2 in [-0.15, 0.15]:
-				_add_cylinder(root, Vector3(sx2, 1.54, 0.1), 0.04, 0.03, MAHOGANY_DARK, false, 0.5)
-				_add_cylinder(root, Vector3(sx2, 1.66, 0.1), 0.022, 0.2, CANDLE, false, 0.55)
-				_add_sphere_blob(root, Vector3(sx2, 1.8, 0.1), 0.025, Color(1.0, 0.75, 0.35))
+				_add_mesh_cyl(root, Vector3(sx2, 1.54, 0.1), 0.04, 0.03, mat_md, false)
+				_add_mesh_cyl(root, Vector3(sx2, 1.66, 0.1), 0.022, 0.2, mat_candle, false)
+				_add_mesh_cyl(root, Vector3(sx2, 1.8, 0.1), 0.02, 0.03, mat_flame, false)
 		_:
-			# Carriage clock + small vases
-			_add_box(root, Vector3(0.0, 1.62, 0.08), Vector3(0.2, 0.28, 0.12), BRASS.darkened(0.1), false, 0.32)
-			_add_box(root, Vector3(0.0, 1.68, 0.12), Vector3(0.14, 0.14, 0.03), Color(0.9, 0.88, 0.8), false, 0.5)
-			_add_box(root, Vector3(0.0, 1.8, 0.08), Vector3(0.16, 0.03, 0.1), BRASS.darkened(0.05), false, 0.32)
-			_add_cylinder(root, Vector3(-0.52, 1.58, 0.08), 0.055, 0.18, Color(0.35, 0.2, 0.15), false, 0.7)
-			_add_cylinder(root, Vector3(0.52, 1.58, 0.08), 0.055, 0.18, Color(0.35, 0.2, 0.15), false, 0.7)
+			_add_mesh_box(root, Vector3(0.0, 1.62, 0.08), Vector3(0.2, 0.28, 0.12), mat_br_d)
+			_add_mesh_box(root, Vector3(0.0, 1.68, 0.12), Vector3(0.14, 0.14, 0.03), mat_clock)
+			_add_mesh_box(root, Vector3(0.0, 1.8, 0.08), Vector3(0.16, 0.03, 0.1), mat_br)
+			_add_mesh_cyl(root, Vector3(-0.52, 1.58, 0.08), 0.055, 0.18, mat_vase, false)
+			_add_mesh_cyl(root, Vector3(0.52, 1.58, 0.08), 0.055, 0.18, mat_vase, false)
 	# Columns / pilasters with capital + plinth
-	_add_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
-	_add_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), MARBLE, false, 0.32)
-	_add_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), MARBLE.darkened(0.04), false, 0.32)
-	_add_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), MARBLE.darkened(0.04), false, 0.32)
-	_add_box(root, Vector3(-0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), MARBLE.darkened(0.06), false, 0.35)
-	_add_box(root, Vector3(0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), MARBLE.darkened(0.06), false, 0.35)
+	_add_mesh_box(root, Vector3(-0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), mat_marble)
+	_add_mesh_box(root, Vector3(0.72, 0.7, 0.12), Vector3(0.16, 1.25, 0.22), mat_marble)
+	_add_mesh_box(root, Vector3(-0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), mat_marble_d)
+	_add_mesh_box(root, Vector3(0.72, 1.3, 0.14), Vector3(0.22, 0.1, 0.26), mat_marble_d)
+	_add_mesh_box(root, Vector3(-0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), mat_marble_dd)
+	_add_mesh_box(root, Vector3(0.72, 0.12, 0.14), Vector3(0.22, 0.12, 0.26), mat_marble_dd)
 	# Hearth slab + ash lip
-	_add_box(root, Vector3(0, 0.04, 0.35), Vector3(1.55, 0.08, 0.58), STONE, true, 0.55)
-	_add_box(root, Vector3(0, 0.08, 0.38), Vector3(1.25, 0.03, 0.42), STONE.darkened(0.1), false, 0.6)
-	# Loop 144: iron fender rail (hearth reads as hearth, not open hole)
-	_add_box(root, Vector3(0, 0.16, 0.58), Vector3(1.35, 0.04, 0.05), grate_iron, false, 0.42)
-	_add_box(root, Vector3(0, 0.28, 0.58), Vector3(1.3, 0.025, 0.035), grate_iron.lightened(0.08), false, 0.42)
+	_add_mesh_box(root, Vector3(0, 0.04, 0.35), Vector3(1.55, 0.08, 0.58), mat_stone)
+	_add_mesh_box(root, Vector3(0, 0.08, 0.38), Vector3(1.25, 0.03, 0.42), mat_stone_d)
+	# Iron fender rail
+	_add_mesh_box(root, Vector3(0, 0.16, 0.58), Vector3(1.35, 0.04, 0.05), mat_iron)
+	_add_mesh_box(root, Vector3(0, 0.28, 0.58), Vector3(1.3, 0.025, 0.035), mat_iron_l)
 	for fx in [-0.62, -0.2, 0.2, 0.62]:
-		_add_cylinder(root, Vector3(fx, 0.22, 0.58), 0.018, 0.14, grate_iron.darkened(0.05), false, 0.45)
-	_add_cylinder(root, Vector3(-0.68, 0.14, 0.58), 0.04, 0.08, grate_iron, false, 0.42)
-	_add_cylinder(root, Vector3(0.68, 0.14, 0.58), 0.04, 0.08, grate_iron, false, 0.42)
-	# Andirons (mid-grey iron so not pure black under filmic)
+		_add_mesh_cyl(root, Vector3(fx, 0.22, 0.58), 0.018, 0.14, mat_iron_d, false)
+	_add_mesh_cyl(root, Vector3(-0.68, 0.14, 0.58), 0.04, 0.08, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(0.68, 0.14, 0.58), 0.04, 0.08, mat_iron, false)
+	# Andirons
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), grate_iron, false, 0.45)
-		_add_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), grate_iron.lightened(0.1), false, 0.45)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.1, 0.42), 0.03, 0.08, grate_iron.darkened(0.05), false, 0.45)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.32, 0.22), 0.02, 0.03, BRASS.darkened(0.2), false, 0.35, true)
+		_add_mesh_box(root, Vector3(sx * 0.3, 0.16, 0.3), Vector3(0.07, 0.22, 0.2), mat_iron)
+		_add_mesh_box(root, Vector3(sx * 0.3, 0.28, 0.22), Vector3(0.05, 0.08, 0.08), mat_iron_l)
+		_add_mesh_cyl(root, Vector3(sx * 0.3, 0.1, 0.42), 0.03, 0.08, mat_iron_d, false)
+		_add_mesh_cyl(root, Vector3(sx * 0.3, 0.32, 0.22), 0.02, 0.03, mat_br_d, false)
 	# Grate bars
 	for i in 5:
 		var gx := -0.32 + float(i) * 0.16
-		_add_box(root, Vector3(gx, 0.2, 0.22), Vector3(0.025, 0.22, 0.04), grate_iron.darkened(0.08), false, 0.45)
+		_add_mesh_box(root, Vector3(gx, 0.2, 0.22), Vector3(0.025, 0.22, 0.04), mat_iron_d)
 	# Logs
-	_add_box(root, Vector3(-0.12, 0.24, 0.2), Vector3(0.55, 0.1, 0.16), MAHOGANY_DARK, false, 0.7)
-	_add_box(root, Vector3(0.15, 0.3, 0.22), Vector3(0.45, 0.09, 0.14), MAHOGANY, false, 0.7)
-	_add_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), Color(0.25, 0.12, 0.06), false, 0.8)
+	_add_mesh_box(root, Vector3(-0.12, 0.24, 0.2), Vector3(0.55, 0.1, 0.16), mat_md)
+	_add_mesh_box(root, Vector3(0.15, 0.3, 0.22), Vector3(0.45, 0.09, 0.14), mat_m)
+	_add_mesh_box(root, Vector3(0.0, 0.36, 0.18), Vector3(0.35, 0.08, 0.12), mat_log)
 	# Ash bed
-	_add_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), Color(0.22, 0.18, 0.14), false, 0.85)
-	# Loop 144: fire-tool stand + poker / shovel / tongs (right of hearth)
-	_add_cylinder(root, Vector3(0.78, 0.08, 0.42), 0.08, 0.04, iron_tool, false, 0.5)
-	_add_cylinder(root, Vector3(0.78, 0.35, 0.42), 0.018, 0.55, iron_tool.lightened(0.08), false, 0.48)
-	_add_cylinder(root, Vector3(0.78, 0.65, 0.42), 0.1, 0.03, iron_tool, false, 0.5)
-	# Poker
-	_add_cylinder(root, Vector3(0.72, 0.42, 0.48), 0.01, 0.7, iron_tool.darkened(0.05), false, 0.45)
-	_add_box(root, Vector3(0.72, 0.08, 0.48), Vector3(0.03, 0.04, 0.06), iron_tool, false, 0.45)
-	_add_cylinder(root, Vector3(0.72, 0.78, 0.48), 0.022, 0.04, BRASS.darkened(0.15), false, 0.35, true)
-	# Shovel
-	_add_cylinder(root, Vector3(0.84, 0.4, 0.38), 0.01, 0.62, iron_tool.darkened(0.05), false, 0.45)
-	_add_box(root, Vector3(0.84, 0.1, 0.38), Vector3(0.1, 0.02, 0.08), iron_tool, false, 0.45)
-	_add_box(root, Vector3(0.84, 0.12, 0.34), Vector3(0.08, 0.04, 0.02), iron_tool.lightened(0.05), false, 0.45)
-	_add_cylinder(root, Vector3(0.84, 0.72, 0.38), 0.02, 0.035, BRASS.darkened(0.15), false, 0.35, true)
-	# Tongs (paired thin bars)
-	_add_box(root, Vector3(0.78, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), iron_tool, false, 0.45)
-	_add_box(root, Vector3(0.82, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), iron_tool, false, 0.45)
-	_add_box(root, Vector3(0.8, 0.12, 0.5), Vector3(0.06, 0.02, 0.04), iron_tool.darkened(0.05), false, 0.45)
-	# Coal scuttle (left of hearth)
-	_add_cylinder(root, Vector3(-0.82, 0.18, 0.4), 0.14, 0.28, Color(0.22, 0.2, 0.18), false, 0.55)
-	_add_cylinder(root, Vector3(-0.82, 0.34, 0.4), 0.15, 0.04, Color(0.28, 0.26, 0.24), false, 0.5)
-	_add_box(root, Vector3(-0.82, 0.22, 0.52), Vector3(0.04, 0.12, 0.08), iron_tool, false, 0.48)
-	_add_box(root, Vector3(-0.7, 0.12, 0.4), Vector3(0.12, 0.06, 0.1), Color(0.18, 0.14, 0.1), false, 0.75)
-	# Loop 107: organic flame (spheres + tapered cylinders) — not flat yellow slabs
+	_add_mesh_box(root, Vector3(0, 0.14, 0.25), Vector3(0.7, 0.04, 0.28), mat_ash)
+	# Fire-tool stand + poker / shovel / tongs
+	_add_mesh_cyl(root, Vector3(0.78, 0.08, 0.42), 0.08, 0.04, mat_tool, false)
+	_add_mesh_cyl(root, Vector3(0.78, 0.35, 0.42), 0.018, 0.55, mat_tool_l, false)
+	_add_mesh_cyl(root, Vector3(0.78, 0.65, 0.42), 0.1, 0.03, mat_tool, false)
+	_add_mesh_cyl(root, Vector3(0.72, 0.42, 0.48), 0.01, 0.7, mat_iron_d, false)
+	_add_mesh_box(root, Vector3(0.72, 0.08, 0.48), Vector3(0.03, 0.04, 0.06), mat_tool)
+	_add_mesh_cyl(root, Vector3(0.72, 0.78, 0.48), 0.022, 0.04, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0.84, 0.4, 0.38), 0.01, 0.62, mat_iron_d, false)
+	_add_mesh_box(root, Vector3(0.84, 0.1, 0.38), Vector3(0.1, 0.02, 0.08), mat_tool)
+	_add_mesh_box(root, Vector3(0.84, 0.12, 0.34), Vector3(0.08, 0.04, 0.02), mat_tool_l)
+	_add_mesh_cyl(root, Vector3(0.84, 0.72, 0.38), 0.02, 0.035, mat_br_d, false)
+	_add_mesh_box(root, Vector3(0.78, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), mat_tool)
+	_add_mesh_box(root, Vector3(0.82, 0.4, 0.5), Vector3(0.012, 0.55, 0.012), mat_tool)
+	_add_mesh_box(root, Vector3(0.8, 0.12, 0.5), Vector3(0.06, 0.02, 0.04), mat_iron_d)
+	# Coal scuttle
+	_add_mesh_cyl(root, Vector3(-0.82, 0.18, 0.4), 0.14, 0.28, mat_coal, false)
+	_add_mesh_cyl(root, Vector3(-0.82, 0.34, 0.4), 0.15, 0.04, mat_coal_l, false)
+	_add_mesh_box(root, Vector3(-0.82, 0.22, 0.52), Vector3(0.04, 0.12, 0.08), mat_tool)
+	_add_mesh_box(root, Vector3(-0.7, 0.12, 0.4), Vector3(0.12, 0.06, 0.1), mat_coal_d)
+	# Organic flame (spheres + tapered cylinders) — not flat yellow slabs
 	var base_em := MeshInstance3D.new()
 	var base_m := SphereMesh.new()
 	base_m.radius = 0.22

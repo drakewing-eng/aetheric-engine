@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 201)
+
+- **Fireplace residual:** marble/brass/iron/mantel still `_mat_for` washout mid-FOV. Full solid-mat surround, overmantel frame, fender, tools, scuttle, seed mantel kits (candles/urns/clock). Flame/sparks/mirror plate kept special.  
+- **Aetheric machine residual:** pedestal + copper coils still textured. Solid-mat oak base, iron posts, copper coils/windings, brass spine (dome already solid from 191).  
+- **Prep table residual:** scrubbed top + legs still `_mat_for`. Solid-mat top/apron/legs (kits already solid).  
+
 ## Status update 2026-07-30 (loop 200)
 
 - **Sofa residual:** chesterfield velvet/mahogany still `_mat_for` washout mid-FOV drawing room. Solid-mat velvet seat/back/arms + mahogany plinth/crest/feet + brass nails.  
