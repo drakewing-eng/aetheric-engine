@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~overnight loop 147  
-**HEAD:** `e16ee18` visual loop 147  
+**Updated:** 2026-07-29 ~17:20 (overnight goal active)  
+**HEAD:** `461b2fa` visual loop 148  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -18,30 +18,29 @@
 | 9 | Door transition safety | **DONE tests** 76+98+125+137 |
 | 10 | Wallpaper contrast | **ADVANCED 72–142** morning stripes |
 | 11 | Hall / prep still-life | **ADVANCED 73–145** prep kits |
-| 12–23 | Conservatory / gallery / workshop densify | **ADVANCED 116–147** basket |
+| 12–23 | Conservatory / gallery / workshop densify | **ADVANCED 116–148** engine |
 | 24–52 | Materials…stools | **DONE 89–127+138** |
 | 53–62 | Copper…stools/sconces | **DONE 118–127+140** |
 | 63–72 | Plants…tight bulk | **DONE 128–137** |
-| 73–80 | Sofa…kitchen prep | **DONE 138–145** |
-| 81 | Workshop bench micro + hall plant clear | **DONE 146** |
-| 82 | Chair seat bulk + wicker baskets | **DONE 147** |
+| 73–82 | Sofa…baskets | **DONE 138–147** |
+| 83 | Engine bloom + oil lamp silhouette | **DONE 148** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 145 | Kitchen prep still-life boards/food/tools |
 | 146 | Workbench files/clamps/timber + hall plant clearance |
-| 147 | **Chairs:** seat-only green pad with cross_planes (no leg L-junk). **Alpha scissor** 0.58 furniture. **Wicker baskets** weave+fill in kitchen/conservatory. |
+| 147 | Chair seat bulk + wicker baskets |
+| 148 | **Engine:** softer emission/lights, darker pedestal. **Gallery north cam:** offset behind coils. **Oil lamps:** wood+glass Argand (not copper barrels). |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation (automated suite PASS)  
-- Optional: paper-thin chair *legs* edge-on (seat bulk helps; legs still card-only)  
-- Optional: conservatory oil-lamp silhouettes still a bit barrel-like  
-- Optional: gallery from-north engine bloom / pedestal hero polish  
+- Optional: paper-thin chair legs edge-on (tradeoff accepted)  
+- Optional: conservatory oil-lamp still slightly metal-heavy at some angles  
+- Optional: engine pedestal hero polish from playtest angles  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_147/`  
+- Shots: `auto_loop_67/` … `auto_loop_148/`  
