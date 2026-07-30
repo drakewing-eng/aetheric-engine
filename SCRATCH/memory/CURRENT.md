@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
 **Updated:** 2026-07-29 ~overnight loop 172  
-**HEAD:** (pending) visual loop 172  
+**HEAD:** `7e0f855` visual loop 172  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
