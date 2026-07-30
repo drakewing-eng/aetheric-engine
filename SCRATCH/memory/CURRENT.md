@@ -1,8 +1,8 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 241  
-**HEAD:** `62d9e0a` visual loop 241  
-**10m density scheduler:** OFF  
+**Updated:** 2026-07-30 — retired iron floor_path  
+**HEAD:** (local) iron path removed workshop + gallery  
+**15m overnight scheduler:** OFF (user stopped)  
 **Do not mark goal complete after one pass** — living priority queue.
 
 ## Ordered work list
@@ -39,6 +39,10 @@
 - Optional residual: packing crates still boxy mid-FOV workshop  
 - Optional residual: kitchen flour sack still tall cylinder mid-FOV  
 - Intentional textures kept (wallpaper, rugs, oils, views, plant cards)
+
+## Design notes
+
+- **Iron `floor_path` retired** (workshop + gallery): factory diamond-tread fought Victorian house language. Workshop aisle is wood boards + work runners; conservatory keeps stone garden path.
 
 ## Solid-mat / residual status
 

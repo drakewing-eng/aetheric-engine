@@ -428,9 +428,7 @@ const ROOMS := {
 				"size": [2.2, 5.0],
 				"texture": "res://assets/rooms/textures/hall_runner.jpg",
 			},
-			# Iron plate walk to engine (experiment floor language, not garden stone)
-			{"kind": "floor_path", "pos": [0.0, 0.0, -1.0], "yaw": 0.0, "length": 5.5, "width": 1.35,
-				"surface": "iron", "seed": 2},
+			# Retired iron floor_path (factory tread fought Victorian house language)
 			# Loop 92: side-aisle densify (from_south flanks were bare floor)
 			{"kind": "side_table", "pos": [3.4, 0.0, 0.8], "yaw": -15.0, "seed": 4},
 			{"kind": "oil_lamp", "pos": [3.3, 0.0, 0.7], "height": 0.95},
@@ -681,7 +679,7 @@ const ROOMS := {
 			{"kind": "copper_pot", "pos": [1.5, 0.0, -2.3], "scale": 0.6, "seed": 4},
 			{"kind": "copper_scrap", "pos": [-3.6, 0.0, 1.6], "scale": 1.0, "seed": 0},
 			{"kind": "copper_scrap", "pos": [3.5, 0.0, 2.2], "scale": 0.85, "seed": 2},
-			# Loop 151: scrap off iron path (was mid-aisle)
+			# Scrap on side aisles (keep centre clear for walk)
 			{"kind": "copper_scrap", "pos": [3.2, 0.0, -3.5], "scale": 0.7, "seed": 4},
 			{"kind": "copper_scrap", "pos": [3.6, 0.0, -2.6], "scale": 0.75, "seed": 1},
 			{"kind": "oil_lamp", "pos": [-2.3, 0.0, -1.0], "yaw": 25.0, "height": 0.95, "seed": 0},
@@ -703,14 +701,13 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [1.5, 0.0, 4.15], "yaw": 180.0, "height": 2.3},
 			# Loop 151: lamp off path centre (was blocking aisle at z=3.2)
 			{"kind": "oil_lamp", "pos": [2.2, 0.0, 3.2], "yaw": 0.0, "height": 0.9, "seed": 1},
-			{"kind": "floor_path", "pos": [0.0, 0.0, 0.0], "yaw": 0.0, "length": 6.5, "width": 1.05,
-				"surface": "iron", "seed": 3},
-			# Loop 110: practical work runner flanking iron path (bench approach, not salon Persian)
+			# Retired iron floor_path (factory diamond-tread fought Victorian house language).
+			# Work runners define the aisle on scrubbed boards instead.
 			{"kind": "rug", "pos": [-1.85, 0.0, -0.4], "size": [1.15, 5.4], "yaw": 0.0,
 				"texture": "res://assets/rooms/textures/work_runner.jpg"},
 			{"kind": "rug", "pos": [1.9, 0.0, 0.3], "size": [1.1, 4.8], "yaw": 0.0,
 				"texture": "res://assets/rooms/textures/work_runner.jpg"},
-			# Loop 93/151: mid-floor densify — stay on runners, not iron plates
+			# Loop 93/151: mid-floor densify — stay on runners / side aisles
 			{"kind": "crate", "pos": [-2.0, 0.0, 1.2], "scale": 0.7, "seed": 6},
 			{"kind": "crate", "pos": [2.1, 0.0, 1.4], "scale": 0.65, "seed": 7},
 			{"kind": "copper_scrap", "pos": [-2.0, 0.0, 0.2], "scale": 0.8, "seed": 5},
