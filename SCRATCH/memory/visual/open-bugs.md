@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 186)
+
+- **Packing crate residual:** solid wood cubes mid-FOV (gallery/workshop). Rewrote as boarded shipping crate — separate plank faces, corner posts, iron bands + corner straps, floor skids, lid board seam or ajar straw, seed forks for rope handles/stencil/hasp. Solid-matte wood (no texture washout).  
+
 ## Status update 2026-07-29 (loop 185)
 
 - **Hall table flower vase residual:** dress-2 cream cylinder stack + sphere blooms read as wedding cake mid-FOV. Slim porcelain bud bottle (narrow neck), blue glaze band, irregular red/pink/yellow bloom cluster + leaf pad; cards + ink tray solid-matte.  

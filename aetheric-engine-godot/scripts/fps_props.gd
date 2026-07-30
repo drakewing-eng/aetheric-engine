@@ -2880,51 +2880,98 @@ static func _make_wicker_basket(prop: Dictionary) -> Node3D:
 
 
 static func _make_crate(prop: Dictionary) -> Node3D:
-	## Packing crates: closed / open-lid / stenciled / rope-handled by seed.
+	## Loop 186: shipping crate — board seams + iron straps + corner posts
+	## (not solid Minecraft wood cube mid-FOV).
 	var root := Node3D.new()
 	root.name = "Crate"
-	var s: float = prop.get("scale", 1.0)
+	var s: float = float(prop.get("scale", 1.0))
 	var seed0: int = int(prop.get("seed", 0))
-	var wood := Color(0.62, 0.48, 0.28) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.24)
+	var wood_c := Color(0.52, 0.38, 0.22) if seed0 % 2 == 0 else Color(0.46, 0.34, 0.2)
 	if seed0 % 5 == 4:
-		wood = Color(0.48, 0.36, 0.22)  # darker shipping pine
-	var h: float = 0.38 + float(seed0 % 3) * 0.04
+		wood_c = Color(0.4, 0.3, 0.18)
+	var mat_w := _solid_matte(wood_c, 0.88)
+	var mat_wd := _solid_matte(wood_c.darkened(0.12), 0.9)
+	var mat_wl := _solid_matte(wood_c.lightened(0.08), 0.86)
+	var mat_iron := _solid_metal(Color(0.28, 0.28, 0.3), 0.55)
+	var mat_rope := _solid_matte(Color(0.4, 0.3, 0.16), 0.9)
+	var mat_straw := _solid_matte(Color(0.62, 0.52, 0.28), 0.92)
+	var mat_stenc := _solid_matte(Color(0.7, 0.64, 0.5), 0.85)
+	var mat_ink := _solid_matte(Color(0.2, 0.16, 0.12), 0.8)
+	var h: float = (0.36 + float(seed0 % 3) * 0.05) * s
+	var w: float = 0.52 * s
+	var d: float = 0.42 * s
 	var open_lid := seed0 % 4 == 1
-	_add_box(root, Vector3(0, h * 0.5 * s, 0), Vector3(0.55 * s, h * s, 0.45 * s), wood, true, 0.7)
-	# Loop 117: plank lines so crate reads as boarded (not solid cube)
-	for pi in 3:
-		var py := (0.15 + float(pi) * 0.12) * h * s
-		_add_box(root, Vector3(0, py, 0.225 * s), Vector3(0.52 * s, 0.012 * s, 0.012 * s), wood.darkened(0.12), false, 0.6)
-		_add_box(root, Vector3(0, py, -0.225 * s), Vector3(0.52 * s, 0.012 * s, 0.012 * s), wood.darkened(0.12), false, 0.6)
+	# Floor skids (raise off ground — crate identity)
+	_add_mesh_box(root, Vector3(0, 0.02 * s, d * 0.35), Vector3(w * 0.95, 0.04 * s, 0.06 * s), mat_wd)
+	_add_mesh_box(root, Vector3(0, 0.02 * s, -d * 0.35), Vector3(w * 0.95, 0.04 * s, 0.06 * s), mat_wd)
+	# Main body as separate face boards (gaps between planks)
+	# Front/back horizontal planks
+	for pi in 4:
+		var py: float = 0.08 * s + float(pi) * (h * 0.22)
+		_add_mesh_box(root, Vector3(0, py, d * 0.5), Vector3(w * 0.92, h * 0.18, 0.025 * s), mat_w if pi % 2 == 0 else mat_wl)
+		_add_mesh_box(root, Vector3(0, py, -d * 0.5), Vector3(w * 0.92, h * 0.18, 0.025 * s), mat_wd if pi % 2 == 0 else mat_w)
+	# Side planks
+	for pi in 4:
+		var py2: float = 0.08 * s + float(pi) * (h * 0.22)
+		_add_mesh_box(root, Vector3(w * 0.5, py2, 0), Vector3(0.025 * s, h * 0.18, d * 0.88), mat_wl if pi % 2 == 0 else mat_w)
+		_add_mesh_box(root, Vector3(-w * 0.5, py2, 0), Vector3(0.025 * s, h * 0.18, d * 0.88), mat_wd if pi % 2 == 0 else mat_w)
+	# Interior fill (solid so no hollow z-fight from side)
+	_add_mesh_box(root, Vector3(0, h * 0.48, 0), Vector3(w * 0.82, h * 0.85, d * 0.78), mat_wd)
+	# Corner posts
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			_add_mesh_box(
+				root,
+				Vector3(sx * w * 0.48, h * 0.48, sz * d * 0.48),
+				Vector3(0.04 * s, h * 0.95, 0.04 * s),
+				mat_wd
+			)
+	# Iron corner straps
+	for sx in [-1.0, 1.0]:
+		for sz in [-1.0, 1.0]:
+			_add_mesh_box(
+				root,
+				Vector3(sx * w * 0.48, h * 0.15, sz * d * 0.48),
+				Vector3(0.05 * s, 0.05 * s, 0.05 * s),
+				mat_iron
+			)
+			_add_mesh_box(
+				root,
+				Vector3(sx * w * 0.48, h * 0.85, sz * d * 0.48),
+				Vector3(0.05 * s, 0.05 * s, 0.05 * s),
+				mat_iron
+			)
+	# Horizontal iron bands (all crates)
+	_add_mesh_box(root, Vector3(0, h * 0.25, 0), Vector3(w * 1.02, 0.03 * s, d * 1.02), mat_iron)
+	_add_mesh_box(root, Vector3(0, h * 0.72, 0), Vector3(w * 1.02, 0.03 * s, d * 1.02), mat_iron)
+	# Lid
 	if open_lid:
-		# Lid hinged ajar — shows packing straw
-		_add_box(root, Vector3(0.0, h * s + 0.04 * s, -0.18 * s), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.08), false, 0.65)
-		_add_box(root, Vector3(0.0, h * s - 0.02 * s, 0.0), Vector3(0.4 * s, 0.04 * s, 0.3 * s), Color(0.7, 0.62, 0.35), false, 0.85)
+		_add_mesh_box(root, Vector3(0.0, h + 0.03 * s, -d * 0.35), Vector3(w * 0.95, 0.035 * s, d * 0.85), mat_w)
+		_add_mesh_box(root, Vector3(0.0, h - 0.02 * s, 0.0), Vector3(w * 0.7, 0.03 * s, d * 0.55), mat_straw)
 	else:
-		_add_box(root, Vector3(0, h * s, 0), Vector3(0.52 * s, 0.04 * s, 0.42 * s), wood.darkened(0.1), false, 0.65)
-	# Batten straps
-	if seed0 % 2 == 0:
-		_add_box(root, Vector3(0, h * 0.5 * s, 0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
-		_add_box(root, Vector3(0, h * 0.5 * s, -0.22 * s), Vector3(0.52 * s, 0.06 * s, 0.03 * s), wood.darkened(0.15), false, 0.55)
-	else:
-		_add_box(root, Vector3(0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
-		_add_box(root, Vector3(-0.22 * s, h * 0.5 * s, 0), Vector3(0.03 * s, 0.06 * s, 0.42 * s), wood.darkened(0.15), false, 0.55)
-	# Iron hasp / rope handles / stencil plate by seed
+		# Lid boards with seam
+		_add_mesh_box(root, Vector3(-w * 0.22, h + 0.015 * s, 0), Vector3(w * 0.42, 0.03 * s, d * 0.92), mat_wl)
+		_add_mesh_box(root, Vector3(w * 0.22, h + 0.015 * s, 0), Vector3(w * 0.42, 0.03 * s, d * 0.92), mat_w)
+		_add_mesh_box(root, Vector3(0, h + 0.02 * s, 0), Vector3(0.02 * s, 0.035 * s, d * 0.9), mat_wd)
+	# Seed forks: rope handles / stencil / hasp
 	match seed0 % 4:
 		0:
-			_add_box(root, Vector3(0, h * 0.55 * s, 0.24 * s), Vector3(0.08 * s, 0.04 * s, 0.02 * s), IRON, false, 0.4)
+			_add_mesh_box(root, Vector3(0, h * 0.5, d * 0.52), Vector3(0.1 * s, 0.05 * s, 0.025 * s), mat_iron)
 		1:
-			_add_cylinder(root, Vector3(0.28 * s, h * 0.55 * s, 0), 0.02 * s, 0.12 * s, Color(0.45, 0.35, 0.2), false, 0.7)
-			_add_cylinder(root, Vector3(-0.28 * s, h * 0.55 * s, 0), 0.02 * s, 0.12 * s, Color(0.45, 0.35, 0.2), false, 0.7)
+			_add_mesh_cyl(root, Vector3(w * 0.52, h * 0.55, 0), 0.018 * s, 0.14 * s, mat_rope, false)
+			_add_mesh_cyl(root, Vector3(-w * 0.52, h * 0.55, 0), 0.018 * s, 0.14 * s, mat_rope, false)
+			_add_mesh_box(root, Vector3(w * 0.52, h * 0.62, 0), Vector3(0.03 * s, 0.03 * s, 0.08 * s), mat_rope)
+			_add_mesh_box(root, Vector3(-w * 0.52, h * 0.62, 0), Vector3(0.03 * s, 0.03 * s, 0.08 * s), mat_rope)
 		2:
-			# Stencil plate "SULPHUR / PARTS"
-			_add_box(root, Vector3(0, h * 0.55 * s, 0.23 * s), Vector3(0.22 * s, 0.1 * s, 0.015 * s), PAPER.darkened(0.15), false, 0.75)
-			_add_box(root, Vector3(0, h * 0.58 * s, 0.24 * s), Vector3(0.16 * s, 0.02 * s, 0.01 * s), INK.lightened(0.3), false, 0.9)
+			_add_mesh_box(root, Vector3(0, h * 0.55, d * 0.52), Vector3(0.22 * s, 0.1 * s, 0.015 * s), mat_stenc)
+			_add_mesh_box(root, Vector3(0, h * 0.58, d * 0.53), Vector3(0.16 * s, 0.02 * s, 0.01 * s), mat_ink)
+			_add_mesh_box(root, Vector3(0, h * 0.52, d * 0.53), Vector3(0.12 * s, 0.015 * s, 0.01 * s), mat_ink)
 		_:
-			_add_box(root, Vector3(0, h * 0.35 * s, 0.23 * s), Vector3(0.5 * s, 0.03 * s, 0.02 * s), IRON.darkened(0.1), false, 0.4)
-			_add_box(root, Vector3(0, h * 0.65 * s, 0.23 * s), Vector3(0.5 * s, 0.03 * s, 0.02 * s), IRON.darkened(0.1), false, 0.4)
-	_add_contact_shadow(root, 0.3 * s, 0.25 * s)
+			_add_mesh_box(root, Vector3(0, h * 0.35, d * 0.52), Vector3(w * 0.9, 0.025 * s, 0.02 * s), mat_iron)
+			_add_mesh_box(root, Vector3(0, h * 0.65, d * 0.52), Vector3(w * 0.9, 0.025 * s, 0.02 * s), mat_iron)
+	_add_contact_shadow(root, w * 0.55, d * 0.55)
 	return root
+
 
 static func _make_stool(prop: Dictionary) -> Node3D:
 	## Loop 127: thicker seats, piping, turned legs — not flat green discs.
