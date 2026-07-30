@@ -114,18 +114,23 @@ func _init() -> void:
 		print("OK conservatory glass_wall")
 
 
-	# Drawing room hybrid: cutout billboards + at least one mesh armchair
+	# Loop 161: drawing room seating is solid mesh (sofa + armchair), not paper cutouts
 	var dprops: Array = prop_kinds_by_room.get("drawing_room", [])
-	if "billboard_prop" not in dprops:
-		push_error("Drawing room missing cutout billboard_prop heroes")
+	if "sofa" not in dprops:
+		push_error("Drawing room missing mesh sofa hero")
 		failed += 1
 	else:
-		print("OK drawing_room billboard_prop")
-	if "armchair" not in dprops and "sofa" not in dprops:
-		# either mesh or billboard coverage for seating
-		pass
-	if "armchair" in dprops:
+		print("OK drawing_room mesh sofa present")
+	if "armchair" not in dprops:
+		push_error("Drawing room missing mesh armchair")
+		failed += 1
+	else:
 		print("OK drawing_room mesh armchair present")
+	if "ottoman" not in dprops:
+		push_error("Drawing room missing ottoman")
+		failed += 1
+	else:
+		print("OK drawing_room ottoman present")
 
 	# Alpha integrity on hero PNGs (must not be studio-opaque)
 	for hero in ["sofa", "armchair", "chair", "desk", "side_table"]:

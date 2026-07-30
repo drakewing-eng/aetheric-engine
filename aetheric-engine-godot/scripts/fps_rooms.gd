@@ -64,23 +64,12 @@ const ROOMS := {
 			# NOTE: on-disk filenames swapped by CONTENT:
 			#   desk.png = olive chesterfield · sofa.png = writing desk
 			#   chair.png = red wing · armchair.png = green side chair
-			# Loop 70: mesh bulk / solid mesh where billboards went paper-thin edge-on
-			# North: painted chesterfield + sofa mesh_bulk for side volume
-			{
-				"kind": "billboard_prop",
-				"pos": [0.0, 0.0, -3.65],
-				"yaw": 0.0,
-				"texture": PROP_DIR + "desk.png",
-				"width": 2.5,
-				"height": 1.12,
-				"sink": 0.16,
-				"solid": true,
-				"col_size": [2.2, 0.95, 0.85],
-				"mesh_bulk": "sofa",
-			},
-			# Loop 77: clear gap from sofa face (was tight at -2.35 under bulk)
+			# Loop 161: solid mesh chesterfield (no painted-card edge-on ghost)
+			{"kind": "sofa", "pos": [0.0, 0.0, -3.65], "yaw": 0.0, "width": 2.4,
+				"fabric": Color(0.28, 0.36, 0.22)},
+			# Loop 77/161: soft tufted ottoman in front of sofa (not green brick)
 			{"kind": "ottoman", "pos": [0.0, 0.0, -2.05], "yaw": 0.0, "seed": 0,
-				"fabric": Color(0.32, 0.38, 0.2)},
+				"fabric": Color(0.28, 0.36, 0.2)},
 			{"kind": "side_table", "pos": [-1.75, 0.0, -3.35], "yaw": 12.0, "seed": 0},
 			# Loop 144: keep fire-side table clear of coal scuttle / tools
 			{"kind": "side_table", "pos": [1.55, 0.0, -3.15], "yaw": -18.0, "seed": 4},
@@ -553,8 +542,9 @@ const ROOMS := {
 				"fabric": Color(0.2, 0.3, 0.2)},
 			{"kind": "side_table", "pos": [1.7, 0.0, 1.7], "yaw": -20.0, "seed": 8},
 			{"kind": "letter_stack", "pos": [1.65, 0.68, 1.65], "yaw": 10.0, "seed": 0},
+			# Loop 161: oxblood hits velvet-red gate (brown taupe was wood-classified)
 			{"kind": "ottoman", "pos": [-1.2, 0.0, -1.5], "yaw": 20.0, "seed": 1,
-				"fabric": Color(0.42, 0.28, 0.22)},
+				"fabric": Color(0.48, 0.14, 0.14)},
 			# Centre work table (no extra chair — card scrap was extreme edge-on)
 			{"kind": "side_table", "pos": [0.15, 0.0, -1.5], "yaw": -10.0, "seed": 9, "bare": true},
 			{"kind": "letter_stack", "pos": [0.1, 0.68, -1.45], "yaw": 25.0, "seed": 3},
@@ -587,8 +577,9 @@ const ROOMS := {
 			{"kind": "plant", "pos": [2.0, 0.0, 2.9], "scale": 0.55, "seed": 5,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
 			# Loop 155: clear centre walk — one low ottoman only (no mid oil-lamp forest)
+			# Loop 161: deep sage hits green-velvet gate (brown taupe was timber chest)
 			{"kind": "ottoman", "pos": [0.15, 0.0, 0.7], "yaw": -30.0, "seed": 2,
-				"fabric": Color(0.36, 0.28, 0.22)},
+				"fabric": Color(0.22, 0.32, 0.2)},
 			{"kind": "plant", "pos": [0.4, 0.0, -0.2], "scale": 0.45, "seed": 6,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.42, "height": 0.5},
 		],

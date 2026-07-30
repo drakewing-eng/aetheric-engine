@@ -394,48 +394,121 @@ static func _make_armchair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
-	## Low tufted footstool — sits in front of sofa, never under it.
-	## seed: 0 square tufted · 1 round drum · 2 long bench with fringe (uniqueness).
+	## Loop 161 — soft tufted footstool (not a green Minecraft brick).
+	## Uses velvet-mat cylinders/boxes only (no foliage sphere_blob).
+	## seed: 0 square chesterfield · 1 round drum · 2 long fringe bench.
 	var root := Node3D.new()
 	root.name = "Ottoman"
 	var fabric: Color = prop.get("fabric", VELVET_GREEN.darkened(0.08))
+	var fabric_d := fabric.darkened(0.12)
+	var fabric_dd := fabric.darkened(0.24)
+	var fabric_l := fabric.lightened(0.05)
 	var seed0: int = int(prop.get("seed", 0))
 	var style := seed0 % 3
-	var w: float = float(prop.get("width", 0.72 if style != 2 else 1.05))
-	var d: float = float(prop.get("depth", 0.5 if style != 1 else 0.72))
+	var w: float = float(prop.get("width", 0.78 if style != 2 else 1.12))
+	var d: float = float(prop.get("depth", 0.56 if style != 1 else 0.78))
 	if style == 1:
-		# Round drum ottoman
-		_add_cylinder(root, Vector3(0, 0.12, 0), w * 0.42, 0.1, MAHOGANY_DARK, true, 0.42)
-		_add_cylinder(root, Vector3(0, 0.28, 0), w * 0.4, 0.22, fabric, true, 0.9)
-		_add_cylinder(root, Vector3(0, 0.42, 0), w * 0.36, 0.06, fabric.darkened(0.1), false, 0.92)
-		for i in 6:
-			var ang := float(i) * TAU / 6.0
-			_add_cylinder(root, Vector3(cos(ang) * w * 0.18, 0.44, sin(ang) * w * 0.18), 0.014, 0.02, fabric.darkened(0.22), false, 0.95)
-		for i in 4:
-			var ang2 := float(i) * TAU / 4.0 + 0.4
-			_add_cylinder(root, Vector3(cos(ang2) * w * 0.28, 0.05, sin(ang2) * w * 0.28), 0.03, 0.1, MAHOGANY, true)
-	else:
-		# Square / long bench: mahogany base + padded top + fringe
-		_add_box(root, Vector3(0, 0.14, 0), Vector3(w, 0.1, d), MAHOGANY_DARK, true, 0.42)
-		_add_box(root, Vector3(0, 0.26, 0), Vector3(w * 0.96, 0.16, d * 0.96), fabric, true, 0.9)
-		_add_box(root, Vector3(0, 0.36, 0), Vector3(w * 0.88, 0.06, d * 0.88), fabric.darkened(0.1), false, 0.92)
-		# Tufts denser on long style
-		var cols := 3 if style == 0 else 5
-		for i in cols:
-			for j in 2:
-				var bx := (float(i) / float(maxi(cols - 1, 1)) - 0.5) * w * 0.7
-				var bz := (float(j) - 0.5) * d * 0.35
-				_add_cylinder(root, Vector3(bx, 0.4, bz), 0.015, 0.02, fabric.darkened(0.22), false, 0.95)
-		# Nailhead edge
+		# Round drum — stepped dome + button ring, turned feet (morning)
+		var r: float = w * 0.4
+		_add_cylinder(root, Vector3(0, 0.08, 0), r * 0.92, 0.08, MAHOGANY_DARK, true, 0.42)
+		_add_cylinder(root, Vector3(0, 0.14, 0), r * 0.98, 0.05, MAHOGANY, false, 0.45)
+		_add_cylinder(root, Vector3(0, 0.28, 0), r, 0.22, fabric, true, 0.9)
+		_add_cylinder(root, Vector3(0, 0.4, 0), r * 0.9, 0.1, fabric_d, false, 0.92)
+		_add_cylinder(root, Vector3(0, 0.46, 0), r * 0.72, 0.06, fabric_l, false, 0.92)
+		_add_cylinder(root, Vector3(0, 0.5, 0), r * 0.45, 0.04, fabric_d, false, 0.93)
+		_add_cylinder(root, Vector3(0, 0.18, 0), r * 1.02, 0.04, fabric_dd, false, 0.88)
+		# Button ring (readable mid-FOV)
 		for i in 8:
-			var t := float(i) / 7.0
-			_add_cylinder(root, Vector3(-w * 0.42 + t * w * 0.84, 0.2, d * 0.42), 0.01, 0.012, BRASS, false, 0.3, true)
-		# Fringe / skirt
-		_add_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.94, 0.06, d * 0.94), fabric.darkened(0.18), false, 0.88)
+			var ang := float(i) * TAU / 8.0
+			_add_cylinder(root, Vector3(cos(ang) * r * 0.42, 0.48, sin(ang) * r * 0.42), 0.02, 0.018, fabric_dd, false, 0.95)
+		_add_cylinder(root, Vector3(0, 0.52, 0), 0.022, 0.02, fabric_dd, false, 0.95)
+		# Side bolster ring (reads as soft roll, not wood barrel)
+		_add_cylinder(root, Vector3(0, 0.34, 0), r * 1.04, 0.06, fabric_l, false, 0.9)
+		for i in 4:
+			var ang2 := float(i) * TAU / 4.0 + 0.35
+			var fx := cos(ang2) * r * 0.62
+			var fz := sin(ang2) * r * 0.62
+			_add_cylinder(root, Vector3(fx, 0.05, fz), 0.032, 0.1, MAHOGANY, true)
+			_add_cylinder(root, Vector3(fx, 0.01, fz), 0.042, 0.025, MAHOGANY_DARK, true)
+	elif style == 2:
+		# Long fringe bench — rolled ends, diamond tufts, mahogany rail
+		_add_box(root, Vector3(0, 0.12, 0), Vector3(w * 0.96, 0.08, d * 0.9), MAHOGANY_DARK, true, 0.42)
+		_add_box(root, Vector3(0, 0.17, 0), Vector3(w, 0.03, d * 0.96), MAHOGANY, false, 0.45)
+		_add_box(root, Vector3(0, 0.3, 0), Vector3(w * 0.94, 0.2, d * 0.88), fabric, true, 0.9)
+		_add_box(root, Vector3(0, 0.42, 0), Vector3(w * 0.86, 0.06, d * 0.78), fabric_d, false, 0.92)
+		# Cushion pads as short vertical cylinders (velvet mat), not foliage spheres
+		for i in 4:
+			var bx := (float(i) / 3.0 - 0.5) * w * 0.68
+			_add_cylinder(root, Vector3(bx, 0.46, 0), d * 0.28, 0.08, fabric_l, false, 0.92)
+		# Horizontal edge bolsters
+		_add_cylinder_rotated(root, Vector3(0, 0.36, d * 0.38), 0.05, w * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+		_add_cylinder_rotated(root, Vector3(0, 0.36, -d * 0.38), 0.05, w * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+		for sx in [-1.0, 1.0]:
+			_add_cylinder_rotated(root, Vector3(sx * w * 0.42, 0.36, 0), 0.055, d * 0.7, fabric_d, Vector3(PI * 0.5, 0, 0), 0.9)
+			_add_cylinder(root, Vector3(sx * w * 0.44, 0.4, 0), 0.06, 0.08, fabric, false, 0.9)
+		# Diamond tufts
+		for i in 5:
+			for j in 2:
+				var bx2 := (float(i) / 4.0 - 0.5) * w * 0.72
+				var bz2 := (float(j) - 0.5) * d * 0.32
+				_add_cylinder(root, Vector3(bx2, 0.5, bz2), 0.018, 0.016, fabric_dd, false, 0.95)
+		# Fringe strips (vertical, not a second slab)
+		for i in 9:
+			var fx := (float(i) / 8.0 - 0.5) * w * 0.88
+			_add_box(root, Vector3(fx, 0.1, d * 0.44), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
+			_add_box(root, Vector3(fx, 0.1, -d * 0.44), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
+		# Brass nailheads along front rail
+		for i in 7:
+			var t := float(i) / 6.0
+			_add_cylinder(root, Vector3(-w * 0.4 + t * w * 0.8, 0.2, d * 0.42), 0.012, 0.014, BRASS, false, 0.3, true)
 		for sx in [-1.0, 1.0]:
 			for sz in [-1.0, 1.0]:
-				_add_cylinder(root, Vector3(sx * w * 0.38, 0.05, sz * d * 0.35), 0.032, 0.1, MAHOGANY, true)
-				_add_cylinder(root, Vector3(sx * w * 0.38, 0.01, sz * d * 0.35), 0.04, 0.03, MAHOGANY_DARK, true)
+				_add_cylinder(root, Vector3(sx * w * 0.4, 0.055, sz * d * 0.34), 0.03, 0.1, MAHOGANY, true)
+				_add_cylinder(root, Vector3(sx * w * 0.4, 0.012, sz * d * 0.34), 0.04, 0.028, MAHOGANY_DARK, true)
+	else:
+		# Square chesterfield footstool (drawing-room hero) — soft mass, not a fridge brick
+		_add_box(root, Vector3(0, 0.1, 0), Vector3(w * 0.92, 0.07, d * 0.9), MAHOGANY_DARK, true, 0.42)
+		_add_box(root, Vector3(0, 0.15, 0), Vector3(w * 0.98, 0.035, d * 0.96), MAHOGANY, false, 0.45)
+		# Main cushion + slightly inset top
+		_add_box(root, Vector3(0, 0.28, 0), Vector3(w * 0.9, 0.18, d * 0.86), fabric, true, 0.9)
+		_add_box(root, Vector3(0, 0.39, 0), Vector3(w * 0.78, 0.08, d * 0.72), fabric_d, false, 0.92)
+		_add_box(root, Vector3(0, 0.45, 0), Vector3(w * 0.62, 0.05, d * 0.55), fabric_l, false, 0.93)
+		# Rolled perimeter bolsters (side volume + soft silhouette)
+		_add_cylinder_rotated(root, Vector3(0, 0.34, d * 0.38), 0.055, w * 0.82, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+		_add_cylinder_rotated(root, Vector3(0, 0.34, -d * 0.38), 0.055, w * 0.82, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+		_add_cylinder_rotated(root, Vector3(w * 0.4, 0.34, 0), 0.055, d * 0.72, fabric_l, Vector3(PI * 0.5, 0, 0), 0.9)
+		_add_cylinder_rotated(root, Vector3(-w * 0.4, 0.34, 0), 0.055, d * 0.72, fabric_l, Vector3(PI * 0.5, 0, 0), 0.9)
+		# Corner rolls (velvet cylinders, not foliage spheres)
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_cylinder(root, Vector3(sx * w * 0.36, 0.36, sz * d * 0.32), 0.055, 0.1, fabric, false, 0.9)
+		# Diamond button tufts — large enough to read at room FOV
+		for row in 3:
+			var by := 0.48
+			var odd := row % 2 == 1
+			var cols: Array = [-0.12, 0.12] if odd else [-0.2, 0.0, 0.2]
+			for bx_v in cols:
+				var bz_v := (float(row) - 1.0) * d * 0.18
+				_add_cylinder(root, Vector3(float(bx_v), by, bz_v), 0.02, 0.016, fabric_dd, false, 0.95)
+		# Skirt fringe (thin vertical dangles)
+		for i in 7:
+			var fx := (float(i) / 6.0 - 0.5) * w * 0.82
+			_add_box(root, Vector3(fx, 0.1, d * 0.42), Vector3(0.035, 0.09, 0.018), fabric_dd, false, 0.88)
+			_add_box(root, Vector3(fx, 0.1, -d * 0.42), Vector3(0.035, 0.09, 0.018), fabric_dd, false, 0.88)
+		for i in 5:
+			var fz := (float(i) / 4.0 - 0.5) * d * 0.75
+			_add_box(root, Vector3(w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), fabric_dd, false, 0.88)
+			_add_box(root, Vector3(-w * 0.44, 0.1, fz), Vector3(0.018, 0.09, 0.035), fabric_dd, false, 0.88)
+		# Brass nailheads on mahogany rail
+		for i in 6:
+			var t := float(i) / 5.0
+			_add_cylinder(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, d * 0.44), 0.011, 0.012, BRASS, false, 0.3, true)
+			_add_cylinder(root, Vector3(-w * 0.38 + t * w * 0.76, 0.18, -d * 0.44), 0.011, 0.012, BRASS, false, 0.3, true)
+		# Turned bun feet
+		for sx in [-1.0, 1.0]:
+			for sz in [-1.0, 1.0]:
+				_add_cylinder(root, Vector3(sx * w * 0.34, 0.05, sz * d * 0.3), 0.034, 0.1, MAHOGANY, true)
+				_add_cylinder(root, Vector3(sx * w * 0.34, 0.012, sz * d * 0.3), 0.044, 0.028, MAHOGANY_DARK, true)
 	_add_contact_shadow(root, w * 0.55, d * 0.55)
 	return root
 
@@ -565,50 +638,68 @@ static func _make_tea_tray(prop: Dictionary) -> Node3D:
 
 
 static func _make_sofa(prop: Dictionary) -> Node3D:
-	## Chesterfield-style sofa: buttoned back, rolled arms, carved feet, skirt.
+	## Loop 161 — olive chesterfield mesh (drawing-room hero).
+	## Continuous seat/back envelope + rolled arms + diamond tufts — not a green fridge.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Sofa"
-	var width: float = prop.get("width", 2.3)
+	var width: float = float(prop.get("width", 2.35))
 	var fabric: Color = prop.get("fabric", VELVET_GREEN)
-	# Base frame
-	_add_box(root, Vector3(0, 0.22, 0.08), Vector3(width, 0.14, 0.92), MAHOGANY_DARK, true, 0.4)
-	# Seat body + 3 cushions
-	_add_box(root, Vector3(0, 0.4, 0.1), Vector3(width - 0.08, 0.2, 0.86), fabric, true, 0.9)
+	var fabric_d := fabric.darkened(0.1)
+	var fabric_dd := fabric.darkened(0.22)
+	var fabric_l := fabric.lightened(0.05)
+	# Slim mahogany plinth (visible under skirt)
+	_add_box(root, Vector3(0, 0.16, 0.04), Vector3(width * 0.98, 0.08, 0.88), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.22, 0.04), Vector3(width, 0.035, 0.92), MAHOGANY, false, 0.45)
+	# Seat deck + three cushions with soft crowns
+	_add_box(root, Vector3(0, 0.36, 0.08), Vector3(width - 0.12, 0.14, 0.78), fabric, true, 0.9)
 	for i in 3:
 		var cx: float = (i - 1) * (width * 0.28)
-		_add_box(root, Vector3(cx, 0.54, 0.12), Vector3(width * 0.26, 0.12, 0.72), fabric.darkened(0.08), false, 0.92)
-		# button row
+		_add_box(root, Vector3(cx, 0.48, 0.1), Vector3(width * 0.26, 0.12, 0.68), fabric_d, false, 0.92)
+		_add_sphere_blob(root, Vector3(cx, 0.56, 0.08), width * 0.1, fabric_l)
+		# Button row on each cushion
 		for j in 2:
-			_add_cylinder(root, Vector3(cx + (j - 0.5) * 0.12, 0.61, 0.05 + j * 0.15), 0.02, 0.02, fabric.darkened(0.22), false, 0.95)
-	# Loop 128 back: deeper padded mass + crown roll (not flat green slab from rear)
-	_add_box(root, Vector3(0, 0.85, -0.32), Vector3(width, 0.8, 0.24), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.9, -0.2), Vector3(width - 0.1, 0.7, 0.12), fabric.darkened(0.06), false, 0.9)
-	_add_cylinder(root, Vector3(0, 1.05, -0.18), width * 0.28, 0.55, fabric.darkened(0.04), false, 0.9)
-	_add_box(root, Vector3(0, 1.25, -0.28), Vector3(width - 0.1, 0.16, 0.18), fabric.darkened(0.05), false, 0.9)
-	_add_box(root, Vector3(0, 1.34, -0.26), Vector3(width - 0.18, 0.05, 0.1), MAHOGANY, false, 0.45)
-	for i in 5:
-		for j in 3:
-			var bx := (i - 2) * (width * 0.16)
-			var by := 0.7 + j * 0.18
-			_add_cylinder(root, Vector3(bx, by, -0.16), 0.018, 0.02, fabric.darkened(0.25), false, 0.95)
-	# Rolled arms — extra outer cylinders for side volume
+			_add_cylinder(root, Vector3(cx + (float(j) - 0.5) * 0.1, 0.58, 0.02 + float(j) * 0.12), 0.018, 0.016, fabric_dd, false, 0.95)
+	# Front seat bolster (horizontal roll)
+	_add_cylinder_rotated(root, Vector3(0, 0.42, 0.42), 0.07, width * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+	# Back: continuous shell (not fridge slab) + inner pad + crown roll
+	_add_box(root, Vector3(0, 0.88, -0.28), Vector3(width * 0.96, 0.78, 0.22), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.9, -0.16), Vector3(width * 0.88, 0.7, 0.1), fabric_d, false, 0.9)
+	_add_box(root, Vector3(0, 0.95, -0.1), Vector3(width * 0.78, 0.55, 0.06), fabric_l, false, 0.92)
+	# Crown roll + mahogany crest
+	_add_cylinder_rotated(root, Vector3(0, 1.22, -0.12), 0.08, width * 0.82, fabric, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_cylinder_rotated(root, Vector3(0, 1.26, -0.18), 0.05, width * 0.55, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_box(root, Vector3(0, 1.28, -0.26), Vector3(width * 0.4, 0.04, 0.08), MAHOGANY, false, 0.45)
+	# Diamond tufts on back
+	for row in 4:
+		var by := 0.65 + float(row) * 0.14
+		var odd := row % 2 == 1
+		var n := 4 if odd else 5
+		for i in n:
+			var bx := (float(i) / float(maxi(n - 1, 1)) - 0.5) * width * 0.7
+			_add_cylinder(root, Vector3(bx, by, -0.08), 0.016, 0.014, fabric_dd, false, 0.95)
+	# Rolled arms (continuous with seat, rounded outer volume)
 	for sx in [-1.0, 1.0]:
-		var ax: float = sx * (width * 0.5 - 0.12)
-		_add_box(root, Vector3(ax, 0.6, 0.06), Vector3(0.24, 0.5, 0.88), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(ax, 0.82, 0.2), 0.12, 0.4, fabric.darkened(0.05), false, 0.9)
-		_add_cylinder(root, Vector3(ax + sx * 0.1, 0.72, 0.05), 0.1, 0.6, fabric.darkened(0.08), false, 0.88)
-		_add_sphere_blob(root, Vector3(ax + sx * 0.08, 0.95, 0.15), 0.12, fabric.lightened(0.03))
-		_add_box(root, Vector3(ax + sx * 0.08, 0.95, -0.05), Vector3(0.12, 0.4, 0.55), fabric.darkened(0.04), false, 0.9)
-		_add_cylinder(root, Vector3(ax, 0.55, 0.4), 0.075, 0.16, MAHOGANY, false, 0.45)
-	# Turned legs
-	for x in range(-2, 3):
-		var lx := x * (width * 0.2)
-		_add_cylinder(root, Vector3(lx, 0.08, 0.32), 0.035, 0.14, MAHOGANY, true)
-		_add_cylinder(root, Vector3(lx, 0.08, -0.28), 0.035, 0.14, MAHOGANY, true)
-		_add_cylinder(root, Vector3(lx, 0.02, 0.32), 0.045, 0.03, MAHOGANY_DARK, true)
-	_add_contact_shadow(root, width * 0.5, 0.55)
+		var ax: float = sx * (width * 0.5 - 0.14)
+		_add_box(root, Vector3(ax, 0.58, 0.04), Vector3(0.22, 0.42, 0.78), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(ax, 0.72, 0.08), 0.11, 0.55, fabric_d, false, 0.9)
+		_add_cylinder_rotated(root, Vector3(ax, 0.78, 0.05), 0.09, 0.7, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
+		_add_sphere_blob(root, Vector3(ax + sx * 0.04, 0.9, 0.2), 0.11, fabric)
+		_add_sphere_blob(root, Vector3(ax + sx * 0.02, 0.88, -0.15), 0.09, fabric_d)
+		# Arm support post
+		_add_cylinder(root, Vector3(ax, 0.42, 0.32), 0.04, 0.2, MAHOGANY, false, 0.45)
+	# Skirt fringe (thin verticals, not a second solid box)
+	for i in 11:
+		var fx := (float(i) / 10.0 - 0.5) * width * 0.9
+		_add_box(root, Vector3(fx, 0.12, 0.42), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
+	# Turned bun feet (4 corners + mid)
+	for sx in [-1.0, 0.0, 1.0]:
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.07, 0.3), 0.032, 0.12, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.015, 0.3), 0.042, 0.025, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.07, -0.26), 0.03, 0.12, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.015, -0.26), 0.04, 0.025, MAHOGANY_DARK, true)
+	_add_contact_shadow(root, width * 0.48, 0.52)
 	return root
 
 static func _make_rug(prop: Dictionary) -> Node3D:
