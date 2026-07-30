@@ -3040,64 +3040,71 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			_add_cylinder(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, COPPER, false, 0.32, true)
 			_add_cylinder(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, BRASS, false, 0.3, true)
 		1:
-			# Harmonic resonator — loop 132: SOLID bulk (not empty shelf tower).
-			# Wide iron cheeks + dense copper diaphragms + central mast fill.
-			_add_box(root, Vector3(0, 0.12, 0), Vector3(1.25, 0.24, 1.0), iron_dark, true, 0.45)
-			_add_box(root, Vector3(0, 0.28, 0), Vector3(1.1, 0.1, 0.88), iron_mid, true, 0.45)
-			_add_box(root, Vector3(0, 0.35, 0), Vector3(0.95, 0.04, 0.75), BRASS.darkened(0.12), false, 0.32)
-			# Thick side cheeks (solid walls — kill hollow shelf read)
+			# Loop 182: OPEN harmonic resonator — not closed iron fridge with cyan hat.
+			# Oak plinth + two posts + air-spaced copper diaphragms + tuning fork crown.
+			var mat_iron := _solid_matte(iron_mid, 0.55)
+			var mat_iron_d := _solid_matte(iron_dark, 0.58)
+			var mat_oak := _solid_matte(oak, 0.72)
+			var mat_oak_d := _solid_matte(oak_d, 0.75)
+			var mat_cop := _solid_metal(COPPER, 0.32)
+			var mat_cop_d := _solid_metal(COPPER.darkened(0.1), 0.35)
+			var mat_br := _solid_metal(BRASS, 0.28)
+			var mat_br_d := _solid_metal(BRASS.darkened(0.1), 0.3)
+			# Low oak plinth (instrument base — not full-height cabinet)
+			_add_mesh_box(root, Vector3(0, 0.08, 0), Vector3(1.1, 0.16, 0.85), mat_oak_d)
+			_add_mesh_box(root, Vector3(0, 0.18, 0), Vector3(1.0, 0.06, 0.75), mat_oak)
+			_add_mesh_box(root, Vector3(0, 0.22, 0), Vector3(0.9, 0.03, 0.65), mat_br_d)
+			# Two upright posts (open air between — not solid side cheeks)
 			for sx in [-1.0, 1.0]:
-				_add_box(root, Vector3(sx * 0.38, 1.0, 0), Vector3(0.16, 1.4, 0.55), iron_mid, true, 0.42)
-				_add_box(root, Vector3(sx * 0.38, 1.0, 0.08), Vector3(0.1, 1.3, 0.35), iron_dark, false, 0.45)
-				_add_cylinder(root, Vector3(sx * 0.38, 1.72, 0), 0.09, 0.08, BRASS, false, 0.28, true)
-				# Brass edge rails on cheeks
-				_add_box(root, Vector3(sx * 0.46, 1.0, 0.25), Vector3(0.03, 1.25, 0.04), BRASS.darkened(0.1), false, 0.3)
-			# Back panel (closes the silhouette from any angle)
-			_add_box(root, Vector3(0, 1.0, -0.28), Vector3(0.85, 1.35, 0.08), oak_d, true, 0.5)
-			_add_box(root, Vector3(0, 1.0, -0.24), Vector3(0.7, 1.2, 0.04), iron_dark, false, 0.48)
-			# Central mast + stacked copper diaphragms (thick bands, no air-shelf look)
-			_add_cylinder(root, Vector3(0, 1.0, 0.05), 0.08, 1.35, BRASS.darkened(0.05), true, 0.28, true)
+				_add_mesh_box(root, Vector3(sx * 0.32, 0.95, 0), Vector3(0.08, 1.35, 0.08), mat_iron_d)
+				_add_mesh_cyl(root, Vector3(sx * 0.32, 0.3, 0), 0.06, 0.08, mat_br, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.32, 1.62, 0), 0.055, 0.06, mat_br, false)
+			# Rear thin rail only (not full back panel wall)
+			_add_mesh_box(root, Vector3(0, 0.95, -0.22), Vector3(0.08, 1.2, 0.05), mat_iron)
+			_add_mesh_box(root, Vector3(0, 1.55, -0.1), Vector3(0.7, 0.04, 0.04), mat_iron_d)
+			_add_mesh_box(root, Vector3(0, 0.55, -0.1), Vector3(0.7, 0.04, 0.04), mat_iron_d)
+			# Central brass mast
+			_add_mesh_cyl(root, Vector3(0, 0.95, 0.05), 0.045, 1.25, mat_br_d, true)
+			# Air-spaced copper diaphragms (gaps visible — instrument, not fridge shelves)
 			for i in 5:
-				var y: float = 0.55 + float(i) * 0.22
-				var r: float = 0.34 - float(i) * 0.025
-				var copper_col: Color = COPPER if i % 2 == 0 else COPPER.darkened(0.1)
-				_add_cylinder(root, Vector3(0, y, 0.05), r, 0.1, copper_col, false, 0.3, true)
-				_add_cylinder(root, Vector3(0, y + 0.03, 0.05), r * 0.88, 0.035, copper_col.lightened(0.08), false, 0.28, true)
-				# Fill between coil and cheeks so no empty shelf voids
-				_add_box(root, Vector3(0, y, 0.05), Vector3(r * 1.5, 0.06, 0.2), copper_col.darkened(0.05), false, 0.35)
-			# Cross braces (instrument, not furniture shelves)
-			_add_box(root, Vector3(0, 0.7, 0.15), Vector3(0.75, 0.06, 0.1), iron_mid, false, 0.42)
-			_add_box(root, Vector3(0, 1.35, 0.15), Vector3(0.75, 0.05, 0.1), iron_mid, false, 0.42)
-			# Side instrument cabinets
-			_add_box(root, Vector3(0.55, 0.65, 0.15), Vector3(0.3, 0.55, 0.42), oak_d, true, 0.5)
-			for gi in 3:
-				_add_cylinder(root, Vector3(0.55, 0.55 + float(gi) * 0.14, 0.32), 0.055, 0.025, BRASS, false, 0.28, true)
-				_add_cylinder(root, Vector3(0.55, 0.56 + float(gi) * 0.14, 0.34), 0.04, 0.01, Color(0.85, 0.88, 0.8), false, 0.5)
-			_add_box(root, Vector3(-0.55, 0.6, 0.1), Vector3(0.28, 0.45, 0.35), iron_dark, true, 0.45)
-			_add_cylinder(root, Vector3(-0.55, 0.9, 0.2), 0.04, 0.55, COPPER, false, 0.32, true)
-			_add_cylinder(root, Vector3(-0.55, 1.2, 0.28), 0.05, 0.04, BRASS, false, 0.3, true)
-			# Top bridge + glass chamber
-			_add_box(root, Vector3(0, 1.72, 0), Vector3(0.85, 0.08, 0.5), iron_mid, false, 0.42)
-			_add_box(root, Vector3(0, 1.78, 0), Vector3(0.7, 0.04, 0.4), BRASS.darkened(0.08), false, 0.3)
-			_add_cylinder(root, Vector3(0, 1.92, 0.05), 0.14, 0.16, glass_c, false, 0.32)
-			_add_cylinder(root, Vector3(0, 2.02, 0.05), 0.1, 0.08, glass_hi, false, 0.3)
-			for ri in 4:
-				var ra := float(ri) * TAU / 4.0
-				_add_box(root, Vector3(cos(ra) * 0.12, 1.95, sin(ra) * 0.12 + 0.05), Vector3(0.015, 0.14, 0.015), BRASS, false, 0.28)
-			top_y = 1.95
+				var y: float = 0.48 + float(i) * 0.22
+				var r: float = 0.28 - float(i) * 0.02
+				var cm: Material = mat_cop if i % 2 == 0 else mat_cop_d
+				_add_mesh_cyl(root, Vector3(0, y, 0.05), r, 0.045, cm, false)
+				_add_mesh_cyl(root, Vector3(0, y + 0.02, 0.05), r * 0.82, 0.02, mat_br_d, false)
+			# Cross struts between posts (open triangle braces)
+			_add_mesh_box(root, Vector3(0, 0.75, 0.12), Vector3(0.62, 0.03, 0.03), mat_iron)
+			_add_mesh_box(root, Vector3(0, 1.25, 0.12), Vector3(0.62, 0.03, 0.03), mat_iron)
+			# Side gauge box (small, not cheek wall)
+			_add_mesh_box(root, Vector3(0.48, 0.55, 0.15), Vector3(0.22, 0.35, 0.28), mat_oak_d)
+			for gi in 2:
+				_add_mesh_cyl(root, Vector3(0.48, 0.5 + float(gi) * 0.14, 0.28), 0.045, 0.02, mat_br, false)
+			# Copper riser pipe
+			_add_mesh_cyl(root, Vector3(-0.48, 0.75, 0.1), 0.03, 0.7, mat_cop, false)
+			_add_mesh_cyl(root, Vector3(-0.48, 1.15, 0.2), 0.04, 0.035, mat_br, false)
+			# Top bridge + small glass jar (not fat cyan hat on fridge)
+			_add_mesh_box(root, Vector3(0, 1.65, 0), Vector3(0.75, 0.05, 0.35), mat_iron)
+			_add_mesh_box(root, Vector3(0, 1.7, 0), Vector3(0.6, 0.03, 0.28), mat_br_d)
+			_add_mesh_cyl(root, Vector3(0, 1.82, 0.05), 0.1, 0.14, _solid_matte(glass_c, 0.25), false)
+			_add_mesh_cyl(root, Vector3(0, 1.9, 0.05), 0.07, 0.05, _solid_matte(glass_hi, 0.22), false)
+			# Tuning-fork prongs (identity of resonator)
+			_add_mesh_box(root, Vector3(-0.04, 2.0, 0.05), Vector3(0.025, 0.2, 0.025), mat_br)
+			_add_mesh_box(root, Vector3(0.04, 2.0, 0.05), Vector3(0.025, 0.2, 0.025), mat_br)
+			_add_mesh_box(root, Vector3(0, 1.88, 0.05), Vector3(0.1, 0.025, 0.025), mat_br_d)
+			top_y = 2.0
 			var fork_core := MeshInstance3D.new()
 			var fcm := SphereMesh.new()
-			fcm.radius = 0.07
-			fcm.height = 0.14
+			fcm.radius = 0.045
+			fcm.height = 0.09
 			fork_core.mesh = fcm
 			var fcmat := StandardMaterial3D.new()
 			fcmat.albedo_color = Color(0.5, 0.88, 1.0)
 			fcmat.emission_enabled = true
 			fcmat.emission = Color(0.4, 0.8, 1.0)
-			fcmat.emission_energy_multiplier = 2.4
+			fcmat.emission_energy_multiplier = 1.8
 			fcmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			fork_core.material_override = fcmat
-			fork_core.position = Vector3(0, 1.95, 0.05)
+			fork_core.position = Vector3(0, 1.9, 0.05)
 			root.add_child(fork_core)
 		_:
 			# Leyden / glass-stack apparatus (vertical jar battery look)

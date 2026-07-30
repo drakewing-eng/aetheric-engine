@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~overnight loop 181  
-**HEAD:** `350ecca` visual loop 181  
+**Updated:** 2026-07-29 ~overnight loop 182  
+**HEAD:** (pending checkpoint) visual loop 182  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,8 +10,8 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–181** pot |
-| 5 | Geometric / surface detail | **ADVANCED 72–181** pot |
+| 4 | Unique Victorian objects | **ADVANCED 71–182** machine |
+| 5 | Geometric / surface detail | **ADVANCED 72–182** machine |
 | 6 | Victorian wall art | **ADVANCED 69+96+97+133** kitchen |
 | 7 | Plant diversity / side volume | **ADVANCED 74–169** min size |
 | 8 | Side-view mesh furniture | **DONE 70–165** wing envelope |
@@ -23,15 +23,16 @@
 | 114 | Butler sink fireclay + pump | **DONE 179** |
 | 115 | Hessian flour bag + urn body | **DONE 180** |
 | 116 | Botanical table pot (not cake) | **DONE 181** |
+| 117 | Open harmonic resonator machine | **DONE 182** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 178 | Open cast-iron park bench |
 | 179 | Butler sink fireclay + brass hand-pump |
 | 180 | Hessian flour bag + single-mat amphora |
-| 181 | **Botanical pot:** tapered clay + leaf mound + geranium cluster (no blue band / red lid cake) |
+| 181 | Botanical pot tapered clay + geranium |
+| 182 | **Gallery machine style-1:** open posts + air-spaced copper diaphragms + tuning fork (not iron fridge + cyan hat) |
 
 ## Still high-value if continuing
 
@@ -41,4 +42,4 @@
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_181/`  
+- Shots: `auto_loop_67/` … `auto_loop_182/`  

@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 182)
+
+- **Gallery secondary machine residual:** style-1 harmonic resonator was solid iron side cheeks + back panel + cyan glass hat = iron fridge mid-FOV. Open oak plinth, two posts, air-spaced copper diaphragms, thin rear rail, small glass jar + tuning-fork prongs.  
+
 ## Status update 2026-07-29 (loop 181)
 
 - **Botanical table pot residual:** blue glaze band + red disc lid still read as wedding cake mid-FOV (conservatory side table). Classic tapered terracotta + saucer, leaf mound, irregular geranium cluster (red/pink/cream) — no contrasting band or lid disc.  
