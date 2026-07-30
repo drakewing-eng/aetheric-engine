@@ -117,6 +117,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Wing boxiness:** mesh armchair was a velvet fridge / ziggurat crown. Rewrote continuous shell + rounded crown rolls, diamond tufts, horizontal seat/arm bolsters, slim turned legs. Helper `_add_cylinder_rotated` for pipe bolsters.  
 
+## Status update 2026-07-29 (loop 168)
+
+- **Prep flour sack residual:** stacked cylinders with g<0.7 hit scrubbed-wood path → copper/wood coil look on doorway FOV. Wide low linen bag (g≥0.7 linen gate), flat cloth top, short twine ear, low oval loaf, flour scoop; salt crock moved clear of sack.  
+
 ## Status update 2026-07-29 (loop 167)
 
 - **Door closet residual:** portal visual identity — double leaves for wide doors, destination Label3D plaque on lintel, warm under-leaf emission + soft omni (next-room light leak), overdoor cornice. Feature frames get glow + cornice. Prompt `[E] Enter · <room>`. Automated door suite still PASS; human playtest still recommended.  

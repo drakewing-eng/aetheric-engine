@@ -1564,59 +1564,60 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	match kit:
 		0:
 			# Loop 163: flour/dough day — cloth bag + oval loaf (no snowman sphere stack).
-			# Crust/crumb MUST miss copper (r>0.55,g 0.25–0.48,b<0.32). Sack hits linen.
-			var sack := Color(0.78, 0.7, 0.55)      # linen path
-			var sack_d := Color(0.62, 0.54, 0.4)
-			var sack_dd := Color(0.5, 0.42, 0.3)
-			var crust := Color(0.5, 0.34, 0.18)     # wood brown, not copper metal
-			var crumb := Color(0.82, 0.72, 0.52)     # matte pale (g≤0.72, not brass)
-			# Flour sack — cloth bag via linen cylinders (soft silhouette, textured).
-			# Avoid: sphere_blob snowman (untextured) OR stacked bare cubes.
-			_add_cylinder(root, Vector3(-0.52, 0.95, 0.04), 0.12, 0.16, sack, false, 0.92)
-			_add_cylinder(root, Vector3(-0.5, 0.97, 0.07), 0.1, 0.14, sack_d, false, 0.92)
-			_add_cylinder(root, Vector3(-0.55, 0.96, 0.0), 0.08, 0.12, sack, false, 0.92)
-			# Slightly wider belly mid-band (slumped bag read)
-			_add_cylinder(root, Vector3(-0.52, 0.98, 0.04), 0.13, 0.06, sack_d, false, 0.9)
-			# Cloth folds as thin draped lids (not full cube mass)
-			_add_box(root, Vector3(-0.52, 1.06, 0.04), Vector3(0.2, 0.04, 0.16), sack_d, false, 0.9)
-			_add_box(root, Vector3(-0.48, 1.08, 0.0), Vector3(0.08, 0.035, 0.06), sack, false, 0.9)
-			_add_box(root, Vector3(-0.58, 1.075, 0.06), Vector3(0.06, 0.03, 0.06), sack_dd, false, 0.9)
-			# Gathered neck + twine
-			_add_cylinder(root, Vector3(-0.52, 1.12, 0.04), 0.048, 0.055, sack_dd, false, 0.9)
-			_add_cylinder(root, Vector3(-0.52, 1.16, 0.04), 0.03, 0.03, sack_d.darkened(0.08), false, 0.9)
-			_add_cylinder(root, Vector3(-0.52, 1.125, 0.04), 0.052, 0.012, Color(0.36, 0.28, 0.16), false, 0.8)
-			# Stencil band on bag face
-			_add_box(root, Vector3(-0.41, 0.98, 0.04), Vector3(0.012, 0.07, 0.09), sack_dd, false, 0.88)
-			# Wide dough board + flour dust smear
-			_add_box(root, Vector3(0.08, 0.875, -0.05), Vector3(0.7, 0.03, 0.4), OAK.lightened(0.18), false, 0.65)
-			_add_box(root, Vector3(0.08, 0.89, -0.05), Vector3(0.68, 0.008, 0.38), OAK.lightened(0.1), false, 0.68)
-			_add_box(root, Vector3(0.0, 0.882, 0.0), Vector3(0.42, 0.006, 0.28), CREAM.lightened(0.08), false, 0.95)
-			# Oval loaf — stacked horizontal cylinders only (no foliage end-blobs)
-			_add_cylinder_rotated(root, Vector3(-0.02, 0.93, -0.05), 0.055, 0.3, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_cylinder_rotated(root, Vector3(-0.02, 0.945, -0.05), 0.042, 0.24, crumb, Vector3(0, 0, PI * 0.5), 0.94)
-			_add_cylinder_rotated(root, Vector3(-0.14, 0.93, -0.05), 0.048, 0.06, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_cylinder_rotated(root, Vector3(0.1, 0.93, -0.05), 0.048, 0.06, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			# Score lines on crust
-			_add_box(root, Vector3(-0.02, 0.985, -0.05), Vector3(0.18, 0.006, 0.008), crust.darkened(0.12), false, 0.92)
-			_add_box(root, Vector3(-0.02, 0.985, -0.02), Vector3(0.14, 0.005, 0.006), crust.darkened(0.1), false, 0.92)
-
-			# Carving knife — thin blade + turned handle on rest
-			_add_box(root, Vector3(0.32, 0.895, 0.12), Vector3(0.28, 0.012, 0.04), OAK.darkened(0.05), false, 0.55)
-			_add_box(root, Vector3(0.4, 0.905, 0.12), Vector3(0.2, 0.008, 0.018), IRON.lightened(0.15), false, 0.28)
-			_add_box(root, Vector3(0.48, 0.905, 0.12), Vector3(0.04, 0.006, 0.01), IRON.lightened(0.05), false, 0.3)
-			_add_cylinder_rotated(root, Vector3(0.26, 0.905, 0.12), 0.012, 0.08, Color(0.35, 0.22, 0.12), Vector3(0, 0, PI * 0.5), 0.55)
+			# Loop 168: cloth flour sack (not stacked cup towers / snowman).
+			# Crust MUST miss copper. Sack g≥0.7 so linen gate wins (g<0.7 was scrubbed wood).
+			var sack := Color(0.85, 0.78, 0.62)      # linen (g≥0.7 skips scrubbed wood)
+			var sack_d := Color(0.78, 0.7, 0.55)     # still linen-ish
+			var sack_dd := Color(0.72, 0.66, 0.5)     # g≥0.65 linen edge
+			var crust := Color(0.48, 0.32, 0.16)     # wood brown
+			var crumb := Color(0.8, 0.7, 0.5)
+			# ONE wide low body (bag sits on table) + slight lean for slump
+			_add_cylinder(root, Vector3(-0.5, 0.94, 0.02), 0.14, 0.14, sack, false, 0.92)
+			_add_cylinder(root, Vector3(-0.48, 0.96, 0.05), 0.12, 0.1, sack_d, false, 0.92)
+			# Belly bulge (wider mid band only — not a second tower)
+			_add_cylinder(root, Vector3(-0.5, 0.95, 0.02), 0.155, 0.05, sack_d, false, 0.9)
+			# Flat closed top (cloth fold lid) — short, not a cup rim stack
+			_add_box(root, Vector3(-0.5, 1.03, 0.02), Vector3(0.24, 0.035, 0.2), sack_d, false, 0.9)
+			_add_box(root, Vector3(-0.46, 1.05, -0.02), Vector3(0.1, 0.025, 0.08), sack, false, 0.9)
+			_add_box(root, Vector3(-0.56, 1.045, 0.06), Vector3(0.08, 0.02, 0.07), sack_dd, false, 0.9)
+			# Small gathered ear + twine (short knob only)
+			_add_cylinder(root, Vector3(-0.5, 1.07, 0.02), 0.04, 0.035, sack_dd, false, 0.9)
+			_add_cylinder(root, Vector3(-0.5, 1.075, 0.02), 0.045, 0.01, Color(0.36, 0.28, 0.16), false, 0.8)
+			# Stencil / flour brand on face
+			_add_box(root, Vector3(-0.38, 0.96, 0.02), Vector3(0.01, 0.06, 0.08), sack_dd, false, 0.88)
+			_add_box(root, Vector3(-0.375, 0.97, 0.02), Vector3(0.008, 0.035, 0.05), Color(0.4, 0.18, 0.12), false, 0.7)
+			# Wide dough board + flour dust
+			_add_box(root, Vector3(0.1, 0.875, -0.05), Vector3(0.72, 0.03, 0.42), OAK.lightened(0.18), false, 0.65)
+			_add_box(root, Vector3(0.1, 0.89, -0.05), Vector3(0.7, 0.008, 0.4), OAK.lightened(0.1), false, 0.68)
+			_add_box(root, Vector3(0.02, 0.882, 0.0), Vector3(0.48, 0.006, 0.3), CREAM.lightened(0.1), false, 0.95)
+			_add_box(root, Vector3(0.15, 0.883, -0.08), Vector3(0.2, 0.005, 0.14), CREAM, false, 0.95)
+			# Oval loaf — lower profile, one crust shell + crumb top (readable scores)
+			_add_cylinder_rotated(root, Vector3(0.0, 0.915, -0.05), 0.05, 0.32, crust, Vector3(0, 0, PI * 0.5), 0.92)
+			_add_cylinder_rotated(root, Vector3(0.0, 0.93, -0.05), 0.038, 0.26, crumb, Vector3(0, 0, PI * 0.5), 0.94)
+			_add_cylinder_rotated(root, Vector3(-0.14, 0.915, -0.05), 0.042, 0.05, crust, Vector3(0, 0, PI * 0.5), 0.92)
+			_add_cylinder_rotated(root, Vector3(0.14, 0.915, -0.05), 0.042, 0.05, crust, Vector3(0, 0, PI * 0.5), 0.92)
+			_add_box(root, Vector3(0.0, 0.96, -0.05), Vector3(0.2, 0.005, 0.008), crust.darkened(0.12), false, 0.92)
+			_add_box(root, Vector3(0.0, 0.96, -0.02), Vector3(0.16, 0.004, 0.006), crust.darkened(0.1), false, 0.92)
+			# Flour scoop (period cue)
+			_add_box(root, Vector3(-0.28, 0.9, 0.18), Vector3(0.1, 0.025, 0.06), OAK.lightened(0.05), false, 0.55)
+			_add_cylinder_rotated(root, Vector3(-0.22, 0.9, 0.18), 0.012, 0.1, OAK.darkened(0.05), Vector3(0, 0, PI * 0.5), 0.55)
+			# Carving knife on rest
+			_add_box(root, Vector3(0.34, 0.895, 0.12), Vector3(0.28, 0.012, 0.04), OAK.darkened(0.05), false, 0.55)
+			_add_box(root, Vector3(0.42, 0.905, 0.12), Vector3(0.2, 0.008, 0.018), IRON.lightened(0.15), false, 0.28)
+			_add_box(root, Vector3(0.5, 0.905, 0.12), Vector3(0.04, 0.006, 0.01), IRON.lightened(0.05), false, 0.3)
+			_add_cylinder_rotated(root, Vector3(0.28, 0.905, 0.12), 0.012, 0.08, Color(0.35, 0.22, 0.12), Vector3(0, 0, PI * 0.5), 0.55)
 			# Shallow copper basin + folded tea towel
 			_add_cylinder(root, Vector3(0.52, 0.9, -0.15), 0.11, 0.05, COPPER, false, 0.35, true)
 			_add_cylinder(root, Vector3(0.52, 0.935, -0.15), 0.12, 0.018, COPPER.lightened(0.08), false, 0.32, true)
 			_add_box(root, Vector3(0.5, 0.875, 0.14), Vector3(0.14, 0.012, 0.1), Color(0.62, 0.58, 0.48), false, 0.85)
 			_add_box(root, Vector3(0.5, 0.885, 0.14), Vector3(0.1, 0.01, 0.08), Color(0.7, 0.66, 0.55), false, 0.88)
-			# Cold apples (produce — sphere_blob OK)
-			_add_sphere_blob(root, Vector3(0.18, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
-			_add_sphere_blob(root, Vector3(0.26, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
-			_add_sphere_blob(root, Vector3(0.2, 0.91, 0.1), 0.03, Color(0.6, 0.2, 0.14))
-			# Short salt crock
-			_add_cylinder(root, Vector3(-0.22, 0.91, 0.2), 0.04, 0.08, CREAM.darkened(0.08), false, 0.85)
-			_add_cylinder(root, Vector3(-0.22, 0.96, 0.2), 0.032, 0.025, CREAM.darkened(0.14), false, 0.85)
+			# Cold apples (produce)
+			_add_sphere_blob(root, Vector3(0.2, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
+			_add_sphere_blob(root, Vector3(0.28, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
+			_add_sphere_blob(root, Vector3(0.22, 0.91, 0.1), 0.03, Color(0.6, 0.2, 0.14))
+			# Salt crock — moved clear of sack (was merging into cup stack)
+			_add_cylinder(root, Vector3(0.32, 0.91, -0.22), 0.038, 0.07, CREAM.darkened(0.08), false, 0.85)
+			_add_cylinder(root, Vector3(0.32, 0.955, -0.22), 0.03, 0.022, CREAM.darkened(0.14), false, 0.85)
 		1:
 			# Baking — pie board, pie dish, low mixing bowl, horizontal rolling pin, cutters
 			_add_box(root, Vector3(-0.4, 0.875, 0.0), Vector3(0.55, 0.03, 0.38), OAK.lightened(0.18), false, 0.65)
