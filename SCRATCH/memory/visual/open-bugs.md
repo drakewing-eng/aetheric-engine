@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 190)
+
+- **Prep flour sack residual (post-189):** rectangular body still read as crate mid-FOV. Soft plump cylindrical hessian bag + cinch ear + brand stamp (one rounded mass).  
+- **Hall coat stand residual:** thin stick pole mid-FOV. Victorian hall tree — wide base, turned column rings, solid-metal brass hooks, coats/hat, solid matte wood.  
+- **Secondary machine cyan hats:** style 0/1 fat cyan glass mid-FOV gallery. Amber/brass terminals + warm emission (not cyan game hats).  
+
 ## Status update 2026-07-30 (loop 189)
 
 - **Prep flour sack residual:** kit-0 still wedding-cake cylinder tiers mid-FOV (`kitchen_from_south`). Low rectangular hessian bag — continuous body width, sewn panels, twine, brand stamp, solid matte (not tier stack).  

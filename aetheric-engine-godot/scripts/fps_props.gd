@@ -1661,14 +1661,13 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(width * 0.22, 0.42, 0.12), 0.06, 0.1, CREAM.darkened(0.1), false, 0.85)
 	match kit:
 		0:
-			# Loop 189: slumped hessian flour sack — rectangular bag (not wedding-cake
-			# cylinder tiers mid-FOV). Single matte body + sewn panels + cinch ear.
-			var mat_hess := _solid_matte(Color(0.48, 0.38, 0.24), 0.96)
-			var mat_hess_d := _solid_matte(Color(0.36, 0.28, 0.17), 0.96)
-			var mat_hess_s := _solid_matte(Color(0.4, 0.32, 0.2), 0.96)
-			var mat_dust := _solid_matte(Color(0.68, 0.6, 0.42), 0.97)
-			var mat_twine := _solid_matte(Color(0.26, 0.18, 0.1), 0.9)
-			var mat_stamp := _solid_matte(Color(0.28, 0.1, 0.06), 0.88)
+			# Loop 190: soft plump flour sack — ONE rounded hessian body (not crate box /
+			# wedding-cake tiers). Cinch ear + brand stamp only as bag identity.
+			var mat_hess := _solid_matte(Color(0.5, 0.4, 0.26), 0.96)
+			var mat_hess_d := _solid_matte(Color(0.38, 0.3, 0.18), 0.96)
+			var mat_dust := _solid_matte(Color(0.7, 0.62, 0.44), 0.97)
+			var mat_twine := _solid_matte(Color(0.28, 0.2, 0.1), 0.9)
+			var mat_stamp := _solid_matte(Color(0.3, 0.1, 0.06), 0.88)
 			var mat_crust := _solid_matte(Color(0.48, 0.32, 0.16), 0.92)
 			var mat_crumb := _solid_matte(Color(0.78, 0.66, 0.46), 0.94)
 			var mat_board := _solid_matte(Color(0.62, 0.5, 0.32), 0.85)
@@ -1679,27 +1678,22 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			var mat_cloth := _solid_matte(Color(0.58, 0.54, 0.44), 0.95)
 			var mat_crock := _solid_matte(Color(0.72, 0.64, 0.52), 0.9)
 			var mat_crock_d := _solid_matte(Color(0.58, 0.5, 0.4), 0.9)
-			# Low rectangular sack (height ~0.2 from top — not a tower / cake)
-			var bx := -0.5
-			var bz := 0.02
-			# Continuous body: base + walls share silhouette width (no tier stack)
-			_add_mesh_box(root, Vector3(bx, 0.885, bz), Vector3(0.3, 0.03, 0.22), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx, 0.98, bz), Vector3(0.28, 0.2, 0.2), mat_hess)
-			# Side plump flush with body (same mat — fabric bulk, not stacked boxes)
-			_add_mesh_box(root, Vector3(bx + 0.11, 0.97, bz), Vector3(0.08, 0.16, 0.17), mat_hess)
-			_add_mesh_box(root, Vector3(bx - 0.11, 0.97, bz), Vector3(0.08, 0.16, 0.17), mat_hess)
-			# Sewn panel / weave lines (bag identity, same tone family)
-			_add_mesh_box(root, Vector3(bx, 0.98, bz + 0.102), Vector3(0.24, 0.18, 0.008), mat_hess_s)
-			_add_mesh_box(root, Vector3(bx + 0.02, 0.98, bz), Vector3(0.008, 0.18, 0.18), mat_hess_s)
-			# Gathered top: shallow fold coplanar with body top + soft ear + twine
-			_add_mesh_box(root, Vector3(bx, 1.09, bz), Vector3(0.2, 0.035, 0.14), mat_hess)
-			_add_mesh_box(root, Vector3(bx + 0.06, 1.11, bz - 0.03), Vector3(0.09, 0.04, 0.07), mat_hess_s)
-			_add_mesh_box(root, Vector3(bx, 1.095, bz), Vector3(0.2, 0.012, 0.012), mat_twine)
-			_add_mesh_box(root, Vector3(bx, 1.095, bz), Vector3(0.012, 0.012, 0.16), mat_twine)
-			# Brand stencil + flour dust
-			_add_mesh_box(root, Vector3(bx, 0.98, bz + 0.106), Vector3(0.1, 0.08, 0.008), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx, 0.985, bz + 0.109), Vector3(0.07, 0.05, 0.006), mat_stamp)
-			_add_mesh_box(root, Vector3(bx - 0.02, 1.07, bz + 0.04), Vector3(0.12, 0.01, 0.08), mat_dust)
+			var bx := -0.48
+			var bz := 0.0
+			# Plump upright sack: single wide cylinder + same-mat side flatten (no box tiers)
+			_add_mesh_cyl(root, Vector3(bx, 0.96, bz), 0.12, 0.18, mat_hess, false)
+			_add_mesh_cyl(root, Vector3(bx, 0.88, bz), 0.11, 0.04, mat_hess_d, false)
+			# Mild oval stretch (thin cheeks — same color so silhouette stays one mass)
+			_add_mesh_box(root, Vector3(bx, 0.96, bz), Vector3(0.26, 0.14, 0.16), mat_hess)
+			# Gathered neck + soft ear fold + twine (bag, not crate lid)
+			_add_mesh_cyl(root, Vector3(bx, 1.08, bz), 0.055, 0.05, mat_hess_d, false)
+			_add_mesh_box(root, Vector3(bx + 0.04, 1.1, bz - 0.02), Vector3(0.07, 0.035, 0.05), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx, 1.085, bz), Vector3(0.12, 0.012, 0.012), mat_twine)
+			_add_mesh_box(root, Vector3(bx, 1.085, bz), Vector3(0.012, 0.012, 0.1), mat_twine)
+			# Brand stencil (curved face approx) + flour dust smear
+			_add_mesh_box(root, Vector3(bx + 0.11, 0.97, bz), Vector3(0.012, 0.07, 0.08), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx + 0.115, 0.975, bz), Vector3(0.008, 0.045, 0.05), mat_stamp)
+			_add_mesh_box(root, Vector3(bx, 1.05, bz + 0.04), Vector3(0.1, 0.01, 0.06), mat_dust)
 			# Dough board + flour dust
 			_add_mesh_box(root, Vector3(0.12, 0.875, -0.05), Vector3(0.72, 0.03, 0.42), mat_board_d)
 			_add_mesh_box(root, Vector3(0.12, 0.89, -0.05), Vector3(0.7, 0.008, 0.4), mat_board)
@@ -3194,13 +3188,18 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 						Vector3(0.04, 0.03, 0.06), copper_col.lightened(0.05), false, 0.28)
 				var side := 1.0 if i % 2 == 0 else -1.0
 				_add_box(root, Vector3(side * r * 0.95, y, 0), Vector3(0.055, 0.07, 0.07), BRASS, false, 0.28)
+			# Loop 190: brass terminal + small amber jar (not fat cyan hat mid-FOV)
 			top_y = 0.42 + col_h * 0.9
-			_add_cylinder(root, Vector3(0, top_y, 0), 0.2, 0.05, BRASS.lightened(0.05), false, 0.3, true)
-			_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.14, 0.14, glass_c, false, 0.35)
-			_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.1, 0.08, glass_hi, false, 0.32)
-			for ri in 5:
-				var ra := float(ri) * TAU / 5.0
-				_add_box(root, Vector3(cos(ra) * 0.13, top_y + 0.12, sin(ra) * 0.13), Vector3(0.016, 0.14, 0.016), BRASS, false, 0.28)
+			var mat_br0 := _solid_metal(BRASS.lightened(0.05), 0.28)
+			var mat_br0d := _solid_metal(BRASS.darkened(0.08), 0.32)
+			var mat_amber := _solid_matte(Color(0.72, 0.55, 0.28), 0.35)
+			_add_mesh_cyl(root, Vector3(0, top_y, 0), 0.18, 0.05, mat_br0, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.06, 0), 0.08, 0.08, mat_br0d, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.14, 0), 0.07, 0.1, mat_amber, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.2, 0), 0.05, 0.03, mat_br0, false)
+			for ri in 4:
+				var ra := float(ri) * TAU / 4.0
+				_add_mesh_box(root, Vector3(cos(ra) * 0.1, top_y + 0.08, sin(ra) * 0.1), Vector3(0.016, 0.1, 0.016), mat_br0d)
 			# Gauge bank + copper riser
 			_add_box(root, Vector3(0.55, 0.55, 0.1), Vector3(0.28, 0.42, 0.3), oak_d, true, 0.48)
 			for gi in 3:
@@ -3251,29 +3250,31 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			# Copper riser pipe
 			_add_mesh_cyl(root, Vector3(-0.48, 0.75, 0.1), 0.03, 0.7, mat_cop, false)
 			_add_mesh_cyl(root, Vector3(-0.48, 1.15, 0.2), 0.04, 0.035, mat_br, false)
-			# Top bridge + small glass jar (not fat cyan hat on fridge)
+			# Top bridge + brass fork crown (no fat cyan jar hat mid-FOV)
 			_add_mesh_box(root, Vector3(0, 1.65, 0), Vector3(0.75, 0.05, 0.35), mat_iron)
 			_add_mesh_box(root, Vector3(0, 1.7, 0), Vector3(0.6, 0.03, 0.28), mat_br_d)
-			_add_mesh_cyl(root, Vector3(0, 1.82, 0.05), 0.1, 0.14, _solid_matte(glass_c, 0.25), false)
-			_add_mesh_cyl(root, Vector3(0, 1.9, 0.05), 0.07, 0.05, _solid_matte(glass_hi, 0.22), false)
+			# Small amber sample vial (not cyan game hat)
+			_add_mesh_cyl(root, Vector3(0, 1.78, 0.05), 0.045, 0.1, _solid_matte(Color(0.7, 0.52, 0.28), 0.35), false)
+			_add_mesh_cyl(root, Vector3(0, 1.84, 0.05), 0.035, 0.025, mat_br, false)
 			# Tuning-fork prongs (identity of resonator)
-			_add_mesh_box(root, Vector3(-0.04, 2.0, 0.05), Vector3(0.025, 0.2, 0.025), mat_br)
-			_add_mesh_box(root, Vector3(0.04, 2.0, 0.05), Vector3(0.025, 0.2, 0.025), mat_br)
-			_add_mesh_box(root, Vector3(0, 1.88, 0.05), Vector3(0.1, 0.025, 0.025), mat_br_d)
+			_add_mesh_box(root, Vector3(-0.04, 1.95, 0.05), Vector3(0.025, 0.22, 0.025), mat_br)
+			_add_mesh_box(root, Vector3(0.04, 1.95, 0.05), Vector3(0.025, 0.22, 0.025), mat_br)
+			_add_mesh_box(root, Vector3(0, 1.82, 0.05), Vector3(0.1, 0.025, 0.025), mat_br_d)
 			top_y = 2.0
+			# Soft warm emission at fork base (not cyan orb)
 			var fork_core := MeshInstance3D.new()
 			var fcm := SphereMesh.new()
-			fcm.radius = 0.045
-			fcm.height = 0.09
+			fcm.radius = 0.03
+			fcm.height = 0.06
 			fork_core.mesh = fcm
 			var fcmat := StandardMaterial3D.new()
-			fcmat.albedo_color = Color(0.5, 0.88, 1.0)
+			fcmat.albedo_color = Color(0.95, 0.75, 0.4)
 			fcmat.emission_enabled = true
-			fcmat.emission = Color(0.4, 0.8, 1.0)
-			fcmat.emission_energy_multiplier = 1.8
+			fcmat.emission = Color(0.9, 0.65, 0.3)
+			fcmat.emission_energy_multiplier = 1.2
 			fcmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			fork_core.material_override = fcmat
-			fork_core.position = Vector3(0, 1.9, 0.05)
+			fork_core.position = Vector3(0, 1.82, 0.05)
 			root.add_child(fork_core)
 		_:
 			# Leyden / glass-stack apparatus (vertical jar battery look)
@@ -3319,45 +3320,31 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			leyden_g.material_override = lmat
 			leyden_g.position = Vector3(0, 1.72, -0.25)
 			root.add_child(leyden_g)
-	# Shared: emissive core accent for styles that need one on dome (style 0)
+	# Shared: warm brass-energy accent (style 0) — not cyan game-hat glow mid-FOV
 	if style == 0:
 		var core := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
-		cm.top_radius = 0.04
-		cm.bottom_radius = 0.04
-		cm.height = 0.12
+		cm.top_radius = 0.025
+		cm.bottom_radius = 0.025
+		cm.height = 0.08
 		core.mesh = cm
 		var cmat := StandardMaterial3D.new()
-		cmat.albedo_color = Color(0.45, 0.85, 0.95)
+		cmat.albedo_color = Color(0.95, 0.75, 0.4)
 		cmat.emission_enabled = true
-		cmat.emission = Color(0.35, 0.75, 0.95)
-		cmat.emission_energy_multiplier = 2.8
+		cmat.emission = Color(0.9, 0.65, 0.3)
+		cmat.emission_energy_multiplier = 1.4
 		cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		core.material_override = cmat
-		core.position = Vector3(0, top_y + 0.12, 0)
+		core.position = Vector3(0, top_y + 0.14, 0)
 		root.add_child(core)
-		var glow_s := MeshInstance3D.new()
-		var gsm := SphereMesh.new()
-		gsm.radius = 0.05
-		gsm.height = 0.1
-		glow_s.mesh = gsm
-		var gsmat := StandardMaterial3D.new()
-		gsmat.albedo_color = Color(0.5, 0.9, 1.0)
-		gsmat.emission_enabled = true
-		gsmat.emission = Color(0.4, 0.85, 1.0)
-		gsmat.emission_energy_multiplier = 2.0
-		gsmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		glow_s.material_override = gsmat
-		glow_s.position = Vector3(0, top_y + 0.16, 0)
-		root.add_child(glow_s)
 	# Front valve wheel (all styles — control language)
 	_add_cylinder(root, Vector3(0.0, 0.52, 0.48), 0.1, 0.03, BRASS, false, 0.28, true)
 	_add_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.18, 0.02, 0.02), BRASS.lightened(0.05), false, 0.28)
 	_add_box(root, Vector3(0.0, 0.52, 0.48), Vector3(0.02, 0.02, 0.18), BRASS.lightened(0.05), false, 0.28)
 	var glow := OmniLight3D.new()
-	glow.light_color = Color(0.55, 0.82, 0.95)
-	glow.light_energy = 0.85
-	glow.omni_range = 3.8
+	glow.light_color = Color(0.95, 0.78, 0.55)
+	glow.light_energy = 0.55
+	glow.omni_range = 3.2
 	glow.position = Vector3(0, top_y * 0.7, 0.1)
 	root.add_child(glow)
 	_add_contact_shadow(root, 0.58, 0.52)
@@ -3766,40 +3753,69 @@ static func _add_sphere_blob(parent: Node3D, pos: Vector3, radius: float, color:
 	parent.add_child(mi)
 
 static func _make_coat_stand(prop: Dictionary) -> Node3D:
-	## Turned hall tree — seed forks coats / hats (uniqueness).
+	## Loop 190: Victorian hall tree — turned post + brass hooks (not thin stick pole mid-FOV).
 	var root := Node3D.new()
 	root.name = "CoatStand"
 	var seed0: int = int(prop.get("seed", 0))
-	var wood := MAHOGANY if seed0 % 2 == 0 else MAHOGANY_DARK
-	_add_cylinder(root, Vector3(0, 0.95, 0), 0.045, 1.85, wood, true, 0.45)
-	_add_cylinder(root, Vector3(0, 0.35, 0), 0.07, 0.25, wood.darkened(0.1), true, 0.45)
-	_add_cylinder(root, Vector3(0, 0.05, 0), 0.28, 0.08, wood, true, 0.45)
-	for y in [0.55, 0.85, 1.25, 1.55]:
-		_add_cylinder(root, Vector3(0, y, 0), 0.06, 0.04, wood.darkened(0.08), false, 0.4)
-	for a in [0.0, 72.0, 144.0, 216.0, 288.0]:
-		var rad := deg_to_rad(a + float(seed0) * 8.0)
-		_add_box(root, Vector3(cos(rad) * 0.16, 1.62, sin(rad) * 0.16), Vector3(0.16, 0.025, 0.025), BRASS, false, 0.3)
-		_add_cylinder(root, Vector3(cos(rad) * 0.22, 1.62, sin(rad) * 0.22), 0.02, 0.04, BRASS, false, 0.28, true)
-	# Coat colours / count by seed
-	var coat_a := Color(0.18, 0.14, 0.12) if seed0 % 3 != 1 else Color(0.12, 0.16, 0.22)
-	var coat_b := Color(0.22, 0.12, 0.1) if seed0 % 3 != 2 else Color(0.28, 0.22, 0.14)
-	_add_box(root, Vector3(0.14, 1.15, 0.06), Vector3(0.22, 0.85, 0.1), coat_a, false, 0.88)
+	var mat_w := _solid_matte(Color(0.32, 0.18, 0.1) if seed0 % 2 == 0 else Color(0.22, 0.12, 0.07), 0.72)
+	var mat_wd := _solid_matte(Color(0.22, 0.12, 0.07) if seed0 % 2 == 0 else Color(0.16, 0.09, 0.05), 0.75)
+	var mat_wl := _solid_matte(Color(0.4, 0.24, 0.14), 0.7)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.58, 0.44, 0.22), 0.34)
+	var mat_hat := _solid_matte(Color(0.1, 0.1, 0.11), 0.85)
+	var mat_hat_b := _solid_matte(Color(0.14, 0.12, 0.1), 0.85)
+	var mat_coat_a := _solid_matte(Color(0.16, 0.12, 0.1) if seed0 % 3 != 1 else Color(0.1, 0.14, 0.2), 0.92)
+	var mat_coat_b := _solid_matte(Color(0.2, 0.1, 0.08) if seed0 % 3 != 2 else Color(0.26, 0.2, 0.12), 0.92)
+	var mat_scarf := _solid_matte(Color(0.38, 0.12, 0.12), 0.9)
+	var mat_cane := _solid_matte(Color(0.28, 0.18, 0.1), 0.7)
+	# Wide tripod-ish base disc + stepped foot (furniture mass, not pencil stick)
+	_add_mesh_cyl(root, Vector3(0, 0.04, 0), 0.28, 0.06, mat_w, true)
+	_add_mesh_cyl(root, Vector3(0, 0.1, 0), 0.18, 0.05, mat_wd, false)
+	_add_mesh_cyl(root, Vector3(0, 0.18, 0), 0.1, 0.1, mat_wl, false)
+	# Turned column: thick trunk with ring swellings (not one thin pole)
+	_add_mesh_cyl(root, Vector3(0, 0.55, 0), 0.055, 0.55, mat_w, true)
+	_add_mesh_cyl(root, Vector3(0, 1.0, 0), 0.05, 0.4, mat_wd, false)
+	_add_mesh_cyl(root, Vector3(0, 1.4, 0), 0.055, 0.45, mat_w, false)
+	_add_mesh_cyl(root, Vector3(0, 1.7, 0), 0.045, 0.2, mat_wd, false)
+	# Turned ring beads
+	for y in [0.4, 0.72, 1.15, 1.55]:
+		_add_mesh_cyl(root, Vector3(0, y, 0), 0.075, 0.035, mat_wl, false)
+	# Crown ball
+	_add_mesh_cyl(root, Vector3(0, 1.85, 0), 0.06, 0.08, mat_br_d, false)
+	# Brass hook ring + radial hooks (solid metal arms)
+	_add_mesh_cyl(root, Vector3(0, 1.62, 0), 0.08, 0.04, mat_br, false)
+	for i in 5:
+		var a := deg_to_rad(float(i) * 72.0 + float(seed0) * 8.0)
+		var hx := cos(a) * 0.14
+		var hz := sin(a) * 0.14
+		_add_mesh_box(root, Vector3(hx, 1.62, hz), Vector3(0.14, 0.022, 0.022), mat_br)
+		_add_mesh_cyl(root, Vector3(cos(a) * 0.22, 1.6, sin(a) * 0.22), 0.018, 0.05, mat_br_d, false)
+	# Mid peg ring for umbrellas / lower coats
+	_add_mesh_cyl(root, Vector3(0, 1.05, 0), 0.07, 0.03, mat_br_d, false)
+	for i in 3:
+		var a := deg_to_rad(float(i) * 120.0 + 30.0)
+		_add_mesh_box(root, Vector3(cos(a) * 0.12, 1.05, sin(a) * 0.12), Vector3(0.1, 0.018, 0.018), mat_br)
+	# Hanging coats (soft fabric slabs with collar fold)
+	_add_mesh_box(root, Vector3(0.16, 1.2, 0.04), Vector3(0.2, 0.75, 0.08), mat_coat_a)
+	_add_mesh_box(root, Vector3(0.16, 1.55, 0.04), Vector3(0.18, 0.08, 0.1), mat_coat_a)
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(-0.1, 1.05, -0.08), Vector3(0.18, 0.55, 0.08), coat_b, false, 0.88)
-	# Hat: top hat vs bowler vs none
+		_add_mesh_box(root, Vector3(-0.12, 1.1, -0.08), Vector3(0.16, 0.55, 0.07), mat_coat_b)
+		_add_mesh_box(root, Vector3(-0.12, 1.38, -0.08), Vector3(0.14, 0.06, 0.09), mat_coat_b)
+	# Hat: top hat vs bowler
 	if seed0 % 3 == 0:
-		_add_cylinder(root, Vector3(0.05, 1.85, 0.05), 0.1, 0.04, Color(0.08, 0.08, 0.09), false, 0.7)
-		_add_cylinder(root, Vector3(0.05, 1.95, 0.05), 0.07, 0.16, Color(0.1, 0.1, 0.11), false, 0.7)
+		_add_mesh_cyl(root, Vector3(0.08, 1.88, 0.08), 0.1, 0.035, mat_hat, false)
+		_add_mesh_cyl(root, Vector3(0.08, 1.98, 0.08), 0.065, 0.15, mat_hat, false)
+		_add_mesh_cyl(root, Vector3(0.08, 1.9, 0.08), 0.07, 0.02, mat_hat_b, false)
 	elif seed0 % 3 == 1:
-		_add_cylinder(root, Vector3(-0.05, 1.88, -0.05), 0.09, 0.05, Color(0.12, 0.1, 0.08), false, 0.7)
-		_add_cylinder(root, Vector3(-0.05, 1.95, -0.05), 0.07, 0.08, Color(0.14, 0.11, 0.09), false, 0.7)
-	# Scarf drape / cane (seed-forked detail so stands read from doorway)
+		_add_mesh_cyl(root, Vector3(-0.06, 1.9, -0.06), 0.09, 0.045, mat_hat_b, false)
+		_add_mesh_cyl(root, Vector3(-0.06, 1.97, -0.06), 0.07, 0.08, mat_hat_b, false)
+	# Scarf drape / cane
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(0.08, 1.35, -0.1), Vector3(0.12, 0.45, 0.04), Color(0.35, 0.12, 0.12), false, 0.85)
-		_add_box(root, Vector3(0.1, 1.12, -0.12), Vector3(0.1, 0.08, 0.05), Color(0.4, 0.15, 0.14), false, 0.85)
+		_add_mesh_box(root, Vector3(0.1, 1.3, -0.12), Vector3(0.1, 0.4, 0.035), mat_scarf)
+		_add_mesh_box(root, Vector3(0.12, 1.08, -0.14), Vector3(0.08, 0.06, 0.04), mat_scarf)
 	else:
-		_add_cylinder(root, Vector3(-0.18, 0.85, 0.05), 0.015, 1.4, Color(0.22, 0.14, 0.08), false, 0.55)
-		_add_sphere_blob(root, Vector3(-0.18, 1.55, 0.05), 0.03, Color(0.18, 0.12, 0.08))
+		_add_mesh_cyl(root, Vector3(-0.2, 0.85, 0.05), 0.014, 1.35, mat_cane, false)
+		_add_mesh_cyl(root, Vector3(-0.2, 1.52, 0.05), 0.025, 0.05, mat_br_d, false)
 	_add_contact_shadow(root, 0.32, 0.32)
 	return root
 
