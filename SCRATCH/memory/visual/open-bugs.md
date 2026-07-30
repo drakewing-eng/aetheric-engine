@@ -118,6 +118,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Tea at four:** redesigned `_make_tea_tray` — silvered rim tray, belly teapot with spout/C-handle/lid knop, saucers+cups, jug, sugar (not white box stack).  
 - **Chair edge scrap:** drawing desk/side/approach + morning desk/SE → solid mesh chairs. Wings drop cross_planes; fuller mesh bulk for side volume without double-card ghost.  
 
+## Status update 2026-07-29 (loop 158)
+
+- **Wing silhouette:** `_make_armchair` rewritten — continuous shell + rounded crown bolsters (not fridge slab or ziggurat terraces).  
+- **Horizontal rolls:** new `_add_cylinder_rotated` for seat front, arm, and crown (true axis orientation).  
+- **Tufts:** staggered diamond buttons on seat + back. Drawing red + morning sage FOVs in `auto_loop_158/`.  
+
 ## Status update 2026-07-29 (loop 157)
 
 - **Hall cutout chairs:** all entrance_hall side chairs → mesh (no cross_plane scrap). Gallery desk chair mesh. Kitchen formal cutout → stool.  
