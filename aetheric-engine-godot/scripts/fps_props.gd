@@ -904,18 +904,19 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_contact_shadow(root, 0.34, 0.34)
 		return root
 	if dress == 0:
-		# Mini Argand: dark wood base + fat font + short amber glass (loop 121 language)
-		_add_cylinder(root, Vector3(0, top_y + 0.02, 0), 0.07, 0.04, MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.085, 0.1, Color(0.5, 0.36, 0.18), false, 0.4, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.14, 0), 0.055, 0.025, BRASS.darkened(0.2), false, 0.35, true)
-		_add_cylinder(root, Vector3(0, top_y + 0.24, 0), 0.04, 0.14, Color(0.85, 0.62, 0.28), false, 0.35)
-		_add_sphere_blob(root, Vector3(0, top_y + 0.22, 0), 0.025, Color(1.0, 0.8, 0.4))
-		_add_box(root, Vector3(0.14, top_y + 0.05, 0.06), Vector3(0.1, 0.12, 0.08), _book_color(2 + seed0), false)
+		# Loop 154 mini Argand: thin base + thimble font + tall glass (not fat barrel)
+		_add_cylinder(root, Vector3(0, top_y + 0.015, 0), 0.045, 0.028, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0, top_y + 0.05, 0), 0.04, 0.045, Color(0.48, 0.34, 0.16), false, 0.4, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.032, 0.018, BRASS.darkened(0.18), false, 0.32, true)
+		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.028, 0.2, Color(0.95, 0.78, 0.42, 0.42), false, 0.12)
+		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.018, 0.16, Color(1.0, 0.9, 0.58, 0.28), false, 0.1)
+		_add_sphere_blob(root, Vector3(0, top_y + 0.12, 0), 0.016, Color(1.0, 0.82, 0.4))
+		_add_box(root, Vector3(0.12, top_y + 0.04, 0.05), Vector3(0.1, 0.1, 0.08), _book_color(2 + seed0), false)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 0.55
 		lamp.omni_range = 2.6
-		lamp.position = Vector3(0, top_y + 0.24, 0)
+		lamp.position = Vector3(0, top_y + 0.22, 0)
 		root.add_child(lamp)
 	elif dress == 1:
 		# Book stack + cream crock (no metal tower)
@@ -1062,18 +1063,19 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		_add_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), Color(0.75, 0.75, 0.78), false, 0.32)
 		_add_box(root, Vector3(-0.1, ty + 0.03, 0.02), Vector3(0.2, 0.01, 0.14), PAPER, false)
 		_add_box(root, Vector3(-0.08, ty + 0.04, 0.0), Vector3(0.16, 0.008, 0.1), PAPER.darkened(0.05), false)
-		# Mini Argand: dark base + fat font + short amber glass (loop 121 language)
-		_add_cylinder(root, Vector3(0.18, ty + 0.03, -0.05), 0.055, 0.04, MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(0.18, ty + 0.09, -0.05), 0.07, 0.08, Color(0.5, 0.36, 0.18), false, 0.4, true)
-		_add_cylinder(root, Vector3(0.18, ty + 0.15, -0.05), 0.045, 0.03, BRASS.darkened(0.2), false, 0.35, true)
-		_add_cylinder(root, Vector3(0.18, ty + 0.24, -0.05), 0.035, 0.12, Color(0.85, 0.62, 0.28), false, 0.35)
-		_add_sphere_blob(root, Vector3(0.18, ty + 0.24, -0.05), 0.022, Color(1.0, 0.78, 0.35))
+		# Loop 154 mini Argand on tray: thimble font + tall glass
+		_add_cylinder(root, Vector3(0.18, ty + 0.02, -0.05), 0.038, 0.028, MAHOGANY_DARK, false, 0.5)
+		_add_cylinder(root, Vector3(0.18, ty + 0.055, -0.05), 0.035, 0.04, Color(0.48, 0.34, 0.16), false, 0.4, true)
+		_add_cylinder(root, Vector3(0.18, ty + 0.085, -0.05), 0.028, 0.016, BRASS.darkened(0.18), false, 0.32, true)
+		_add_cylinder(root, Vector3(0.18, ty + 0.2, -0.05), 0.026, 0.18, Color(0.95, 0.78, 0.42, 0.42), false, 0.12)
+		_add_cylinder(root, Vector3(0.18, ty + 0.2, -0.05), 0.016, 0.14, Color(1.0, 0.9, 0.58, 0.28), false, 0.1)
+		_add_sphere_blob(root, Vector3(0.18, ty + 0.12, -0.05), 0.014, Color(1.0, 0.8, 0.38))
 		_add_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
 		var lamp3 := OmniLight3D.new()
 		lamp3.light_color = Color(1.0, 0.85, 0.55)
 		lamp3.light_energy = 0.45
 		lamp3.omni_range = 2.6
-		lamp3.position = Vector3(0.18, ty + 0.28, -0.05)
+		lamp3.position = Vector3(0.18, ty + 0.22, -0.05)
 		root.add_child(lamp3)
 	_add_contact_shadow(root, 0.78, 0.38)
 	return root
@@ -1867,82 +1869,95 @@ static func _make_wall_sconce(prop: Dictionary) -> Node3D:
 
 
 static func _make_oil_lamp(prop: Dictionary) -> Node3D:
-	## Loop 149 Argand: slim wood stem + small font + tall glass hero —
-	## glass should dominate silhouette (not metal barrel stack).
+	## Loop 154 Argand: pencil stem + thimble font + tall glass hero.
+	## Close FOV must not read as stacked metal barrels (loop 149 residual).
 	var root := Node3D.new()
 	root.name = "OilLamp"
 	var h: float = float(prop.get("height", 1.0))
 	var ppos: Array = prop.get("pos", [0, 0, 0])
 	var seed0: int = int(prop.get("seed", int(absf(h * 17.0 + float(ppos[0]) * 7.0 + float(ppos[2]) * 11.0))))
 	var style := seed0 % 3
-	var stem_top: float = clampf(h * 0.32, 0.24, 0.38)
+	# Stem ends lower so glass occupies more of total height
+	var stem_top: float = clampf(h * 0.26, 0.18, 0.30)
 	var wood_d := MAHOGANY_DARK
 	var wood := MAHOGANY
 	var iron_mid := Color(0.34, 0.34, 0.36)
 	if style == 0:
-		# Slim mahogany foot + thin stem
-		_add_cylinder(root, Vector3(0, 0.025, 0), 0.11, 0.05, wood_d, true, 0.55)
-		_add_cylinder(root, Vector3(0, 0.06, 0), 0.08, 0.03, wood, true, 0.52)
-		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.018, stem_top * 0.55, wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.72, 0), 0.028, 0.025, BRASS.darkened(0.15), false, 0.35, true)
+		# Disc foot + pencil stem (not fat pedestal)
+		_add_cylinder(root, Vector3(0, 0.018, 0), 0.07, 0.032, wood_d, true, 0.55)
+		_add_cylinder(root, Vector3(0, 0.04, 0), 0.045, 0.02, wood, true, 0.52)
+		_add_cylinder(root, Vector3(0, stem_top * 0.48, 0), 0.012, stem_top * 0.7, wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.78, 0), 0.02, 0.018, BRASS.darkened(0.15), false, 0.35, true)
 	elif style == 1:
-		# Tripod wood feet
-		_add_cylinder(root, Vector3(0, 0.03, 0), 0.06, 0.035, wood_d, true, 0.5)
+		# Slim tripod (feet hug the floor, not a wide platform)
+		_add_cylinder(root, Vector3(0, 0.022, 0), 0.04, 0.028, wood_d, true, 0.5)
 		for a in [0.0, 120.0, 240.0]:
 			var rad := deg_to_rad(a)
-			_add_box(root, Vector3(cos(rad) * 0.09, 0.02, sin(rad) * 0.09), Vector3(0.12, 0.022, 0.03), wood, true, 0.5)
-			_add_cylinder(root, Vector3(cos(rad) * 0.13, 0.015, sin(rad) * 0.13), 0.02, 0.025, wood_d.lightened(0.08), true, 0.52)
-		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.018, stem_top * 0.55, wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.7, 0), 0.026, 0.022, BRASS.darkened(0.12), false, 0.35, true)
+			_add_box(root, Vector3(cos(rad) * 0.07, 0.015, sin(rad) * 0.07), Vector3(0.09, 0.016, 0.022), wood, true, 0.5)
+			_add_cylinder(root, Vector3(cos(rad) * 0.1, 0.012, sin(rad) * 0.1), 0.014, 0.02, wood_d.lightened(0.08), true, 0.52)
+		_add_cylinder(root, Vector3(0, stem_top * 0.48, 0), 0.012, stem_top * 0.7, wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.78, 0), 0.02, 0.018, BRASS.darkened(0.12), false, 0.35, true)
 	else:
-		# Square wood base + thin brass riser
-		_add_box(root, Vector3(0, 0.025, 0), Vector3(0.16, 0.05, 0.16), wood_d, true, 0.52)
-		_add_box(root, Vector3(0, 0.06, 0), Vector3(0.1, 0.03, 0.1), wood, true, 0.5)
-		_add_cylinder(root, Vector3(0, stem_top * 0.45, 0), 0.016, stem_top * 0.5, BRASS.darkened(0.18), true, 0.35, true)
-		_add_cylinder(root, Vector3(0, stem_top * 0.7, 0), 0.028, 0.022, BRASS.darkened(0.12), false, 0.32, true)
-	# Compact oil font (small mass under glass)
-	var font_c := Color(0.48, 0.34, 0.16)
-	var fy: float = stem_top + 0.01
-	_add_cylinder(root, Vector3(0, fy, 0), 0.06, 0.025, font_c.darkened(0.1), false, 0.42, true)
-	_add_cylinder(root, Vector3(0, fy + 0.04, 0), 0.08, 0.06, font_c, false, 0.4, true)
-	_add_cylinder(root, Vector3(0, fy + 0.08, 0), 0.065, 0.02, font_c.lightened(0.05), false, 0.38, true)
-	_add_box(root, Vector3(0.08, fy + 0.04, 0), Vector3(0.03, 0.05, 0.02), font_c.darkened(0.08), false, 0.4)
-	_add_cylinder(root, Vector3(0, fy + 0.1, 0), 0.05, 0.02, BRASS.darkened(0.12), false, 0.32, true)
-	# Tall amber glass chimney — dominant silhouette
-	var glass := Color(0.9, 0.7, 0.35)
-	var glass_hi := Color(0.98, 0.84, 0.5)
-	var cy: float = fy + 0.28
-	_add_cylinder(root, Vector3(0, cy, 0), 0.042, 0.26, glass, false, 0.35)
-	_add_cylinder(root, Vector3(0, cy, 0), 0.03, 0.22, glass_hi, false, 0.32)
+		# Small square plinth + thin brass riser
+		_add_box(root, Vector3(0, 0.018, 0), Vector3(0.11, 0.032, 0.11), wood_d, true, 0.52)
+		_add_box(root, Vector3(0, 0.04, 0), Vector3(0.07, 0.02, 0.07), wood, true, 0.5)
+		_add_cylinder(root, Vector3(0, stem_top * 0.48, 0), 0.011, stem_top * 0.65, BRASS.darkened(0.18), true, 0.35, true)
+		_add_cylinder(root, Vector3(0, stem_top * 0.78, 0), 0.02, 0.018, BRASS.darkened(0.12), false, 0.32, true)
+	# Thimble oil font — tiny cup under burner (not barrel drum)
+	var font_c := Color(0.46, 0.32, 0.15)
+	var fy: float = stem_top + 0.008
+	_add_cylinder(root, Vector3(0, fy, 0), 0.038, 0.018, font_c.darkened(0.12), false, 0.42, true)
+	_add_cylinder(root, Vector3(0, fy + 0.028, 0), 0.048, 0.04, font_c, false, 0.4, true)
+	_add_cylinder(root, Vector3(0, fy + 0.052, 0), 0.04, 0.014, font_c.lightened(0.06), false, 0.38, true)
+	# Small side filler knob (reads as hardware, not bulk)
+	_add_sphere_blob(root, Vector3(0.042, fy + 0.03, 0), 0.012, font_c.darkened(0.05))
+	# Brass burner collar
+	_add_cylinder(root, Vector3(0, fy + 0.065, 0), 0.036, 0.016, BRASS.darkened(0.1), false, 0.3, true)
+	_add_cylinder(root, Vector3(0, fy + 0.078, 0), 0.028, 0.012, BRASS.darkened(0.18), false, 0.32, true)
+	# Tall thin amber chimney — alpha glass so _mat_for never classifies as brass
+	# (opaque amber was metallic brass → solid gold barrel at mid FOV).
+	var glass := Color(0.95, 0.78, 0.42, 0.42)
+	var glass_hi := Color(1.0, 0.9, 0.58, 0.28)
+	var glass_h: float = clampf(h * 0.38, 0.28, 0.42)
+	var cy: float = fy + 0.08 + glass_h * 0.5
+	_add_cylinder(root, Vector3(0, cy, 0), 0.032, glass_h, glass, false, 0.12)
+	_add_cylinder(root, Vector3(0, cy + glass_h * 0.02, 0), 0.022, glass_h * 0.85, glass_hi, false, 0.1)
+	# Slight top flare (chimney lip) — still translucent
+	_add_cylinder(root, Vector3(0, cy + glass_h * 0.48, 0), 0.038, 0.018, Color(0.98, 0.88, 0.55, 0.5), false, 0.12)
 	var glass_em := MeshInstance3D.new()
 	var gem := CylinderMesh.new()
-	gem.top_radius = 0.024
-	gem.bottom_radius = 0.024
-	gem.height = 0.16
+	gem.top_radius = 0.016
+	gem.bottom_radius = 0.018
+	gem.height = glass_h * 0.55
 	glass_em.mesh = gem
 	var gmat := StandardMaterial3D.new()
-	gmat.albedo_color = Color(1.0, 0.8, 0.42)
+	gmat.albedo_color = Color(1.0, 0.86, 0.5, 0.55)
+	gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	gmat.emission_enabled = true
-	gmat.emission = Color(1.0, 0.72, 0.32)
-	gmat.emission_energy_multiplier = 1.35
+	gmat.emission = Color(1.0, 0.76, 0.38)
+	gmat.emission_energy_multiplier = 1.15
 	gmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	glass_em.material_override = gmat
 	glass_em.position = Vector3(0, cy, 0)
 	root.add_child(glass_em)
-	# Thin iron cage (sparse)
-	for i in 3:
-		var ang := float(i) * TAU / 3.0 + 0.2
-		_add_box(root, Vector3(cos(ang) * 0.042, cy, sin(ang) * 0.042), Vector3(0.008, 0.2, 0.008), iron_mid, false, 0.45)
-	_add_cylinder(root, Vector3(0, cy + 0.14, 0), 0.035, 0.02, iron_mid.lightened(0.08), false, 0.4)
-	_add_cylinder(root, Vector3(0, cy - 0.14, 0), 0.048, 0.015, BRASS.darkened(0.2), false, 0.35, true)
-	_add_sphere_blob(root, Vector3(0, cy - 0.04, 0), 0.025, Color(1.0, 0.84, 0.42))
+	# Two hairline cage rods only (not iron barrel bars)
+	for i in 2:
+		var ang := float(i) * PI + 0.35
+		_add_box(
+			root,
+			Vector3(cos(ang) * 0.034, cy, sin(ang) * 0.034),
+			Vector3(0.005, glass_h * 0.7, 0.005),
+			iron_mid, false, 0.45
+		)
+	_add_cylinder(root, Vector3(0, cy + glass_h * 0.42, 0), 0.026, 0.012, iron_mid.lightened(0.08), false, 0.4)
+	_add_sphere_blob(root, Vector3(0, fy + 0.1, 0), 0.016, Color(1.0, 0.86, 0.45))
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.86, 0.58)
-	light.light_energy = 0.65 + float(style) * 0.05
-	light.omni_range = 3.4 + float(style) * 0.15
+	light.light_energy = 0.62 + float(style) * 0.05
+	light.omni_range = 3.3 + float(style) * 0.15
 	light.position = Vector3(0, cy, 0)
 	root.add_child(light)
-	_add_contact_shadow(root, 0.12, 0.12)
+	_add_contact_shadow(root, 0.08, 0.08)
 	return root
 
 

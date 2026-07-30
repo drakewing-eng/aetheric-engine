@@ -101,3 +101,7 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Chair edge-on:** cross_plane chairs/wings get four vertical stub feet under seat pad (no horizontal stretchers — those were rug L-junk).  
 - **Door UX:** prompt is `[E] Enter <room>` (closed-leaf teleport). Door test nudge amount aligned to fps_main 0.65.  
 
+## Status update 2026-07-29 (loop 154)
+
+- **Oil lamp residual mass:** freestanding Argands were still reading as fat metal barrels (esp. workshop/gallery mid-FOV). Root cause: opaque amber glass Color matched brass in `_mat_for` → metallic brass texture on chimney. Fix: pencil stem + thimble font + tall chimney; glass/emission use alpha transparency (never brass path). Mini Argands on furniture dress kits slimmed to match.  
+

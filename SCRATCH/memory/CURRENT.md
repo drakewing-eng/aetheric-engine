@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-29 ~overnight loop 153  
-**HEAD:** `3df61b6` visual loop 153  
+**Updated:** 2026-07-29 ~overnight loop 154  
+**HEAD:** (pending checkpoint) visual loop 154  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -24,6 +24,7 @@
 | 63–72 | Plants…tight bulk | **DONE 128–137** |
 | 73–87 | Sofa…kitchen trugs | **DONE 138–152** |
 | 88 | Chair stub feet + door Enter prompt | **DONE 153** |
+| 89 | Oil-lamp residual mass (close FOV) | **DONE 154** slim + glass alpha |
 
 ## Loops
 
@@ -32,14 +33,15 @@
 | 151 | Whole-house residual path spacing |
 | 152 | Kitchen floor trugs + declutter |
 | 153 | **Chairs:** vertical stub feet under seat (no stretchers). **Door:** "[E] Enter %s". **Test:** nudge 0.65 = fps_main. |
+| 154 | **Oil lamps:** pencil stem + thimble font + tall chimney; amber glass uses alpha so `_mat_for` no longer classifies as brass metal (was solid gold barrel mid-FOV). Mini Argands on side tables/desks matched. |
 
 ## Still high-value if continuing
 
 - Human E-door playtest confirmation (automated suite PASS + prompt clearer)  
-- Optional: residual oil-lamp mass at extreme close FOV  
+- Optional: residual chair edge-on scrap at extreme side angles  
 - Optional: user-driven residual notes after playtest  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_153/`  
+- Shots: `auto_loop_67/` … `auto_loop_154/`  
