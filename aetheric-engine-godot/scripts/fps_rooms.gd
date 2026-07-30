@@ -847,8 +847,8 @@ const ROOMS := {
 		"wainscot_height": 2.45,
 		"floor_texture": TEX + "floor_kitchen.jpg",
 		"floor_color": Color(0.32, 0.24, 0.16),
-		# Loop 110: denser quarry tiles (grout + wear read at standing height)
-		"floor_uv_scale": 0.42,
+		# Loop 110/228: denser quarry tiles (grout + wear at standing height)
+		"floor_uv_scale": 0.58,
 		"ceiling_color": Color(0.72, 0.66, 0.56),
 		# Loop 84: warm fill (range fire still carries orange) — less flat orange wash
 		"light_energy": 1.0,

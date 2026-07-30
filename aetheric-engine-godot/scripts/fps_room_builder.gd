@@ -861,11 +861,12 @@ func _make_mat(tex_path: String, fallback: Color, plane_size: Vector2, tiled: bo
 			if tiled:
 				# Damask denser (loop 77); service tiles denser so grout reads (loop 115)
 				# Loop 209: kitchen/workshop denser still — 0.38 left ~30cm Minecraft blocks mid-FOV
+				# Loop 228: kitchen denser again — 0.72 still ~20cm blocks mid-FOV kitchen_spawn
 				var dens := 0.22
 				if tex_path.find("wallpaper_drawing") >= 0 or tex_path.find("wallpaper_gallery") >= 0:
 					dens = 0.28
 				elif tex_path.find("wainscot_kitchen") >= 0 or tex_path.find("wallpaper_kitchen") >= 0:
-					dens = 0.72  # ~15cm metro tiles / fine cream check (period service)
+					dens = 1.15  # ~10cm metro / fine cream check + regen 24×18 tile plate
 				elif tex_path.find("wallpaper_workshop") >= 0:
 					dens = 0.58  # limewash brick — half-size vs 0.32 Minecraft stretch
 				elif tex_path.find("wainscot_workshop") >= 0:

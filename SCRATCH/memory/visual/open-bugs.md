@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 228)
+
+- **Kitchen metro Minecraft residual:** oversized wainscot tiles mid-FOV (kitchen_spawn). Regenerated 24×18 metro plate + fine cream check wallpaper; dens 0.72→1.15; floor quarry denser plate + UV 0.42→0.58.  
+- **Aetheric posts residual:** slimmer iron/oak corner posts for more air. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 227)
 
 - **Wing armchair pipe residual:** multi-cylinder wings read as green organ pipes from rear/side mid-FOV (morning_room_corner). Continuous deep back shell + solid wing panels + single outer roll each side (not 3 stacked pipes). Art + door suite PASS.  

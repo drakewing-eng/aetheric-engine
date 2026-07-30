@@ -3908,14 +3908,14 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 		for sz in [-1.0, 1.0]:
 			_add_mesh_box(root, Vector3(sx * 0.74, 0.06, sz * 0.74), Vector3(0.18, 0.12, 0.18), mat_iron_d)
 			_add_mesh_cyl(root, Vector3(sx * 0.74, 0.14, sz * 0.74), 0.032, 0.03, mat_br, false)
-	# Four corner posts — slightly slender for more air between frame and coils
+	# Four corner posts — loop 228: slimmer iron/oak for more air (less grey fridge cage)
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
-			_add_mesh_box(root, Vector3(sx * 0.54, height * 0.45, sz * 0.54), Vector3(0.09, height * 0.78, 0.09), mat_iron)
-			_add_mesh_box(root, Vector3(sx * 0.54, height * 0.45, sz * 0.54), Vector3(0.055, height * 0.72, 0.055), mat_oak_d)
-			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.86, sz * 0.54), 0.065, 0.055, mat_br, false)
-			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.5, sz * 0.54), 0.06, 0.035, mat_br_d, false)
-			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.28, sz * 0.54), 0.055, 0.03, mat_br_d, false)
+			_add_mesh_box(root, Vector3(sx * 0.54, height * 0.45, sz * 0.54), Vector3(0.07, height * 0.78, 0.07), mat_iron)
+			_add_mesh_box(root, Vector3(sx * 0.54, height * 0.45, sz * 0.54), Vector3(0.042, height * 0.72, 0.042), mat_oak_d)
+			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.86, sz * 0.54), 0.05, 0.05, mat_br, false)
+			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.5, sz * 0.54), 0.048, 0.03, mat_br_d, false)
+			_add_mesh_cyl(root, Vector3(sx * 0.54, height * 0.28, sz * 0.54), 0.042, 0.028, mat_br_d, false)
 	# Open top ring (not solid oak lid slab)
 	_add_mesh_box(root, Vector3(0, height * 0.9, 0), Vector3(1.2, 0.05, 1.2), mat_oak_d)
 	_add_mesh_box(root, Vector3(0, height * 0.935, 0), Vector3(1.05, 0.03, 1.05), mat_br_d)
