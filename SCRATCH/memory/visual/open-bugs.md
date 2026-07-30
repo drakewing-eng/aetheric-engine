@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 232)
+
+- **Wing armchair fridge residual:** front mid-FOV (morning_room_spawn) pale seat square + box stack; side FOV multi-cyl organ pipes after earlier roll experiments. Rewrote continuous solid shell — same fabric family only (no lightened pad), one deep back, solid wing panels + single outer roll, horizontal arm only. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 231)
 
 - **Conservatory floor Minecraft residual:** large pale square tiles mid-FOV under glass (conservatory_spawn/corner, dens 0.38). Regenerated 14-row irregular flag plate (mixed widths, warm grit mortar, muted moss flecks); floor_uv_scale 0.38→**0.72**. Art + door suite PASS.  

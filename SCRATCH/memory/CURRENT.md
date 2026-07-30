@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 231  
-**HEAD:** `f4bd307` visual loop 231  
+**Updated:** 2026-07-30 ~overnight loop 232  
+**HEAD:** (pending) visual loop 232  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,11 +10,11 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–229** hall chairs |
+| 4 | Unique Victorian objects | **ADVANCED 71–232** wing chair |
 | 5 | Geometric / surface detail | **ADVANCED 72–231** conservatory floor |
 | 6 | Victorian wall art | **ADVANCED 69–205** frames |
 | 7 | Plant diversity / side volume | **ADVANCED 74–210** denser fronds |
-| 8 | Side-view mesh furniture | **ADVANCED 70–229** hall chairs |
+| 8 | Side-view mesh furniture | **ADVANCED 70–232** wing shell |
 | 9 | Door transition safety | **ADVANCED 76–208** portal solid |
 | 10 | Wallpaper contrast | **ADVANCED 72–229** workshop dens |
 | 11 | Hall / prep still-life | **ADVANCED 73–219** lower shelf |
@@ -26,15 +26,16 @@
 | 164 | Workshop brick dens + wood hall chairs | **DONE 229** |
 | 165 | Iron diamond-tread floor path | **DONE 230** |
 | 166 | Conservatory fine flagstone dens | **DONE 231** |
+| 167 | Wing armchair continuous shell (front+side) | **DONE 232** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 228 | **Kitchen fine metro/check** + denser quarry floor + slimmer aetheric posts |
 | 229 | **Workshop fine limewash brick** + denser board wainscot + **wood-seat hall chairs** |
 | 230 | **Iron path diamond-tread plates** (not dark Minecraft slab strip) |
 | 231 | **Conservatory fine irregular flags** + dens UV 0.38→0.72 |
+| 232 | **Wing armchair continuous shell** — no pale seat square / no side organ pipes |
 
 ## Still high-value if continuing
 
@@ -45,10 +46,10 @@
 ## Solid-mat / residual status
 
 - Prop solid-mat conversion largely exhausted  
-- Architecture, machines, furniture, service textures advanced 208–231  
-- Conservatory floor denser irregular flags under glass wash  
+- Architecture, machines, furniture, service textures advanced 208–232  
+- Wing chairs: solid continuous shell + single outer roll (front and side FOV)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_231/`  
+- Shots: `auto_loop_67/` … `auto_loop_232/`  
