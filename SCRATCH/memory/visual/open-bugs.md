@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 198)
+
+- **Chair residual:** mahogany/velvet washout mid-FOV house-wide. Solid-mat wood + velvet seat/splat + brass nails.  
+- **Stool residual:** oak/mahogany/velvet washout. Solid-mat tripod/square/drum styles.  
+- **Oil lamp residual:** stem/font washout. Solid-mat wood stem + metal font + brass collar + amber glass.  
+
 ## Status update 2026-07-30 (loop 197)
 
 - **Kitchen range residual:** body/brass/copper still `_mat_for` washout mid-FOV. Full solid-mat iron body, brass trim, copper vessels, stone hearth.  
