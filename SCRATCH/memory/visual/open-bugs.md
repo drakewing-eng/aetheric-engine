@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 215)
+
+- **Prep kits 1–3 residual:** baking dough slab / sparse veg nubs / flat herb board mid-FOV. Kit1: plump dough mound, pie tin with lattice, eggs, flour bowl. Kit2: oval willow trug cabbage/carrots/leeks/onions, thick chop block + cleaver. Kit3: irregular herb pile, mortar+pestle head, colander holes, spice jar. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 214)
 
 - **Gallery style-1 machine residual:** dense 5 copper discs + iron posts still read as metal fridge shelves mid-FOV. Rewrote open oak turned posts, 3 thin diaphragms with large air gaps + spokes, slim brass rails, tall tuning-fork crown. Art + door suite PASS.  
