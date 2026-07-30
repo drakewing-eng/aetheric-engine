@@ -136,5 +136,9 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 ## Status update 2026-07-29 (loop 154)
 
-- **Oil lamp residual mass:** freestanding Argands were still reading as fat metal barrels (esp. workshop/gallery mid-FOV). Root cause: opaque amber glass Color matched brass in `_mat_for` → metallic brass texture on chimney. Fix: pencil stem + thimble font + tall chimney; glass/emission use alpha transparency (never brass path). Mini Argands on furniture dress kits slimmed to match.  
+- **Oil lamp residual mass:** freestanding Argands were still reading as fat metal barrels (esp. workshop/gallery mid-FOV). Root cause: opaque amber glass Color matched brass in `_mat_for` → metallic brass texture on chimney. Fix: pencil stem + thimble font + tall chimney; glass/emission use alpha transparency (never brass path). Mini Argands on furniture dress kits slimmed to match.
 
+## Status update 2026-07-29 (loop 159)
+
+- **Prep still-life cubes:** flour sack was stacked beige boxes; loaf was white bricks then copper metal (crust Color hit copper gate). Soft sphere-mass sack + oval matte loaf; crust r≤0.5 to miss copper. Rolling pin axis-rotated. Kit 2 oval wicker tray.  
+- **Wing arm residual:** sphere_blob scroll read as billiard ball → fabric cylinder roll.  
