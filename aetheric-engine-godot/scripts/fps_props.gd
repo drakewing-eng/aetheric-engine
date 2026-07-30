@@ -2224,21 +2224,26 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	## Loop 203: walk path solid mats — iron tread / wood boards / stone flags (no washout).
 	## Loop 212: stone = irregular garden flags (not pale game slabs + green rivet dots mid-FOV).
 	##          iron = darker worn tread, smaller recessed bolts (not bright rivet grid).
+	## Loop 230: iron = staggered diamond-tread checker plates (not dark Minecraft slab strip mid-FOV).
 	var root := Node3D.new()
 	root.name = "FloorPath"
 	var length: float = float(prop.get("length", 3.5))
 	var width: float = float(prop.get("width", 0.9))
 	var seed0: int = int(prop.get("seed", 0))
 	var surface: String = str(prop.get("surface", "stone"))
-	var n := int(clampf(length / 0.55, 3.0, 14.0))
-	var mat_iron_mid := _solid_metal(Color(0.28, 0.28, 0.3), 0.55)
-	var mat_iron_light := _solid_metal(Color(0.34, 0.34, 0.36), 0.52)
-	var mat_iron_dark := _solid_metal(Color(0.2, 0.2, 0.22), 0.58)
-	var mat_iron_edge := _solid_metal(Color(0.38, 0.36, 0.34), 0.5)
-	var mat_iron_hi := _solid_metal(Color(0.4, 0.4, 0.42), 0.5)
-	var mat_riv := _solid_metal(Color(0.32, 0.3, 0.28), 0.5)
-	var mat_br_d := _solid_metal(Color(0.48, 0.36, 0.18), 0.38)
-	var mat_cop_scuff := _solid_metal(Color(0.48, 0.28, 0.12), 0.42)
+	# Iron uses denser plates; stone/wood keep prior spacing
+	var n := int(clampf(length / (0.36 if surface == "iron" else 0.55), 3.0, 20.0))
+	# Loop 230: warmer worn iron greys (not pure black fridge slabs)
+	var mat_iron_mid := _solid_metal(Color(0.34, 0.33, 0.32), 0.52)
+	var mat_iron_light := _solid_metal(Color(0.42, 0.4, 0.38), 0.48)
+	var mat_iron_dark := _solid_metal(Color(0.24, 0.23, 0.22), 0.56)
+	var mat_iron_edge := _solid_metal(Color(0.48, 0.45, 0.4), 0.45)
+	var mat_iron_hi := _solid_metal(Color(0.52, 0.5, 0.46), 0.42)
+	var mat_iron_tread := _solid_metal(Color(0.38, 0.36, 0.34), 0.5)
+	var mat_riv := _solid_metal(Color(0.36, 0.34, 0.3), 0.48)
+	var mat_br_d := _solid_metal(Color(0.52, 0.4, 0.2), 0.36)
+	var mat_cop_scuff := _solid_metal(Color(0.5, 0.3, 0.14), 0.4)
+	var mat_rust := _solid_matte(Color(0.42, 0.28, 0.16), 0.88)
 	var mat_oak := _solid_matte(Color(0.48, 0.34, 0.18), 0.78)
 	var mat_oak_d := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
 	var mat_oak_dd := _solid_matte(Color(0.3, 0.2, 0.1), 0.85)
@@ -2251,34 +2256,77 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 	var mat_moss_l := _solid_matte(Color(0.2, 0.28, 0.14), 0.94)
 	var mat_peb := _solid_matte(Color(0.4, 0.36, 0.3), 0.88)
 	if surface == "iron":
-		_add_mesh_box(root, Vector3(0, 0.01, 0), Vector3(width * 0.98, 0.014, length * 0.98), mat_iron_dark)
-		_add_mesh_box(root, Vector3(-width * 0.48, 0.03, 0), Vector3(0.05, 0.04, length * 0.96), mat_iron_mid)
-		_add_mesh_box(root, Vector3(width * 0.48, 0.03, 0), Vector3(0.05, 0.04, length * 0.96), mat_iron_mid)
+		# Sub-bed + side channel rails (raised angle iron, not flat black strip)
+		_add_mesh_box(root, Vector3(0, 0.008, 0), Vector3(width * 1.02, 0.012, length * 0.98), mat_iron_dark)
+		# Angle-iron curbs with top lip
+		for side in [-1.0, 1.0]:
+			_add_mesh_box(root, Vector3(side * width * 0.5, 0.028, 0), Vector3(0.055, 0.04, length * 0.96), mat_iron_mid)
+			_add_mesh_box(root, Vector3(side * width * 0.48, 0.05, 0), Vector3(0.08, 0.014, length * 0.94), mat_iron_edge)
+			# Rail brackets every ~0.9m
+			var nb := int(clampf(length / 0.9, 2.0, 10.0))
+			for bi in nb:
+				var bz := -length * 0.42 + float(bi) * (length * 0.84 / float(maxi(nb - 1, 1)))
+				_add_mesh_box(root, Vector3(side * width * 0.5, 0.035, bz), Vector3(0.07, 0.05, 0.04), mat_iron_dark)
+				_add_mesh_cyl(root, Vector3(side * width * 0.5, 0.06, bz), 0.014, 0.012, mat_riv, false)
+		# End terminal posts
 		for ez in [-1.0, 1.0]:
 			for ex in [-1.0, 1.0]:
-				_add_mesh_cyl(root, Vector3(ex * width * 0.48, 0.05, ez * length * 0.46), 0.025, 0.04, mat_br_d, false)
+				_add_mesh_cyl(root, Vector3(ex * width * 0.5, 0.055, ez * length * 0.47), 0.028, 0.05, mat_br_d, false)
+				_add_mesh_cyl(root, Vector3(ex * width * 0.5, 0.08, ez * length * 0.47), 0.02, 0.02, mat_iron_hi, false)
 	for i in n:
-		var z := -length * 0.5 + 0.3 + float(i) * (length / float(n))
-		var ox := 0.03 * float(((i + seed0) % 3) - 1)
+		var z := -length * 0.5 + 0.22 + float(i) * (length / float(n))
+		var ox := 0.04 * float(((i * 2 + seed0) % 5) - 2)  # stronger stagger
 		if surface == "iron":
-			var pw := width * (0.8 + float(i % 2) * 0.04)
-			var pd := 0.46
-			var mat_pl := mat_iron_light if (i + seed0) % 2 == 0 else mat_iron_mid
-			_add_mesh_box(root, Vector3(ox, 0.026, z), Vector3(pw, 0.026, pd), mat_pl)
-			# Thin wear groove only (not heavy bright frame)
-			_add_mesh_box(root, Vector3(ox, 0.04, z - pd * 0.42), Vector3(pw * 0.92, 0.008, 0.022), mat_iron_edge)
-			_add_mesh_box(root, Vector3(ox, 0.04, z + pd * 0.42), Vector3(pw * 0.92, 0.008, 0.022), mat_iron_edge)
-			if (i + seed0) % 2 == 0:
-				for r in 2:
-					var rx := ox - pw * 0.2 + float(r) * (pw * 0.4)
-					_add_mesh_box(root, Vector3(rx, 0.038, z), Vector3(0.03, 0.006, pd * 0.55), mat_iron_hi)
-			# Corner bolts only (recessed dark, not bright rivet grid)
+			# Loop 230: smaller staggered diamond-tread plates (not fat black Minecraft slabs)
+			var pw := width * (0.72 + float((i + seed0) % 3) * 0.04)
+			var pd := 0.30 + float((i + seed0) % 3) * 0.03
+			var hy := 0.022 + float((i + seed0) % 3) * 0.003
+			var mat_pl: StandardMaterial3D
+			match (i + seed0) % 4:
+				0:
+					mat_pl = mat_iron_light
+				1:
+					mat_pl = mat_iron_mid
+				2:
+					mat_pl = mat_iron_tread
+				_:
+					mat_pl = mat_iron_mid
+			# Plate body
+			_add_mesh_box(root, Vector3(ox, hy, z), Vector3(pw, 0.02, pd), mat_pl)
+			# Raised bevel rim (reads as cast plate edge, not slab)
+			_add_mesh_box(root, Vector3(ox, hy + 0.012, z - pd * 0.46), Vector3(pw * 0.96, 0.01, 0.018), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox, hy + 0.012, z + pd * 0.46), Vector3(pw * 0.96, 0.01, 0.018), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox - pw * 0.46, hy + 0.012, z), Vector3(0.018, 0.01, pd * 0.92), mat_iron_edge)
+			_add_mesh_box(root, Vector3(ox + pw * 0.46, hy + 0.012, z), Vector3(0.018, 0.01, pd * 0.92), mat_iron_edge)
+			# Diamond-tread pattern: cross-hatch of raised ribs (checker plate read mid-FOV)
+			var cols := 3 + ((i + seed0) % 2)
+			var rows := 2 + ((i + seed0) % 2)
+			for cx_i in cols:
+				var rx := ox - pw * 0.32 + float(cx_i) * (pw * 0.64 / float(maxi(cols - 1, 1)))
+				_add_mesh_box(root, Vector3(rx, hy + 0.014, z), Vector3(0.018, 0.008, pd * 0.72), mat_iron_hi)
+			for rz_i in rows:
+				var rz := z - pd * 0.28 + float(rz_i) * (pd * 0.56 / float(maxi(rows - 1, 1)))
+				_add_mesh_box(root, Vector3(ox, hy + 0.014, rz), Vector3(pw * 0.72, 0.008, 0.018), mat_iron_hi)
+			# Raised diamond lozenges at crossings (cast tread nubs)
+			for dx_i in range(cols):
+				for dz_i in range(rows):
+					if (dx_i + dz_i + i + seed0) % 2 == 0:
+						var dx := ox - pw * 0.32 + float(dx_i) * (pw * 0.64 / float(maxi(cols - 1, 1)))
+						var dz := z - pd * 0.28 + float(dz_i) * (pd * 0.56 / float(maxi(rows - 1, 1)))
+						_add_mesh_box(root, Vector3(dx, hy + 0.018, dz), Vector3(0.04, 0.01, 0.04), mat_iron_hi)
+						_add_mesh_box(root, Vector3(dx, hy + 0.022, dz), Vector3(0.022, 0.008, 0.022), mat_iron_light)
+			# Recessed corner bolts (dark heads)
 			for cx in [-1.0, 1.0]:
 				for cz in [-1.0, 1.0]:
-					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.4, 0.042, z + cz * pd * 0.38), 0.012, 0.01, mat_riv, false)
-			_add_mesh_box(root, Vector3(ox, 0.018, z + pd * 0.5), Vector3(pw * 0.88, 0.008, 0.03), mat_iron_dark)
-			if (i + seed0) % 5 == 0:
-				_add_mesh_box(root, Vector3(ox + pw * 0.12, 0.04, z - 0.04), Vector3(0.1, 0.006, 0.06), mat_cop_scuff)
+					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.42, hy + 0.02, z + cz * pd * 0.4), 0.014, 0.012, mat_riv, false)
+					_add_mesh_cyl(root, Vector3(ox + cx * pw * 0.42, hy + 0.028, z + cz * pd * 0.4), 0.009, 0.008, mat_iron_dark, false)
+			# Seam gap to next plate (dark recess — breaks continuous slab read)
+			_add_mesh_box(root, Vector3(ox, 0.012, z + pd * 0.52), Vector3(pw * 0.9, 0.006, 0.04), mat_iron_dark)
+			# Wear: copper/rust scuff or polish patch
+			if (i + seed0) % 4 == 0:
+				_add_mesh_box(root, Vector3(ox + pw * 0.1, hy + 0.016, z - pd * 0.1), Vector3(0.12, 0.006, 0.08), mat_cop_scuff)
+			if (i + seed0) % 5 == 2:
+				_add_mesh_box(root, Vector3(ox - pw * 0.15, hy + 0.015, z + pd * 0.08), Vector3(0.1, 0.005, 0.07), mat_rust)
 		elif surface == "wood":
 			var mat_w := mat_oak if (i + seed0) % 2 == 0 else mat_oak_d
 			_add_mesh_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), mat_w)
