@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 217)
+
+- **Main aetheric hero residual:** 5 dense copper coils + solid oak disc fills still read as stacked fridge mid-FOV (gallery_from_south). Rewrote 4 thinner air-spaced coils, hollow brass hubs, sparse winding studs (8), slenderer posts, open top ring. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 216)
 
 - **Gallery style-0 coil residual:** 4 dense copper coils + iron base read as copper fridge stack mid-FOV. Rewrote oak plinth + 4 slender oak posts (open cage), 3 thin airy coils with hollow centres + sparse studs, compact amber terminal. Art + door suite PASS.  
