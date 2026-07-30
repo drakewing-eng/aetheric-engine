@@ -1309,69 +1309,69 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 # ─── Kitchen identity ────────────────────────────────────────────────────────
 
 static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
-	## Cast-iron Victorian kitchen range (loop 130): readable from doorway —
-	## fielded oven doors, fender, firebox, bulbous hotplate vessels (no copper tower),
-	## stepped flue crown, side boiler, brass furniture.
+	## Loop 197: cast-iron Victorian range — solid-mat iron/brass/copper (no metal washout).
 	var root := Node3D.new()
 	root.name = "KitchenRange"
-	var iron_mid := Color(0.38, 0.38, 0.4)
-	var iron_body := Color(0.32, 0.32, 0.34)
-	var iron_dark := Color(0.22, 0.22, 0.24)
-	var iron_light := Color(0.48, 0.48, 0.5)
-	var soot := Color(0.16, 0.15, 0.14)
+	var mat_iron := _solid_metal(Color(0.38, 0.38, 0.4), 0.5)
+	var mat_body := _solid_metal(Color(0.32, 0.32, 0.34), 0.55)
+	var mat_iron_d := _solid_metal(Color(0.22, 0.22, 0.24), 0.58)
+	var mat_iron_l := _solid_metal(Color(0.48, 0.48, 0.5), 0.48)
+	var mat_soot := _solid_matte(Color(0.16, 0.15, 0.14), 0.9)
+	var mat_stone := _solid_matte(Color(0.55, 0.52, 0.46), 0.85)
+	var mat_stone_d := _solid_matte(Color(0.42, 0.4, 0.35), 0.88)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_br_l := _solid_metal(Color(0.78, 0.62, 0.32), 0.28)
+	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
+	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
+	var mat_cop_l := _solid_metal(Color(0.78, 0.5, 0.24), 0.28)
+	var mat_log := _solid_matte(Color(0.22, 0.12, 0.07), 0.85)
+	var mat_log_l := _solid_matte(Color(0.32, 0.16, 0.09), 0.82)
+	var mat_ash := _solid_matte(Color(0.2, 0.16, 0.12), 0.9)
 	# Hearth plinth + ash lip + fender rail
-	_add_box(root, Vector3(0, 0.07, 0.08), Vector3(2.4, 0.14, 1.05), STONE, true, 0.72)
-	_add_box(root, Vector3(0, 0.12, 0.48), Vector3(1.2, 0.05, 0.32), STONE.darkened(0.15), false, 0.78)
-	# Low iron fender (keeps fire reading as a hearth, not a hole)
-	_add_box(root, Vector3(0, 0.18, 0.55), Vector3(0.9, 0.08, 0.06), iron_dark, false, 0.45)
-	_add_box(root, Vector3(-0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), iron_mid, false, 0.45)
-	_add_box(root, Vector3(0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), iron_mid, false, 0.45)
-	_add_cylinder(root, Vector3(0, 0.28, 0.55), 0.02, 0.7, BRASS.darkened(0.15), false, 0.35)
-	# Main body + slightly proud top band
-	_add_box(root, Vector3(0, 0.68, 0), Vector3(2.2, 1.15, 0.9), iron_body, true, 0.55)
-	_add_box(root, Vector3(0, 1.2, 0.02), Vector3(2.22, 0.08, 0.92), iron_mid, false, 0.5)
-	# Side cheeks + rivets
+	_add_mesh_box(root, Vector3(0, 0.07, 0.08), Vector3(2.4, 0.14, 1.05), mat_stone)
+	_add_mesh_box(root, Vector3(0, 0.12, 0.48), Vector3(1.2, 0.05, 0.32), mat_stone_d)
+	_add_mesh_box(root, Vector3(0, 0.18, 0.55), Vector3(0.9, 0.08, 0.06), mat_iron_d)
+	_add_mesh_box(root, Vector3(-0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), mat_iron)
+	_add_mesh_box(root, Vector3(0.42, 0.22, 0.5), Vector3(0.06, 0.16, 0.08), mat_iron)
+	_add_mesh_cyl(root, Vector3(0, 0.28, 0.55), 0.02, 0.7, mat_br_d, false)
+	# Main body + top band
+	_add_mesh_box(root, Vector3(0, 0.68, 0), Vector3(2.2, 1.15, 0.9), mat_body)
+	_add_mesh_box(root, Vector3(0, 1.2, 0.02), Vector3(2.22, 0.08, 0.92), mat_iron)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 1.08, 0.68, 0.08), Vector3(0.1, 1.05, 0.72), iron_dark, false, 0.5)
+		_add_mesh_box(root, Vector3(sx * 1.08, 0.68, 0.08), Vector3(0.1, 1.05, 0.72), mat_iron_d)
 		for ri in 6:
 			var ry := 0.28 + float(ri) * 0.16
-			_add_cylinder(root, Vector3(sx * 1.12, ry, 0.4), 0.015, 0.018, iron_light, false, 0.4)
-	# Brass trim rails (period range identity)
-	_add_box(root, Vector3(0, 1.22, 0.46), Vector3(2.22, 0.035, 0.04), BRASS, false, 0.32)
-	_add_box(root, Vector3(0, 0.2, 0.46), Vector3(2.22, 0.03, 0.04), BRASS.darkened(0.12), false, 0.35)
-	_add_box(root, Vector3(-1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), BRASS.darkened(0.1), false, 0.35)
-	_add_box(root, Vector3(1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), BRASS.darkened(0.1), false, 0.35)
-	# Twin oven doors — deeper fielded panels + hinges + D-handles
+			_add_mesh_cyl(root, Vector3(sx * 1.12, ry, 0.4), 0.015, 0.018, mat_iron_l, false)
+	_add_mesh_box(root, Vector3(0, 1.22, 0.46), Vector3(2.22, 0.035, 0.04), mat_br)
+	_add_mesh_box(root, Vector3(0, 0.2, 0.46), Vector3(2.22, 0.03, 0.04), mat_br_d)
+	_add_mesh_box(root, Vector3(-1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), mat_br_d)
+	_add_mesh_box(root, Vector3(1.08, 0.7, 0.46), Vector3(0.04, 1.05, 0.03), mat_br_d)
+	# Twin oven doors
 	for door_x in [-0.55, 0.55]:
-		_add_box(root, Vector3(door_x, 0.58, 0.44), Vector3(0.78, 0.72, 0.08), iron_mid, false, 0.5)
-		_add_box(root, Vector3(door_x, 0.58, 0.49), Vector3(0.58, 0.52, 0.025), iron_dark, false, 0.55)
-		_add_box(root, Vector3(door_x, 0.58, 0.505), Vector3(0.42, 0.36, 0.02), iron_light, false, 0.5)
-		# Cross stile in panel
-		_add_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.42, 0.03, 0.015), iron_mid, false, 0.5)
-		_add_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.03, 0.36, 0.015), iron_mid, false, 0.5)
+		_add_mesh_box(root, Vector3(door_x, 0.58, 0.44), Vector3(0.78, 0.72, 0.08), mat_iron)
+		_add_mesh_box(root, Vector3(door_x, 0.58, 0.49), Vector3(0.58, 0.52, 0.025), mat_iron_d)
+		_add_mesh_box(root, Vector3(door_x, 0.58, 0.505), Vector3(0.42, 0.36, 0.02), mat_iron_l)
+		_add_mesh_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.42, 0.03, 0.015), mat_iron)
+		_add_mesh_box(root, Vector3(door_x, 0.58, 0.51), Vector3(0.03, 0.36, 0.015), mat_iron)
 		for hy in [0.85, 0.32]:
-			_add_box(root, Vector3(door_x - 0.34, hy, 0.48), Vector3(0.07, 0.09, 0.045), BRASS, false, 0.3)
-		# D-handle (posts + bar)
-		_add_cylinder(root, Vector3(door_x + 0.18, 0.68, 0.54), 0.014, 0.05, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(door_x + 0.18, 0.48, 0.54), 0.014, 0.05, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(door_x + 0.18, 0.58, 0.56), 0.016, 0.22, BRASS.lightened(0.05), false, 0.28, true)
-	# Upper warming-oven doors (smaller pair above fire)
+			_add_mesh_box(root, Vector3(door_x - 0.34, hy, 0.48), Vector3(0.07, 0.09, 0.045), mat_br)
+		_add_mesh_cyl(root, Vector3(door_x + 0.18, 0.68, 0.54), 0.014, 0.05, mat_br, false)
+		_add_mesh_cyl(root, Vector3(door_x + 0.18, 0.48, 0.54), 0.014, 0.05, mat_br, false)
+		_add_mesh_cyl(root, Vector3(door_x + 0.18, 0.58, 0.56), 0.016, 0.22, mat_br_l, false)
 	for wx in [-0.32, 0.32]:
-		_add_box(root, Vector3(wx, 1.0, 0.44), Vector3(0.42, 0.22, 0.06), iron_mid, false, 0.5)
-		_add_box(root, Vector3(wx, 1.0, 0.48), Vector3(0.3, 0.14, 0.02), iron_dark, false, 0.55)
-		_add_cylinder(root, Vector3(wx, 1.0, 0.52), 0.012, 0.1, BRASS, false, 0.3, true)
-	# Centre firebox
-	_add_box(root, Vector3(0, 0.42, 0.4), Vector3(0.58, 0.48, 0.1), soot, false, 0.55)
-	_add_box(root, Vector3(0, 0.22, 0.4), Vector3(0.52, 0.06, 0.2), Color(0.2, 0.16, 0.12), false, 0.85)
-	# Grate + fire dogs
+		_add_mesh_box(root, Vector3(wx, 1.0, 0.44), Vector3(0.42, 0.22, 0.06), mat_iron)
+		_add_mesh_box(root, Vector3(wx, 1.0, 0.48), Vector3(0.3, 0.14, 0.02), mat_iron_d)
+		_add_mesh_cyl(root, Vector3(wx, 1.0, 0.52), 0.012, 0.1, mat_br, false)
+	_add_mesh_box(root, Vector3(0, 0.42, 0.4), Vector3(0.58, 0.48, 0.1), mat_soot)
+	_add_mesh_box(root, Vector3(0, 0.22, 0.4), Vector3(0.52, 0.06, 0.2), mat_ash)
 	for gi in 5:
 		var gx := -0.18 + float(gi) * 0.09
-		_add_box(root, Vector3(gx, 0.34, 0.44), Vector3(0.025, 0.26, 0.035), iron_dark, false, 0.45)
-	_add_box(root, Vector3(-0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), iron_mid, false, 0.45)
-	_add_box(root, Vector3(0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), iron_mid, false, 0.45)
-	# Logs
-	_add_box(root, Vector3(-0.06, 0.3, 0.36), Vector3(0.38, 0.07, 0.11), MAHOGANY_DARK, false, 0.7)
-	_add_box(root, Vector3(0.08, 0.36, 0.37), Vector3(0.28, 0.06, 0.09), MAHOGANY, false, 0.7)
+		_add_mesh_box(root, Vector3(gx, 0.34, 0.44), Vector3(0.025, 0.26, 0.035), mat_iron_d)
+	_add_mesh_box(root, Vector3(-0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), mat_iron)
+	_add_mesh_box(root, Vector3(0.16, 0.28, 0.42), Vector3(0.06, 0.14, 0.1), mat_iron)
+	_add_mesh_box(root, Vector3(-0.06, 0.3, 0.36), Vector3(0.38, 0.07, 0.11), mat_log)
+	_add_mesh_box(root, Vector3(0.08, 0.36, 0.37), Vector3(0.28, 0.06, 0.09), mat_log_l)
 	# Multi-lobe fire (smaller spheres, less one big orange blob)
 	for fi in 6:
 		var t := float(fi) / 5.0
@@ -1390,50 +1390,45 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 		em.material_override = emat
 		em.position = Vector3(sin(t * 4.0) * 0.08, 0.34 + t * 0.1, 0.46 + cos(t * 3.0) * 0.02)
 		root.add_child(em)
-	# Hotplate — four rings (not two giant discs)
-	_add_box(root, Vector3(0, 1.28, 0), Vector3(2.22, 0.08, 0.9), iron_dark, true, 0.45)
+	# Hotplate — four rings
+	_add_mesh_box(root, Vector3(0, 1.28, 0), Vector3(2.22, 0.08, 0.9), mat_iron_d)
 	for ring_x in [-0.7, -0.22, 0.22, 0.7]:
-		_add_cylinder(root, Vector3(ring_x, 1.34, 0.05), 0.16, 0.03, iron_mid, false, 0.4)
-		_add_cylinder(root, Vector3(ring_x, 1.36, 0.05), 0.145, 0.015, BRASS.darkened(0.22), false, 0.35, true)
-		_add_cylinder(root, Vector3(ring_x, 1.37, 0.05), 0.07, 0.02, iron_dark, false, 0.45)
-	# Hotplate vessels: squat kettle + saucepan + iron skillet (NO tall copper tower)
-	# Kettle (left) — bulbous
-	_add_cylinder(root, Vector3(-0.7, 1.42, 0.05), 0.08, 0.04, COPPER.darkened(0.1), false, 0.32, true)
-	_add_cylinder(root, Vector3(-0.7, 1.5, 0.05), 0.12, 0.12, COPPER, false, 0.32, true)
-	_add_sphere_blob(root, Vector3(-0.7, 1.52, 0.05), 0.1, COPPER.lightened(0.04))
-	_add_cylinder(root, Vector3(-0.7, 1.6, 0.05), 0.06, 0.04, COPPER.darkened(0.05), false, 0.32, true)
-	_add_cylinder(root, Vector3(-0.7, 1.64, 0.05), 0.03, 0.03, BRASS, false, 0.28, true)
-	_add_box(root, Vector3(-0.52, 1.5, 0.05), Vector3(0.12, 0.025, 0.03), COPPER.darkened(0.05), false, 0.32)
-	_add_box(root, Vector3(-0.82, 1.52, 0.05), Vector3(0.04, 0.08, 0.03), COPPER, false, 0.32)
-	# Saucepan (mid-left)
-	_add_cylinder(root, Vector3(-0.2, 1.42, 0.08), 0.09, 0.1, COPPER.lightened(0.05), false, 0.32, true)
-	_add_cylinder(root, Vector3(-0.2, 1.48, 0.08), 0.095, 0.02, COPPER.lightened(0.1), false, 0.3, true)
-	_add_box(root, Vector3(-0.02, 1.44, 0.08), Vector3(0.14, 0.02, 0.03), COPPER, false, 0.32)
-	# Iron skillet (mid-right)
-	_add_cylinder(root, Vector3(0.25, 1.4, 0.05), 0.14, 0.04, iron_dark, false, 0.4)
-	_add_cylinder(root, Vector3(0.25, 1.43, 0.05), 0.145, 0.02, iron_mid, false, 0.4)
-	_add_box(root, Vector3(0.48, 1.41, 0.05), Vector3(0.2, 0.022, 0.035), iron_light, false, 0.4)
-	# Small copper pot (right ring)
-	_add_cylinder(root, Vector3(0.7, 1.42, 0.05), 0.07, 0.08, COPPER.darkened(0.06), false, 0.32, true)
-	_add_cylinder(root, Vector3(0.7, 1.48, 0.05), 0.075, 0.02, COPPER.lightened(0.08), false, 0.3, true)
-	_add_cylinder(root, Vector3(0.7, 1.5, 0.05), 0.025, 0.025, BRASS, false, 0.28, true)
+		_add_mesh_cyl(root, Vector3(ring_x, 1.34, 0.05), 0.16, 0.03, mat_iron, false)
+		_add_mesh_cyl(root, Vector3(ring_x, 1.36, 0.05), 0.145, 0.015, mat_br_d, false)
+		_add_mesh_cyl(root, Vector3(ring_x, 1.37, 0.05), 0.07, 0.02, mat_iron_d, false)
+	# Hotplate vessels
+	_add_mesh_cyl(root, Vector3(-0.7, 1.42, 0.05), 0.08, 0.04, mat_cop_d, false)
+	_add_mesh_cyl(root, Vector3(-0.7, 1.5, 0.05), 0.12, 0.12, mat_cop, false)
+	_add_sphere_blob(root, Vector3(-0.7, 1.52, 0.05), 0.1, Color(0.78, 0.48, 0.22))
+	_add_mesh_cyl(root, Vector3(-0.7, 1.6, 0.05), 0.06, 0.04, mat_cop_d, false)
+	_add_mesh_cyl(root, Vector3(-0.7, 1.64, 0.05), 0.03, 0.03, mat_br, false)
+	_add_mesh_box(root, Vector3(-0.52, 1.5, 0.05), Vector3(0.12, 0.025, 0.03), mat_cop_d)
+	_add_mesh_box(root, Vector3(-0.82, 1.52, 0.05), Vector3(0.04, 0.08, 0.03), mat_cop)
+	_add_mesh_cyl(root, Vector3(-0.2, 1.42, 0.08), 0.09, 0.1, mat_cop_l, false)
+	_add_mesh_cyl(root, Vector3(-0.2, 1.48, 0.08), 0.095, 0.02, mat_cop_l, false)
+	_add_mesh_box(root, Vector3(-0.02, 1.44, 0.08), Vector3(0.14, 0.02, 0.03), mat_cop)
+	_add_mesh_cyl(root, Vector3(0.25, 1.4, 0.05), 0.14, 0.04, mat_iron_d, false)
+	_add_mesh_cyl(root, Vector3(0.25, 1.43, 0.05), 0.145, 0.02, mat_iron, false)
+	_add_mesh_box(root, Vector3(0.48, 1.41, 0.05), Vector3(0.2, 0.022, 0.035), mat_iron_l)
+	_add_mesh_cyl(root, Vector3(0.7, 1.42, 0.05), 0.07, 0.08, mat_cop_d, false)
+	_add_mesh_cyl(root, Vector3(0.7, 1.48, 0.05), 0.075, 0.02, mat_cop_l, false)
+	_add_mesh_cyl(root, Vector3(0.7, 1.5, 0.05), 0.025, 0.025, mat_br, false)
 	# Mantel shelf + still-life
-	_add_box(root, Vector3(0, 1.52, 0.12), Vector3(2.35, 0.06, 0.58), iron_mid, false, 0.45)
-	_add_box(root, Vector3(0, 1.56, 0.12), Vector3(2.32, 0.02, 0.54), BRASS.darkened(0.12), false, 0.32)
-	# Mantel crock, tin, candle, spoon rest — not copper coil stacks
-	_add_cylinder(root, Vector3(-0.75, 1.64, 0.12), 0.07, 0.14, CREAM.darkened(0.1), false, 0.8)
-	_add_cylinder(root, Vector3(-0.75, 1.73, 0.12), 0.055, 0.03, CREAM.darkened(0.18), false, 0.8)
-	_add_cylinder(root, Vector3(-0.4, 1.62, 0.15), 0.05, 0.1, Color(0.55, 0.52, 0.48), false, 0.45)
-	_add_box(root, Vector3(-0.05, 1.6, 0.18), Vector3(0.2, 0.03, 0.1), MAHOGANY, false, 0.5)
-	_add_cylinder(root, Vector3(0.25, 1.66, 0.15), 0.025, 0.14, CANDLE, false, 0.55)
+	_add_mesh_box(root, Vector3(0, 1.52, 0.12), Vector3(2.35, 0.06, 0.58), mat_iron)
+	_add_mesh_box(root, Vector3(0, 1.56, 0.12), Vector3(2.32, 0.02, 0.54), mat_br_d)
+	_add_mesh_cyl(root, Vector3(-0.75, 1.64, 0.12), 0.07, 0.14, _solid_matte(Color(0.78, 0.72, 0.6), 0.9), false)
+	_add_mesh_cyl(root, Vector3(-0.75, 1.73, 0.12), 0.055, 0.03, _solid_matte(Color(0.7, 0.64, 0.52), 0.9), false)
+	_add_mesh_cyl(root, Vector3(-0.4, 1.62, 0.15), 0.05, 0.1, _solid_matte(Color(0.55, 0.52, 0.48), 0.75), false)
+	_add_mesh_box(root, Vector3(-0.05, 1.6, 0.18), Vector3(0.2, 0.03, 0.1), mat_log_l)
+	_add_mesh_cyl(root, Vector3(0.25, 1.66, 0.15), 0.025, 0.14, _solid_matte(Color(0.95, 0.82, 0.45), 0.7), false)
 	_add_sphere_blob(root, Vector3(0.25, 1.75, 0.15), 0.022, Color(1.0, 0.75, 0.35))
-	_add_cylinder(root, Vector3(0.65, 1.64, 0.12), 0.08, 0.12, CLAY, false, 0.8)
-	_add_cylinder(root, Vector3(0.65, 1.72, 0.12), 0.06, 0.03, CLAY.darkened(0.1), false, 0.8)
-	# Side hot-water boiler cylinder (classic range silhouette)
-	_add_cylinder(root, Vector3(1.05, 0.85, -0.05), 0.18, 0.9, iron_mid, true, 0.5)
-	_add_cylinder(root, Vector3(1.05, 1.3, -0.05), 0.19, 0.06, BRASS.darkened(0.1), false, 0.32, true)
-	_add_cylinder(root, Vector3(1.05, 0.45, -0.05), 0.19, 0.06, iron_dark, false, 0.5)
-	_add_cylinder(root, Vector3(1.05, 1.0, 0.12), 0.03, 0.04, BRASS, false, 0.3, true)
+	_add_mesh_cyl(root, Vector3(0.65, 1.64, 0.12), 0.08, 0.12, _solid_matte(Color(0.72, 0.46, 0.28), 0.9), false)
+	_add_mesh_cyl(root, Vector3(0.65, 1.72, 0.12), 0.06, 0.03, _solid_matte(Color(0.58, 0.36, 0.22), 0.9), false)
+	# Side boiler
+	_add_mesh_cyl(root, Vector3(1.05, 0.85, -0.05), 0.18, 0.9, mat_iron, true)
+	_add_mesh_cyl(root, Vector3(1.05, 1.3, -0.05), 0.19, 0.06, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(1.05, 0.45, -0.05), 0.19, 0.06, mat_iron_d, false)
+	_add_mesh_cyl(root, Vector3(1.05, 1.0, 0.12), 0.03, 0.04, mat_br, false)
 	# Loop 176: continuous flue shaft (not grey ziggurat crown mid-FOV).
 	# Period range: tall rectangular flue + iron bands + one cornice cap only.
 	var mat_flue := _solid_matte(Color(0.3, 0.3, 0.32), 0.55)
@@ -1464,14 +1459,14 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	# Tiny chimney pot (cylinder — period cue)
 	_add_mesh_cyl(root, Vector3(0, 2.88, -0.1), 0.08, 0.16, mat_flue, false)
 	_add_mesh_cyl(root, Vector3(0, 2.96, -0.1), 0.1, 0.04, mat_flue_l, false)
-	# Short hanging rail under mantel (pans — not giant tower stack)
-	_add_box(root, Vector3(0, 1.62, 0.38), Vector3(1.4, 0.03, 0.04), MAHOGANY_DARK, false, 0.5)
-	_add_cylinder(root, Vector3(-0.4, 1.48, 0.4), 0.09, 0.05, COPPER, false, 0.32, true)
-	_add_box(root, Vector3(-0.22, 1.48, 0.4), Vector3(0.14, 0.02, 0.03), COPPER.darkened(0.05), false, 0.32)
-	_add_cylinder(root, Vector3(-0.4, 1.55, 0.38), 0.008, 0.12, IRON, false, 0.4)
-	_add_cylinder(root, Vector3(0.35, 1.46, 0.4), 0.08, 0.08, COPPER.lightened(0.04), false, 0.32, true)
-	_add_cylinder(root, Vector3(0.35, 1.52, 0.4), 0.03, 0.025, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0.35, 1.56, 0.38), 0.008, 0.1, IRON, false, 0.4)
+	# Short hanging rail under mantel
+	_add_mesh_box(root, Vector3(0, 1.62, 0.38), Vector3(1.4, 0.03, 0.04), mat_log)
+	_add_mesh_cyl(root, Vector3(-0.4, 1.48, 0.4), 0.09, 0.05, mat_cop, false)
+	_add_mesh_box(root, Vector3(-0.22, 1.48, 0.4), Vector3(0.14, 0.02, 0.03), mat_cop_d)
+	_add_mesh_cyl(root, Vector3(-0.4, 1.55, 0.38), 0.008, 0.12, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(0.35, 1.46, 0.4), 0.08, 0.08, mat_cop_l, false)
+	_add_mesh_cyl(root, Vector3(0.35, 1.52, 0.4), 0.03, 0.025, mat_br, false)
+	_add_mesh_cyl(root, Vector3(0.35, 1.56, 0.38), 0.008, 0.1, mat_iron, false)
 	var fire := OmniLight3D.new()
 	fire.light_color = Color(1.0, 0.5, 0.22)
 	fire.light_energy = 1.95
@@ -3581,21 +3576,24 @@ static func _make_aetheric_machine(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_chalk_board(prop: Dictionary) -> Node3D:
-	## Workshop / gallery slate — loop 122: bold high-contrast chalk plates (room-length read).
+	## Loop 197: slate board — solid-mat mahogany frame + chalk rail (no wood washout).
 	var root := Node3D.new()
 	root.name = "ChalkBoard"
 	var seed0: int = int(prop.get("seed", 0))
 	var w := 1.35 + float(seed0 % 3) * 0.08
 	var h := 0.95 + float(seed0 % 2) * 0.08
-	_add_box(root, Vector3(0, 1.2, 0), Vector3(w, h, 0.06), MAHOGANY_DARK, true, 0.45)
-	# Frame lip (top/bottom + sides)
-	_add_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(-w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
-	_add_box(root, Vector3(w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), MAHOGANY, false, 0.48)
-	# Dark slate recess behind plate
-	_add_box(root, Vector3(0, 1.2, 0.02), Vector3(w - 0.1, h - 0.1, 0.015), Color(0.08, 0.09, 0.08), false, 0.95)
-	# Full-face chalk plate — loop 139: 4 unique dense plates (no clone equations/engine)
+	var mat_frame_d := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_frame := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_slate_bg := _solid_matte(Color(0.08, 0.09, 0.08), 0.95)
+	var mat_chalk := _solid_matte(Color(0.9, 0.86, 0.76), 0.9)
+	var mat_chalk_d := _solid_matte(Color(0.82, 0.78, 0.68), 0.9)
+	var mat_eraser := _solid_matte(Color(0.55, 0.12, 0.1), 0.85)
+	_add_mesh_box(root, Vector3(0, 1.2, 0), Vector3(w, h, 0.06), mat_frame_d)
+	_add_mesh_box(root, Vector3(0, 1.2 + h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), mat_frame)
+	_add_mesh_box(root, Vector3(0, 1.2 - h * 0.48, 0.02), Vector3(w - 0.04, 0.03, 0.04), mat_frame)
+	_add_mesh_box(root, Vector3(-w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), mat_frame)
+	_add_mesh_box(root, Vector3(w * 0.48, 1.2, 0.02), Vector3(0.03, h - 0.06, 0.04), mat_frame)
+	_add_mesh_box(root, Vector3(0, 1.2, 0.02), Vector3(w - 0.1, h - 0.1, 0.015), mat_slate_bg)
 	var plate_paths := [
 		"res://assets/rooms/textures/chalk/chalk_equations.jpg",
 		"res://assets/rooms/textures/chalk/chalk_engine.jpg",
@@ -3612,7 +3610,6 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	if plate_tex:
 		slate_mat.albedo_texture = plate_tex
 		slate_mat.uv1_scale = Vector3(1.0, 1.0, 1.0)
-		# Loop 139: denser unique plates + strong room-length read
 		slate_mat.albedo_color = Color(1.25, 1.25, 1.18)
 		slate_mat.emission_enabled = true
 		slate_mat.emission_texture = plate_tex
@@ -3626,16 +3623,15 @@ static func _make_chalk_board(prop: Dictionary) -> Node3D:
 	slate.material_override = slate_mat
 	slate.position = Vector3(0, 1.2, 0.04)
 	root.add_child(slate)
-	# Chalk rail + sticks
-	_add_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), MAHOGANY, false, 0.5)
-	_add_cylinder(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, CREAM, false)
-	_add_cylinder(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, CREAM.darkened(0.1), false)
+	_add_mesh_box(root, Vector3(0, 0.7, 0.05), Vector3(w - 0.1, 0.05, 0.1), mat_frame)
+	_add_mesh_cyl(root, Vector3(-0.3, 0.76, 0.06), 0.012, 0.08, mat_chalk, false)
+	_add_mesh_cyl(root, Vector3(-0.15, 0.76, 0.05), 0.012, 0.07, mat_chalk_d, false)
 	if seed0 % 2 == 0:
-		_add_cylinder(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, Color(0.85, 0.85, 0.8), false)
-		_add_box(root, Vector3(0.4, 0.76, 0.05), Vector3(0.08, 0.02, 0.04), Color(0.55, 0.12, 0.1), false, 0.7)
+		_add_mesh_cyl(root, Vector3(0.2, 0.76, 0.06), 0.012, 0.09, mat_chalk, false)
+		_add_mesh_box(root, Vector3(0.4, 0.76, 0.05), Vector3(0.08, 0.02, 0.04), mat_eraser)
 	else:
-		_add_cylinder(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, Color(0.9, 0.88, 0.8), false)
-		_add_cylinder(root, Vector3(0.3, 0.76, 0.05), 0.01, 0.06, CREAM, false)
+		_add_mesh_cyl(root, Vector3(0.15, 0.76, 0.06), 0.012, 0.08, mat_chalk, false)
+		_add_mesh_cyl(root, Vector3(0.3, 0.76, 0.05), 0.01, 0.06, mat_chalk_d, false)
 	return root
 
 # ─── Conservatory / hall ─────────────────────────────────────────────────────
