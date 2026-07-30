@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 226)
+
+- **Conservatory path residual:** pale aligned flag boards mid-FOV (conservatory_corner). Darker warm stone flags, heavy stagger + filler stones, dark grit bed, chunky irregular curbs.  
+- **Garden urn residual:** pale white wash under glass. Darker sandstone body/stem/bowl + trailing ivy drape. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 225)
 
 - **Tool rack board residual:** solid brown wall slabs + hairline sticks mid-FOV (workshop_from_north). Rewrote open peg-rail rack — top/bottom rails + side posts, air behind, two peg rails, chunky hammer/wrench/tongs/plane/mallet heads, lower tool row + shelf ledge.  

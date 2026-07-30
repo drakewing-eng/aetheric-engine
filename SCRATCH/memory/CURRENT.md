@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 225  
-**HEAD:** `17e9c21` visual loop 225  
+**Updated:** 2026-07-30 ~overnight loop 226  
+**HEAD:** pending visual loop 226  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -10,29 +10,28 @@
 | # | Item | Status |
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
-| 4 | Unique Victorian objects | **ADVANCED 71–225** aetheric |
-| 5 | Geometric / surface detail | **ADVANCED 72–213** range flue |
+| 4 | Unique Victorian objects | **ADVANCED 71–226** aetheric |
+| 5 | Geometric / surface detail | **ADVANCED 72–226** garden path |
 | 6 | Victorian wall art | **ADVANCED 69–205** frames |
 | 7 | Plant diversity / side volume | **ADVANCED 74–210** denser fronds |
 | 8 | Side-view mesh furniture | **ADVANCED 70–223** balloon chairs |
 | 9 | Door transition safety | **ADVANCED 76–208** portal solid |
 | 10 | Wallpaper contrast | **ADVANCED 72–209** kitchen dens |
 | 11 | Hall / prep still-life | **ADVANCED 73–219** lower shelf |
-| 12–23 | Conservatory densify | **ADVANCED 116–212** garden path |
+| 12–23 | Conservatory densify | **ADVANCED 116–226** path + urn |
 | 24–142 | Prop solid mats…billboard bulk | **DONE 89–207** |
 | 143–152 | Arch trim…main aetheric open | **DONE 208–217** |
-| 153–158 | Flour sack…overmantel gilt | **DONE 218–223** |
-| 159 | Gasolier + umbrella stand polish | **DONE 224** |
-| 160 | Open peg-rail tool rack + stools | **DONE 225** |
+| 153–160 | Flour sack…tool rack stools | **DONE 218–225** |
+| 161 | Dark garden path + urn polish | **DONE 226** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 222 | **Copper scrap** raised-lip tray + spool / plates / elbows |
 | 223 | **Balloon-back side chairs** + **gilt chimney-glass overmantel** |
 | 224 | **Brass-dominant gasolier** + **urn umbrella stand** + hall bud vase |
-| 225 | **Open peg-rail tool rack** + **turned stools** (not disc-on-sticks) |
+| 225 | **Open peg-rail tool rack** + **turned stools** |
+| 226 | **Dark irregular garden path** + **dark sandstone urn** (glass wash) |
 
 ## Still high-value if continuing
 
@@ -43,10 +42,10 @@
 ## Solid-mat / residual status
 
 - Prop solid-mat conversion largely exhausted  
-- Architecture, machines, furniture, workshop racks, lights advanced 208–225  
+- Architecture, machines, furniture, workshop, conservatory path advanced 208–226  
 - Intentional textures kept (wallpaper, floors, rugs, oils, views, plant cards)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_225/`  
+- Shots: `auto_loop_67/` … `auto_loop_226/`  
