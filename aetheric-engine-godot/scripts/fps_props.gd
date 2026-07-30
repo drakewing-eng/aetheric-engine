@@ -638,8 +638,9 @@ static func _make_tea_tray(prop: Dictionary) -> Node3D:
 
 
 static func _make_sofa(prop: Dictionary) -> Node3D:
-	## Loop 161 — olive chesterfield mesh (drawing-room hero).
-	## Continuous seat/back envelope + rolled arms + diamond tufts — not a green fridge.
+	## Loop 162 — olive chesterfield mesh (drawing-room hero).
+	## Dense diamond buttoning, velvet-mat bolsters only (no foliage sphere_blob),
+	## carved mahogany arm ends + scrolled crest. Not a green fridge or balloon cushions.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
@@ -648,57 +649,71 @@ static func _make_sofa(prop: Dictionary) -> Node3D:
 	var fabric: Color = prop.get("fabric", VELVET_GREEN)
 	var fabric_d := fabric.darkened(0.1)
 	var fabric_dd := fabric.darkened(0.22)
-	var fabric_l := fabric.lightened(0.05)
+	var fabric_l := fabric.lightened(0.04)
 	# Slim mahogany plinth (visible under skirt)
-	_add_box(root, Vector3(0, 0.16, 0.04), Vector3(width * 0.98, 0.08, 0.88), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.22, 0.04), Vector3(width, 0.035, 0.92), MAHOGANY, false, 0.45)
-	# Seat deck + three cushions with soft crowns
-	_add_box(root, Vector3(0, 0.36, 0.08), Vector3(width - 0.12, 0.14, 0.78), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.14, 0.02), Vector3(width * 0.98, 0.07, 0.86), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.2, 0.02), Vector3(width, 0.03, 0.9), MAHOGANY, false, 0.45)
+	# Seat deck — one continuous buttoned pad (not three pale balloons)
+	_add_box(root, Vector3(0, 0.34, 0.06), Vector3(width - 0.1, 0.16, 0.76), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.44, 0.08), Vector3(width - 0.18, 0.08, 0.66), fabric_d, false, 0.92)
+	# Shallow cushion sections as low boxes + dense seat buttons
 	for i in 3:
 		var cx: float = (i - 1) * (width * 0.28)
-		_add_box(root, Vector3(cx, 0.48, 0.1), Vector3(width * 0.26, 0.12, 0.68), fabric_d, false, 0.92)
-		_add_sphere_blob(root, Vector3(cx, 0.56, 0.08), width * 0.1, fabric_l)
-		# Button row on each cushion
-		for j in 2:
-			_add_cylinder(root, Vector3(cx + (float(j) - 0.5) * 0.1, 0.58, 0.02 + float(j) * 0.12), 0.018, 0.016, fabric_dd, false, 0.95)
-	# Front seat bolster (horizontal roll)
-	_add_cylinder_rotated(root, Vector3(0, 0.42, 0.42), 0.07, width * 0.88, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
-	# Back: continuous shell (not fridge slab) + inner pad + crown roll
-	_add_box(root, Vector3(0, 0.88, -0.28), Vector3(width * 0.96, 0.78, 0.22), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.9, -0.16), Vector3(width * 0.88, 0.7, 0.1), fabric_d, false, 0.9)
-	_add_box(root, Vector3(0, 0.95, -0.1), Vector3(width * 0.78, 0.55, 0.06), fabric_l, false, 0.92)
-	# Crown roll + mahogany crest
-	_add_cylinder_rotated(root, Vector3(0, 1.22, -0.12), 0.08, width * 0.82, fabric, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_cylinder_rotated(root, Vector3(0, 1.26, -0.18), 0.05, width * 0.55, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
-	_add_box(root, Vector3(0, 1.28, -0.26), Vector3(width * 0.4, 0.04, 0.08), MAHOGANY, false, 0.45)
-	# Diamond tufts on back
-	for row in 4:
-		var by := 0.65 + float(row) * 0.14
+		_add_box(root, Vector3(cx, 0.48, 0.1), Vector3(width * 0.25, 0.06, 0.6), fabric_d, false, 0.92)
+		_add_box(root, Vector3(cx, 0.52, 0.1), Vector3(width * 0.22, 0.03, 0.52), fabric, false, 0.93)
+		for j in 3:
+			for k in 2:
+				var bx := cx + (float(j) - 1.0) * 0.1
+				var bz := 0.0 + float(k) * 0.16
+				_add_cylinder(root, Vector3(bx, 0.55, bz), 0.014, 0.012, fabric_dd, false, 0.95)
+	# Front seat bolster (horizontal velvet roll)
+	_add_cylinder_rotated(root, Vector3(0, 0.4, 0.4), 0.065, width * 0.86, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+	# Back: continuous buttoned shell + crown scroll
+	_add_box(root, Vector3(0, 0.85, -0.3), Vector3(width * 0.96, 0.72, 0.2), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.88, -0.18), Vector3(width * 0.88, 0.64, 0.1), fabric_d, false, 0.9)
+	_add_box(root, Vector3(0, 0.92, -0.1), Vector3(width * 0.78, 0.5, 0.05), fabric_l, false, 0.92)
+	# Dense diamond tufts (chesterfield read at room FOV)
+	for row in 5:
+		var by := 0.58 + float(row) * 0.12
 		var odd := row % 2 == 1
-		var n := 4 if odd else 5
+		var n := 5 if odd else 6
 		for i in n:
-			var bx := (float(i) / float(maxi(n - 1, 1)) - 0.5) * width * 0.7
-			_add_cylinder(root, Vector3(bx, by, -0.08), 0.016, 0.014, fabric_dd, false, 0.95)
-	# Rolled arms (continuous with seat, rounded outer volume)
+			var bx := (float(i) / float(maxi(n - 1, 1)) - 0.5) * width * 0.72
+			_add_cylinder(root, Vector3(bx, by, -0.06), 0.015, 0.012, fabric_dd, false, 0.95)
+	# Crown roll + carved mahogany crest (painted-art cue)
+	_add_cylinder_rotated(root, Vector3(0, 1.18, -0.14), 0.075, width * 0.78, fabric, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_cylinder_rotated(root, Vector3(0, 1.22, -0.2), 0.048, width * 0.5, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_box(root, Vector3(0, 1.24, -0.28), Vector3(width * 0.42, 0.04, 0.08), MAHOGANY, false, 0.45)
+	_add_box(root, Vector3(0, 1.28, -0.28), Vector3(width * 0.18, 0.035, 0.06), MAHOGANY_DARK, false, 0.42)
+	# Scrolled arm ends (mahogany) + velvet rolls — no foliage spheres
 	for sx in [-1.0, 1.0]:
-		var ax: float = sx * (width * 0.5 - 0.14)
-		_add_box(root, Vector3(ax, 0.58, 0.04), Vector3(0.22, 0.42, 0.78), fabric, true, 0.88)
-		_add_cylinder(root, Vector3(ax, 0.72, 0.08), 0.11, 0.55, fabric_d, false, 0.9)
-		_add_cylinder_rotated(root, Vector3(ax, 0.78, 0.05), 0.09, 0.7, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
-		_add_sphere_blob(root, Vector3(ax + sx * 0.04, 0.9, 0.2), 0.11, fabric)
-		_add_sphere_blob(root, Vector3(ax + sx * 0.02, 0.88, -0.15), 0.09, fabric_d)
-		# Arm support post
-		_add_cylinder(root, Vector3(ax, 0.42, 0.32), 0.04, 0.2, MAHOGANY, false, 0.45)
-	# Skirt fringe (thin verticals, not a second solid box)
+		var ax: float = sx * (width * 0.5 - 0.12)
+		_add_box(root, Vector3(ax, 0.55, 0.02), Vector3(0.2, 0.4, 0.76), fabric, true, 0.88)
+		_add_cylinder(root, Vector3(ax, 0.7, 0.06), 0.1, 0.52, fabric_d, false, 0.9)
+		_add_cylinder_rotated(root, Vector3(ax, 0.76, 0.02), 0.08, 0.68, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
+		# Outer vertical roll
+		_add_cylinder(root, Vector3(ax + sx * 0.06, 0.72, 0.0), 0.07, 0.48, fabric, false, 0.88)
+		# Mahogany scroll nose + post (reads carved wood like painted art)
+		_add_cylinder(root, Vector3(ax + sx * 0.02, 0.55, 0.38), 0.055, 0.14, MAHOGANY, false, 0.42)
+		_add_cylinder_rotated(root, Vector3(ax + sx * 0.02, 0.62, 0.42), 0.04, 0.12, MAHOGANY_DARK, Vector3(PI * 0.5, 0, 0), 0.42)
+		_add_cylinder(root, Vector3(ax, 0.38, 0.3), 0.035, 0.18, MAHOGANY, false, 0.45)
+		# Arm top buttons
+		for k in 3:
+			_add_cylinder(root, Vector3(ax, 0.82, -0.1 + float(k) * 0.14), 0.012, 0.01, fabric_dd, false, 0.95)
+	# Skirt fringe (thin verticals)
 	for i in 11:
 		var fx := (float(i) / 10.0 - 0.5) * width * 0.9
-		_add_box(root, Vector3(fx, 0.12, 0.42), Vector3(0.04, 0.1, 0.02), fabric_dd, false, 0.88)
-	# Turned bun feet (4 corners + mid)
+		_add_box(root, Vector3(fx, 0.11, 0.4), Vector3(0.04, 0.09, 0.02), fabric_dd, false, 0.88)
+	# Brass nailheads along front rail
+	for i in 9:
+		var t := float(i) / 8.0
+		_add_cylinder(root, Vector3(-width * 0.42 + t * width * 0.84, 0.22, 0.42), 0.01, 0.012, BRASS, false, 0.3, true)
+	# Turned bun feet
 	for sx in [-1.0, 0.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * width * 0.38, 0.07, 0.3), 0.032, 0.12, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * width * 0.38, 0.015, 0.3), 0.042, 0.025, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * width * 0.38, 0.07, -0.26), 0.03, 0.12, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * width * 0.38, 0.015, -0.26), 0.04, 0.025, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.06, 0.28), 0.03, 0.11, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.012, 0.28), 0.04, 0.024, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.06, -0.24), 0.028, 0.11, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * width * 0.38, 0.012, -0.24), 0.038, 0.024, MAHOGANY_DARK, true)
 	_add_contact_shadow(root, width * 0.48, 0.52)
 	return root
 
