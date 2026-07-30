@@ -1085,14 +1085,23 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
 		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Porcelain vase + restrained bloom (cylinders only — no foliage sphere blobs)
-		_add_cylinder(root, Vector3(0, top_y + 0.03, 0), 0.045, 0.04, CREAM.darkened(0.12), false, 0.7)
-		_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.06, 0.12, CREAM.darkened(0.05), false, 0.7)
-		_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.045, 0.04, CREAM, false, 0.7)
-		_add_cylinder(root, Vector3(0.01, top_y + 0.26, 0.01), 0.012, 0.12, Color(0.22, 0.35, 0.16), false, 0.8)
-		_add_cylinder(root, Vector3(0.03, top_y + 0.32, 0.02), 0.022, 0.03, Color(0.62, 0.22, 0.22), false, 0.85)
-		_add_cylinder(root, Vector3(-0.02, top_y + 0.3, -0.01), 0.018, 0.025, Color(0.72, 0.55, 0.28), false, 0.85)
-		_add_cylinder(root, Vector3(0.0, top_y + 0.34, -0.02), 0.016, 0.022, Color(0.55, 0.2, 0.25), false, 0.85)
+		# Loop 170: porcelain urn vase + clustered blooms (not white stick-cup)
+		# Cream g≥0.65 linen / pale — miss copper; amphora silhouette
+		var china_v := Color(0.88, 0.82, 0.72)
+		var china_vd := Color(0.78, 0.72, 0.62)
+		_add_cylinder(root, Vector3(0, top_y + 0.02, 0), 0.05, 0.03, china_vd, false, 0.65)
+		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.065, 0.1, china_v, false, 0.65)
+		_add_cylinder(root, Vector3(0, top_y + 0.15, 0), 0.05, 0.05, china_vd, false, 0.65)
+		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.04, 0.04, china_v, false, 0.65)
+		_add_cylinder(root, Vector3(0, top_y + 0.24, 0), 0.055, 0.025, china_vd, false, 0.62)
+		# Stem cluster + blooms (short cylinders, multiple)
+		for bi in 4:
+			var bang := float(bi) * TAU / 4.0 + 0.3
+			var bx := cos(bang) * 0.025
+			var bz := sin(bang) * 0.025
+			_add_cylinder(root, Vector3(bx, top_y + 0.3, bz), 0.008, 0.1, Color(0.2, 0.34, 0.14), false, 0.85)
+			_add_cylinder(root, Vector3(bx * 1.4, top_y + 0.36, bz * 1.4), 0.02, 0.028, Color(0.58, 0.18, 0.2) if bi % 2 == 0 else Color(0.7, 0.5, 0.25), false, 0.8)
+		_add_cylinder(root, Vector3(0, top_y + 0.38, 0), 0.018, 0.025, Color(0.55, 0.2, 0.22), false, 0.8)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
@@ -1779,68 +1788,70 @@ static func _make_floor_path(prop: Dictionary) -> Node3D:
 			_add_box(root, Vector3(ox, 0.02, z), Vector3(width * 0.9, 0.035, 0.52), wcol, false, 0.6)
 			_add_box(root, Vector3(ox, 0.015, z + 0.22), Vector3(width * 0.85, 0.008, 0.02), OAK.darkened(0.18), false, 0.55)
 		else:
-			# Stone flags (conservatory) — loop 116: darker grit flags + gravel bed (not bleach-white slabs)
-			var pw := width * (0.72 + float(i % 4) * 0.07)
-			var pd := 0.42 + float((i + seed0) % 3) * 0.05
+			# Loop 170: stone flags — colors MUST hit TEX_STONE (r>0.45,g>0.42,b>0.36,|r−g|<0.1).
+			# Prior greys hit iron/wood paths → metal plates + board look on conservatory path.
+			var pw := width * (0.78 + float(i % 3) * 0.06)
+			var pd := 0.48 + float((i + seed0) % 2) * 0.06
 			var col: Color
 			match (i + seed0) % 5:
 				0:
-					col = Color(0.42, 0.4, 0.36)
+					col = Color(0.55, 0.52, 0.46)
 				1:
-					col = Color(0.36, 0.38, 0.34)
+					col = Color(0.5, 0.48, 0.42)
 				2:
-					col = Color(0.48, 0.44, 0.38)
+					col = Color(0.58, 0.54, 0.48)
 				3:
-					col = Color(0.38, 0.36, 0.32)
+					col = Color(0.52, 0.5, 0.44)
 				_:
-					col = Color(0.44, 0.42, 0.37)
-			# Continuous gravel bed under flags
-			_add_box(root, Vector3(ox, 0.008, z), Vector3(pw * 1.08, 0.012, pd * 1.1), Color(0.32, 0.3, 0.26), false, 0.9)
-			# Raised flag body + slight height jitter
-			var hy := 0.022 + float((i + seed0) % 3) * 0.006
-			_add_box(root, Vector3(ox, hy, z), Vector3(pw, 0.045, pd), col, false, 0.72)
-			# Bevel / edge shadow (reads as cut stone lip)
-			_add_box(root, Vector3(ox, hy - 0.012, z), Vector3(pw * 1.04, 0.014, pd * 1.04), Color(0.28, 0.26, 0.22), false, 0.85)
-			# Mortar / grit seam
-			_add_box(root, Vector3(ox, 0.014, z + pd * 0.5), Vector3(pw * 0.92, 0.012, 0.05), Color(0.3, 0.28, 0.24), false, 0.9)
-			# Diagonal crack / wear mark
+					col = Color(0.54, 0.51, 0.45)
+			var grit := Color(0.48, 0.46, 0.4)
+			# Continuous gravel bed under each flag
+			_add_box(root, Vector3(ox, 0.008, z), Vector3(pw * 1.12, 0.014, pd * 1.12), grit, false, 0.88)
+			# Raised flag (slight height jitter) + dark lip
+			var hy := 0.024 + float((i + seed0) % 3) * 0.005
+			_add_box(root, Vector3(ox, hy, z), Vector3(pw, 0.04, pd), col, false, 0.78)
+			_add_box(root, Vector3(ox, hy - 0.01, z), Vector3(pw * 1.05, 0.012, pd * 1.05), grit.darkened(0.08), false, 0.85)
+			# Mortar seam between flags
+			_add_box(root, Vector3(ox, 0.012, z + pd * 0.52), Vector3(pw * 0.95, 0.01, 0.04), grit.darkened(0.05), false, 0.88)
+			# Wear groove (not brass rivet — that read as iron plate)
 			if (i + seed0) % 3 == 0:
 				_add_box(
 					root,
-					Vector3(ox + pw * 0.1, hy + 0.024, z - pd * 0.1),
-					Vector3(pw * 0.35, 0.006, 0.02),
-					col.darkened(0.15), false, 0.8
+					Vector3(ox + pw * 0.08, hy + 0.022, z - pd * 0.08),
+					Vector3(pw * 0.4, 0.005, 0.018),
+					col.darkened(0.12), false, 0.82
 				)
-			# Moss tufts (damp conservatory)
+			# Moss tufts (damp conservatory grit)
 			if (i + seed0) % 3 != 1:
 				_add_box(
 					root,
-					Vector3(ox + pw * 0.3, hy + 0.02, z - pd * 0.22),
-					Vector3(0.1, 0.014, 0.07),
-					Color(0.18, 0.34, 0.14), false, 0.92
+					Vector3(ox + pw * 0.28, hy + 0.018, z - pd * 0.2),
+					Vector3(0.09, 0.012, 0.06),
+					Color(0.2, 0.36, 0.16), false, 0.92
 				)
 			if (i + seed0) % 2 == 0:
 				_add_box(
 					root,
-					Vector3(ox - pw * 0.28, hy + 0.018, z + pd * 0.18),
-					Vector3(0.08, 0.012, 0.06),
-					Color(0.22, 0.36, 0.16), false, 0.92
+					Vector3(ox - pw * 0.26, hy + 0.016, z + pd * 0.16),
+					Vector3(0.07, 0.01, 0.05),
+					Color(0.24, 0.38, 0.18), false, 0.92
 				)
-			# Pebble scatter
+			# Pebble (stone-class color, not brass bolt)
 			if (i + seed0) % 2 == 1:
 				_add_cylinder(
 					root,
-					Vector3(ox + pw * 0.2, hy + 0.02, z + pd * 0.15),
-					0.025, 0.02, Color(0.4, 0.38, 0.34), false, 0.75
+					Vector3(ox + pw * 0.18, hy + 0.018, z + pd * 0.12),
+					0.022, 0.018, Color(0.5, 0.48, 0.42), false, 0.8
 				)
-	# Stone path side gravel curb (loop 116: chunkier + pebble crown)
+	# Continuous gravel bed full length + side curbs (loop 170)
 	if surface == "stone":
-		_add_box(root, Vector3(-width * 0.5, 0.012, 0), Vector3(0.12, 0.03, length * 0.96), Color(0.36, 0.34, 0.3), false, 0.8)
-		_add_box(root, Vector3(width * 0.5, 0.012, 0), Vector3(0.12, 0.03, length * 0.96), Color(0.36, 0.34, 0.3), false, 0.8)
+		_add_box(root, Vector3(0, 0.006, 0), Vector3(width * 0.95, 0.01, length * 0.96), Color(0.48, 0.46, 0.4), false, 0.88)
+		_add_box(root, Vector3(-width * 0.5, 0.014, 0), Vector3(0.14, 0.028, length * 0.96), Color(0.5, 0.48, 0.42), false, 0.82)
+		_add_box(root, Vector3(width * 0.5, 0.014, 0), Vector3(0.14, 0.028, length * 0.96), Color(0.5, 0.48, 0.42), false, 0.82)
 		for gi in 10:
 			var gz := -length * 0.4 + float(gi) * (length * 0.8 / 9.0)
-			_add_cylinder(root, Vector3(-width * 0.5, 0.03, gz), 0.03, 0.025, Color(0.42, 0.4, 0.35), false, 0.78)
-			_add_cylinder(root, Vector3(width * 0.5, 0.03, gz), 0.028, 0.022, Color(0.4, 0.38, 0.33), false, 0.78)
+			_add_cylinder(root, Vector3(-width * 0.5, 0.028, gz), 0.028, 0.022, Color(0.52, 0.5, 0.44), false, 0.8)
+			_add_cylinder(root, Vector3(width * 0.5, 0.028, gz), 0.026, 0.02, Color(0.5, 0.48, 0.42), false, 0.8)
 	return root
 
 
