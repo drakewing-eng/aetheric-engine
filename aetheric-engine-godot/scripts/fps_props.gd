@@ -2457,32 +2457,31 @@ static func _make_oil_lamp(prop: Dictionary) -> Node3D:
 
 
 static func _make_wall_vine(prop: Dictionary) -> Node3D:
-	## Dense climbing ivy mat on plaster — not balloon poles.
+	## Loop 205: climbing ivy — solid-mat stems + leaf blobs (no wood washout).
 	var root := Node3D.new()
 	root.name = "WallVine"
 	var height: float = float(prop.get("height", 1.8))
 	var width: float = float(prop.get("width", 1.4))
-	var leaf_a := Color(0.2, 0.4, 0.16)
-	var leaf_b := Color(0.14, 0.32, 0.1)
-	var leaf_c := Color(0.26, 0.46, 0.18)
-	# Thin guide stems (short, many)
+	var mat_stem := _solid_matte(Color(0.18, 0.26, 0.1), 0.92)
+	var mat_a := _solid_matte(Color(0.2, 0.4, 0.16), 0.9)
+	var mat_b := _solid_matte(Color(0.14, 0.32, 0.1), 0.9)
+	var mat_c := _solid_matte(Color(0.26, 0.46, 0.18), 0.9)
 	for i in 6:
 		var x := -width * 0.4 + float(i) * (width * 0.16)
 		var sh := height * (0.45 + float(i % 3) * 0.12)
-		_add_cylinder(root, Vector3(x, 0.25 + sh * 0.5, 0.01), 0.008, sh, Color(0.18, 0.26, 0.1), false, 0.92)
-	# Dense leaf mat (many small spheres packed flat to wall)
+		_add_mesh_cyl(root, Vector3(x, 0.25 + sh * 0.5, 0.01), 0.008, sh, mat_stem, false)
 	for j in 28:
 		var t := float(j)
 		var fx := -width * 0.42 + fmod(t * 0.29, width * 0.84)
 		var fy := 0.2 + fmod(t * 0.41, height * 0.85)
 		var fz := 0.04 + float(j % 3) * 0.02
 		var r := 0.07 + float(j % 4) * 0.015
-		var col := leaf_a if j % 3 == 0 else (leaf_b if j % 3 == 1 else leaf_c)
-		_add_sphere_blob(root, Vector3(fx, fy, fz), r, col)
-	# Soft base mound
-	_add_sphere_blob(root, Vector3(0, 0.25, 0.08), 0.18, leaf_b)
-	_add_sphere_blob(root, Vector3(-0.2, 0.2, 0.07), 0.14, leaf_a)
-	_add_sphere_blob(root, Vector3(0.22, 0.22, 0.07), 0.15, leaf_c)
+		var mat_leaf := mat_a if j % 3 == 0 else (mat_b if j % 3 == 1 else mat_c)
+		# Compact leaf pads (mesh cyl discs — not foliage path)
+		_add_mesh_cyl(root, Vector3(fx, fy, fz), r, r * 0.55, mat_leaf, false)
+	_add_mesh_cyl(root, Vector3(0, 0.25, 0.08), 0.18, 0.12, mat_b, false)
+	_add_mesh_cyl(root, Vector3(-0.2, 0.2, 0.07), 0.14, 0.1, mat_a, false)
+	_add_mesh_cyl(root, Vector3(0.22, 0.22, 0.07), 0.15, 0.1, mat_c, false)
 	return root
 
 
@@ -4341,9 +4340,7 @@ static func _make_dust_motes(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_window(feat: Dictionary) -> Node3D:
-	## Sash-style window with OUTSIDE view through a hollow aperture.
-	## CRITICAL: never fill the aperture with a solid box — that reads as black/void.
-	## View plate sits in the opening (unshaded garden/yard/sky). Never room photos.
+	## Loop 205: sash window — solid-mat mahogany frame + drapery (hollow aperture kept).
 	var root := Node3D.new()
 	root.name = "Window"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -4354,18 +4351,16 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	var seed0: int = int(feat.get("seed", int(absf(pos[0] * 10.0 + pos[2] * 3.0))))
 	var frame_d := 0.12
 	var stile := 0.07
-	# Hollow frame: four stiles/rails only (open aperture for exterior plate)
-	_add_box(root, Vector3(-w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), MAHOGANY, true, 0.38)
-	_add_box(root, Vector3(w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), MAHOGANY, true, 0.38)
-	_add_box(root, Vector3(0, h - stile * 0.5, 0), Vector3(w, stile, frame_d), MAHOGANY, true, 0.38)
-	_add_box(root, Vector3(0, stile * 0.5, 0), Vector3(w, stile, frame_d), MAHOGANY, true, 0.38)
-	# Architrave + deep sill (period sash)
-	_add_box(root, Vector3(0, h + 0.04, 0.02), Vector3(w + 0.18, 0.08, 0.16), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(0, 0.02, 0.1), Vector3(w + 0.22, 0.07, 0.24), MAHOGANY, false, 0.42)
-	# Mullion cross (thin — must not hide exterior)
-	_add_box(root, Vector3(0, h * 0.5, 0.03), Vector3(0.045, h - stile * 2.0, 0.04), MAHOGANY_DARK, false, 0.4)
-	_add_box(root, Vector3(0, h * 0.5, 0.03), Vector3(w - stile * 2.0, 0.045, 0.04), MAHOGANY_DARK, false, 0.4)
-	# Exterior view plate in the open aperture (both faces, unshaded so never void-black)
+	var mat_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	_add_mesh_box(root, Vector3(-w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), mat_m, true)
+	_add_mesh_box(root, Vector3(w * 0.5, h * 0.5, 0), Vector3(stile, h, frame_d), mat_m, true)
+	_add_mesh_box(root, Vector3(0, h - stile * 0.5, 0), Vector3(w, stile, frame_d), mat_m, true)
+	_add_mesh_box(root, Vector3(0, stile * 0.5, 0), Vector3(w, stile, frame_d), mat_m, true)
+	_add_mesh_box(root, Vector3(0, h + 0.04, 0.02), Vector3(w + 0.18, 0.08, 0.16), mat_md)
+	_add_mesh_box(root, Vector3(0, 0.02, 0.1), Vector3(w + 0.22, 0.07, 0.24), mat_m)
+	_add_mesh_box(root, Vector3(0, h * 0.5, 0.03), Vector3(0.045, h - stile * 2.0, 0.04), mat_md)
+	_add_mesh_box(root, Vector3(0, h * 0.5, 0.03), Vector3(w - stile * 2.0, 0.045, 0.04), mat_md)
 	var view_path: String = str(feat.get("view", ""))
 	if view_path == "" or view_path.find("richmond_") >= 0 or view_path.find("wallpaper_") >= 0:
 		view_path = VIEW_EXTERIORS[seed0 % VIEW_EXTERIORS.size()]
@@ -4377,19 +4372,15 @@ static func _make_window(feat: Dictionary) -> Node3D:
 	var vtex := _load_tex(view_path)
 	if vtex:
 		vmat.albedo_texture = vtex
-		vmat.albedo_color = Color(1.05, 1.05, 1.0)  # slight lift so green/sky read
+		vmat.albedo_color = Color(1.05, 1.05, 1.0)
 	else:
-		# Procedural sky+lawn fallback if texture missing
 		vmat.albedo_color = Color(0.42, 0.62, 0.38)
 	vmat.roughness = 1.0
 	vmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	vmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	view_mi.material_override = vmat
-	# Loop 83: view plate on room side of wall (+Z) so facade never occludes to black
-	# Loop 91: do not paint sky/lawn bands over the painted exterior plate
 	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
-	# Very thin cool glass (alpha low) — never solid black
 	var gmat := StandardMaterial3D.new()
 	gmat.albedo_color = Color(0.82, 0.92, 0.98, 0.1)
 	gmat.metallic = 0.05
@@ -4405,34 +4396,29 @@ static func _make_window(feat: Dictionary) -> Node3D:
 			pane.material_override = gmat
 			pane.position = Vector3(ox * w * 0.2, h * oy, 0.06)
 			root.add_child(pane)
-	# Soft outdoor fill (daylight through sash)
 	var fill := OmniLight3D.new()
 	fill.light_color = Color(0.85, 0.92, 1.0)
 	fill.light_energy = 0.65
 	fill.omni_range = 4.2
 	fill.position = Vector3(0, h * 0.55, 0.45)
 	root.add_child(fill)
-	# Loop 106: period drapery (drawing/morning/gallery) — soft panels, not modern blinds
 	if bool(feat.get("curtains", false)):
 		var drape: Color = feat.get("curtain_color", Color(0.38, 0.28, 0.22))
-		var drape_d := drape.darkened(0.12)
-		var drape_l := drape.lightened(0.08)
-		# Pelmet / cornice box
-		_add_box(root, Vector3(0, h + 0.02, 0.14), Vector3(w + 0.28, 0.1, 0.12), MAHOGANY_DARK, false, 0.45)
-		_add_box(root, Vector3(0, h - 0.02, 0.16), Vector3(w + 0.22, 0.04, 0.08), drape_d, false, 0.85)
-		# Side panels (parted, revealing view)
+		var mat_drape := _solid_matte(drape, 0.9)
+		var mat_drape_d := _solid_matte(drape.darkened(0.12), 0.92)
+		var mat_drape_l := _solid_matte(drape.lightened(0.08), 0.9)
+		var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+		_add_mesh_box(root, Vector3(0, h + 0.02, 0.14), Vector3(w + 0.28, 0.1, 0.12), mat_md)
+		_add_mesh_box(root, Vector3(0, h - 0.02, 0.16), Vector3(w + 0.22, 0.04, 0.08), mat_drape_d)
 		for sx in [-1.0, 1.0]:
 			var px: float = sx * (w * 0.38)
-			_add_box(root, Vector3(px, h * 0.48, 0.12), Vector3(w * 0.22, h * 0.88, 0.06), drape, false, 0.88)
-			# Soft fold ridges
-			_add_box(root, Vector3(px + sx * 0.04, h * 0.48, 0.14), Vector3(0.03, h * 0.82, 0.04), drape_d, false, 0.9)
-			_add_box(root, Vector3(px - sx * 0.05, h * 0.45, 0.14), Vector3(0.025, h * 0.75, 0.035), drape_l, false, 0.9)
-			# Tie-back / rope
-			_add_cylinder(root, Vector3(px, h * 0.35, 0.18), 0.02, 0.08, BRASS.darkened(0.15), false, 0.4, true)
-			_add_box(root, Vector3(px + sx * 0.06, h * 0.35, 0.16), Vector3(0.1, 0.025, 0.03), drape_d, false, 0.85)
-		# Pool / puddle of fabric on sill
-		_add_box(root, Vector3(-w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), drape_d, false, 0.88)
-		_add_box(root, Vector3(w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), drape_d, false, 0.88)
+			_add_mesh_box(root, Vector3(px, h * 0.48, 0.12), Vector3(w * 0.22, h * 0.88, 0.06), mat_drape)
+			_add_mesh_box(root, Vector3(px + sx * 0.04, h * 0.48, 0.14), Vector3(0.03, h * 0.82, 0.04), mat_drape_d)
+			_add_mesh_box(root, Vector3(px - sx * 0.05, h * 0.45, 0.14), Vector3(0.025, h * 0.75, 0.035), mat_drape_l)
+			_add_mesh_cyl(root, Vector3(px, h * 0.35, 0.18), 0.02, 0.08, mat_br_d, false)
+			_add_mesh_box(root, Vector3(px + sx * 0.06, h * 0.35, 0.16), Vector3(0.1, 0.025, 0.03), mat_drape_d)
+		_add_mesh_box(root, Vector3(-w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), mat_drape_d)
+		_add_mesh_box(root, Vector3(w * 0.35, 0.08, 0.14), Vector3(0.18, 0.06, 0.1), mat_drape_d)
 	return root
 
 static func _make_glass_wall(feat: Dictionary) -> Node3D:
@@ -4477,26 +4463,26 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	# Plate on room side of wall (+Z) so facade never occludes to black
 	view_mi.position = Vector3(0, h * 0.5, 0.02)
 	root.add_child(view_mi)
-	# Subtle sill ledge only
-	_add_box(root, Vector3(0, 0.06, 0.08), Vector3(w - 0.1, 0.08, 0.12), STONE.darkened(0.05), false, 0.7)
-	# Brass glazing bar caps
+	# Loop 205: solid-mat sill + iron glazing bars (no iron/stone washout)
+	var mat_stone := _solid_matte(Color(0.5, 0.47, 0.42), 0.85)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_iron := _solid_metal(Color(0.34, 0.34, 0.36), 0.48)
+	var mat_iron_l := _solid_metal(Color(0.42, 0.42, 0.44), 0.45)
+	_add_mesh_box(root, Vector3(0, 0.06, 0.08), Vector3(w - 0.1, 0.08, 0.12), mat_stone)
 	for sx in [-1.0, 1.0]:
 		for sy in [0.08, h - 0.08]:
-			_add_box(root, Vector3(sx * (w * 0.5 - 0.05), sy, 0.14), Vector3(0.08, 0.06, 0.06), BRASS.darkened(0.1), false, 0.35)
-	# Perimeter iron (mid-grey)
+			_add_mesh_box(root, Vector3(sx * (w * 0.5 - 0.05), sy, 0.14), Vector3(0.08, 0.06, 0.06), mat_br_d)
 	var bar := 0.07
-	var frame_iron := Color(0.34, 0.34, 0.36)
-	_add_box(root, Vector3(0, bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
-	_add_box(root, Vector3(0, h - bar * 0.5, 0.1), Vector3(w, bar, 0.09), frame_iron, true, 0.45)
-	_add_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
-	_add_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), frame_iron, true, 0.45)
-	# Mullion grid
+	_add_mesh_box(root, Vector3(0, bar * 0.5, 0.1), Vector3(w, bar, 0.09), mat_iron, true)
+	_add_mesh_box(root, Vector3(0, h - bar * 0.5, 0.1), Vector3(w, bar, 0.09), mat_iron, true)
+	_add_mesh_box(root, Vector3(-w * 0.5 + bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), mat_iron, true)
+	_add_mesh_box(root, Vector3(w * 0.5 - bar * 0.5, h * 0.5, 0.1), Vector3(bar, h, 0.09), mat_iron, true)
 	for i in 4:
 		var fx2 := -w * 0.35 + float(i) * (w * 0.23)
-		_add_box(root, Vector3(fx2, h * 0.5, 0.11), Vector3(0.035, h - 0.14, 0.04), frame_iron.lightened(0.08), false, 0.45)
+		_add_mesh_box(root, Vector3(fx2, h * 0.5, 0.11), Vector3(0.035, h - 0.14, 0.04), mat_iron_l)
 	for j in 3:
 		var fy := h * 0.22 * float(j + 1)
-		_add_box(root, Vector3(0, fy, 0.11), Vector3(w - 0.14, 0.035, 0.04), frame_iron.lightened(0.08), false, 0.45)
+		_add_mesh_box(root, Vector3(0, fy, 0.11), Vector3(w - 0.14, 0.035, 0.04), mat_iron_l)
 	# Very light glass tint — NO depth write (loop 140: DEPTH_DRAW_ALWAYS could black out plates)
 	var glass := MeshInstance3D.new()
 	var gm := BoxMesh.new()
@@ -4712,9 +4698,8 @@ static func _add_unshaded_plate(parent: Node3D, pos: Vector3, size: Vector3, col
 	parent.add_child(mi)
 
 static func _make_painting(feat: Dictionary) -> Node3D:
-	## Gilt/wood-frame oil: landscape / still life / botanical / portrait —
-	## NEVER a room photo (reads as windows or nonsense mirrors).
-	## Frame style forks by seed: ornate gilt · mahogany · ebony · dark gilt.
+	## Loop 205: gilt/wood frame oils — solid-mat frames (canvas texture retained).
+	## NEVER a room photo. Frame forks: ornate gilt · mahogany · ebony · dark gilt.
 	var root := Node3D.new()
 	root.name = "Painting"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -4731,57 +4716,68 @@ static func _make_painting(feat: Dictionary) -> Node3D:
 	var corner_c: Color
 	var rough_o: float = 0.32
 	match frame_style:
-		0:  # Ornate gilt salon
+		0:
 			outer = BRASS
 			mid = BRASS.lightened(0.1)
 			liner = BRASS.darkened(0.18)
 			corner_c = BRASS.lightened(0.14)
 			rough_o = 0.28
-		1:  # Mahogany with gilt liner (library / morning)
-			outer = MAHOGANY
-			mid = MAHOGANY.lightened(0.08)
+		1:
+			outer = Color(0.3, 0.14, 0.08)
+			mid = Color(0.36, 0.18, 0.1)
 			liner = BRASS.darkened(0.1)
 			corner_c = BRASS
 			rough_o = 0.55
-		2:  # Ebony austere (gallery / hall)
+		2:
 			outer = Color(0.08, 0.07, 0.07)
 			mid = Color(0.12, 0.1, 0.09)
 			liner = Color(0.22, 0.16, 0.1)
 			corner_c = BRASS.darkened(0.2)
 			rough_o = 0.45
-		_:  # Dark gilt with deep liner (kitchen / workshop)
+		_:
 			outer = BRASS.darkened(0.22)
 			mid = BRASS.darkened(0.1)
 			liner = Color(0.14, 0.08, 0.05)
 			corner_c = BRASS.lightened(0.05)
 			rough_o = 0.35
-	# Outer moulding + stepped liner (NO solid plate over canvas — was blacking out oils)
-	_add_box(root, Vector3(0, 0, 0), Vector3(w + 0.12, h + 0.12, 0.08), outer, true, rough_o)
-	_add_box(root, Vector3(0, 0, 0.018), Vector3(w + 0.05, h + 0.05, 0.05), mid, false, rough_o * 0.95)
-	# Hollow liner: four thin rails around the canvas aperture (not a full dark plate)
+	var mat_outer: Material
+	var mat_mid: Material
+	var mat_liner: Material
+	var mat_corner: Material
+	if frame_style == 1 or frame_style == 2:
+		mat_outer = _solid_matte(outer, rough_o)
+		mat_mid = _solid_matte(mid, rough_o * 0.95)
+	else:
+		mat_outer = _solid_metal(outer, rough_o)
+		mat_mid = _solid_metal(mid, rough_o * 0.95)
+	if frame_style == 2:
+		mat_liner = _solid_matte(liner, 0.55)
+		mat_corner = _solid_metal(corner_c, 0.35)
+	else:
+		mat_liner = _solid_metal(liner, 0.35) if frame_style != 1 else _solid_metal(liner, 0.32)
+		if frame_style == 1:
+			mat_liner = _solid_metal(liner, 0.32)
+		mat_corner = _solid_metal(corner_c, 0.28)
+	_add_mesh_box(root, Vector3(0, 0, 0), Vector3(w + 0.12, h + 0.12, 0.08), mat_outer, true)
+	_add_mesh_box(root, Vector3(0, 0, 0.018), Vector3(w + 0.05, h + 0.05, 0.05), mat_mid)
 	var rail: float = 0.06
 	var aper_w: float = w - 0.16
 	var aper_h: float = h - 0.16
-	_add_box(root, Vector3(0, aper_h * 0.5 + rail * 0.35, 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), liner, false, 0.4)
-	_add_box(root, Vector3(0, -(aper_h * 0.5 + rail * 0.35), 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), liner, false, 0.4)
-	_add_box(root, Vector3(aper_w * 0.5 + rail * 0.35, 0, 0.03), Vector3(rail, aper_h, 0.035), liner, false, 0.4)
-	_add_box(root, Vector3(-(aper_w * 0.5 + rail * 0.35), 0, 0.03), Vector3(rail, aper_h, 0.035), liner, false, 0.4)
-	# Backing board behind canvas (slightly larger, pushed back so canvas wins depth)
-	_add_box(root, Vector3(0, 0, -0.01), Vector3(aper_w + 0.02, aper_h + 0.02, 0.02), Color(0.12, 0.08, 0.05), false, 0.7)
-	# Corner ornaments (gilt styles only get full blocks; ebony gets slim pips)
+	_add_mesh_box(root, Vector3(0, aper_h * 0.5 + rail * 0.35, 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), mat_liner)
+	_add_mesh_box(root, Vector3(0, -(aper_h * 0.5 + rail * 0.35), 0.03), Vector3(aper_w + rail * 1.2, rail, 0.035), mat_liner)
+	_add_mesh_box(root, Vector3(aper_w * 0.5 + rail * 0.35, 0, 0.03), Vector3(rail, aper_h, 0.035), mat_liner)
+	_add_mesh_box(root, Vector3(-(aper_w * 0.5 + rail * 0.35), 0, 0.03), Vector3(rail, aper_h, 0.035), mat_liner)
+	_add_mesh_box(root, Vector3(0, 0, -0.01), Vector3(aper_w + 0.02, aper_h + 0.02, 0.02), _solid_matte(Color(0.12, 0.08, 0.05), 0.8))
 	var csz: float = 0.08 if frame_style != 2 else 0.045
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * (w * 0.5 + 0.02), sy * (h * 0.5 + 0.02), 0.03),
-				Vector3(csz, csz, 0.05), corner_c, false, 0.28)
-	# Picture-rail hook / crest (skip on austere ebony)
+			_add_mesh_box(root, Vector3(sx * (w * 0.5 + 0.02), sy * (h * 0.5 + 0.02), 0.03), Vector3(csz, csz, 0.05), mat_corner)
 	if frame_style != 2:
-		_add_box(root, Vector3(0, h * 0.5 + 0.1, 0.02), Vector3(0.12, 0.08, 0.04), liner, false, 0.32)
-		_add_cylinder(root, Vector3(0, h * 0.5 + 0.16, 0.03), 0.025, 0.03, corner_c, false, 0.3, true)
-	# Ornate gilt: mid-side rosettes
+		_add_mesh_box(root, Vector3(0, h * 0.5 + 0.1, 0.02), Vector3(0.12, 0.08, 0.04), mat_liner)
+		_add_mesh_cyl(root, Vector3(0, h * 0.5 + 0.16, 0.03), 0.025, 0.03, mat_corner, false)
 	if frame_style == 0:
-		_add_cylinder(root, Vector3(-(w * 0.5 + 0.01), 0, 0.04), 0.03, 0.025, corner_c, false, 0.28, true)
-		_add_cylinder(root, Vector3(w * 0.5 + 0.01, 0, 0.04), 0.03, 0.025, corner_c, false, 0.28, true)
+		_add_mesh_cyl(root, Vector3(-(w * 0.5 + 0.01), 0, 0.04), 0.03, 0.025, mat_corner, false)
+		_add_mesh_cyl(root, Vector3(w * 0.5 + 0.01, 0, 0.04), 0.03, 0.025, mat_corner, false)
 	var canvas := MeshInstance3D.new()
 	var cm := QuadMesh.new()
 	cm.size = Vector2(aper_w, aper_h)
