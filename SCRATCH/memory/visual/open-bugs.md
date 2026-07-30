@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 191)
+
+- **Hero aetheric cyan dome residual:** fat teal/cyan hat + cool fill mid-FOV gallery_from_south. Brass gallery ring + compact amber chamber + warm copper aether glow; warm lights only (no cyan).  
+- **Umbrella stand residual:** anonymous dark cylinder. Oak/ceramic pot + brass rim + crook-handle sticks, solid mats.  
+
 ## Status update 2026-07-30 (loop 190)
 
 - **Prep flour sack residual (post-189):** rectangular body still read as crate mid-FOV. Soft plump cylindrical hessian bag + cinch ear + brand stamp (one rounded mass).  
