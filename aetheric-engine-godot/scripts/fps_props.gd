@@ -1098,28 +1098,32 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_mesh_cyl(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, mat_cream, false)
 		_add_mesh_cyl(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, mat_cream_d, false)
 	elif dress == 2:
-		# Classic clay flower pot — solid-mat terracotta + irregular blooms
+		# Loop 218: classic terracotta — continuous taper (not tier cake) + low irregular blooms
 		var mat_pot := _solid_matte(Color(0.7, 0.4, 0.22), 0.92)
 		var mat_pot_d := _solid_matte(Color(0.52, 0.3, 0.15), 0.94)
+		var mat_pot_l := _solid_matte(Color(0.78, 0.48, 0.28), 0.9)
 		var mat_soil := _solid_matte(Color(0.14, 0.09, 0.05), 0.95)
 		var mat_leaf := _solid_matte(Color(0.22, 0.4, 0.14), 0.9)
 		var mat_leaf_d := _solid_matte(Color(0.14, 0.3, 0.1), 0.9)
 		var mat_fl_r := _solid_matte(Color(0.62, 0.16, 0.14), 0.88)
 		var mat_fl_p := _solid_matte(Color(0.7, 0.35, 0.4), 0.88)
 		var mat_fl_w := _solid_matte(Color(0.82, 0.72, 0.55), 0.9)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.01, 0), 0.1, 0.016, mat_pot_d, false)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.04, 0), 0.055, 0.05, mat_pot_d, false)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.1, 0), 0.075, 0.1, mat_pot, false)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.16, 0), 0.09, 0.04, mat_pot, false)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.185, 0), 0.1, 0.02, mat_pot_d, false)
-		_add_mesh_cyl(root, Vector3(0, top_y + 0.19, 0), 0.07, 0.012, mat_soil, false)
-		_add_mesh_box(root, Vector3(0.0, top_y + 0.22, 0.0), Vector3(0.1, 0.025, 0.08), mat_leaf)
-		_add_mesh_box(root, Vector3(0.03, top_y + 0.23, 0.02), Vector3(0.06, 0.015, 0.05), mat_leaf_d)
-		_add_mesh_box(root, Vector3(-0.025, top_y + 0.225, -0.02), Vector3(0.05, 0.012, 0.045), mat_leaf)
-		_add_mesh_cyl(root, Vector3(0.0, top_y + 0.245, 0.01), 0.022, 0.018, mat_fl_r, false)
-		_add_mesh_cyl(root, Vector3(0.035, top_y + 0.24, -0.015), 0.016, 0.014, mat_fl_p, false)
-		_add_mesh_cyl(root, Vector3(-0.03, top_y + 0.238, 0.02), 0.014, 0.012, mat_fl_w, false)
-		_add_mesh_cyl(root, Vector3(0.015, top_y + 0.255, -0.02), 0.012, 0.01, mat_fl_r, false)
+		# Saucer + continuous taper body (single color family)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.012, 0), 0.095, 0.018, mat_pot_d, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.08, 0), 0.07, 0.12, mat_pot, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.14, 0), 0.085, 0.04, mat_pot_l, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.16, 0), 0.095, 0.022, mat_pot_d, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.17, 0), 0.065, 0.012, mat_soil, false)
+		# Leaf mound (low pad, not tall stem)
+		_add_mesh_box(root, Vector3(0.0, top_y + 0.19, 0.0), Vector3(0.11, 0.022, 0.09), mat_leaf)
+		_add_mesh_box(root, Vector3(0.03, top_y + 0.2, 0.02), Vector3(0.06, 0.014, 0.05), mat_leaf_d)
+		_add_mesh_box(root, Vector3(-0.025, top_y + 0.195, -0.02), Vector3(0.05, 0.012, 0.045), mat_leaf)
+		# Tight bloom cluster just above soil (not lid disc)
+		_add_mesh_cyl(root, Vector3(0.0, top_y + 0.215, 0.01), 0.02, 0.016, mat_fl_r, false)
+		_add_mesh_cyl(root, Vector3(0.03, top_y + 0.21, -0.012), 0.014, 0.012, mat_fl_p, false)
+		_add_mesh_cyl(root, Vector3(-0.025, top_y + 0.208, 0.018), 0.012, 0.011, mat_fl_w, false)
+		_add_mesh_cyl(root, Vector3(0.012, top_y + 0.222, -0.018), 0.011, 0.01, mat_fl_r, false)
+		_add_mesh_cyl(root, Vector3(-0.01, top_y + 0.218, -0.01), 0.01, 0.009, mat_fl_p, false)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		var mat_candle := _solid_matte(Color(0.95, 0.82, 0.45), 0.7)
@@ -1746,8 +1750,8 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	_add_mesh_cyl(root, Vector3(width * 0.22, 0.39, -0.08), 0.07, 0.03, mat_sh_cop, false)
 	match kit:
 		0:
-			# Loop 210: flour still-life rewrite — plump sack, cottage loaf, scored board,
-			# rolling pin, proper apples (not brown log + brick + red nubs mid-FOV).
+			# Loop 218: STANDING plump flour sack (not horizontal log mid-FOV).
+			# Wide base → cinched neck + ear, brand stamp, flour spill toward board.
 			var mat_hess := _solid_matte(Color(0.5, 0.4, 0.26), 0.96)
 			var mat_hess_d := _solid_matte(Color(0.38, 0.3, 0.18), 0.96)
 			var mat_hess_l := _solid_matte(Color(0.58, 0.48, 0.32), 0.95)
@@ -1773,32 +1777,34 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 			var mat_apple_c := _solid_matte(Color(0.62, 0.22, 0.14), 0.88)
 			var mat_stem := _solid_matte(Color(0.22, 0.14, 0.08), 0.85)
 			var mat_leaf := _solid_matte(Color(0.28, 0.42, 0.16), 0.9)
-			# --- Plump flour sack (lying, gathered mouth toward centre) ---
+			# --- Standing plump flour sack (bag silhouette, not log) ---
 			var bx := -0.55
-			var by := 0.94
-			var bz := 0.0
-			# Main body mass (overlapping plump cylinders — not single log)
-			_add_mesh_cyl_rot(root, Vector3(bx, by, bz), 0.11, 0.3, mat_hess, Vector3(0, 0, PI * 0.5))
-			_add_mesh_cyl_rot(root, Vector3(bx + 0.02, by + 0.03, bz + 0.02), 0.095, 0.26, mat_hess_l, Vector3(0, 0, PI * 0.5))
-			_add_mesh_box(root, Vector3(bx, by + 0.04, bz), Vector3(0.26, 0.1, 0.16), mat_hess)
-			# Seam panels
-			_add_mesh_box(root, Vector3(bx, by + 0.08, bz), Vector3(0.22, 0.01, 0.02), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx, by + 0.02, bz + 0.09), Vector3(0.24, 0.06, 0.012), mat_hess_d)
-			# Closed butt end (gathered folds)
-			_add_mesh_cyl(root, Vector3(bx - 0.15, by, bz), 0.1, 0.04, mat_hess_d, false)
-			_add_mesh_cyl(root, Vector3(bx - 0.17, by + 0.02, bz), 0.06, 0.03, mat_hess, false)
-			# Open mouth + twine + ear flap toward board
-			_add_mesh_cyl(root, Vector3(bx + 0.14, by, bz), 0.08, 0.05, mat_hess_d, false)
-			_add_mesh_cyl(root, Vector3(bx + 0.13, by, bz), 0.085, 0.018, mat_twine, false)
-			_add_mesh_box(root, Vector3(bx + 0.18, by + 0.04, bz + 0.01), Vector3(0.07, 0.05, 0.055), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx + 0.2, by + 0.06, bz), Vector3(0.04, 0.03, 0.04), mat_hess_l)
-			# Brand stamp
-			_add_mesh_box(root, Vector3(bx - 0.02, by + 0.1, bz), Vector3(0.11, 0.012, 0.08), mat_hess_d)
-			_add_mesh_box(root, Vector3(bx - 0.02, by + 0.108, bz), Vector3(0.075, 0.01, 0.05), mat_stamp)
-			# Flour spill from mouth
-			_add_mesh_box(root, Vector3(bx + 0.22, 0.875, bz + 0.06), Vector3(0.14, 0.01, 0.12), mat_dust)
-			_add_mesh_cyl(root, Vector3(bx + 0.2, 0.882, bz + 0.02), 0.045, 0.018, mat_dust, false)
-			_add_mesh_cyl(root, Vector3(bx + 0.24, 0.88, bz + 0.08), 0.03, 0.014, mat_dust, false)
+			var bz := 0.02
+			# Wide base foot + body (same width family — continuous bag mass)
+			_add_mesh_cyl(root, Vector3(bx, 0.89, bz), 0.11, 0.04, mat_hess_d, false)
+			_add_mesh_cyl(root, Vector3(bx, 0.98, bz), 0.125, 0.16, mat_hess, false)
+			_add_mesh_cyl(root, Vector3(bx + 0.02, 0.99, bz + 0.02), 0.11, 0.14, mat_hess_l, false)
+			_add_mesh_cyl(root, Vector3(bx - 0.02, 0.97, bz - 0.02), 0.105, 0.12, mat_hess, false)
+			# Soft cheek folds (fabric mass, not cylinder stack tiers)
+			_add_mesh_box(root, Vector3(bx + 0.08, 0.98, bz), Vector3(0.06, 0.12, 0.14), mat_hess_l)
+			_add_mesh_box(root, Vector3(bx - 0.08, 0.97, bz), Vector3(0.05, 0.11, 0.12), mat_hess_d)
+			# Vertical seam + stitch lines
+			_add_mesh_box(root, Vector3(bx, 0.98, bz + 0.11), Vector3(0.015, 0.14, 0.02), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx + 0.04, 0.98, bz + 0.1), Vector3(0.01, 0.12, 0.015), mat_hess_d)
+			# Shoulder taper into neck
+			_add_mesh_cyl(root, Vector3(bx, 1.08, bz), 0.09, 0.05, mat_hess, false)
+			_add_mesh_cyl(root, Vector3(bx, 1.12, bz), 0.065, 0.04, mat_hess_d, false)
+			# Twine cinch + ear flap
+			_add_mesh_cyl(root, Vector3(bx, 1.14, bz), 0.07, 0.018, mat_twine, false)
+			_add_mesh_box(root, Vector3(bx + 0.05, 1.17, bz), Vector3(0.06, 0.05, 0.05), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx + 0.07, 1.19, bz + 0.01), Vector3(0.04, 0.03, 0.035), mat_hess_l)
+			# Brand stamp on front face
+			_add_mesh_box(root, Vector3(bx, 1.0, bz + 0.12), Vector3(0.09, 0.07, 0.012), mat_hess_d)
+			_add_mesh_box(root, Vector3(bx, 1.0, bz + 0.13), Vector3(0.065, 0.045, 0.01), mat_stamp)
+			# Flour spill at base toward board
+			_add_mesh_box(root, Vector3(bx + 0.14, 0.875, bz + 0.05), Vector3(0.14, 0.01, 0.12), mat_dust)
+			_add_mesh_cyl(root, Vector3(bx + 0.12, 0.882, bz + 0.02), 0.04, 0.016, mat_dust, false)
+			_add_mesh_cyl(root, Vector3(bx + 0.08, 0.88, bz + 0.08), 0.028, 0.012, mat_dust, false)
 			# --- Thick dough board with edge lip + flour dust ---
 			_add_mesh_box(root, Vector3(0.18, 0.87, -0.04), Vector3(0.78, 0.04, 0.48), mat_board_d)
 			_add_mesh_box(root, Vector3(0.18, 0.892, -0.04), Vector3(0.74, 0.012, 0.44), mat_board)

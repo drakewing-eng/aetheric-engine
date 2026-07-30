@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 217  
-**HEAD:** `0536481` visual loop 217  
+**Updated:** 2026-07-30 ~overnight loop 218  
+**HEAD:** (pending) visual loop 218  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -17,20 +17,20 @@
 | 8 | Side-view mesh furniture | **DONE 70–165** wing envelope |
 | 9 | Door transition safety | **ADVANCED 76–208** portal solid |
 | 10 | Wallpaper contrast | **ADVANCED 72–209** kitchen dens |
-| 11 | Hall / prep still-life | **ADVANCED 73–215** kits 1–3 |
+| 11 | Hall / prep still-life | **ADVANCED 73–218** flour bag |
 | 12–23 | Conservatory densify | **ADVANCED 116–212** garden path |
 | 24–142 | Prop solid mats…billboard bulk | **DONE 89–207** |
-| 143–151 | Arch trim…style-0 coil | **DONE 208–216** |
-| 152 | Main aetheric open coil stack | **DONE 217** |
+| 143–152 | Arch trim…main aetheric open | **DONE 208–217** |
+| 153 | Standing flour sack + table pot polish | **DONE 218** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 214 | Gallery style-1 resonator open oak + airy diaphragms |
 | 215 | Prep kits 1–3 baking/veg/scullery still-life polish |
 | 216 | Gallery style-0 coil oak cage + 3 airy coils |
-| 217 | **Main aetheric hero** 4 thinner air-spaced coils + hollow hubs (not 5 dense fridge stack) |
+| 217 | Main aetheric hero 4 thinner air-spaced coils |
+| 218 | **Standing plump flour sack** (not horizontal log) + terracotta table pot taper |
 
 ## Still high-value if continuing
 
@@ -41,10 +41,10 @@
 ## Solid-mat / residual status
 
 - Prop solid-mat conversion largely exhausted  
-- Architecture, service walls, paths, flue, secondary + hero machines, prep kits advanced 208–217  
+- Architecture, machines, prep still-life, plants advanced 208–218  
 - Intentional textures kept (wallpaper, floors, rugs, oils, views, plant cards)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_217/`  
+- Shots: `auto_loop_67/` … `auto_loop_218/`  

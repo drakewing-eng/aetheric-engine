@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 218)
+
+- **Prep kit 0 flour sack residual:** horizontal hessian cylinder still read as brown log mid-FOV. Rewrote standing plump bag — wide base, cinched neck + ear, brand stamp, cheek folds, flour spill.  
+- **Side-table botanical pot residual:** tiered cake silhouette. Continuous terracotta taper + low irregular bloom cluster. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 217)
 
 - **Main aetheric hero residual:** 5 dense copper coils + solid oak disc fills still read as stacked fridge mid-FOV (gallery_from_south). Rewrote 4 thinner air-spaced coils, hollow brass hubs, sparse winding studs (8), slenderer posts, open top ring. Art + door suite PASS.  
