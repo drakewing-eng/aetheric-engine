@@ -128,6 +128,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Watering can residual:** 5-prim stick read as brown lump mid-FOV. Rewrote Haws-style can — stacked copper body + collar, long horizontal spout + rose head, C-handle, top bail, seam rivets; larger scale + yaw so spout reads from spawn.  
 - **Floor trug residual:** low box nubs. Oval willow weave, arched end handles (+ optional crossbar), apples/linen/veg fills without foliage sphere scrap. Kitchen trugs inherit same mesh.  
 
+## Status update 2026-07-29 (loop 176)
+
+- **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
+
 ## Status update 2026-07-29 (loop 175)
 
 - **Classical urn residual:** multi-cylinder stack read as stone barrel mid-FOV. Continuous amphora (foot→belly→shoulder→neck), solid matte stone (no TEX bands), C-handles, sparse trailing ivy only.  

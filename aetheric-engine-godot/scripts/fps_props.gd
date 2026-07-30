@@ -1374,21 +1374,36 @@ static func _make_kitchen_range(_prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(1.05, 1.3, -0.05), 0.19, 0.06, BRASS.darkened(0.1), false, 0.32, true)
 	_add_cylinder(root, Vector3(1.05, 0.45, -0.05), 0.19, 0.06, iron_dark, false, 0.5)
 	_add_cylinder(root, Vector3(1.05, 1.0, 0.12), 0.03, 0.04, BRASS, false, 0.3, true)
-	# Flue — stepped stack, not black slab
-	_add_box(root, Vector3(0, 1.7, -0.1), Vector3(0.85, 0.12, 0.6), iron_mid, true, 0.48)
-	_add_box(root, Vector3(0, 1.78, -0.1), Vector3(0.72, 0.06, 0.52), BRASS.darkened(0.1), false, 0.32)
-	_add_box(root, Vector3(0, 2.15, -0.12), Vector3(0.52, 0.85, 0.42), iron_body, true, 0.5)
+	# Loop 176: continuous flue shaft (not grey ziggurat crown mid-FOV).
+	# Period range: tall rectangular flue + iron bands + one cornice cap only.
+	var mat_flue := _solid_matte(Color(0.3, 0.3, 0.32), 0.55)
+	var mat_flue_d := _solid_matte(Color(0.2, 0.2, 0.22), 0.58)
+	var mat_flue_l := _solid_matte(Color(0.42, 0.42, 0.44), 0.5)
+	var mat_brass_f := _solid_copper_mat(Color(0.62, 0.48, 0.22), 0.35)  # darkened brass-ish
+	# Throat plate on range top (joins body to flue — wide, low)
+	_add_mesh_box(root, Vector3(0, 1.68, -0.08), Vector3(0.9, 0.1, 0.55), mat_flue)
+	_add_mesh_box(root, Vector3(0, 1.74, -0.08), Vector3(0.78, 0.04, 0.48), mat_brass_f)
+	# ONE continuous shaft (constant section — bands are surface only)
+	_add_mesh_box(root, Vector3(0, 2.2, -0.1), Vector3(0.48, 0.95, 0.4), mat_flue_d)
+	# Horizontal iron bands (identity, not width steps)
+	for bi in 4:
+		var by := 1.9 + float(bi) * 0.18
+		_add_mesh_box(root, Vector3(0, by, -0.1), Vector3(0.52, 0.035, 0.44), mat_flue_l)
+	# Corner rivets along front edges
 	for ri in 5:
-		var ry := 1.85 + float(ri) * 0.14
-		_add_box(root, Vector3(-0.24, ry, 0.08), Vector3(0.035, 0.035, 0.035), iron_light, false, 0.45)
-		_add_box(root, Vector3(0.24, ry, 0.08), Vector3(0.035, 0.035, 0.035), iron_light, false, 0.45)
-	# Smoke plate + damper pull
-	_add_box(root, Vector3(0, 2.05, 0.1), Vector3(0.32, 0.45, 0.04), iron_dark, false, 0.5)
-	_add_cylinder(root, Vector3(0, 2.0, 0.14), 0.02, 0.08, BRASS, false, 0.3, true)
-	# Stepped crown
-	_add_box(root, Vector3(0, 2.55, -0.12), Vector3(0.68, 0.08, 0.52), iron_mid.lightened(0.05), false, 0.48)
-	_add_box(root, Vector3(0, 2.62, -0.12), Vector3(0.52, 0.06, 0.4), iron_dark, false, 0.5)
-	_add_box(root, Vector3(0, 2.68, -0.12), Vector3(0.38, 0.05, 0.3), iron_mid, false, 0.48)
+		var ry := 1.85 + float(ri) * 0.15
+		_add_mesh_cyl(root, Vector3(-0.22, ry, 0.1), 0.016, 0.02, mat_flue_l, false)
+		_add_mesh_cyl(root, Vector3(0.22, ry, 0.1), 0.016, 0.02, mat_flue_l, false)
+	# Front smoke plate + brass damper pull
+	_add_mesh_box(root, Vector3(0, 2.05, 0.12), Vector3(0.28, 0.4, 0.035), mat_flue)
+	_add_mesh_box(root, Vector3(0, 2.05, 0.14), Vector3(0.18, 0.28, 0.02), mat_flue_d)
+	_add_mesh_cyl(root, Vector3(0, 2.0, 0.16), 0.018, 0.07, mat_brass_f, false)
+	# Single cornice cap (one moulding, not Minecraft steps)
+	_add_mesh_box(root, Vector3(0, 2.7, -0.1), Vector3(0.58, 0.06, 0.48), mat_flue_l)
+	_add_mesh_box(root, Vector3(0, 2.76, -0.1), Vector3(0.42, 0.05, 0.36), mat_flue_d)
+	# Tiny chimney pot (cylinder — period cue)
+	_add_mesh_cyl(root, Vector3(0, 2.88, -0.1), 0.08, 0.16, mat_flue, false)
+	_add_mesh_cyl(root, Vector3(0, 2.96, -0.1), 0.1, 0.04, mat_flue_l, false)
 	# Short hanging rail under mantel (pans — not giant tower stack)
 	_add_box(root, Vector3(0, 1.62, 0.38), Vector3(1.4, 0.03, 0.04), MAHOGANY_DARK, false, 0.5)
 	_add_cylinder(root, Vector3(-0.4, 1.48, 0.4), 0.09, 0.05, COPPER, false, 0.32, true)
