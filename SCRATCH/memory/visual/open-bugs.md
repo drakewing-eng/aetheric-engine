@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 214)
+
+- **Gallery style-1 machine residual:** dense 5 copper discs + iron posts still read as metal fridge shelves mid-FOV. Rewrote open oak turned posts, 3 thin diaphragms with large air gaps + spokes, slim brass rails, tall tuning-fork crown. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 213)
 
 - **Kitchen range flue residual:** pale grey matte shaft + proud light bands + double cornice read as Minecraft ziggurat mid-FOV (kitchen_spawn). Rewrote continuous cast-iron matching range body mats, inset seams only, single thin lip, period cylinder pot. Art + door suite PASS.  

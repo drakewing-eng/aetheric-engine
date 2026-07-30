@@ -3401,73 +3401,87 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 			_add_mesh_cyl(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, mat_cop_s, false)
 			_add_mesh_cyl(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, mat_br_s, false)
 		1:
-			# Loop 182: OPEN harmonic resonator — not closed iron fridge with cyan hat.
-			# Oak plinth + two posts + air-spaced copper diaphragms + tuning fork crown.
-			var mat_iron := _solid_matte(iron_mid, 0.55)
-			var mat_iron_d := _solid_matte(iron_dark, 0.58)
+			# Loop 214: OPEN harmonic resonator rewrite — dense copper discs + iron posts
+			# still read as metal fridge shelves mid-FOV. Airy oak stand + 3 thin diaphragms
+			# with large gaps + tall tuning-fork crown (walk-through silhouette).
 			var mat_oak := _solid_matte(oak, 0.72)
 			var mat_oak_d := _solid_matte(oak_d, 0.75)
+			var mat_oak_l := _solid_matte(oak.lightened(0.08), 0.7)
 			var mat_cop := _solid_metal(COPPER, 0.32)
-			var mat_cop_d := _solid_metal(COPPER.darkened(0.1), 0.35)
+			var mat_cop_d := _solid_metal(COPPER.darkened(0.12), 0.36)
+			var mat_cop_l := _solid_metal(COPPER.lightened(0.08), 0.28)
 			var mat_br := _solid_metal(BRASS, 0.28)
-			var mat_br_d := _solid_metal(BRASS.darkened(0.1), 0.3)
-			# Low oak plinth (instrument base — not full-height cabinet)
-			_add_mesh_box(root, Vector3(0, 0.08, 0), Vector3(1.1, 0.16, 0.85), mat_oak_d)
-			_add_mesh_box(root, Vector3(0, 0.18, 0), Vector3(1.0, 0.06, 0.75), mat_oak)
-			_add_mesh_box(root, Vector3(0, 0.22, 0), Vector3(0.9, 0.03, 0.65), mat_br_d)
-			# Two upright posts (open air between — not solid side cheeks)
+			var mat_br_d := _solid_metal(BRASS.darkened(0.1), 0.32)
+			var mat_br_l := _solid_metal(BRASS.lightened(0.06), 0.26)
+			# Turned oak plinth (furniture mass, not iron cabinet)
+			_add_mesh_box(root, Vector3(0, 0.06, 0), Vector3(0.95, 0.12, 0.7), mat_oak_d)
+			_add_mesh_box(root, Vector3(0, 0.14, 0), Vector3(0.85, 0.05, 0.6), mat_oak)
+			_add_mesh_cyl(root, Vector3(0, 0.2, 0), 0.32, 0.04, mat_br_d, false)
+			# Two slender turned oak posts (not iron fridge cheeks)
 			for sx in [-1.0, 1.0]:
-				_add_mesh_box(root, Vector3(sx * 0.32, 0.95, 0), Vector3(0.08, 1.35, 0.08), mat_iron_d)
-				_add_mesh_cyl(root, Vector3(sx * 0.32, 0.3, 0), 0.06, 0.08, mat_br, false)
-				_add_mesh_cyl(root, Vector3(sx * 0.32, 1.62, 0), 0.055, 0.06, mat_br, false)
-			# Rear thin rail only (not full back panel wall)
-			_add_mesh_box(root, Vector3(0, 0.95, -0.22), Vector3(0.08, 1.2, 0.05), mat_iron)
-			_add_mesh_box(root, Vector3(0, 1.55, -0.1), Vector3(0.7, 0.04, 0.04), mat_iron_d)
-			_add_mesh_box(root, Vector3(0, 0.55, -0.1), Vector3(0.7, 0.04, 0.04), mat_iron_d)
-			# Central brass mast
-			_add_mesh_cyl(root, Vector3(0, 0.95, 0.05), 0.045, 1.25, mat_br_d, true)
-			# Air-spaced copper diaphragms (gaps visible — instrument, not fridge shelves)
-			for i in 5:
-				var y: float = 0.48 + float(i) * 0.22
-				var r: float = 0.28 - float(i) * 0.02
+				_add_mesh_cyl(root, Vector3(sx * 0.28, 0.28, 0), 0.055, 0.1, mat_oak_d, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.28, 0.85, 0), 0.04, 1.0, mat_oak, true)
+				_add_mesh_cyl(root, Vector3(sx * 0.28, 0.55, 0), 0.05, 0.06, mat_oak_l, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.28, 1.15, 0), 0.05, 0.06, mat_oak_l, false)
+				_add_mesh_cyl(root, Vector3(sx * 0.28, 1.4, 0), 0.05, 0.08, mat_br, false)
+			# Thin rear brass rail only (air behind — no iron wall)
+			_add_mesh_box(root, Vector3(0, 0.9, -0.18), Vector3(0.04, 0.9, 0.035), mat_br_d)
+			# Central brass mast (thin)
+			_add_mesh_cyl(root, Vector3(0, 0.9, 0.02), 0.032, 1.15, mat_br_d, true)
+			_add_mesh_cyl(root, Vector3(0, 0.35, 0.02), 0.05, 0.06, mat_br, false)
+			# THREE thin copper diaphragms with LARGE air gaps (not 5 fridge shelves)
+			for i in 3:
+				var y: float = 0.5 + float(i) * 0.38
+				var r: float = 0.26 - float(i) * 0.03
 				var cm: Material = mat_cop if i % 2 == 0 else mat_cop_d
-				_add_mesh_cyl(root, Vector3(0, y, 0.05), r, 0.045, cm, false)
-				_add_mesh_cyl(root, Vector3(0, y + 0.02, 0.05), r * 0.82, 0.02, mat_br_d, false)
-			# Cross struts between posts (open triangle braces)
-			_add_mesh_box(root, Vector3(0, 0.75, 0.12), Vector3(0.62, 0.03, 0.03), mat_iron)
-			_add_mesh_box(root, Vector3(0, 1.25, 0.12), Vector3(0.62, 0.03, 0.03), mat_iron)
-			# Side gauge box (small, not cheek wall)
-			_add_mesh_box(root, Vector3(0.48, 0.55, 0.15), Vector3(0.22, 0.35, 0.28), mat_oak_d)
-			for gi in 2:
-				_add_mesh_cyl(root, Vector3(0.48, 0.5 + float(gi) * 0.14, 0.28), 0.045, 0.02, mat_br, false)
-			# Copper riser pipe
-			_add_mesh_cyl(root, Vector3(-0.48, 0.75, 0.1), 0.03, 0.7, mat_cop, false)
-			_add_mesh_cyl(root, Vector3(-0.48, 1.15, 0.2), 0.04, 0.035, mat_br, false)
-			# Top bridge + brass fork crown (no fat cyan jar hat mid-FOV)
-			_add_mesh_box(root, Vector3(0, 1.65, 0), Vector3(0.75, 0.05, 0.35), mat_iron)
-			_add_mesh_box(root, Vector3(0, 1.7, 0), Vector3(0.6, 0.03, 0.28), mat_br_d)
-			# Small amber sample vial (not cyan game hat)
-			_add_mesh_cyl(root, Vector3(0, 1.78, 0.05), 0.045, 0.1, _solid_matte(Color(0.7, 0.52, 0.28), 0.35), false)
-			_add_mesh_cyl(root, Vector3(0, 1.84, 0.05), 0.035, 0.025, mat_br, false)
-			# Tuning-fork prongs (identity of resonator)
-			_add_mesh_box(root, Vector3(-0.04, 1.95, 0.05), Vector3(0.025, 0.22, 0.025), mat_br)
-			_add_mesh_box(root, Vector3(0.04, 1.95, 0.05), Vector3(0.025, 0.22, 0.025), mat_br)
-			_add_mesh_box(root, Vector3(0, 1.82, 0.05), Vector3(0.1, 0.025, 0.025), mat_br_d)
-			top_y = 2.0
-			# Soft warm emission at fork base (not cyan orb)
+				_add_mesh_cyl(root, Vector3(0, y, 0.02), r, 0.028, cm, false)
+				_add_mesh_cyl(root, Vector3(0, y + 0.012, 0.02), r * 0.78, 0.014, mat_cop_l, false)
+				_add_mesh_cyl(root, Vector3(0, y, 0.02), 0.04, 0.022, mat_br_d, false)
+				# Spoke hint (instrument disc, not solid plate stack)
+				for sp in 4:
+					var sa: float = float(sp) * TAU / 4.0 + float(i) * 0.2
+					_add_mesh_box(
+						root,
+						Vector3(cos(sa) * r * 0.55, y, sin(sa) * r * 0.55 + 0.02),
+						Vector3(r * 0.7, 0.01, 0.018),
+						mat_br_d
+					)
+			# Single open cross brace (not dense shelf rails)
+			_add_mesh_box(root, Vector3(0, 0.7, 0.1), Vector3(0.52, 0.022, 0.022), mat_br)
+			_add_mesh_box(root, Vector3(0, 1.1, 0.1), Vector3(0.52, 0.022, 0.022), mat_br)
+			# Small oak gauge box
+			_add_mesh_box(root, Vector3(0.42, 0.48, 0.12), Vector3(0.18, 0.28, 0.22), mat_oak_d)
+			_add_mesh_cyl(root, Vector3(0.42, 0.52, 0.22), 0.04, 0.018, mat_br, false)
+			_add_mesh_cyl(root, Vector3(0.42, 0.62, 0.22), 0.035, 0.016, mat_br_d, false)
+			# Copper feed pipe
+			_add_mesh_cyl(root, Vector3(-0.42, 0.7, 0.08), 0.025, 0.55, mat_cop, false)
+			_add_mesh_cyl(root, Vector3(-0.42, 1.0, 0.16), 0.035, 0.03, mat_br, false)
+			# Slim top bridge (oak + brass, not iron fridge lid)
+			_add_mesh_box(root, Vector3(0, 1.48, 0), Vector3(0.65, 0.04, 0.28), mat_oak)
+			_add_mesh_box(root, Vector3(0, 1.52, 0), Vector3(0.5, 0.025, 0.22), mat_br_d)
+			# Amber vial
+			_add_mesh_cyl(root, Vector3(0, 1.6, 0.02), 0.04, 0.08, _solid_matte(Color(0.7, 0.52, 0.28), 0.35), false)
+			_add_mesh_cyl(root, Vector3(0, 1.66, 0.02), 0.03, 0.02, mat_br, false)
+			# Tall tuning-fork prongs (resonator identity — hero silhouette)
+			_add_mesh_box(root, Vector3(-0.055, 1.9, 0.02), Vector3(0.028, 0.42, 0.028), mat_br_l)
+			_add_mesh_box(root, Vector3(0.055, 1.9, 0.02), Vector3(0.028, 0.42, 0.028), mat_br_l)
+			_add_mesh_box(root, Vector3(0, 1.68, 0.02), Vector3(0.14, 0.03, 0.03), mat_br_d)
+			_add_mesh_box(root, Vector3(0, 1.72, 0.02), Vector3(0.05, 0.08, 0.05), mat_br)
+			top_y = 2.15
+			# Warm emission at fork stem
 			var fork_core := MeshInstance3D.new()
 			var fcm := SphereMesh.new()
-			fcm.radius = 0.03
-			fcm.height = 0.06
+			fcm.radius = 0.028
+			fcm.height = 0.055
 			fork_core.mesh = fcm
 			var fcmat := StandardMaterial3D.new()
 			fcmat.albedo_color = Color(0.95, 0.75, 0.4)
 			fcmat.emission_enabled = true
 			fcmat.emission = Color(0.9, 0.65, 0.3)
-			fcmat.emission_energy_multiplier = 1.2
+			fcmat.emission_energy_multiplier = 1.35
 			fcmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			fork_core.material_override = fcmat
-			fork_core.position = Vector3(0, 1.82, 0.05)
+			fork_core.position = Vector3(0, 1.72, 0.02)
 			root.add_child(fork_core)
 		_:
 			# Leyden / glass-stack apparatus — solid mats + warm amber terminal (not cyan hat)
