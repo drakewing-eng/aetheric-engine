@@ -802,8 +802,8 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.75},
 			{"kind": "plant", "pos": [1.6, 0.0, 3.35], "scale": 0.75, "seed": 10,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.7, "height": 0.95},
-			# One still-life table by south bench — lamp beside table (not under apron)
-			{"kind": "side_table", "pos": [-0.15, 0.0, -2.5], "yaw": 5.0, "seed": 3},
+			# Loop 166: botanical still-life (seed 6 → dress vase) not cube-book stack
+			{"kind": "side_table", "pos": [-0.15, 0.0, -2.5], "yaw": 5.0, "seed": 6},
 			{"kind": "oil_lamp", "pos": [-0.75, 0.0, -2.35], "height": 0.78, "seed": 0},
 			# Classical urns at corners (not mid-path)
 			{"kind": "urn", "pos": [3.45, 0.0, -1.1], "scale": 1.0, "seed": 0},

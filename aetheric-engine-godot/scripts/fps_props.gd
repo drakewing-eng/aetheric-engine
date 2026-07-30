@@ -1059,20 +1059,20 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.22, 0.02, 0.1), 0.04, 0.04, MAHOGANY, true)
 		_add_cylinder(root, Vector3(0.0, 0.02, -0.06), 0.04, 0.04, MAHOGANY, true)
 		_add_box(root, Vector3(0, 0.28, 0.06), Vector3(0.42, 0.03, 0.14), MAHOGANY, false, 0.48)
-	# Loop 126 top dressing — candlestick / Argand / books / letters (never brass coin tower)
+	# Loop 126/166 top dressing — thin leather folios (not Minecraft cubes)
 	var top_y := 0.69
 	if prop.get("bare", false):
 		_add_contact_shadow(root, 0.34, 0.34)
 		return root
 	if dress == 0:
-		# Loop 154 mini Argand: thin base + thimble font + tall glass (not fat barrel)
+		# Loop 154 mini Argand + thin octavo (not fat book brick)
 		_add_cylinder(root, Vector3(0, top_y + 0.015, 0), 0.045, 0.028, MAHOGANY_DARK, false, 0.5)
 		_add_cylinder(root, Vector3(0, top_y + 0.05, 0), 0.04, 0.045, Color(0.48, 0.34, 0.16), false, 0.4, true)
 		_add_cylinder(root, Vector3(0, top_y + 0.08, 0), 0.032, 0.018, BRASS.darkened(0.18), false, 0.32, true)
 		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.028, 0.2, Color(0.95, 0.78, 0.42, 0.42), false, 0.12)
 		_add_cylinder(root, Vector3(0, top_y + 0.2, 0), 0.018, 0.16, Color(1.0, 0.9, 0.58, 0.28), false, 0.1)
-		_add_sphere_blob(root, Vector3(0, top_y + 0.12, 0), 0.016, Color(1.0, 0.82, 0.4))
-		_add_box(root, Vector3(0.12, top_y + 0.04, 0.05), Vector3(0.1, 0.1, 0.08), _book_color(2 + seed0), false)
+		_add_cylinder(root, Vector3(0, top_y + 0.12, 0), 0.014, 0.02, Color(1.0, 0.82, 0.4), false, 0.35)
+		_add_table_folio(root, Vector3(0.12, top_y + 0.02, 0.04), seed0 + 2, 0.0)
 		var lamp := OmniLight3D.new()
 		lamp.light_color = Color(1.0, 0.85, 0.55)
 		lamp.light_energy = 0.55
@@ -1080,21 +1080,19 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		lamp.position = Vector3(0, top_y + 0.22, 0)
 		root.add_child(lamp)
 	elif dress == 1:
-		# Book stack + cream crock (no metal tower)
-		_add_box(root, Vector3(-0.05, top_y + 0.01, 0.02), Vector3(0.14, 0.05, 0.18), _book_color(seed0), false)
-		_add_box(root, Vector3(0.02, top_y + 0.06, 0.0), Vector3(0.12, 0.04, 0.16), _book_color(seed0 + 3), false)
-		_add_box(root, Vector3(0.08, top_y + 0.11, -0.02), Vector3(0.1, 0.035, 0.14), _book_color(seed0 + 5), false)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.1), 0.04, 0.1, CREAM.darkened(0.1), false, 0.75)
-		_add_cylinder(root, Vector3(0.12, top_y + 0.12, 0.1), 0.03, 0.03, CREAM.darkened(0.18), false, 0.75)
+		# Stacked thin folios + cream crock (loop 166 — not colored cubes)
+		_add_table_folio_stack(root, Vector3(-0.04, top_y + 0.01, 0.0), seed0, 3)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
+		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Porcelain vase + restrained bloom
+		# Porcelain vase + restrained bloom (cylinders only — no foliage sphere blobs)
 		_add_cylinder(root, Vector3(0, top_y + 0.03, 0), 0.045, 0.04, CREAM.darkened(0.12), false, 0.7)
 		_add_cylinder(root, Vector3(0, top_y + 0.1, 0), 0.06, 0.12, CREAM.darkened(0.05), false, 0.7)
 		_add_cylinder(root, Vector3(0, top_y + 0.18, 0), 0.045, 0.04, CREAM, false, 0.7)
 		_add_cylinder(root, Vector3(0.01, top_y + 0.26, 0.01), 0.012, 0.12, Color(0.22, 0.35, 0.16), false, 0.8)
-		_add_sphere_blob(root, Vector3(0.03, top_y + 0.32, 0.02), 0.028, Color(0.62, 0.22, 0.22))
-		_add_sphere_blob(root, Vector3(-0.02, top_y + 0.3, -0.01), 0.022, Color(0.72, 0.55, 0.28))
-		_add_sphere_blob(root, Vector3(0.0, top_y + 0.34, -0.02), 0.02, Color(0.55, 0.2, 0.25))
+		_add_cylinder(root, Vector3(0.03, top_y + 0.32, 0.02), 0.022, 0.03, Color(0.62, 0.22, 0.22), false, 0.85)
+		_add_cylinder(root, Vector3(-0.02, top_y + 0.3, -0.01), 0.018, 0.025, Color(0.72, 0.55, 0.28), false, 0.85)
+		_add_cylinder(root, Vector3(0.0, top_y + 0.34, -0.02), 0.016, 0.022, Color(0.55, 0.2, 0.25), false, 0.85)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
@@ -4512,6 +4510,36 @@ static func _book_color(seed: int) -> Color:
 		Color(0.18, 0.14, 0.10),  # black morocco
 	]
 	return hues[seed % hues.size()]
+
+
+static func _add_table_folio(root: Node3D, pos: Vector3, seed0: int, yaw_deg: float = 0.0) -> void:
+	## Single thin leather folio on a table — spine + gilt edge (not a cube).
+	var col := _book_color(seed0)
+	var node := Node3D.new()
+	node.position = pos
+	node.rotation_degrees.y = yaw_deg
+	root.add_child(node)
+	# Lying flat: height is book thickness
+	_add_box(node, Vector3(0, 0.012, 0), Vector3(0.12, 0.022, 0.16), col, false, 0.68)
+	# Gilt page edge
+	_add_box(node, Vector3(0.055, 0.012, 0), Vector3(0.008, 0.018, 0.14), BRASS.lightened(0.05), false, 0.35)
+	# Spine band
+	_add_box(node, Vector3(-0.055, 0.012, 0), Vector3(0.012, 0.02, 0.15), col.darkened(0.12), false, 0.65)
+
+
+static func _add_table_folio_stack(root: Node3D, pos: Vector3, seed0: int, count: int = 3) -> void:
+	## Stacked thin folios with slight offsets — conservatory/library table dress.
+	var n := clampi(count, 2, 4)
+	for i in n:
+		var ox := float((i + seed0) % 3) * 0.012 - 0.012
+		var oz := float((i * 2 + seed0) % 3) * 0.01 - 0.01
+		var yaw := float((i + seed0) % 5) * 4.0 - 8.0
+		_add_table_folio(
+			root,
+			pos + Vector3(ox, float(i) * 0.024, oz),
+			seed0 + i * 3,
+			yaw
+		)
 
 static func _load_tex(path: String) -> Texture2D:
 	if path == "":
