@@ -1188,24 +1188,37 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 			_add_mesh_cyl(root, Vector3(leg.x, 0.02, leg.z), 0.04, 0.04, mat_ml, false)
 		_add_mesh_box(root, Vector3(0, 0.35, 0.08), Vector3(0.7, 0.03, 0.15), mat_m)
 	var ty := top_y + 0.05
-	# Loop 122 dressing — period candlesticks / miniature Argand (never gold coin stacks)
+	# Loop 196: dress kits solid mats (0/1/3 join kit 2)
+	var mat_d_md := _solid_matte(Color(0.18, 0.09, 0.05), 0.78)
+	var mat_d_m := _solid_matte(Color(0.3, 0.14, 0.08), 0.72)
+	var mat_d_paper := _solid_matte(Color(0.84, 0.78, 0.62), 0.92)
+	var mat_d_paper_d := _solid_matte(Color(0.76, 0.7, 0.54), 0.92)
+	var mat_d_cream := _solid_matte(Color(0.82, 0.76, 0.64), 0.9)
+	var mat_d_cream_d := _solid_matte(Color(0.7, 0.64, 0.52), 0.9)
+	var mat_d_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_d_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_d_candle := _solid_matte(Color(0.95, 0.82, 0.45), 0.7)
+	var mat_d_clock := _solid_matte(Color(0.88, 0.86, 0.78), 0.55)
+	var mat_d_hat := _solid_matte(Color(0.55, 0.28, 0.18), 0.88)
+	var mat_d_hat_d := _solid_matte(Color(0.48, 0.24, 0.14), 0.9)
+	var mat_d_silver := _solid_metal(Color(0.65, 0.65, 0.68), 0.35)
+	var mat_d_silver_l := _solid_metal(Color(0.75, 0.75, 0.78), 0.32)
+	var mat_d_seal := _solid_matte(Color(0.55, 0.12, 0.1), 0.85)
 	if dress == 0:
 		# Card tray + dual candlesticks + carriage clock
-		_add_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.36, 0.03, 0.22), MAHOGANY_DARK, false, 0.4)
-		_add_box(root, Vector3(-0.35, ty + 0.03, 0.05), Vector3(0.28, 0.01, 0.16), PAPER, false)
-		_add_box(root, Vector3(-0.32, ty + 0.045, 0.02), Vector3(0.2, 0.008, 0.11), PAPER.darkened(0.08), false)
-		_add_box(root, Vector3(0.05, ty, 0.08), Vector3(0.14, 0.02, 0.09), CREAM.darkened(0.12), false, 0.9)
-		# Pair of candlesticks: dark iron/mahogany base + cream taper + flame
+		_add_mesh_box(root, Vector3(-0.35, ty, 0.05), Vector3(0.36, 0.03, 0.22), mat_d_md)
+		_add_mesh_box(root, Vector3(-0.35, ty + 0.03, 0.05), Vector3(0.28, 0.01, 0.16), mat_d_paper)
+		_add_mesh_box(root, Vector3(-0.32, ty + 0.045, 0.02), Vector3(0.2, 0.008, 0.11), mat_d_paper_d)
+		_add_mesh_box(root, Vector3(0.05, ty, 0.08), Vector3(0.14, 0.02, 0.09), mat_d_cream_d)
 		for sx in [-0.15, 0.42]:
-			_add_cylinder(root, Vector3(sx, ty + 0.02, -0.05), 0.055, 0.04, MAHOGANY_DARK, false, 0.5)
-			_add_cylinder(root, Vector3(sx, ty + 0.08, -0.05), 0.035, 0.08, MAHOGANY, false, 0.48)
-			_add_cylinder(root, Vector3(sx, ty + 0.14, -0.05), 0.04, 0.03, BRASS.darkened(0.2), false, 0.35, true)
-			_add_cylinder(root, Vector3(sx, ty + 0.26, -0.05), 0.018, 0.22, CANDLE, false, 0.6)
+			_add_mesh_cyl(root, Vector3(sx, ty + 0.02, -0.05), 0.055, 0.04, mat_d_md, false)
+			_add_mesh_cyl(root, Vector3(sx, ty + 0.08, -0.05), 0.035, 0.08, mat_d_m, false)
+			_add_mesh_cyl(root, Vector3(sx, ty + 0.14, -0.05), 0.04, 0.03, mat_d_br_d, false)
+			_add_mesh_cyl(root, Vector3(sx, ty + 0.26, -0.05), 0.018, 0.22, mat_d_candle, false)
 			_add_sphere_blob(root, Vector3(sx, ty + 0.4, -0.05), 0.025, Color(1.0, 0.78, 0.35))
-		# Carriage clock (square face — not brass cylinder stack)
-		_add_box(root, Vector3(0.12, ty + 0.08, -0.12), Vector3(0.1, 0.14, 0.06), BRASS.darkened(0.15), false, 0.35)
-		_add_box(root, Vector3(0.12, ty + 0.08, -0.09), Vector3(0.07, 0.1, 0.02), Color(0.88, 0.86, 0.78), false, 0.5)
-		_add_box(root, Vector3(0.12, ty + 0.16, -0.12), Vector3(0.08, 0.02, 0.05), BRASS.darkened(0.1), false, 0.35)
+		_add_mesh_box(root, Vector3(0.12, ty + 0.08, -0.12), Vector3(0.1, 0.14, 0.06), mat_d_br_d)
+		_add_mesh_box(root, Vector3(0.12, ty + 0.08, -0.09), Vector3(0.07, 0.1, 0.02), mat_d_clock)
+		_add_mesh_box(root, Vector3(0.12, ty + 0.16, -0.12), Vector3(0.08, 0.02, 0.05), mat_d_br)
 		var lamp0 := OmniLight3D.new()
 		lamp0.light_color = Color(1.0, 0.85, 0.55)
 		lamp0.light_energy = 0.55
@@ -1213,18 +1226,17 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		lamp0.position = Vector3(0.42, ty + 0.38, -0.05)
 		root.add_child(lamp0)
 	elif dress == 1:
-		# Hat box + gloves + single brass candlestick with drip pan
-		_add_cylinder(root, Vector3(-0.35, ty + 0.1, 0), 0.14, 0.18, Color(0.55, 0.28, 0.18), false, 0.75)
-		_add_cylinder(root, Vector3(-0.35, ty + 0.2, 0), 0.15, 0.03, Color(0.48, 0.24, 0.14), false, 0.7)
-		_add_box(root, Vector3(0.05, ty, 0.08), Vector3(0.18, 0.025, 0.12), CREAM.darkened(0.15), false, 0.9)
-		_add_box(root, Vector3(0.07, ty + 0.02, 0.05), Vector3(0.12, 0.015, 0.08), CREAM.darkened(0.2), false, 0.9)
-		# Candlestick: wide drip pan + short stem + cream taper
-		_add_cylinder(root, Vector3(0.4, ty + 0.02, 0), 0.07, 0.03, BRASS.darkened(0.15), false, 0.35, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.08, 0), 0.025, 0.1, BRASS.darkened(0.2), false, 0.35, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.14, 0), 0.05, 0.025, BRASS.darkened(0.1), false, 0.32, true)
-		_add_cylinder(root, Vector3(0.4, ty + 0.28, 0), 0.02, 0.24, CANDLE, false, 0.6)
+		# Hat box + gloves + brass candlestick
+		_add_mesh_cyl(root, Vector3(-0.35, ty + 0.1, 0), 0.14, 0.18, mat_d_hat, false)
+		_add_mesh_cyl(root, Vector3(-0.35, ty + 0.2, 0), 0.15, 0.03, mat_d_hat_d, false)
+		_add_mesh_box(root, Vector3(0.05, ty, 0.08), Vector3(0.18, 0.025, 0.12), mat_d_cream_d)
+		_add_mesh_box(root, Vector3(0.07, ty + 0.02, 0.05), Vector3(0.12, 0.015, 0.08), mat_d_cream)
+		_add_mesh_cyl(root, Vector3(0.4, ty + 0.02, 0), 0.07, 0.03, mat_d_br_d, false)
+		_add_mesh_cyl(root, Vector3(0.4, ty + 0.08, 0), 0.025, 0.1, mat_d_br_d, false)
+		_add_mesh_cyl(root, Vector3(0.4, ty + 0.14, 0), 0.05, 0.025, mat_d_br, false)
+		_add_mesh_cyl(root, Vector3(0.4, ty + 0.28, 0), 0.02, 0.24, mat_d_candle, false)
 		_add_sphere_blob(root, Vector3(0.4, ty + 0.42, 0), 0.028, Color(1.0, 0.78, 0.4))
-		_add_box(root, Vector3(0.0, ty, -0.1), Vector3(0.22, 0.04, 0.14), MAHOGANY_DARK, false, 0.5)
+		_add_mesh_box(root, Vector3(0.0, ty, -0.1), Vector3(0.22, 0.04, 0.14), mat_d_md)
 		var lamp1 := OmniLight3D.new()
 		lamp1.light_color = Color(1.0, 0.82, 0.5)
 		lamp1.light_energy = 0.4
@@ -1258,19 +1270,33 @@ static func _make_hall_table(prop: Dictionary) -> Node3D:
 		_add_mesh_box(root, Vector3(0.0, ty + 0.01, -0.08), Vector3(0.14, 0.025, 0.09), _solid_matte(MAHOGANY_DARK, 0.55))
 		_add_mesh_cyl(root, Vector3(0.02, ty + 0.06, -0.08), 0.014, 0.08, _solid_matte(INK, 0.6), false)
 	else:
-		# Silver tray + correspondence + miniature Argand (wood base + amber glass)
-		_add_box(root, Vector3(0.0, ty, 0.0), Vector3(0.55, 0.02, 0.32), Color(0.65, 0.65, 0.68), false, 0.35)
-		_add_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), Color(0.75, 0.75, 0.78), false, 0.32)
-		_add_box(root, Vector3(-0.1, ty + 0.03, 0.02), Vector3(0.2, 0.01, 0.14), PAPER, false)
-		_add_box(root, Vector3(-0.08, ty + 0.04, 0.0), Vector3(0.16, 0.008, 0.1), PAPER.darkened(0.05), false)
-		# Loop 154 mini Argand on tray: thimble font + tall glass
-		_add_cylinder(root, Vector3(0.18, ty + 0.02, -0.05), 0.038, 0.028, MAHOGANY_DARK, false, 0.5)
-		_add_cylinder(root, Vector3(0.18, ty + 0.055, -0.05), 0.035, 0.04, Color(0.48, 0.34, 0.16), false, 0.4, true)
-		_add_cylinder(root, Vector3(0.18, ty + 0.085, -0.05), 0.028, 0.016, BRASS.darkened(0.18), false, 0.32, true)
-		_add_cylinder(root, Vector3(0.18, ty + 0.2, -0.05), 0.026, 0.18, Color(0.95, 0.78, 0.42, 0.42), false, 0.12)
-		_add_cylinder(root, Vector3(0.18, ty + 0.2, -0.05), 0.016, 0.14, Color(1.0, 0.9, 0.58, 0.28), false, 0.1)
+		# Silver tray + correspondence + mini Argand (solid mats)
+		_add_mesh_box(root, Vector3(0.0, ty, 0.0), Vector3(0.55, 0.02, 0.32), mat_d_silver)
+		_add_mesh_box(root, Vector3(0.0, ty + 0.015, 0.0), Vector3(0.5, 0.01, 0.28), mat_d_silver_l)
+		_add_mesh_box(root, Vector3(-0.1, ty + 0.03, 0.02), Vector3(0.2, 0.01, 0.14), mat_d_paper)
+		_add_mesh_box(root, Vector3(-0.08, ty + 0.04, 0.0), Vector3(0.16, 0.008, 0.1), mat_d_paper_d)
+		_add_mesh_cyl(root, Vector3(0.18, ty + 0.02, -0.05), 0.038, 0.028, mat_d_md, false)
+		_add_mesh_cyl(root, Vector3(0.18, ty + 0.055, -0.05), 0.035, 0.04, _solid_matte(Color(0.48, 0.34, 0.16), 0.75), false)
+		_add_mesh_cyl(root, Vector3(0.18, ty + 0.085, -0.05), 0.028, 0.016, mat_d_br_d, false)
+		# Amber glass chimney (alpha emission — keep untextured color path via solid-like mat)
+		var glass := MeshInstance3D.new()
+		var gmesh := CylinderMesh.new()
+		gmesh.top_radius = 0.026
+		gmesh.bottom_radius = 0.026
+		gmesh.height = 0.18
+		glass.mesh = gmesh
+		var gmat := StandardMaterial3D.new()
+		gmat.albedo_color = Color(0.95, 0.78, 0.42, 0.42)
+		gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		gmat.emission_enabled = true
+		gmat.emission = Color(1.0, 0.85, 0.5)
+		gmat.emission_energy_multiplier = 0.6
+		gmat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		glass.material_override = gmat
+		glass.position = Vector3(0.18, ty + 0.2, -0.05)
+		root.add_child(glass)
 		_add_sphere_blob(root, Vector3(0.18, ty + 0.12, -0.05), 0.014, Color(1.0, 0.8, 0.38))
-		_add_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), Color(0.55, 0.12, 0.1), false)
+		_add_mesh_box(root, Vector3(0.35, ty + 0.02, 0.08), Vector3(0.12, 0.04, 0.08), mat_d_seal)
 		var lamp3 := OmniLight3D.new()
 		lamp3.light_color = Color(1.0, 0.85, 0.55)
 		lamp3.light_energy = 0.45
@@ -2852,91 +2878,91 @@ static func _make_workbench(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_tool_rack(prop: Dictionary) -> Node3D:
-	## Wall rack — loop 120: readable tool heads (not stick bars).
+	## Loop 196: wall tool rack — solid-mat frame + iron/copper tool heads (not stick washout).
 	var root := Node3D.new()
 	root.name = "ToolRack"
 	var seed0: int = int(prop.get("seed", 0))
-	var wood_h := Color(0.32, 0.2, 0.1)
-	var wood_l := Color(0.42, 0.28, 0.14)
-	# Frame + peg rails
-	_add_box(root, Vector3(0, 1.35, 0), Vector3(1.55, 0.1, 0.12), MAHOGANY_DARK, true, 0.5)
-	_add_box(root, Vector3(0, 0.55, 0), Vector3(1.55, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
-	_add_box(root, Vector3(-0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), MAHOGANY, true, 0.5)
-	_add_box(root, Vector3(0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), MAHOGANY, true, 0.5)
-	# Back board so tools read against dark oak
-	_add_box(root, Vector3(0, 0.95, -0.04), Vector3(1.4, 0.85, 0.03), OAK.darkened(0.15), false, 0.55)
-	# 6 pegs, each tool kind unique by (seed + slot)
+	var mat_frame := _solid_matte(Color(0.22, 0.12, 0.07), 0.8)
+	var mat_side := _solid_matte(Color(0.32, 0.16, 0.09), 0.78)
+	var mat_back := _solid_matte(Color(0.36, 0.24, 0.12), 0.82)
+	var mat_wood_h := _solid_matte(Color(0.32, 0.2, 0.1), 0.8)
+	var mat_wood_l := _solid_matte(Color(0.42, 0.28, 0.14), 0.78)
+	var mat_oak_l := _solid_matte(Color(0.5, 0.38, 0.22), 0.8)
+	var mat_iron := _solid_metal(Color(0.36, 0.36, 0.38), 0.48)
+	var mat_iron_l := _solid_metal(Color(0.48, 0.48, 0.5), 0.45)
+	var mat_iron_d := _solid_metal(Color(0.28, 0.28, 0.3), 0.52)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
+	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
+	_add_mesh_box(root, Vector3(0, 1.35, 0), Vector3(1.55, 0.1, 0.12), mat_frame)
+	_add_mesh_box(root, Vector3(0, 0.55, 0), Vector3(1.55, 0.08, 0.12), mat_frame)
+	_add_mesh_box(root, Vector3(-0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), mat_side)
+	_add_mesh_box(root, Vector3(0.72, 0.95, 0), Vector3(0.08, 0.9, 0.1), mat_side)
+	_add_mesh_box(root, Vector3(0, 0.95, -0.04), Vector3(1.4, 0.85, 0.03), mat_back)
 	for i in 6:
 		var x := -0.55 + float(i) * 0.22
-		_add_cylinder(root, Vector3(x, 1.28, 0.1), 0.018, 0.12, wood_l, false, 0.55)
+		_add_mesh_cyl(root, Vector3(x, 1.28, 0.1), 0.018, 0.12, mat_wood_l, false)
 		var kind := (i + seed0 * 3) % 6
 		match kind:
-			0:  # claw hammer — thick handle + peen + claw fork
-				_add_cylinder(root, Vector3(x, 0.95, 0.12), 0.028, 0.52, wood_h, false, 0.55)
-				_add_box(root, Vector3(x, 0.68, 0.16), Vector3(0.22, 0.1, 0.09), IRON, false, 0.35)
-				_add_box(root, Vector3(x + 0.12, 0.68, 0.16), Vector3(0.08, 0.08, 0.07), IRON.lightened(0.08), false, 0.35)
-				# Claw
-				_add_box(root, Vector3(x - 0.12, 0.66, 0.16), Vector3(0.08, 0.05, 0.06), IRON.darkened(0.05), false, 0.35)
-				_add_box(root, Vector3(x - 0.16, 0.62, 0.16), Vector3(0.04, 0.08, 0.05), IRON, false, 0.35)
-				_add_box(root, Vector3(x - 0.16, 0.7, 0.16), Vector3(0.04, 0.08, 0.05), IRON, false, 0.35)
-			1:  # Rooke open-end wrench — wide jaw
-				_add_box(root, Vector3(x, 0.95, 0.12), Vector3(0.04, 0.5, 0.04), IRON.darkened(0.08), false, 0.4)
-				_add_box(root, Vector3(x, 0.68, 0.16), Vector3(0.2, 0.08, 0.08), IRON, false, 0.35)
-				# Open jaw fork
-				_add_box(root, Vector3(x + 0.12, 0.72, 0.18), Vector3(0.06, 0.1, 0.05), IRON.lightened(0.1), false, 0.35)
-				_add_box(root, Vector3(x + 0.12, 0.64, 0.18), Vector3(0.06, 0.1, 0.05), IRON.lightened(0.1), false, 0.35)
-				_add_box(root, Vector3(x + 0.16, 0.68, 0.18), Vector3(0.04, 0.05, 0.05), IRON, false, 0.35)
-			2:  # blacksmith tongs — crossed arms + tips
-				_add_box(root, Vector3(x - 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), IRON, false, 0.4)
-				_add_box(root, Vector3(x + 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), IRON, false, 0.4)
-				_add_box(root, Vector3(x, 1.15, 0.12), Vector3(0.12, 0.04, 0.04), IRON.darkened(0.05), false, 0.4)
-				_add_box(root, Vector3(x - 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), IRON.lightened(0.08), false, 0.35)
-				_add_box(root, Vector3(x + 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), IRON.lightened(0.08), false, 0.35)
-			3:  # wood plane — body + tote + iron blade
-				_add_box(root, Vector3(x, 0.85, 0.14), Vector3(0.12, 0.1, 0.32), wood_l.lightened(0.08), false, 0.55)
-				_add_box(root, Vector3(x, 0.95, 0.05), Vector3(0.08, 0.1, 0.06), wood_h, false, 0.55)
-				_add_box(root, Vector3(x, 0.82, 0.26), Vector3(0.1, 0.04, 0.08), IRON, false, 0.4)
-				_add_box(root, Vector3(x, 0.88, 0.14), Vector3(0.06, 0.03, 0.12), BRASS.darkened(0.15), false, 0.35)
-			4:  # half-round file — wood grip + tapered blade with teeth ticks
-				_add_cylinder(root, Vector3(x, 1.05, 0.12), 0.03, 0.18, wood_h, false, 0.55)
-				_add_box(root, Vector3(x, 0.78, 0.12), Vector3(0.045, 0.42, 0.04), IRON.lightened(0.12), false, 0.4)
+			0:  # claw hammer
+				_add_mesh_cyl(root, Vector3(x, 0.95, 0.12), 0.028, 0.52, mat_wood_h, false)
+				_add_mesh_box(root, Vector3(x, 0.68, 0.16), Vector3(0.22, 0.1, 0.09), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.12, 0.68, 0.16), Vector3(0.08, 0.08, 0.07), mat_iron_l)
+				_add_mesh_box(root, Vector3(x - 0.12, 0.66, 0.16), Vector3(0.08, 0.05, 0.06), mat_iron_d)
+				_add_mesh_box(root, Vector3(x - 0.16, 0.62, 0.16), Vector3(0.04, 0.08, 0.05), mat_iron)
+				_add_mesh_box(root, Vector3(x - 0.16, 0.7, 0.16), Vector3(0.04, 0.08, 0.05), mat_iron)
+			1:  # Rooke open-end wrench
+				_add_mesh_box(root, Vector3(x, 0.95, 0.12), Vector3(0.04, 0.5, 0.04), mat_iron_d)
+				_add_mesh_box(root, Vector3(x, 0.68, 0.16), Vector3(0.2, 0.08, 0.08), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.12, 0.72, 0.18), Vector3(0.06, 0.1, 0.05), mat_iron_l)
+				_add_mesh_box(root, Vector3(x + 0.12, 0.64, 0.18), Vector3(0.06, 0.1, 0.05), mat_iron_l)
+				_add_mesh_box(root, Vector3(x + 0.16, 0.68, 0.18), Vector3(0.04, 0.05, 0.05), mat_iron)
+			2:  # tongs
+				_add_mesh_box(root, Vector3(x - 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), mat_iron)
+				_add_mesh_box(root, Vector3(x + 0.035, 0.95, 0.12), Vector3(0.028, 0.55, 0.028), mat_iron)
+				_add_mesh_box(root, Vector3(x, 1.15, 0.12), Vector3(0.12, 0.04, 0.04), mat_iron_d)
+				_add_mesh_box(root, Vector3(x - 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), mat_iron_l)
+				_add_mesh_box(root, Vector3(x + 0.05, 0.65, 0.16), Vector3(0.06, 0.04, 0.08), mat_iron_l)
+			3:  # wood plane
+				_add_mesh_box(root, Vector3(x, 0.85, 0.14), Vector3(0.12, 0.1, 0.32), mat_wood_l)
+				_add_mesh_box(root, Vector3(x, 0.95, 0.05), Vector3(0.08, 0.1, 0.06), mat_wood_h)
+				_add_mesh_box(root, Vector3(x, 0.82, 0.26), Vector3(0.1, 0.04, 0.08), mat_iron)
+				_add_mesh_box(root, Vector3(x, 0.88, 0.14), Vector3(0.06, 0.03, 0.12), mat_br_d)
+			4:  # file
+				_add_mesh_cyl(root, Vector3(x, 1.05, 0.12), 0.03, 0.18, mat_wood_h, false)
+				_add_mesh_box(root, Vector3(x, 0.78, 0.12), Vector3(0.045, 0.42, 0.04), mat_iron_l)
 				for ti in 4:
-					_add_box(root, Vector3(x + 0.025, 0.65 + float(ti) * 0.08, 0.12), Vector3(0.01, 0.02, 0.035), IRON, false, 0.4)
-			_:  # copper-headed mallet — turned handle + fat copper head
-				_add_cylinder(root, Vector3(x, 0.98, 0.12), 0.03, 0.42, wood_l, false, 0.55)
-				_add_cylinder(root, Vector3(x, 0.72, 0.16), 0.09, 0.14, COPPER, false, 0.35, true)
-				_add_cylinder(root, Vector3(x, 0.72, 0.16), 0.1, 0.04, COPPER.darkened(0.1), false, 0.35, true)
-	# Lower pegs: shorter seed-unique set
+					_add_mesh_box(root, Vector3(x + 0.025, 0.65 + float(ti) * 0.08, 0.12), Vector3(0.01, 0.02, 0.035), mat_iron)
+			_:  # copper mallet
+				_add_mesh_cyl(root, Vector3(x, 0.98, 0.12), 0.03, 0.42, mat_wood_l, false)
+				_add_mesh_cyl(root, Vector3(x, 0.72, 0.16), 0.09, 0.14, mat_cop, false)
+				_add_mesh_cyl(root, Vector3(x, 0.72, 0.16), 0.1, 0.04, mat_cop_d, false)
 	for i in 3:
 		var x2 := -0.35 + float(i) * 0.35
 		var kind2 := (i + seed0 + 2) % 4
-		_add_cylinder(root, Vector3(x2, 0.58, 0.1), 0.014, 0.1, wood_l, false, 0.55)
+		_add_mesh_cyl(root, Vector3(x2, 0.58, 0.1), 0.014, 0.1, mat_wood_l, false)
 		if kind2 == 0:
-			# Small hatchet
-			_add_box(root, Vector3(x2, 0.38, 0.12), Vector3(0.035, 0.3, 0.035), wood_h, false, 0.55)
-			_add_box(root, Vector3(x2, 0.24, 0.16), Vector3(0.14, 0.08, 0.06), IRON, false, 0.4)
-			_add_box(root, Vector3(x2 + 0.08, 0.24, 0.16), Vector3(0.06, 0.1, 0.04), IRON.lightened(0.08), false, 0.4)
+			_add_mesh_box(root, Vector3(x2, 0.38, 0.12), Vector3(0.035, 0.3, 0.035), mat_wood_h)
+			_add_mesh_box(root, Vector3(x2, 0.24, 0.16), Vector3(0.14, 0.08, 0.06), mat_iron)
+			_add_mesh_box(root, Vector3(x2 + 0.08, 0.24, 0.16), Vector3(0.06, 0.1, 0.04), mat_iron_l)
 		elif kind2 == 1:
-			# Turn-key / driver
-			_add_cylinder(root, Vector3(x2, 0.4, 0.14), 0.02, 0.32, BRASS.darkened(0.1), false, 0.35, true)
-			_add_box(root, Vector3(x2, 0.55, 0.14), Vector3(0.1, 0.03, 0.03), BRASS, false, 0.3)
+			_add_mesh_cyl(root, Vector3(x2, 0.4, 0.14), 0.02, 0.32, mat_br_d, false)
+			_add_mesh_box(root, Vector3(x2, 0.55, 0.14), Vector3(0.1, 0.03, 0.03), mat_br)
 		elif kind2 == 2:
-			# Cold chisel
-			_add_box(root, Vector3(x2, 0.4, 0.14), Vector3(0.05, 0.28, 0.05), IRON, false, 0.4)
-			_add_box(root, Vector3(x2, 0.24, 0.14), Vector3(0.06, 0.04, 0.04), IRON.lightened(0.15), false, 0.4)
+			_add_mesh_box(root, Vector3(x2, 0.4, 0.14), Vector3(0.05, 0.28, 0.05), mat_iron)
+			_add_mesh_box(root, Vector3(x2, 0.24, 0.14), Vector3(0.06, 0.04, 0.04), mat_iron_l)
 		else:
-			# Small copper boss / punch
-			_add_cylinder(root, Vector3(x2, 0.4, 0.14), 0.025, 0.28, IRON.darkened(0.05), false, 0.4)
-			_add_cylinder(root, Vector3(x2, 0.28, 0.14), 0.05, 0.08, COPPER, false, 0.35, true)
-	# Bits / stock on rail shelf
+			_add_mesh_cyl(root, Vector3(x2, 0.4, 0.14), 0.025, 0.28, mat_iron_d, false)
+			_add_mesh_cyl(root, Vector3(x2, 0.28, 0.14), 0.05, 0.08, mat_cop, false)
 	if seed0 % 2 == 0:
-		_add_box(root, Vector3(-0.35, 0.62, 0.1), Vector3(0.1, 0.04, 0.08), COPPER.darkened(0.05), false, 0.35)
-		_add_cylinder(root, Vector3(-0.18, 0.64, 0.1), 0.03, 0.08, BRASS, false, 0.3, true)
-		_add_box(root, Vector3(0.0, 0.62, 0.1), Vector3(0.12, 0.03, 0.06), IRON.lightened(0.1), false, 0.4)
+		_add_mesh_box(root, Vector3(-0.35, 0.62, 0.1), Vector3(0.1, 0.04, 0.08), mat_cop_d)
+		_add_mesh_cyl(root, Vector3(-0.18, 0.64, 0.1), 0.03, 0.08, mat_br, false)
+		_add_mesh_box(root, Vector3(0.0, 0.62, 0.1), Vector3(0.12, 0.03, 0.06), mat_iron_l)
 	else:
-		_add_box(root, Vector3(0.15, 0.62, 0.1), Vector3(0.22, 0.05, 0.12), OAK.lightened(0.1), false, 0.55)
-		_add_cylinder(root, Vector3(0.4, 0.64, 0.1), 0.028, 0.08, COPPER, false, 0.35, true)
-		_add_box(root, Vector3(0.5, 0.62, 0.1), Vector3(0.08, 0.04, 0.06), BRASS.darkened(0.1), false, 0.3)
+		_add_mesh_box(root, Vector3(0.15, 0.62, 0.1), Vector3(0.22, 0.05, 0.12), mat_oak_l)
+		_add_mesh_cyl(root, Vector3(0.4, 0.64, 0.1), 0.028, 0.08, mat_cop, false)
+		_add_mesh_box(root, Vector3(0.5, 0.62, 0.1), Vector3(0.08, 0.04, 0.06), mat_br_d)
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:

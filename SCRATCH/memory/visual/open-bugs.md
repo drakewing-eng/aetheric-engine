@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 196)
+
+- **Tool rack residual:** dark frame + stick tools mid-FOV workshop. Solid-mat frame/back + iron hammers/wrenches/tongs/planes + copper mallets.  
+- **Hall dress kits 0/1/3 residual:** candlesticks/hat box/silver tray still `_mat_for` washout. Solid-mat trays, candles, clock, hat box, silver Argand.  
+
 ## Status update 2026-07-30 (loop 195)
 
 - **Bookshelf residual:** case + spines texture-washed mid-FOV drawing/morning. Solid-mat case wood + solid-mat leather spines/gilt + brass bookends.  
