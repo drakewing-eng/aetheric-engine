@@ -333,8 +333,8 @@ const ROOMS := {
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.65, "height": 0.8},
 			{"kind": "plant", "pos": [-6.2, 0.0, 2.3], "scale": 0.6, "seed": 1,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.55, "height": 0.8},
-			# Freestanding oil lamp south of center (table kits already carry their own lights)
-			{"kind": "oil_lamp", "pos": [-0.55, 0.0, 2.6], "yaw": 15.0, "height": 1.15},
+			# Loop 155: south freestanding lamps off runner (was posts on carpet at kitchen door)
+			{"kind": "oil_lamp", "pos": [-2.6, 0.0, 2.7], "yaw": 15.0, "height": 0.95, "seed": 1},
 			{"kind": "chandelier", "pos": [0.0, 0.0, 0.0], "hang": 3.4},
 			{"kind": "wall_sconce", "pos": [-3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [3.0, 0.0, -4.6], "yaw": 0.0, "height": 2.15},
@@ -360,7 +360,7 @@ const ROOMS := {
 				"col_size": [0.48, 0.92, 0.48],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "oil_lamp", "pos": [0.6, 0.0, 3.5], "yaw": -10.0, "height": 1.1},
+			{"kind": "oil_lamp", "pos": [2.6, 0.0, 3.4], "yaw": -10.0, "height": 0.95, "seed": 2},
 			# Loop 97: upper hall densify (long empty stripe paper between doors)
 			{"kind": "wall_sconce", "pos": [-4.5, 0.0, -2.0], "yaw": 90.0, "height": 2.35},
 			{"kind": "wall_sconce", "pos": [4.5, 0.0, -2.0], "yaw": -90.0, "height": 2.35},
@@ -646,7 +646,7 @@ const ROOMS := {
 				"texture": "res://assets/rooms/textures/rug_persian.jpg",
 			},
 			{"kind": "desk", "pos": [2.2, 0.0, -2.0], "yaw": -90.0},
-			# Loop 135: painted desk chair hero
+			# Loop 135/155: desk chair only (fewer cross_plane chairs → less edge scrap)
 			{
 				"kind": "billboard_prop",
 				"pos": [1.35, 0.0, -2.0],
@@ -661,7 +661,7 @@ const ROOMS := {
 				"mesh_bulk": "chair",
 			},
 			{"kind": "letter_stack", "pos": [2.1, 0.78, -1.75], "yaw": -20.0, "seed": 2},
-			# Armchair reading nook — cross_planes wing (loop 142: kill green slab tower)
+			# Armchair reading nook — wing hero
 			{
 				"kind": "billboard_prop",
 				"pos": [-2.0, 0.0, -0.6],
@@ -677,12 +677,11 @@ const ROOMS := {
 			},
 			{"kind": "side_table", "pos": [-1.1, 0.0, -0.2], "yaw": 20.0, "seed": 5, "bare": true},
 			{"kind": "tea_tray", "pos": [-1.1, 0.68, -0.2], "yaw": 15.0, "seed": 1},
-			{"kind": "oil_lamp", "pos": [-1.0, 0.0, 0.5], "height": 1.05},
-			# Second soft chair + table fill empty SE/centre floor
+			# One soft chair SE (not mid-floor cluster — loop 155 thin)
 			{
 				"kind": "billboard_prop",
-				"pos": [0.6, 0.0, 1.4],
-				"yaw": -140.0,
+				"pos": [1.1, 0.0, 1.5],
+				"yaw": -130.0,
 				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
 				"cross_planes": true,
 				"width": 0.66,
@@ -692,26 +691,13 @@ const ROOMS := {
 				"col_size": [0.48, 0.92, 0.48],
 				"mesh_bulk": "chair",
 			},
-			{"kind": "side_table", "pos": [1.4, 0.0, 1.6], "yaw": -20.0, "seed": 8},
-			{"kind": "letter_stack", "pos": [1.35, 0.68, 1.55], "yaw": 10.0, "seed": 0},
+			{"kind": "side_table", "pos": [1.7, 0.0, 1.7], "yaw": -20.0, "seed": 8},
+			{"kind": "letter_stack", "pos": [1.65, 0.68, 1.65], "yaw": 10.0, "seed": 0},
 			{"kind": "ottoman", "pos": [-1.2, 0.0, -1.5], "yaw": 20.0, "seed": 1,
 				"fabric": Color(0.42, 0.28, 0.22)},
-			# Loop 99: mid-floor sewing/work corner (center shot still sparse)
-			{"kind": "side_table", "pos": [0.2, 0.0, -1.6], "yaw": -10.0, "seed": 9, "bare": true},
-			{"kind": "letter_stack", "pos": [0.15, 0.68, -1.55], "yaw": 25.0, "seed": 3},
-			{
-				"kind": "billboard_prop",
-				"pos": [0.9, 0.0, -1.9],
-				"yaw": -40.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.66,
-				"height": 1.08,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.48, 0.92, 0.48],
-				"mesh_bulk": "chair",
-			},
+			# Centre work table (no extra chair — card scrap was extreme edge-on)
+			{"kind": "side_table", "pos": [0.15, 0.0, -1.5], "yaw": -10.0, "seed": 9, "bare": true},
+			{"kind": "letter_stack", "pos": [0.1, 0.68, -1.45], "yaw": 25.0, "seed": 3},
 			# Plants at corners + window
 			{"kind": "plant", "pos": [3.15, 0.0, 2.4], "scale": 0.95, "seed": 0,
 				"texture": "res://assets/props/plants/plant_palm.png", "width": 0.85, "height": 1.2},
@@ -726,56 +712,25 @@ const ROOMS := {
 			{"kind": "wall_sconce", "pos": [3.5, 0.0, 1.0], "yaw": -90.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [0.0, 0.0, -3.7], "yaw": 0.0, "height": 2.2},
 			{"kind": "wall_sconce", "pos": [2.0, 0.0, 3.6], "yaw": 180.0, "height": 2.15},
-			# Loop 90: NW corner / centre fill (morning_room_center was bare floor + plant)
+			# NW corner still-life
 			{"kind": "side_table", "pos": [-2.6, 0.0, -2.6], "yaw": 35.0, "seed": 3, "bare": true},
-			{"kind": "oil_lamp", "pos": [-2.55, 0.0, -2.55], "yaw": 20.0, "height": 1.0},
 			{"kind": "letter_stack", "pos": [-2.5, 0.68, -2.45], "yaw": -15.0, "seed": 4},
 			{"kind": "bookshelf", "pos": [-3.5, 0.0, 1.0], "yaw": 90.0, "width": 1.15, "height": 1.85, "depth": 0.32, "seed": 5},
 			{"kind": "plant", "pos": [-0.4, 0.0, -2.8], "scale": 0.5, "seed": 4,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.55},
 			{"kind": "wall_sconce", "pos": [-3.5, 0.0, -2.8], "yaw": 90.0, "height": 2.15},
-			# Loop 94: door approach densify (from_north empty floor + wall)
+			# Door approach — table only (no third/fourth cross_plane chair)
 			{"kind": "wall_sconce", "pos": [-1.6, 0.0, 3.75], "yaw": 180.0, "height": 2.15},
 			{"kind": "wall_sconce", "pos": [1.6, 0.0, 3.75], "yaw": 180.0, "height": 2.15},
 			{"kind": "side_table", "pos": [-1.9, 0.0, 2.8], "yaw": 5.0, "seed": 7, "bare": true},
-			{"kind": "oil_lamp", "pos": [-1.85, 0.0, 2.75], "height": 0.95},
 			{"kind": "letter_stack", "pos": [-1.8, 0.68, 2.7], "yaw": 12.0, "seed": 6},
 			{"kind": "plant", "pos": [2.0, 0.0, 2.9], "scale": 0.55, "seed": 5,
 				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.5, "height": 0.6},
-			{
-				"kind": "billboard_prop",
-				"pos": [1.5, 0.0, 2.6],
-				"yaw": -170.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.66,
-				"height": 1.08,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.48, 0.92, 0.48],
-				"mesh_bulk": "chair",
-			},
-			# Loop 116: morning_room_center NE/mid densify (bare floor between armchair & desk)
-			{"kind": "side_table", "pos": [-0.5, 0.0, 0.5], "yaw": -35.0, "seed": 11, "bare": true},
-			{"kind": "letter_stack", "pos": [-0.45, 0.68, 0.45], "yaw": 20.0, "seed": 8},
-			{"kind": "oil_lamp", "pos": [-0.4, 0.0, 0.55], "yaw": 15.0, "height": 0.95},
-			{"kind": "plant", "pos": [0.3, 0.0, 0.9], "scale": 0.48, "seed": 6,
-				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.45, "height": 0.52},
-			{"kind": "ottoman", "pos": [0.2, 0.0, 1.9], "yaw": -30.0, "seed": 2,
+			# Loop 155: clear centre walk — one low ottoman only (no mid oil-lamp forest)
+			{"kind": "ottoman", "pos": [0.15, 0.0, 0.7], "yaw": -30.0, "seed": 2,
 				"fabric": Color(0.36, 0.28, 0.22)},
-			{
-				"kind": "billboard_prop",
-				"pos": [-1.4, 0.0, 1.1],
-				"yaw": 100.0,
-				"texture": "res://assets/props/drawing_room/cutout/hero_side_chair.png",
-				"cross_planes": true,
-				"width": 0.66,
-				"height": 1.08,
-				"sink": 0.08,
-				"solid": true,
-				"col_size": [0.48, 0.92, 0.48],
-				"mesh_bulk": "chair",
-			},
+			{"kind": "plant", "pos": [0.4, 0.0, -0.2], "scale": 0.45, "seed": 6,
+				"texture": "res://assets/props/plants/plant_fern.png", "width": 0.42, "height": 0.5},
 		],
 		"doors": [
 			{
