@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 200)
+
+- **Sofa residual:** chesterfield velvet/mahogany still `_mat_for` washout mid-FOV drawing room. Solid-mat velvet seat/back/arms + mahogany plinth/crest/feet + brass nails.  
+- **Tea tray residual:** silver tray + china hit metal/fabric classifiers. Solid-metal pewter tray + solid-mat china pot/cups/jug/sugar.  
+- **Letter stack residual:** paper stack used textured path. Solid-mat vellum + ink lines + wax seal + ribbon.  
+
 ## Status update 2026-07-30 (loop 199)
 
 - **Armchair residual:** wing shell mahogany/velvet still `_mat_for` washout mid-FOV. Solid-mat velvet shell + mahogany rail/legs.  
