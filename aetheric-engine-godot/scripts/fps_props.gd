@@ -331,57 +331,65 @@ static func _make_chair(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_armchair(prop: Dictionary) -> Node3D:
-	## Wing chair (loop 132): single continuous upholstered envelope.
-	## No stacked columns, no pale sphere knobs, no free vertical cylinders on wings.
+	## Loop 158: Victorian wing — continuous shell, rounded crown, diamond tufts.
+	## Avoid ziggurat shelves and fridge slabs; side must read as one upholstered mass.
 	if prop.get("billboard", false) and prop.get("texture", "") != "":
 		return _make_billboard_prop(prop)
 	var root := Node3D.new()
 	root.name = "Armchair"
 	var fabric: Color = prop.get("fabric", VELVET_RED)
-	var fabric_d := fabric.darkened(0.12)
+	var fabric_d := fabric.darkened(0.1)
 	var fabric_dd := fabric.darkened(0.2)
-	# Mahogany base rail only (grounding)
-	_add_box(root, Vector3(0, 0.24, 0.05), Vector3(0.9, 0.1, 0.82), MAHOGANY_DARK, true, 0.42)
-	_add_box(root, Vector3(0, 0.3, 0.05), Vector3(0.92, 0.035, 0.84), MAHOGANY, false, 0.45)
-	# Seat — one deep cushion block only
-	_add_box(root, Vector3(0, 0.48, 0.12), Vector3(0.78, 0.24, 0.7), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 0.58, 0.14), Vector3(0.68, 0.06, 0.58), fabric_d, false, 0.92)
-	# Button tufts (dark fabric, flat)
-	for bx in [-0.15, 0.15]:
-		for bz in [-0.05, 0.15]:
-			_add_cylinder(root, Vector3(bx, 0.62, bz), 0.012, 0.01, fabric_dd, false, 0.95)
-	# Back + wings as ONE fused U-shell (continuous from corner angles)
-	# Main back panel
-	_add_box(root, Vector3(0, 1.05, -0.22), Vector3(0.72, 1.1, 0.3), fabric, true, 0.9)
-	_add_box(root, Vector3(0, 1.05, -0.08), Vector3(0.58, 1.0, 0.12), fabric_d, false, 0.9)
-	# Wings: full-height solid sides joined to back (no gap, no pipes)
+	var fabric_l := fabric.lightened(0.05)
+	# Slim mahogany seat rail
+	_add_box(root, Vector3(0, 0.22, 0.02), Vector3(0.76, 0.055, 0.68), MAHOGANY_DARK, true, 0.42)
+	_add_box(root, Vector3(0, 0.26, 0.02), Vector3(0.8, 0.022, 0.7), MAHOGANY, false, 0.45)
+	# Seat + horizontal front bolster
+	_add_box(root, Vector3(0, 0.4, 0.06), Vector3(0.68, 0.15, 0.54), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.49, 0.08), Vector3(0.6, 0.045, 0.46), fabric_d, false, 0.92)
+	_add_cylinder_rotated(root, Vector3(0, 0.43, 0.32), 0.065, 0.64, fabric_l, Vector3(0, 0, PI * 0.5), 0.9)
+	for bx in [-0.14, 0.0, 0.14]:
+		for bz in [-0.05, 0.1]:
+			_add_cylinder(root, Vector3(bx, 0.52, bz), 0.011, 0.01, fabric_dd, false, 0.95)
+	# Continuous back shell (one mass + soft face) — no multi-shelf crown
+	_add_box(root, Vector3(0, 0.92, -0.2), Vector3(0.56, 0.9, 0.2), fabric, true, 0.9)
+	_add_box(root, Vector3(0, 0.94, -0.1), Vector3(0.46, 0.8, 0.09), fabric_d, false, 0.9)
+	_add_box(root, Vector3(0, 0.98, -0.04), Vector3(0.38, 0.6, 0.05), fabric_l, false, 0.92)
+	# Rounded crown: horizontal roll + modest cap (not ziggurat terraces)
+	_add_cylinder_rotated(root, Vector3(0, 1.36, -0.12), 0.09, 0.52, fabric, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_cylinder_rotated(root, Vector3(0, 1.4, -0.16), 0.06, 0.36, fabric_d, Vector3(0, 0, PI * 0.5), 0.88)
+	_add_box(root, Vector3(0, 1.42, -0.22), Vector3(0.28, 0.04, 0.08), MAHOGANY, false, 0.45)
+	# Wings as single forward ear each + rounded leading cylinder (no stair steps)
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 1.0, 0.0), Vector3(0.22, 1.0, 0.55), fabric, true, 0.88)
-		_add_box(root, Vector3(sx * 0.28, 1.05, -0.15), Vector3(0.12, 1.05, 0.25), fabric_d, false, 0.9)
-		# Outer face bevel (thin dark edge, not a second column)
-		_add_box(root, Vector3(sx * 0.5, 1.05, 0.02), Vector3(0.04, 0.95, 0.45), fabric_dd, false, 0.9)
-	# Crown rail (single horizontal bar, not orbs)
-	_add_box(root, Vector3(0, 1.55, -0.1), Vector3(0.88, 0.14, 0.4), fabric_d, false, 0.88)
-	_add_box(root, Vector3(0, 1.6, -0.18), Vector3(0.55, 0.04, 0.1), MAHOGANY, false, 0.45)
-	# Arms continuous from wing bottom — padded bars, dark front scroll only
+		_add_box(root, Vector3(sx * 0.33, 0.9, 0.02), Vector3(0.16, 0.78, 0.42), fabric, true, 0.88)
+		_add_box(root, Vector3(sx * 0.3, 1.05, -0.08), Vector3(0.12, 0.45, 0.22), fabric_d, false, 0.88)
+		_add_cylinder(root, Vector3(sx * 0.33, 0.92, 0.2), 0.08, 0.7, fabric, false, 0.88)
+		_add_box(root, Vector3(sx * 0.41, 0.92, 0.0), Vector3(0.025, 0.68, 0.34), fabric_dd, false, 0.9)
+		_add_box(root, Vector3(sx * 0.22, 0.95, -0.14), Vector3(0.1, 0.6, 0.1), fabric, false, 0.9)
+	# Diamond button tufts
+	for row in 4:
+		var by := 0.7 + float(row) * 0.16
+		var odd := row % 2 == 1
+		var cols: Array = [-0.09, 0.09] if odd else [-0.13, 0.0, 0.13]
+		for bx_v in cols:
+			_add_cylinder(root, Vector3(float(bx_v), by, -0.01), 0.011, 0.01, fabric_dd, false, 0.95)
+	# Rolled arms continuous under wings
 	for sx in [-1.0, 1.0]:
-		_add_box(root, Vector3(sx * 0.4, 0.62, 0.16), Vector3(0.2, 0.18, 0.58), fabric, true, 0.88)
-		_add_box(root, Vector3(sx * 0.4, 0.7, 0.36), Vector3(0.16, 0.12, 0.16), fabric_d, false, 0.88)
-		_add_box(root, Vector3(sx * 0.4, 0.48, 0.28), Vector3(0.05, 0.28, 0.05), MAHOGANY_DARK, true, 0.45)
-		_add_cylinder(root, Vector3(sx * 0.4, 0.48, 0.32), 0.045, 0.16, MAHOGANY, false, 0.45)
-	# Sparse back tufts
-	for by in [0.95, 1.2]:
-		for bx in [-0.12, 0.12]:
-			_add_cylinder(root, Vector3(bx, by, -0.04), 0.01, 0.012, fabric_dd, false, 0.95)
-	# Legs + stretchers
+		_add_box(root, Vector3(sx * 0.33, 0.52, 0.08), Vector3(0.14, 0.11, 0.4), fabric, true, 0.88)
+		_add_cylinder_rotated(root, Vector3(sx * 0.33, 0.56, 0.08), 0.05, 0.38, fabric_l, Vector3(PI * 0.5, 0, 0), 0.88)
+		_add_sphere_blob(root, Vector3(sx * 0.33, 0.56, 0.3), 0.048, fabric_d)
+		_add_cylinder(root, Vector3(sx * 0.33, 0.35, 0.16), 0.02, 0.16, MAHOGANY_DARK, true, 0.45)
+		_add_cylinder(root, Vector3(sx * 0.33, 0.28, 0.22), 0.028, 0.055, MAHOGANY, false, 0.45)
+	# Turned legs + slim H-stretcher
 	for sx in [-1.0, 1.0]:
-		_add_cylinder(root, Vector3(sx * 0.32, 0.11, 0.28), 0.036, 0.22, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.32, 0.01, 0.28), 0.048, 0.03, MAHOGANY, true)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.11, -0.26), 0.034, 0.22, MAHOGANY_DARK, true)
-		_add_cylinder(root, Vector3(sx * 0.3, 0.01, -0.26), 0.045, 0.03, MAHOGANY, true)
-	_add_box(root, Vector3(0, 0.16, 0.3), Vector3(0.66, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
-	_add_box(root, Vector3(0, 0.16, -0.26), Vector3(0.62, 0.04, 0.04), MAHOGANY_DARK, false, 0.42)
-	_add_contact_shadow(root, 0.7, 0.64)
+		_add_cylinder(root, Vector3(sx * 0.27, 0.1, 0.22), 0.026, 0.17, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.27, 0.02, 0.22), 0.036, 0.022, MAHOGANY, true)
+		_add_cylinder(root, Vector3(sx * 0.25, 0.1, -0.2), 0.024, 0.17, MAHOGANY_DARK, true)
+		_add_cylinder(root, Vector3(sx * 0.25, 0.02, -0.2), 0.034, 0.022, MAHOGANY, true)
+	_add_box(root, Vector3(0, 0.1, 0.01), Vector3(0.48, 0.016, 0.016), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(-0.25, 0.1, 0.01), Vector3(0.016, 0.016, 0.36), MAHOGANY, false, 0.48)
+	_add_box(root, Vector3(0.25, 0.1, 0.01), Vector3(0.016, 0.016, 0.36), MAHOGANY, false, 0.48)
+	_add_contact_shadow(root, 0.55, 0.5)
 	return root
 
 static func _make_ottoman(prop: Dictionary) -> Node3D:
@@ -4595,4 +4603,28 @@ static func _add_cylinder(
 		col.shape = shape
 		body.add_child(col)
 	body.position = pos
+	parent.add_child(body)
+
+
+static func _add_cylinder_rotated(
+	parent: Node3D,
+	pos: Vector3,
+	radius: float,
+	height: float,
+	color: Color,
+	euler: Vector3,
+	roughness: float = 0.75,
+) -> void:
+	## Decorative cylinder with euler rotation (for bolsters / horizontal rolls). No collision.
+	var body := Node3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = height
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = _mat_for(color, roughness, Vector3(radius * 2.0, height, radius * 2.0))
+	body.add_child(mi)
+	body.position = pos
+	body.rotation = euler
 	parent.add_child(body)
