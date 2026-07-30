@@ -1085,22 +1085,21 @@ static func _make_side_table(prop: Dictionary) -> Node3D:
 		_add_cylinder(root, Vector3(0.12, top_y + 0.05, 0.08), 0.038, 0.09, CREAM.darkened(0.1), false, 0.75)
 		_add_cylinder(root, Vector3(0.12, top_y + 0.11, 0.08), 0.028, 0.025, CREAM.darkened(0.18), false, 0.75)
 	elif dress == 2:
-		# Loop 173: ONE clay body (floor plant pots prove CLAY reads terracotta, not cake).
-		# Stacked multi-color cylinders were the cake residual — single body + flush blooms.
-		var pot := CLAY
-		var pot_d := Color(0.62, 0.4, 0.22)
-		var glaze := Color(0.14, 0.24, 0.36)
-		# Foot + ONE belly (same clay as plant pots)
-		_add_cylinder(root, Vector3(0, top_y + 0.012, 0), 0.055, 0.018, pot_d, false, 0.85)
-		_add_cylinder(root, Vector3(0, top_y + 0.085, 0), 0.09, 0.14, pot, false, 0.82)
-		# Glaze band ON body surface
-		_add_cylinder(root, Vector3(0, top_y + 0.095, 0), 0.092, 0.018, glaze, false, 0.65)
-		# Thin dark rim
-		_add_cylinder(root, Vector3(0, top_y + 0.16, 0), 0.078, 0.014, pot_d, false, 0.85)
-		# Soil + flush flower (in mouth, not tier above)
-		_add_cylinder(root, Vector3(0, top_y + 0.165, 0), 0.055, 0.01, Color(0.14, 0.09, 0.05), false, 0.95)
-		_add_cylinder(root, Vector3(0, top_y + 0.178, 0), 0.048, 0.022, Color(0.48, 0.14, 0.12), false, 0.88)
-		_add_cylinder(root, Vector3(0.01, top_y + 0.185, 0.008), 0.02, 0.012, Color(0.55, 0.28, 0.1), false, 0.88)
+		# Loop 174: solid matte terracotta pot (no TEX_STONE washout under glass).
+		# ONE body only — any stack reads cake mid-FOV.
+		var mat_pot := _solid_matte(Color(0.72, 0.42, 0.24), 0.92)
+		var mat_pot_d := _solid_matte(Color(0.55, 0.32, 0.16), 0.94)
+		var mat_glaze := _solid_matte(Color(0.16, 0.28, 0.4), 0.55)
+		var mat_soil := _solid_matte(Color(0.14, 0.09, 0.05), 0.95)
+		var mat_bloom := _solid_matte(Color(0.5, 0.14, 0.12), 0.88)
+		var mat_bloom2 := _solid_matte(Color(0.58, 0.3, 0.12), 0.88)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.012, 0), 0.055, 0.018, mat_pot_d, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.09, 0), 0.092, 0.14, mat_pot, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.1, 0), 0.095, 0.02, mat_glaze, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.165, 0), 0.08, 0.016, mat_pot_d, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.17, 0), 0.055, 0.01, mat_soil, false)
+		_add_mesh_cyl(root, Vector3(0, top_y + 0.182, 0), 0.05, 0.022, mat_bloom, false)
+		_add_mesh_cyl(root, Vector3(0.012, top_y + 0.188, 0.008), 0.022, 0.012, mat_bloom2, false)
 	else:
 		# Candlestick + letters (drawing-room identity)
 		_add_cylinder(root, Vector3(-0.08, top_y + 0.02, 0.0), 0.05, 0.03, MAHOGANY_DARK, false, 0.5)
@@ -1571,59 +1570,48 @@ static func _make_prep_table(prop: Dictionary) -> Node3D:
 	_add_cylinder(root, Vector3(width * 0.22, 0.42, 0.12), 0.06, 0.1, CREAM.darkened(0.1), false, 0.85)
 	match kit:
 		0:
-			# Loop 163: flour/dough day — cloth bag + oval loaf (no snowman sphere stack).
-			# Loop 168: cloth flour sack (not stacked cup towers / snowman).
-			# Crust MUST miss copper. Sack g≥0.7 so linen gate wins (g<0.7 was scrubbed wood).
-			var sack := Color(0.85, 0.78, 0.62)      # linen (g≥0.7 skips scrubbed wood)
-			var sack_d := Color(0.78, 0.7, 0.55)     # still linen-ish
-			var sack_dd := Color(0.72, 0.66, 0.5)     # g≥0.65 linen edge
-			var crust := Color(0.48, 0.32, 0.16)     # wood brown
-			var crumb := Color(0.8, 0.7, 0.5)
-			# ONE wide low body (bag sits on table) + slight lean for slump
-			_add_cylinder(root, Vector3(-0.5, 0.94, 0.02), 0.14, 0.14, sack, false, 0.92)
-			_add_cylinder(root, Vector3(-0.48, 0.96, 0.05), 0.12, 0.1, sack_d, false, 0.92)
-			# Belly bulge (wider mid band only — not a second tower)
-			_add_cylinder(root, Vector3(-0.5, 0.95, 0.02), 0.155, 0.05, sack_d, false, 0.9)
-			# Flat closed top (cloth fold lid) — short, not a cup rim stack
-			_add_box(root, Vector3(-0.5, 1.03, 0.02), Vector3(0.24, 0.035, 0.2), sack_d, false, 0.9)
-			_add_box(root, Vector3(-0.46, 1.05, -0.02), Vector3(0.1, 0.025, 0.08), sack, false, 0.9)
-			_add_box(root, Vector3(-0.56, 1.045, 0.06), Vector3(0.08, 0.02, 0.07), sack_dd, false, 0.9)
-			# Small gathered ear + twine (short knob only)
-			_add_cylinder(root, Vector3(-0.5, 1.07, 0.02), 0.04, 0.035, sack_dd, false, 0.9)
-			_add_cylinder(root, Vector3(-0.5, 1.075, 0.02), 0.045, 0.01, Color(0.36, 0.28, 0.16), false, 0.8)
-			# Stencil / flour brand on face
-			_add_box(root, Vector3(-0.38, 0.96, 0.02), Vector3(0.01, 0.06, 0.08), sack_dd, false, 0.88)
-			_add_box(root, Vector3(-0.375, 0.97, 0.02), Vector3(0.008, 0.035, 0.05), Color(0.4, 0.18, 0.12), false, 0.7)
-			# Wide dough board + flour dust
+			# Loop 174: flour sack = wide linen BOX bag (cylinders always read coil tower mid-FOV).
+			# Solid linen mats so _mat_for never remaps to scrubbed wood.
+			var mat_sack := _solid_matte(Color(0.86, 0.8, 0.64), 0.94)
+			var mat_sack_d := _solid_matte(Color(0.78, 0.72, 0.56), 0.94)
+			var mat_sack_dd := _solid_matte(Color(0.7, 0.64, 0.5), 0.92)
+			var mat_twine := _solid_matte(Color(0.38, 0.28, 0.16), 0.85)
+			var mat_crust := _solid_matte(Color(0.48, 0.32, 0.16), 0.92)
+			var mat_crumb := _solid_matte(Color(0.78, 0.66, 0.46), 0.94)
+			# Wide low cloth sack (box body + soft shoulder pads — not cylinder tower)
+			_add_mesh_box(root, Vector3(-0.5, 0.94, 0.02), Vector3(0.32, 0.16, 0.26), mat_sack)
+			_add_mesh_box(root, Vector3(-0.5, 1.0, 0.02), Vector3(0.28, 0.06, 0.22), mat_sack_d)
+			# Cloth fold top + ear
+			_add_mesh_box(root, Vector3(-0.5, 1.04, 0.02), Vector3(0.24, 0.03, 0.18), mat_sack_d)
+			_add_mesh_box(root, Vector3(-0.42, 1.055, -0.02), Vector3(0.1, 0.025, 0.08), mat_sack)
+			_add_mesh_box(root, Vector3(-0.58, 1.05, 0.05), Vector3(0.08, 0.02, 0.07), mat_sack_dd)
+			# Gathered ear + twine
+			_add_mesh_box(root, Vector3(-0.5, 1.07, 0.02), Vector3(0.07, 0.035, 0.06), mat_sack_dd)
+			_add_mesh_box(root, Vector3(-0.5, 1.09, 0.02), Vector3(0.08, 0.012, 0.05), mat_twine)
+			# Flour brand stencil on face
+			_add_mesh_box(root, Vector3(-0.34, 0.96, 0.02), Vector3(0.012, 0.07, 0.1), mat_sack_dd)
+			_add_mesh_box(root, Vector3(-0.335, 0.97, 0.02), Vector3(0.01, 0.04, 0.06), _solid_matte(Color(0.42, 0.18, 0.12), 0.8))
+			# Dough board + flour dust
 			_add_box(root, Vector3(0.1, 0.875, -0.05), Vector3(0.72, 0.03, 0.42), OAK.lightened(0.18), false, 0.65)
 			_add_box(root, Vector3(0.1, 0.89, -0.05), Vector3(0.7, 0.008, 0.4), OAK.lightened(0.1), false, 0.68)
 			_add_box(root, Vector3(0.02, 0.882, 0.0), Vector3(0.48, 0.006, 0.3), CREAM.lightened(0.1), false, 0.95)
-			_add_box(root, Vector3(0.15, 0.883, -0.08), Vector3(0.2, 0.005, 0.14), CREAM, false, 0.95)
-			# Oval loaf — lower profile, one crust shell + crumb top (readable scores)
-			_add_cylinder_rotated(root, Vector3(0.0, 0.915, -0.05), 0.05, 0.32, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_cylinder_rotated(root, Vector3(0.0, 0.93, -0.05), 0.038, 0.26, crumb, Vector3(0, 0, PI * 0.5), 0.94)
-			_add_cylinder_rotated(root, Vector3(-0.14, 0.915, -0.05), 0.042, 0.05, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_cylinder_rotated(root, Vector3(0.14, 0.915, -0.05), 0.042, 0.05, crust, Vector3(0, 0, PI * 0.5), 0.92)
-			_add_box(root, Vector3(0.0, 0.96, -0.05), Vector3(0.2, 0.005, 0.008), crust.darkened(0.12), false, 0.92)
-			_add_box(root, Vector3(0.0, 0.96, -0.02), Vector3(0.16, 0.004, 0.006), crust.darkened(0.1), false, 0.92)
-			# Flour scoop (period cue)
+			# Oval loaf (rotated crust only)
+			_add_mesh_cyl_rot(root, Vector3(0.0, 0.915, -0.05), 0.05, 0.3, mat_crust, Vector3(0, 0, PI * 0.5))
+			_add_mesh_cyl_rot(root, Vector3(0.0, 0.93, -0.05), 0.036, 0.24, mat_crumb, Vector3(0, 0, PI * 0.5))
+			_add_mesh_box(root, Vector3(0.0, 0.955, -0.05), Vector3(0.18, 0.005, 0.008), mat_crust)
+			# Scoop + knife
 			_add_box(root, Vector3(-0.28, 0.9, 0.18), Vector3(0.1, 0.025, 0.06), OAK.lightened(0.05), false, 0.55)
 			_add_cylinder_rotated(root, Vector3(-0.22, 0.9, 0.18), 0.012, 0.1, OAK.darkened(0.05), Vector3(0, 0, PI * 0.5), 0.55)
-			# Carving knife on rest
 			_add_box(root, Vector3(0.34, 0.895, 0.12), Vector3(0.28, 0.012, 0.04), OAK.darkened(0.05), false, 0.55)
 			_add_box(root, Vector3(0.42, 0.905, 0.12), Vector3(0.2, 0.008, 0.018), IRON.lightened(0.15), false, 0.28)
-			_add_box(root, Vector3(0.5, 0.905, 0.12), Vector3(0.04, 0.006, 0.01), IRON.lightened(0.05), false, 0.3)
 			_add_cylinder_rotated(root, Vector3(0.28, 0.905, 0.12), 0.012, 0.08, Color(0.35, 0.22, 0.12), Vector3(0, 0, PI * 0.5), 0.55)
-			# Shallow copper basin + folded tea towel
+			# Copper basin + towel
 			_add_cylinder(root, Vector3(0.52, 0.9, -0.15), 0.11, 0.05, COPPER, false, 0.35, true)
 			_add_cylinder(root, Vector3(0.52, 0.935, -0.15), 0.12, 0.018, COPPER.lightened(0.08), false, 0.32, true)
 			_add_box(root, Vector3(0.5, 0.875, 0.14), Vector3(0.14, 0.012, 0.1), Color(0.62, 0.58, 0.48), false, 0.85)
-			_add_box(root, Vector3(0.5, 0.885, 0.14), Vector3(0.1, 0.01, 0.08), Color(0.7, 0.66, 0.55), false, 0.88)
-			# Cold apples (produce)
+			# Apples + salt crock
 			_add_sphere_blob(root, Vector3(0.2, 0.9, 0.18), 0.038, Color(0.55, 0.18, 0.14))
 			_add_sphere_blob(root, Vector3(0.28, 0.9, 0.14), 0.033, Color(0.48, 0.22, 0.12))
-			_add_sphere_blob(root, Vector3(0.22, 0.91, 0.1), 0.03, Color(0.6, 0.2, 0.14))
-			# Salt crock — moved clear of sack (was merging into cup stack)
 			_add_cylinder(root, Vector3(0.32, 0.91, -0.22), 0.038, 0.07, CREAM.darkened(0.08), false, 0.85)
 			_add_cylinder(root, Vector3(0.32, 0.955, -0.22), 0.03, 0.022, CREAM.darkened(0.14), false, 0.85)
 		1:
@@ -2026,47 +2014,122 @@ static func _make_urn(prop: Dictionary) -> Node3D:
 
 
 static func _make_watering_can(prop: Dictionary) -> Node3D:
-	## Loop 173: Haws can — bright copper body (loop 171 still read as wicker next to trug).
-	## One continuous belly (no weave-band seams), long spout+rose, C-handle, wire bail.
+	## Loop 174: solid-metal copper Haws can (no metal_copper.jpg grain = weave/wicker).
+	## Loop 173 cop_l hit CLAY; body texture grain next to trug read as basket.
 	var root := Node3D.new()
 	root.name = "WateringCan"
 	var s: float = float(prop.get("scale", 1.0))
-	var seed0: int = int(prop.get("seed", 0))
-	# Bright copper: r high, g≈0.42–0.45, b low — metal_copper, not wood
-	var cop := Color(0.8, 0.44, 0.2) if seed0 % 2 == 0 else Color(0.76, 0.42, 0.18)
-	var cop_l := Color(0.88, 0.5, 0.24)
-	var cop_d := Color(0.62, 0.34, 0.14)
-	# Foot + ONE continuous belly (stacked seams looked like basket weave)
-	_add_cylinder(root, Vector3(0, 0.02 * s, 0), 0.1 * s, 0.03 * s, cop_d, true, 0.32, true)
-	_add_cylinder(root, Vector3(0, 0.14 * s, 0), 0.125 * s, 0.22 * s, cop, true, 0.3, true)
-	# Single rim collar only
-	_add_cylinder(root, Vector3(0, 0.26 * s, 0), 0.13 * s, 0.028 * s, cop_l, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, 0.28 * s, 0), 0.1 * s, 0.018 * s, cop_d, false, 0.32, true)
-	# Open mouth dark
-	_add_cylinder(root, Vector3(0, 0.275 * s, 0), 0.075 * s, 0.016 * s, Color(0.2, 0.1, 0.05), false, 0.9)
-	# Spout — thick copper pipe + rose (silhouette hero)
-	_add_box(root, Vector3(0.12 * s, 0.18 * s, 0), Vector3(0.1 * s, 0.05 * s, 0.05 * s), cop, false, 0.3)
-	_add_cylinder_rotated(root, Vector3(0.26 * s, 0.16 * s, 0), 0.038 * s, 0.24 * s, cop_l, Vector3(0, 0, PI * 0.5), 0.28)
-	_add_cylinder_rotated(root, Vector3(0.4 * s, 0.12 * s, 0), 0.03 * s, 0.1 * s, cop, Vector3(0, 0, PI * 0.58), 0.3)
-	_add_cylinder(root, Vector3(0.48 * s, 0.09 * s, 0), 0.058 * s, 0.026 * s, cop_l, false, 0.28, true)
-	_add_cylinder(root, Vector3(0.48 * s, 0.075 * s, 0), 0.05 * s, 0.014 * s, cop_d, false, 0.35, true)
+	var cop := Color(0.82, 0.42, 0.18)
+	var cop_l := Color(0.9, 0.48, 0.2)
+	var cop_d := Color(0.58, 0.3, 0.12)
+	# Smooth solid copper (high metal, no albedo texture)
+	var mat_c := _solid_copper_mat(cop, 0.28)
+	var mat_l := _solid_copper_mat(cop_l, 0.22)
+	var mat_d := _solid_copper_mat(cop_d, 0.35)
+	_add_mesh_cyl(root, Vector3(0, 0.02 * s, 0), 0.1 * s, 0.03 * s, mat_d, true)
+	_add_mesh_cyl(root, Vector3(0, 0.14 * s, 0), 0.13 * s, 0.22 * s, mat_c, true)
+	_add_mesh_cyl(root, Vector3(0, 0.26 * s, 0), 0.135 * s, 0.028 * s, mat_l, false)
+	_add_mesh_cyl(root, Vector3(0, 0.28 * s, 0), 0.1 * s, 0.018 * s, mat_d, false)
+	# Open mouth
+	var mat_dark := StandardMaterial3D.new()
+	mat_dark.albedo_color = Color(0.16, 0.09, 0.05)
+	mat_dark.roughness = 0.9
+	_add_mesh_cyl(root, Vector3(0, 0.275 * s, 0), 0.078 * s, 0.016 * s, mat_dark, false)
+	# Spout + rose
+	_add_mesh_box(root, Vector3(0.12 * s, 0.18 * s, 0), Vector3(0.1 * s, 0.05 * s, 0.05 * s), mat_c)
+	_add_mesh_cyl_rot(root, Vector3(0.26 * s, 0.16 * s, 0), 0.04 * s, 0.24 * s, mat_c, Vector3(0, 0, PI * 0.5))
+	_add_mesh_cyl_rot(root, Vector3(0.4 * s, 0.12 * s, 0), 0.032 * s, 0.1 * s, mat_d, Vector3(0, 0, PI * 0.58))
+	_add_mesh_cyl(root, Vector3(0.48 * s, 0.09 * s, 0), 0.06 * s, 0.026 * s, mat_l, false)
+	_add_mesh_cyl(root, Vector3(0.48 * s, 0.075 * s, 0), 0.052 * s, 0.014 * s, mat_d, false)
 	for di in 5:
 		var dang := float(di) * TAU / 5.0
-		_add_cylinder(
+		_add_mesh_cyl(
 			root,
 			Vector3(0.48 * s + cos(dang) * 0.024 * s, 0.068 * s, sin(dang) * 0.024 * s),
-			0.007 * s, 0.008 * s, Color(0.18, 0.1, 0.05), false, 0.9
+			0.007 * s, 0.008 * s, mat_dark, false
 		)
-	# C-handle (rear) — solid copper posts
-	_add_box(root, Vector3(-0.11 * s, 0.14 * s, 0), Vector3(0.035 * s, 0.05 * s, 0.04 * s), cop_d, false, 0.3)
-	_add_box(root, Vector3(-0.17 * s, 0.2 * s, 0), Vector3(0.035 * s, 0.14 * s, 0.04 * s), cop, false, 0.3)
-	_add_box(root, Vector3(-0.13 * s, 0.28 * s, 0), Vector3(0.09 * s, 0.035 * s, 0.04 * s), cop_l, false, 0.28)
-	# Wire bail (thin brass-copper arch — not basket handles)
-	_add_cylinder(root, Vector3(-0.045 * s, 0.36 * s, 0), 0.01 * s, 0.12 * s, cop_d, false, 0.3, true)
-	_add_cylinder(root, Vector3(0.045 * s, 0.36 * s, 0), 0.01 * s, 0.12 * s, cop_d, false, 0.3, true)
-	_add_box(root, Vector3(0, 0.43 * s, 0), Vector3(0.11 * s, 0.016 * s, 0.02 * s), cop, false, 0.28)
+	# C-handle
+	_add_mesh_box(root, Vector3(-0.11 * s, 0.14 * s, 0), Vector3(0.035 * s, 0.05 * s, 0.04 * s), mat_d)
+	_add_mesh_box(root, Vector3(-0.17 * s, 0.2 * s, 0), Vector3(0.035 * s, 0.14 * s, 0.04 * s), mat_c)
+	_add_mesh_box(root, Vector3(-0.13 * s, 0.28 * s, 0), Vector3(0.09 * s, 0.035 * s, 0.04 * s), mat_l)
+	# Wire bail
+	_add_mesh_cyl(root, Vector3(-0.045 * s, 0.36 * s, 0), 0.011 * s, 0.12 * s, mat_d, false)
+	_add_mesh_cyl(root, Vector3(0.045 * s, 0.36 * s, 0), 0.011 * s, 0.12 * s, mat_d, false)
+	_add_mesh_box(root, Vector3(0, 0.43 * s, 0), Vector3(0.11 * s, 0.016 * s, 0.02 * s), mat_c)
 	_add_contact_shadow(root, 0.22 * s, 0.15 * s)
 	return root
+
+
+static func _solid_copper_mat(color: Color, roughness: float = 0.28) -> StandardMaterial3D:
+	## Smooth copper (no metal_copper.jpg grain → no basket-weave read).
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.metallic = 0.88
+	mat.roughness = roughness
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	return mat
+
+
+static func _solid_matte(color: Color, roughness: float = 0.9) -> StandardMaterial3D:
+	## Untextured matte albedo — bypass _mat_for (no wood/clay/stone washout).
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.metallic = 0.0
+	mat.roughness = roughness
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	return mat
+
+
+static func _add_mesh_cyl(
+	parent: Node3D, pos: Vector3, radius: float, height: float, mat: Material, solid: bool
+) -> void:
+	var body: Node3D = StaticBody3D.new() if solid else Node3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = height
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = mat
+	body.add_child(mi)
+	if solid:
+		var col := CollisionShape3D.new()
+		var shape := CylinderShape3D.new()
+		shape.radius = radius
+		shape.height = height
+		col.shape = shape
+		body.add_child(col)
+	body.position = pos
+	parent.add_child(body)
+
+
+static func _add_mesh_cyl_rot(
+	parent: Node3D, pos: Vector3, radius: float, height: float, mat: Material, euler: Vector3
+) -> void:
+	var body := Node3D.new()
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = radius
+	mesh.bottom_radius = radius
+	mesh.height = height
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = mat
+	body.add_child(mi)
+	body.position = pos
+	body.rotation = euler
+	parent.add_child(body)
+
+
+static func _add_mesh_box(parent: Node3D, pos: Vector3, size: Vector3, mat: Material) -> void:
+	var body := Node3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.material_override = mat
+	body.add_child(mi)
+	body.position = pos
+	parent.add_child(body)
 
 
 static func _make_wall_sconce(prop: Dictionary) -> Node3D:

@@ -128,6 +128,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Watering can residual:** 5-prim stick read as brown lump mid-FOV. Rewrote Haws-style can — stacked copper body + collar, long horizontal spout + rose head, C-handle, top bail, seam rivets; larger scale + yaw so spout reads from spawn.  
 - **Floor trug residual:** low box nubs. Oval willow weave, arched end handles (+ optional crossbar), apples/linen/veg fills without foliage sphere scrap. Kitchen trugs inherit same mesh.  
 
+## Status update 2026-07-29 (loop 174)
+
+- **Watering can residual:** body still read as brown/wicker next to trug. Root: metal_copper.jpg grain + cop_l g≥0.45 hit CLAY. Fix: solid-metal copper materials (no albedo texture), g-safe copper colors on body/spout/handle.  
+
 ## Status update 2026-07-29 (loop 172)
 
 - **Botanical vase residual:** white cream tiers still read as wedding cake at mid FOV. Terracotta pot (clay gate) + blue glaze band + dense low bloom crown.  
