@@ -3426,50 +3426,68 @@ static func _make_machine(prop: Dictionary) -> Node3D:
 	var top_y: float = 1.6
 	match style:
 		0:
-			# Open oak frame + spaced copper coils + amber terminal
-			var col_h: float = maxf(height * 0.68, 1.35)
-			_add_mesh_box(root, Vector3(0, 0.1, 0), Vector3(1.15, 0.2, 1.05), mat_iron_s)
-			_add_mesh_box(root, Vector3(0, 0.24, 0), Vector3(0.98, 0.1, 0.88), mat_oak_sd)
-			_add_mesh_box(root, Vector3(0, 0.3, 0), Vector3(0.82, 0.04, 0.74), mat_cop_sd)
-			var col_mid: float = 0.4 + col_h * 0.45
-			_add_mesh_cyl(root, Vector3(0, col_mid, 0), 0.06, col_h * 0.85, mat_br_sd, true)
+			# Loop 216: open induction coil stand — not dense copper fridge stack mid-FOV.
+			# Oak plinth + four slender posts + 3 airy coils + amber terminal.
+			var col_h: float = maxf(height * 0.62, 1.2)
+			# Oak furniture plinth (not iron slab base)
+			_add_mesh_box(root, Vector3(0, 0.08, 0), Vector3(1.0, 0.14, 0.9), mat_oak_sd)
+			_add_mesh_box(root, Vector3(0, 0.18, 0), Vector3(0.9, 0.06, 0.8), mat_oak_s)
+			_add_mesh_box(root, Vector3(0, 0.22, 0), Vector3(0.72, 0.03, 0.64), mat_br_sd)
+			var col_mid: float = 0.38 + col_h * 0.42
+			# Central brass mast (thin)
+			_add_mesh_cyl(root, Vector3(0, col_mid, 0), 0.04, col_h * 0.8, mat_br_sd, true)
+			_add_mesh_cyl(root, Vector3(0, 0.32, 0), 0.06, 0.06, mat_br_s, false)
+			# Four slender oak posts (open cage — air on all sides)
 			for sx in [-1.0, 1.0]:
 				for sz in [-1.0, 1.0]:
-					_add_mesh_box(root, Vector3(sx * 0.34, col_mid, sz * 0.34), Vector3(0.065, col_h * 0.8, 0.065), mat_oak_sd)
-					_add_mesh_cyl(root, Vector3(sx * 0.34, 0.4 + col_h * 0.85, sz * 0.34), 0.045, 0.045, mat_br_s, false)
-			_add_mesh_box(root, Vector3(0, 0.4 + col_h * 0.82, 0), Vector3(0.78, 0.06, 0.78), mat_oak_s)
-			_add_mesh_box(root, Vector3(0, 0.4 + col_h * 0.86, 0), Vector3(0.66, 0.03, 0.66), mat_br_sd)
-			for i in 4:
-				var y: float = 0.52 + float(i) * (col_h * 0.18)
-				var r: float = 0.4 - float(i) * 0.04
+					_add_mesh_cyl(root, Vector3(sx * 0.32, 0.28, sz * 0.32), 0.045, 0.08, mat_oak_sd, false)
+					_add_mesh_cyl(root, Vector3(sx * 0.32, col_mid, sz * 0.32), 0.035, col_h * 0.75, mat_oak_s, true)
+					_add_mesh_cyl(root, Vector3(sx * 0.32, 0.35 + col_h * 0.78, sz * 0.32), 0.04, 0.05, mat_br_s, false)
+			# Slim top ring (not solid lid)
+			_add_mesh_box(root, Vector3(0, 0.38 + col_h * 0.78, 0), Vector3(0.7, 0.04, 0.7), mat_oak_s)
+			_add_mesh_box(root, Vector3(0, 0.42 + col_h * 0.78, 0), Vector3(0.55, 0.025, 0.55), mat_br_sd)
+			# THREE copper coils with large air gaps (not 4 dense fridge shelves)
+			for i in 3:
+				var y: float = 0.48 + float(i) * (col_h * 0.26)
+				var r: float = 0.36 - float(i) * 0.04
 				var mat_coil := mat_cop_s if i % 2 == 0 else mat_cop_sd
 				var mat_coil_l := mat_cop_sl if i % 2 == 0 else mat_cop_s
-				_add_mesh_cyl(root, Vector3(0, y, 0), r, 0.055, mat_coil, false)
-				_add_mesh_cyl(root, Vector3(0, y + 0.02, 0), r * 0.86, 0.02, mat_coil_l, false)
-				_add_mesh_cyl(root, Vector3(0, y, 0), r * 0.5, 0.045, mat_oak_sdd, false)
-				var wind := 1.0 if i % 2 == 0 else -1.0
-				for s in 10:
-					var ang: float = float(s) * (TAU / 10.0) * wind
-					_add_mesh_box(root, Vector3(cos(ang) * r * 0.96, y, sin(ang) * r * 0.96), Vector3(0.04, 0.03, 0.06), mat_coil_l)
+				# Thin coil ring
+				_add_mesh_cyl(root, Vector3(0, y, 0), r, 0.04, mat_coil, false)
+				_add_mesh_cyl(root, Vector3(0, y + 0.015, 0), r * 0.88, 0.016, mat_coil_l, false)
+				# Hollow centre (air through — not solid oak disc)
+				_add_mesh_cyl(root, Vector3(0, y, 0), 0.06, 0.03, mat_br_sd, false)
+				# Sparse winding studs (not dense 10-box belt)
+				for s in 6:
+					var ang: float = float(s) * (TAU / 6.0) + float(i) * 0.25
+					_add_mesh_box(
+						root,
+						Vector3(cos(ang) * r * 0.95, y, sin(ang) * r * 0.95),
+						Vector3(0.035, 0.025, 0.04),
+						mat_coil_l
+					)
+				# One brass terminal post on rim
 				var side := 1.0 if i % 2 == 0 else -1.0
-				_add_mesh_box(root, Vector3(side * r * 0.95, y, 0), Vector3(0.055, 0.07, 0.07), mat_br_s)
-			top_y = 0.42 + col_h * 0.9
+				_add_mesh_cyl(root, Vector3(side * r * 0.9, y, 0), 0.025, 0.06, mat_br_s, false)
+			top_y = 0.45 + col_h * 0.85
+			# Amber terminal crown (compact — not cyan hat)
 			var mat_br0 := _solid_metal(BRASS.lightened(0.05), 0.28)
 			var mat_br0d := _solid_metal(BRASS.darkened(0.08), 0.32)
 			var mat_amber := _solid_matte(Color(0.72, 0.55, 0.28), 0.35)
-			_add_mesh_cyl(root, Vector3(0, top_y, 0), 0.18, 0.05, mat_br0, false)
-			_add_mesh_cyl(root, Vector3(0, top_y + 0.06, 0), 0.08, 0.08, mat_br0d, false)
-			_add_mesh_cyl(root, Vector3(0, top_y + 0.14, 0), 0.07, 0.1, mat_amber, false)
-			_add_mesh_cyl(root, Vector3(0, top_y + 0.2, 0), 0.05, 0.03, mat_br0, false)
+			_add_mesh_cyl(root, Vector3(0, top_y, 0), 0.14, 0.04, mat_br0, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.05, 0), 0.07, 0.07, mat_br0d, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.12, 0), 0.065, 0.09, mat_amber, false)
+			_add_mesh_cyl(root, Vector3(0, top_y + 0.18, 0), 0.045, 0.025, mat_br0, false)
 			for ri in 4:
 				var ra := float(ri) * TAU / 4.0
-				_add_mesh_box(root, Vector3(cos(ra) * 0.1, top_y + 0.08, sin(ra) * 0.1), Vector3(0.016, 0.1, 0.016), mat_br0d)
-			_add_mesh_box(root, Vector3(0.55, 0.55, 0.1), Vector3(0.28, 0.42, 0.3), mat_oak_sd)
-			for gi in 3:
-				_add_mesh_cyl(root, Vector3(0.55, 0.62 + float(gi) * 0.12, 0.22), 0.055, 0.025, mat_br_s, false)
-				_add_mesh_cyl(root, Vector3(0.55, 0.63 + float(gi) * 0.12, 0.24), 0.04, 0.01, mat_gauge, false)
-			_add_mesh_cyl(root, Vector3(-0.5, 0.85, 0.0), 0.035, 0.7, mat_cop_s, false)
-			_add_mesh_cyl(root, Vector3(-0.5, 1.25, 0.15), 0.045, 0.04, mat_br_s, false)
+				_add_mesh_box(root, Vector3(cos(ra) * 0.09, top_y + 0.07, sin(ra) * 0.09), Vector3(0.014, 0.09, 0.014), mat_br0d)
+			# Side gauge box + feed pipe
+			_add_mesh_box(root, Vector3(0.5, 0.5, 0.08), Vector3(0.22, 0.35, 0.25), mat_oak_sd)
+			for gi in 2:
+				_add_mesh_cyl(root, Vector3(0.5, 0.55 + float(gi) * 0.12, 0.2), 0.045, 0.02, mat_br_s, false)
+				_add_mesh_cyl(root, Vector3(0.5, 0.56 + float(gi) * 0.12, 0.22), 0.032, 0.01, mat_gauge, false)
+			_add_mesh_cyl(root, Vector3(-0.48, 0.8, 0.0), 0.03, 0.6, mat_cop_s, false)
+			_add_mesh_cyl(root, Vector3(-0.48, 1.15, 0.12), 0.04, 0.035, mat_br_s, false)
 		1:
 			# Loop 214: OPEN harmonic resonator rewrite — dense copper discs + iron posts
 			# still read as metal fridge shelves mid-FOV. Airy oak stand + 3 thin diaphragms
