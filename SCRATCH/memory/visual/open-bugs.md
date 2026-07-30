@@ -132,6 +132,12 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 204)
+
+- **Door frame residual:** leaf/architrave/brass still `_mat_for` washout at every portal. Solid-mat wood tones + solid-metal brass furniture; `_add_mesh_box` now supports solid collision so closed leaf still blocks walk-through. Door suite PASS.  
+- **Rug residual:** border/fringe used textured path. Solid-mat lip + fringe teeth (woven plate texture retained).  
+- **Mirror residual:** gilt frame still brass-texture washout. Solid-metal gilt + dark liner.  
+
 ## Status update 2026-07-30 (loop 203)
 
 - **Copper scrap residual:** wood tray + copper/iron still `_mat_for` washout mid-FOV workshop. Solid-mat oak tray + solid-metal spool/plates/tubes all 3 styles.  

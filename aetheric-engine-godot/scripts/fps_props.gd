@@ -737,33 +737,34 @@ static func _make_rug(prop: Dictionary) -> Node3D:
 	body.add_child(mi)
 	body.position = Vector3(0, 0.035, 0)
 	root.add_child(body)
-	var border := Color(0.22, 0.1, 0.08)
-	var gold := Color(0.55, 0.4, 0.2)
-	var fringe := Color(0.42, 0.28, 0.16)
+	# Loop 204: solid-mat lip/fringe (no wood washout on floor edge)
+	var mat_border := _solid_matte(Color(0.18, 0.08, 0.06), 0.94)
+	var mat_fringe := _solid_matte(Color(0.42, 0.28, 0.16), 0.95)
+	var mat_gold := _solid_matte(Color(0.55, 0.4, 0.2), 0.75)
+	var mat_gold_d := _solid_matte(Color(0.45, 0.32, 0.16), 0.8)
+	var mat_med := _solid_matte(Color(0.45, 0.18, 0.12), 0.88)
 	if has_tex:
-		# Loop 109: very thin lip only — woven border is in the plate; no cross-rails/medallion mesh
 		var bw := 0.035
-		_add_box(root, Vector3(0, 0.038, sd * 0.5 - bw * 0.5), Vector3(sw * 0.99, 0.012, bw), border.darkened(0.15), false, 0.92)
-		_add_box(root, Vector3(0, 0.038, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.99, 0.012, bw), border.darkened(0.15), false, 0.92)
-		_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), border.darkened(0.15), false, 0.92)
-		_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), border.darkened(0.15), false, 0.92)
-		# Short fringe teeth on short ends (reads as pile edge from standing height)
+		_add_mesh_box(root, Vector3(0, 0.038, sd * 0.5 - bw * 0.5), Vector3(sw * 0.99, 0.012, bw), mat_border)
+		_add_mesh_box(root, Vector3(0, 0.038, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.99, 0.012, bw), mat_border)
+		_add_mesh_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), mat_border)
+		_add_mesh_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.038, 0), Vector3(bw, 0.012, sd * 0.97), mat_border)
 		var fringe_n := int(clampf(sw * 8.0, 8.0, 28.0))
 		for fi in fringe_n:
 			var fx := -sw * 0.45 + (sw * 0.9) * (float(fi) / float(maxi(fringe_n - 1, 1)))
-			_add_box(root, Vector3(fx, 0.032, sd * 0.5 + 0.02), Vector3(0.04, 0.008, 0.05), fringe, false, 0.95)
-			_add_box(root, Vector3(fx, 0.032, -sd * 0.5 - 0.02), Vector3(0.04, 0.008, 0.05), fringe, false, 0.95)
+			_add_mesh_box(root, Vector3(fx, 0.032, sd * 0.5 + 0.02), Vector3(0.04, 0.008, 0.05), mat_fringe)
+			_add_mesh_box(root, Vector3(fx, 0.032, -sd * 0.5 - 0.02), Vector3(0.04, 0.008, 0.05), mat_fringe)
 	else:
 		var bw := 0.08
-		_add_box(root, Vector3(0, 0.04, sd * 0.5 - bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
-		_add_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), border, false, 0.9)
-		_add_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
-		_add_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), border, false, 0.9)
-		_add_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.01, 0.025), gold, false, 0.7)
-		_add_box(root, Vector3(0, 0.042, 0), Vector3(0.025, 0.01, sd * 0.88), gold, false, 0.7)
+		_add_mesh_box(root, Vector3(0, 0.04, sd * 0.5 - bw * 0.5), Vector3(sw * 0.98, 0.02, bw), mat_border)
+		_add_mesh_box(root, Vector3(0, 0.04, -sd * 0.5 + bw * 0.5), Vector3(sw * 0.98, 0.02, bw), mat_border)
+		_add_mesh_box(root, Vector3(sw * 0.5 - bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), mat_border)
+		_add_mesh_box(root, Vector3(-sw * 0.5 + bw * 0.5, 0.04, 0), Vector3(bw, 0.02, sd * 0.94), mat_border)
+		_add_mesh_box(root, Vector3(0, 0.042, 0), Vector3(sw * 0.88, 0.01, 0.025), mat_gold)
+		_add_mesh_box(root, Vector3(0, 0.042, 0), Vector3(0.025, 0.01, sd * 0.88), mat_gold)
 		if sw > 2.5 and sd > 2.0:
-			_add_cylinder(root, Vector3(0, 0.048, 0), minf(sw, sd) * 0.06, 0.01, gold.darkened(0.1), false, 0.75)
-			_add_cylinder(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.035, 0.01, Color(0.45, 0.18, 0.12), false, 0.85)
+			_add_mesh_cyl(root, Vector3(0, 0.048, 0), minf(sw, sd) * 0.06, 0.01, mat_gold_d, false)
+			_add_mesh_cyl(root, Vector3(0, 0.05, 0), minf(sw, sd) * 0.035, 0.01, mat_med, false)
 	return root
 
 static func _make_bookshelf(prop: Dictionary) -> Node3D:
@@ -2252,14 +2253,23 @@ static func _add_mesh_cyl_rot(
 	parent.add_child(body)
 
 
-static func _add_mesh_box(parent: Node3D, pos: Vector3, size: Vector3, mat: Material) -> void:
-	var body := Node3D.new()
+static func _add_mesh_box(
+	parent: Node3D, pos: Vector3, size: Vector3, mat: Material, solid: bool = false
+) -> void:
+	## solid=true adds StaticBody3D collision (doors / walk-blockers).
+	var body: Node3D = StaticBody3D.new() if solid else Node3D.new()
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
 	mi.material_override = mat
 	body.add_child(mi)
+	if solid:
+		var col := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = size
+		col.shape = shape
+		body.add_child(col)
 	body.position = pos
 	parent.add_child(body)
 
@@ -4511,9 +4521,8 @@ static func _make_glass_wall(feat: Dictionary) -> Node3D:
 	return root
 
 static func _make_door_frame(feat: Dictionary) -> Node3D:
-	## Mid-Victorian 4-panel door + architrave + brass furniture (c.1850s).
-	## seed forks wood tone (reception mahogany vs service oak) for uniqueness.
-	## Root sits on floor at doorway center (ignores feature y so doors don't float).
+	## Loop 204: 4-panel door + architrave — solid-mat wood + brass (no washout mid-FOV).
+	## Collision preserved on leaf/case so closed leaf blocks walk-into-void.
 	var root := Node3D.new()
 	root.name = "DoorFrame"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -4523,40 +4532,47 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	var h: float = feat.get("height", 2.35)
 	var seed0: int = int(feat.get("seed", int(absf(float(pos[0]) * 7.0 + float(pos[2]) * 3.0))))
 	var depth := 0.18
-	# Wood tone by seed — not every door the same brown slab
 	var door_wood: Color
 	var door_frame_col: Color
 	var panel_field: Color
 	var case_col: Color
 	match seed0 % 3:
-		0:  # polished mahogany (drawing / gallery)
+		0:
 			door_wood = Color(0.42, 0.28, 0.16)
 			door_frame_col = Color(0.34, 0.22, 0.12)
 			panel_field = Color(0.36, 0.24, 0.14)
-			case_col = MAHOGANY
-		1:  # darker ebony-mahogany (hall)
+			case_col = Color(0.3, 0.14, 0.08)
+		1:
 			door_wood = Color(0.28, 0.16, 0.1)
 			door_frame_col = Color(0.2, 0.12, 0.07)
 			panel_field = Color(0.24, 0.14, 0.09)
-			case_col = MAHOGANY_DARK
-		_:  # oak service (kitchen / workshop)
+			case_col = Color(0.18, 0.09, 0.05)
+		_:
 			door_wood = Color(0.5, 0.36, 0.2)
 			door_frame_col = Color(0.4, 0.28, 0.15)
 			panel_field = Color(0.45, 0.32, 0.18)
-			case_col = OAK
-	# Outer architrave (doorcase)
-	_add_box(root, Vector3(-w * 0.5 - 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), door_frame_col, true, 0.4)
-	_add_box(root, Vector3(w * 0.5 + 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), door_frame_col, true, 0.4)
-	_add_box(root, Vector3(0, h + 0.05, 0), Vector3(w + 0.34, 0.14, depth + 0.08), case_col, true, 0.4)
-	# Inner stop mould
-	_add_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
-	_add_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), case_col, false, 0.45)
-	# Threshold / saddle (loop 98: dark kick so oak doors don't "float" on bright stone)
-	_add_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.18, 0.05, depth + 0.24), STONE.darkened(0.1), true, 0.7)
-	_add_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.12, 0.04, depth + 0.14), door_frame_col, false, 0.45)
-	# Continuous dark kick under leaf (closes light gap under pale oak doors)
-	_add_box(root, Vector3(0, 0.04, 0.05), Vector3(w - 0.06, 0.08, 0.1), door_wood.darkened(0.12), true, 0.45)
-	# Loop 167: warm under-leaf glow (next room light leak — not closet void)
+			case_col = Color(0.48, 0.34, 0.18)
+	var mat_wood := _solid_matte(door_wood, 0.72)
+	var mat_wood_l := _solid_matte(door_wood.lightened(0.1), 0.7)
+	var mat_wood_d := _solid_matte(door_wood.darkened(0.12), 0.75)
+	var mat_frame := _solid_matte(door_frame_col, 0.75)
+	var mat_panel := _solid_matte(panel_field, 0.78)
+	var mat_case := _solid_matte(case_col, 0.72)
+	var mat_stone := _solid_matte(Color(0.48, 0.45, 0.4), 0.85)
+	var mat_br := _solid_metal(Color(0.72, 0.56, 0.28), 0.3)
+	var mat_br_d := _solid_metal(Color(0.55, 0.42, 0.2), 0.35)
+	var mat_br_l := _solid_metal(Color(0.78, 0.62, 0.32), 0.28)
+	var mat_key := _solid_matte(Color(0.12, 0.1, 0.08), 0.85)
+	# Outer architrave (collision)
+	_add_mesh_box(root, Vector3(-w * 0.5 - 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), mat_frame, true)
+	_add_mesh_box(root, Vector3(w * 0.5 + 0.06, h * 0.5, 0), Vector3(0.14, h + 0.08, depth + 0.06), mat_frame, true)
+	_add_mesh_box(root, Vector3(0, h + 0.05, 0), Vector3(w + 0.34, 0.14, depth + 0.08), mat_case, true)
+	_add_mesh_box(root, Vector3(-w * 0.5 + 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), mat_case)
+	_add_mesh_box(root, Vector3(w * 0.5 - 0.02, h * 0.5, 0.06), Vector3(0.04, h - 0.05, 0.04), mat_case)
+	_add_mesh_box(root, Vector3(0, 0.025, 0.02), Vector3(w + 0.18, 0.05, depth + 0.24), mat_stone, true)
+	_add_mesh_box(root, Vector3(0, 0.055, 0.02), Vector3(w + 0.12, 0.04, depth + 0.14), mat_frame)
+	_add_mesh_box(root, Vector3(0, 0.04, 0.05), Vector3(w - 0.06, 0.08, 0.1), mat_wood_d, true)
+	# Warm under-leaf glow (next room light leak)
 	var glow := MeshInstance3D.new()
 	glow.name = "DoorLightLeak"
 	var gmesh := BoxMesh.new()
@@ -4571,68 +4587,56 @@ static func _make_door_frame(feat: Dictionary) -> Node3D:
 	glow.material_override = gmat
 	glow.position = Vector3(0, 0.03, 0.08)
 	root.add_child(glow)
-	# Overdoor cornice (formal entrance read)
-	_add_box(root, Vector3(0, h + 0.12, 0.02), Vector3(w + 0.28, 0.08, depth + 0.1), case_col, false, 0.42)
-	_add_box(root, Vector3(0, h + 0.18, 0.04), Vector3(w * 0.4, 0.05, 0.08), BRASS.darkened(0.2), false, 0.32)
-	# Jamb feet — ground the case into the threshold
-	_add_box(root, Vector3(-w * 0.5 - 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)
-	_add_box(root, Vector3(w * 0.5 + 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), door_frame_col, true, 0.4)
-	# --- Door leaf CLOSED (E teleports; do not leave walk-into-void gap) ---
-	# Leaf bottom at y≈0.04 so it meets the dark kick / saddle
+	_add_mesh_box(root, Vector3(0, h + 0.12, 0.02), Vector3(w + 0.28, 0.08, depth + 0.1), mat_case)
+	_add_mesh_box(root, Vector3(0, h + 0.18, 0.04), Vector3(w * 0.4, 0.05, 0.08), mat_br_d)
+	_add_mesh_box(root, Vector3(-w * 0.5 - 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), mat_frame, true)
+	_add_mesh_box(root, Vector3(w * 0.5 + 0.06, 0.04, 0), Vector3(0.18, 0.12, depth + 0.1), mat_frame, true)
+	# Closed leaf — solid collision blocks walk-through
 	var leaf_w := w - 0.1
 	var leaf_h := h - 0.05
 	var leaf := Node3D.new()
 	leaf.name = "DoorLeaf"
 	leaf.position = Vector3(-w * 0.5 + 0.05, 0.04, 0.04)
-	leaf.rotation_degrees.y = 0.0  # closed — room change is interact/teleport only
+	leaf.rotation_degrees.y = 0.0
 	root.add_child(leaf)
-	# solid=true so player cannot walk through the closed leaf into void
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), door_wood, true, 0.42)
-	# Bottom kick rail on leaf itself
-	_add_box(leaf, Vector3(leaf_w * 0.5, 0.04, 0.02), Vector3(leaf_w * 0.98, 0.08, 0.04), door_frame_col, false, 0.42)
-	# Stiles & rails (classic 4-panel)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0), Vector3(leaf_w, leaf_h, 0.048), mat_wood, true)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, 0.04, 0.02), Vector3(leaf_w * 0.98, 0.08, 0.04), mat_frame)
 	var stile := 0.11
 	var mid_rail_y := leaf_h * 0.4
-	_add_box(leaf, Vector3(stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.4)
-	_add_box(leaf, Vector3(leaf_w - stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), door_frame_col, false, 0.4)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h - stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.4)
-	_add_box(leaf, Vector3(leaf_w * 0.5, stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), door_frame_col, false, 0.4)
-	_add_box(leaf, Vector3(leaf_w * 0.5, mid_rail_y, 0.028), Vector3(leaf_w - stile * 1.8, stile * 0.9, 0.025), door_frame_col, false, 0.4)
-	_add_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0.028), Vector3(stile * 0.8, leaf_h - stile * 2.0, 0.022), door_frame_col, false, 0.4)
-	# Four fielded panels — raised lip + recessed field (readable silhouette)
+	_add_mesh_box(leaf, Vector3(stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), mat_frame)
+	_add_mesh_box(leaf, Vector3(leaf_w - stile * 0.5, leaf_h * 0.5, 0.028), Vector3(stile, leaf_h, 0.025), mat_frame)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, leaf_h - stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), mat_frame)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, stile * 0.5, 0.028), Vector3(leaf_w, stile, 0.025), mat_frame)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, mid_rail_y, 0.028), Vector3(leaf_w - stile * 1.8, stile * 0.9, 0.025), mat_frame)
+	_add_mesh_box(leaf, Vector3(leaf_w * 0.5, leaf_h * 0.5, 0.028), Vector3(stile * 0.8, leaf_h - stile * 2.0, 0.022), mat_frame)
 	var pw := (leaf_w - stile * 2.4) * 0.44
 	var ph_lo := mid_rail_y - stile * 1.5
 	var ph_hi := leaf_h - mid_rail_y - stile * 1.5
 	for side in [-1.0, 1.0]:
 		var sx: float = float(side)
 		var lx: float = leaf_w * 0.5 + sx * (pw * 0.55 + stile * 0.2)
-		# lower panels
-		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), panel_field, false, 0.5)
-		_add_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
-		# upper panels
+		_add_mesh_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.02), Vector3(pw, ph_lo * 0.78, 0.018), mat_panel)
+		_add_mesh_box(leaf, Vector3(lx, mid_rail_y * 0.52, 0.035), Vector3(pw * 0.78, ph_lo * 0.58, 0.012), mat_wood_l)
 		var uy: float = mid_rail_y + (leaf_h - mid_rail_y) * 0.52
-		_add_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), panel_field, false, 0.5)
-		_add_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), door_wood.lightened(0.1), false, 0.48)
-	# Loop 125: brass mortice set — plate + round knob + keyhole escutcheon (reads at distance)
+		_add_mesh_box(leaf, Vector3(lx, uy, 0.02), Vector3(pw, ph_hi * 0.78, 0.018), mat_panel)
+		_add_mesh_box(leaf, Vector3(lx, uy, 0.035), Vector3(pw * 0.78, ph_hi * 0.58, 0.012), mat_wood_l)
+	# Brass mortice set
 	var knob_x := leaf_w - 0.16
 	var knob_y := mid_rail_y + 0.1
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.04), Vector3(0.1, 0.18, 0.02), BRASS.darkened(0.18), false, 0.3)
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.05), Vector3(0.08, 0.14, 0.012), BRASS.darkened(0.08), false, 0.28)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.06), 0.05, 0.02, BRASS, false, 0.28, true)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.09), 0.04, 0.06, BRASS.lightened(0.08), false, 0.25, true)
-	_add_cylinder(leaf, Vector3(knob_x, knob_y, 0.13), 0.025, 0.03, BRASS.darkened(0.1), false, 0.28, true)
-	# Keyhole plate below knob
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.055), Vector3(0.055, 0.1, 0.018), BRASS, false, 0.28)
-	_add_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.065), Vector3(0.02, 0.05, 0.01), Color(0.12, 0.1, 0.08), false, 0.6)
-	# Three butt hinges on hinge stile
+	_add_mesh_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.04), Vector3(0.1, 0.18, 0.02), mat_br_d)
+	_add_mesh_box(leaf, Vector3(knob_x, knob_y - 0.02, 0.05), Vector3(0.08, 0.14, 0.012), mat_br)
+	_add_mesh_cyl(leaf, Vector3(knob_x, knob_y, 0.06), 0.05, 0.02, mat_br, false)
+	_add_mesh_cyl(leaf, Vector3(knob_x, knob_y, 0.09), 0.04, 0.06, mat_br_l, false)
+	_add_mesh_cyl(leaf, Vector3(knob_x, knob_y, 0.13), 0.025, 0.03, mat_br_d, false)
+	_add_mesh_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.055), Vector3(0.055, 0.1, 0.018), mat_br)
+	_add_mesh_box(leaf, Vector3(knob_x, knob_y - 0.12, 0.065), Vector3(0.02, 0.05, 0.01), mat_key)
 	for hy in [0.28, leaf_h * 0.5, leaf_h - 0.32]:
-		_add_box(leaf, Vector3(0.035, hy, 0.045), Vector3(0.06, 0.18, 0.04), BRASS.darkened(0.05), false, 0.32)
-		_add_box(leaf, Vector3(0.035, hy, 0.06), Vector3(0.03, 0.12, 0.02), BRASS.lightened(0.05), false, 0.3)
+		_add_mesh_box(leaf, Vector3(0.035, hy, 0.045), Vector3(0.06, 0.18, 0.04), mat_br)
+		_add_mesh_box(leaf, Vector3(0.035, hy, 0.06), Vector3(0.03, 0.12, 0.02), mat_br_l)
 	return root
 
 static func _make_mirror(feat: Dictionary) -> Node3D:
-	## Victorian looking-glass (loop 133): full painterly silvered plate (hall reflection),
-	## ornate gilt frame only — NO dark silhouette blocks over the plate.
+	## Loop 204: looking-glass — solid-metal gilt frame (no brass washout mid-FOV).
 	var root := Node3D.new()
 	root.name = "Mirror"
 	var pos: Array = feat.get("pos", [0, 0, 0])
@@ -4640,19 +4644,20 @@ static func _make_mirror(feat: Dictionary) -> Node3D:
 	root.rotation_degrees.y = feat.get("yaw", 0.0)
 	var w: float = float(feat.get("width", 1.05))
 	var h: float = float(feat.get("height", 1.45))
-	# Ornate gilt frame + dark liner
-	_add_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.14, h + 0.14, 0.1), BRASS, true, 0.32)
-	_add_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.06, h + 0.06, 0.05), BRASS.darkened(0.12), false, 0.35)
-	_add_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.06, h - 0.06, 0.03), Color(0.16, 0.1, 0.07), false, 0.55)
-	# Inner gold bead around aperture
-	_add_box(root, Vector3(0, 0, 0.095), Vector3(w - 0.1, h - 0.1, 0.012), BRASS.lightened(0.08), false, 0.3)
-	# Crest + corner bosses
-	_add_box(root, Vector3(0, h * 0.5 + 0.09, 0.06), Vector3(0.32, 0.15, 0.055), BRASS.lightened(0.1), false, 0.3)
-	_add_box(root, Vector3(0, h * 0.5 + 0.16, 0.06), Vector3(0.14, 0.08, 0.04), BRASS, false, 0.3)
-	_add_cylinder(root, Vector3(0, h * 0.5 + 0.2, 0.07), 0.04, 0.03, BRASS.lightened(0.12), false, 0.28, true)
+	var mat_br := _solid_metal(BRASS, 0.3)
+	var mat_br_d := _solid_metal(BRASS.darkened(0.12), 0.35)
+	var mat_br_l := _solid_metal(BRASS.lightened(0.08), 0.28)
+	var mat_liner := _solid_matte(Color(0.16, 0.1, 0.07), 0.75)
+	_add_mesh_box(root, Vector3(0, 0, 0.04), Vector3(w + 0.14, h + 0.14, 0.1), mat_br, true)
+	_add_mesh_box(root, Vector3(0, 0, 0.07), Vector3(w + 0.06, h + 0.06, 0.05), mat_br_d)
+	_add_mesh_box(root, Vector3(0, 0, 0.085), Vector3(w - 0.06, h - 0.06, 0.03), mat_liner)
+	_add_mesh_box(root, Vector3(0, 0, 0.095), Vector3(w - 0.1, h - 0.1, 0.012), mat_br_l)
+	_add_mesh_box(root, Vector3(0, h * 0.5 + 0.09, 0.06), Vector3(0.32, 0.15, 0.055), mat_br_l)
+	_add_mesh_box(root, Vector3(0, h * 0.5 + 0.16, 0.06), Vector3(0.14, 0.08, 0.04), mat_br)
+	_add_mesh_cyl(root, Vector3(0, h * 0.5 + 0.2, 0.07), 0.04, 0.03, mat_br_l, false)
 	for sx in [-1.0, 1.0]:
 		for sy in [-1.0, 1.0]:
-			_add_box(root, Vector3(sx * (w * 0.5), sy * (h * 0.5), 0.07), Vector3(0.1, 0.1, 0.045), BRASS.lightened(0.05), false, 0.3)
+			_add_mesh_box(root, Vector3(sx * (w * 0.5), sy * (h * 0.5), 0.07), Vector3(0.1, 0.1, 0.045), mat_br_l)
 	# Silvered plate — loop 141: cleaner asset + stronger room-length silver read
 	var glass := MeshInstance3D.new()
 	var gm := QuadMesh.new()
