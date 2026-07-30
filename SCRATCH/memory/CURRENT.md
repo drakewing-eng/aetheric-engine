@@ -1,7 +1,7 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 ~overnight loop 232  
-**HEAD:** `4b5a454` visual loop 232  
+**Updated:** 2026-07-30 ~overnight loop 233  
+**HEAD:** (pending) visual loop 233  
 **10m density scheduler:** OFF  
 **Do not mark goal complete after one pass** — living priority queue.
 
@@ -11,12 +11,12 @@
 |---|------|--------|
 | 1–3 | Spacing / collision / walk | **DONE 67–68** |
 | 4 | Unique Victorian objects | **ADVANCED 71–232** wing chair |
-| 5 | Geometric / surface detail | **ADVANCED 72–231** conservatory floor |
+| 5 | Geometric / surface detail | **ADVANCED 72–233** kitchen subway |
 | 6 | Victorian wall art | **ADVANCED 69–205** frames |
 | 7 | Plant diversity / side volume | **ADVANCED 74–210** denser fronds |
 | 8 | Side-view mesh furniture | **ADVANCED 70–232** wing shell |
 | 9 | Door transition safety | **ADVANCED 76–208** portal solid |
-| 10 | Wallpaper contrast | **ADVANCED 72–229** workshop dens |
+| 10 | Wallpaper contrast | **ADVANCED 72–233** kitchen check |
 | 11 | Hall / prep still-life | **ADVANCED 73–219** lower shelf |
 | 12–23 | Conservatory densify | **ADVANCED 116–231** floor dens |
 | 24–142 | Prop solid mats…billboard bulk | **DONE 89–207** |
@@ -27,15 +27,16 @@
 | 165 | Iron diamond-tread floor path | **DONE 230** |
 | 166 | Conservatory fine flagstone dens | **DONE 231** |
 | 167 | Wing armchair continuous shell (front+side) | **DONE 232** |
+| 168 | Kitchen horizontal subway metro + fine check | **DONE 233** |
 
 ## Loops
 
 | Loop | Work |
 |------|------|
-| 229 | **Workshop fine limewash brick** + denser board wainscot + **wood-seat hall chairs** |
 | 230 | **Iron path diamond-tread plates** (not dark Minecraft slab strip) |
 | 231 | **Conservatory fine irregular flags** + dens UV 0.38→0.72 |
 | 232 | **Wing armchair continuous shell** — no pale seat square / no side organ pipes |
+| 233 | **Kitchen horizontal subway metro** + finer cream check wallpaper |
 
 ## Still high-value if continuing
 
@@ -46,10 +47,10 @@
 ## Solid-mat / residual status
 
 - Prop solid-mat conversion largely exhausted  
-- Architecture, machines, furniture, service textures advanced 208–232  
-- Wing chairs: solid continuous shell + single outer roll (front and side FOV)  
+- Architecture, machines, furniture, service textures advanced 208–233  
+- Kitchen wainscot is period horizontal subway (not square brick plate)  
 
 ## Anchors
 
 - Door test: `scripts/test_door_transitions.gd`  
-- Shots: `auto_loop_67/` … `auto_loop_232/`  
+- Shots: `auto_loop_67/` … `auto_loop_233/`  

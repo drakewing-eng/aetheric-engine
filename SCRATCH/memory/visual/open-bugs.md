@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 233)
+
+- **Kitchen metro square-brick residual:** dens 1.15 still read as square Minecraft cream bricks mid-FOV (kitchen_spawn). Regenerated **horizontal subway** plate (20×8 running bond, 2:1 tiles, warm grout) + finer 32×32 cream check wallpaper; dens wainscot **1.25**, paper **1.2**. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 232)
 
 - **Wing armchair fridge residual:** front mid-FOV (morning_room_spawn) pale seat square + box stack; side FOV multi-cyl organ pipes after earlier roll experiments. Rewrote continuous solid shell — same fabric family only (no lightened pad), one deep back, solid wing panels + single outer roll, horizontal arm only. Art + door suite PASS.  

@@ -860,14 +860,15 @@ func _make_mat(tex_path: String, fallback: Color, plane_size: Vector2, tiled: bo
 			mat.albedo_texture = tex
 			if tiled:
 				# Damask denser (loop 77); service tiles denser so grout reads (loop 115)
-				# Loop 209: kitchen/workshop denser still — 0.38 left ~30cm Minecraft blocks mid-FOV
-				# Loop 228: kitchen denser again — 0.72 still ~20cm blocks mid-FOV kitchen_spawn
-				# Loop 229: workshop limewash dens 0.58 still ~25cm Minecraft mid-FOV — finer plate + dens
+				# Loop 209/228/229: dens raises for service walls mid-FOV Minecraft residual
+				# Loop 233: kitchen metro = HORIZONTAL subway plate (not square bricks)
 				var dens := 0.22
 				if tex_path.find("wallpaper_drawing") >= 0 or tex_path.find("wallpaper_gallery") >= 0:
 					dens = 0.28
-				elif tex_path.find("wainscot_kitchen") >= 0 or tex_path.find("wallpaper_kitchen") >= 0:
-					dens = 1.15  # ~10cm metro / fine cream check + regen 24×18 tile plate
+				elif tex_path.find("wainscot_kitchen") >= 0:
+					dens = 1.25  # horizontal subway courses ~8–10cm
+				elif tex_path.find("wallpaper_kitchen") >= 0:
+					dens = 1.2  # fine cream check (32×32 plate)
 				elif tex_path.find("wallpaper_workshop") >= 0:
 					dens = 1.15  # fine limewash brick (~10cm courses) + regen 18-row plate
 				elif tex_path.find("wainscot_workshop") >= 0:
