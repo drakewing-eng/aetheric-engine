@@ -2583,6 +2583,7 @@ static func _make_wall_vine(prop: Dictionary) -> Node3D:
 
 static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 	## Loop 189: oak plate rail + triangle brackets (not stick lumber + black posts mid-FOV).
+	## Loop 211: denser still-life — larger plates/crocks/jugs so rails aren't bare sticks mid-FOV.
 	var root := Node3D.new()
 	root.name = "WallShelf"
 	var width: float = float(prop.get("width", 2.4))
@@ -2592,64 +2593,97 @@ static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 	var mat_oak_d := _solid_matte(Color(0.34, 0.22, 0.12), 0.82)
 	var mat_oak_l := _solid_matte(Color(0.54, 0.4, 0.24), 0.75)
 	var mat_iron := _solid_metal(Color(0.32, 0.32, 0.34), 0.5)
-	var mat_cream := _solid_matte(Color(0.82, 0.76, 0.64), 0.88)
-	var mat_cream_d := _solid_matte(Color(0.72, 0.66, 0.54), 0.88)
+	var mat_cream := _solid_matte(Color(0.84, 0.78, 0.66), 0.88)
+	var mat_cream_d := _solid_matte(Color(0.74, 0.68, 0.56), 0.88)
+	var mat_blue := _solid_matte(Color(0.42, 0.52, 0.62), 0.85)
+	var mat_blue_d := _solid_matte(Color(0.32, 0.4, 0.5), 0.85)
 	var mat_clay := _solid_matte(Color(0.72, 0.46, 0.28), 0.9)
 	var mat_clay_d := _solid_matte(Color(0.58, 0.36, 0.22), 0.9)
+	var mat_clay_l := _solid_matte(Color(0.78, 0.52, 0.32), 0.88)
 	var mat_cop := _solid_metal(Color(0.7, 0.42, 0.18), 0.32)
 	var mat_cop_d := _solid_metal(Color(0.58, 0.34, 0.14), 0.36)
 	var mat_cop_l := _solid_metal(Color(0.78, 0.5, 0.24), 0.28)
+	var mat_pewter := _solid_metal(Color(0.55, 0.55, 0.58), 0.4)
 	# Back wall plate (shelf mounts into wall — not free stick)
-	_add_mesh_box(root, Vector3(0, y + 0.02, -0.04), Vector3(width * 0.98, 0.12, 0.035), mat_oak_d)
-	# Main shelf board + front bead lip
-	_add_mesh_box(root, Vector3(0, y, 0.06), Vector3(width, 0.045, 0.18), mat_oak)
-	_add_mesh_box(root, Vector3(0, y + 0.03, 0.14), Vector3(width * 0.98, 0.028, 0.03), mat_oak_l)
+	_add_mesh_box(root, Vector3(0, y + 0.02, -0.04), Vector3(width * 0.98, 0.14, 0.035), mat_oak_d)
+	# Main shelf board + front bead lip (slightly deeper for ware)
+	_add_mesh_box(root, Vector3(0, y, 0.07), Vector3(width, 0.05, 0.2), mat_oak)
+	_add_mesh_box(root, Vector3(0, y + 0.032, 0.155), Vector3(width * 0.98, 0.03, 0.032), mat_oak_l)
 	# Under-rail (plate groove look)
-	_add_mesh_box(root, Vector3(0, y - 0.03, 0.02), Vector3(width * 0.92, 0.02, 0.04), mat_oak_d)
+	_add_mesh_box(root, Vector3(0, y - 0.03, 0.02), Vector3(width * 0.92, 0.022, 0.045), mat_oak_d)
 	# Triangle wood brackets + iron L (not hanging black posts)
 	var bracket_xs: Array = [-width * 0.38, width * 0.38]
 	if width > 1.6:
 		bracket_xs = [-width * 0.4, 0.0, width * 0.4]
 	for sx in bracket_xs:
-		# Wood triangle: vertical wall leg + horizontal under-shelf + diagonal brace
 		_add_mesh_box(root, Vector3(sx, y - 0.1, -0.02), Vector3(0.05, 0.22, 0.035), mat_oak_d)
 		_add_mesh_box(root, Vector3(sx, y - 0.04, 0.06), Vector3(0.05, 0.035, 0.16), mat_oak)
 		_add_mesh_box(root, Vector3(sx, y - 0.12, 0.05), Vector3(0.04, 0.04, 0.14), mat_oak_d)
-		# Small iron L-strap at wall joint
 		_add_mesh_box(root, Vector3(sx, y - 0.02, -0.01), Vector3(0.035, 0.06, 0.05), mat_iron)
 		_add_mesh_box(root, Vector3(sx, y - 0.18, -0.02), Vector3(0.04, 0.03, 0.03), mat_iron)
 	# End returns
-	_add_mesh_box(root, Vector3(-width * 0.48, y, 0.04), Vector3(0.04, 0.06, 0.14), mat_oak_d)
-	_add_mesh_box(root, Vector3(width * 0.48, y, 0.04), Vector3(0.04, 0.06, 0.14), mat_oak_d)
-	# Contents — low plates/crocks/copper (solid mats; no tall coils)
-	var n := int(clampf(width / 0.38, 3.0, 8.0))
+	_add_mesh_box(root, Vector3(-width * 0.48, y, 0.05), Vector3(0.045, 0.07, 0.16), mat_oak_d)
+	_add_mesh_box(root, Vector3(width * 0.48, y, 0.05), Vector3(0.045, 0.07, 0.16), mat_oak_d)
+	# Loop 211: denser packing + larger ware (was width/0.38 → sparse nubs mid-FOV)
+	var n := int(clampf(width / 0.26, 4.0, 10.0))
 	for i in n:
-		var x := -width * 0.38 + float(i) * (width * 0.76 / float(maxi(n - 1, 1)))
-		var kind := (i + seed0) % 4
-		if kind == 0:
-			# Plate stack with rims (low)
-			_add_mesh_cyl(root, Vector3(x, y + 0.04, 0.05), 0.08 + float(i % 2) * 0.01, 0.018, mat_cream if (i + seed0) % 2 == 0 else mat_cream_d, false)
-			_add_mesh_cyl(root, Vector3(x, y + 0.06, 0.05), 0.07, 0.016, mat_cream_d, false)
-		elif kind == 1:
-			# Shallow copper bowl + handle
-			var cr: float = 0.055 + float((i + seed0) % 3) * 0.01
-			var cmat := mat_cop if i % 2 == 0 else mat_cop_d
-			_add_mesh_cyl(root, Vector3(x, y + 0.035, 0.05), cr * 0.75, 0.014, mat_cop_d, false)
-			_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.05), cr, 0.055, cmat, false)
-			_add_mesh_cyl(root, Vector3(x, y + 0.1, 0.05), cr + 0.012, 0.014, mat_cop_l, false)
-			_add_mesh_box(root, Vector3(x + cr * 0.85, y + 0.07, 0.05), Vector3(0.045, 0.025, 0.028), cmat)
-		elif kind == 2:
-			# Crock with lid (short)
-			_add_mesh_cyl(root, Vector3(x, y + 0.08, 0.05), 0.05, 0.1, mat_clay if (i + seed0) % 2 == 0 else mat_clay_d, false)
-			_add_mesh_cyl(root, Vector3(x, y + 0.14, 0.05), 0.04, 0.025, mat_clay_d, false)
-		else:
-			# Cream bowl / jug
-			if (i + seed0) % 2 == 0:
-				_add_mesh_cyl(root, Vector3(x, y + 0.05, 0.05), 0.065, 0.035, mat_cream_d, false)
-				_add_mesh_cyl(root, Vector3(x, y + 0.075, 0.05), 0.07, 0.014, mat_cream, false)
-			else:
-				_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.05), 0.04, 0.09, mat_cream_d, false)
-				_add_mesh_box(root, Vector3(x + 0.045, y + 0.08, 0.05), Vector3(0.03, 0.05, 0.022), mat_cream)
+		var x := -width * 0.4 + float(i) * (width * 0.8 / float(maxi(n - 1, 1)))
+		var kind := (i + seed0 * 3) % 6
+		match kind:
+			0:
+				# Stack of 3 dinner plates (readable disc mass)
+				var pr: float = 0.095 + float(i % 2) * 0.012
+				var pmat := mat_cream if (i + seed0) % 2 == 0 else mat_cream_d
+				_add_mesh_cyl(root, Vector3(x, y + 0.035, 0.06), pr, 0.016, pmat, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.055, 0.06), pr * 0.92, 0.014, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.072, 0.06), pr * 0.85, 0.014, pmat, false)
+				# Rim lip
+				_add_mesh_cyl(root, Vector3(x, y + 0.08, 0.06), pr * 0.95, 0.008, mat_cream, false)
+			1:
+				# Edge-on plate leaning against wall (silhouette from walk)
+				var er: float = 0.1
+				var emat := mat_blue if (i + seed0) % 3 == 0 else mat_cream
+				_add_mesh_cyl_rot(root, Vector3(x, y + 0.1, 0.02), er, 0.018, emat, Vector3(PI * 0.5, 0.15, 0))
+				_add_mesh_cyl_rot(root, Vector3(x + 0.04, y + 0.09, 0.04), er * 0.85, 0.014, mat_cream_d, Vector3(PI * 0.5, -0.2, 0))
+			2:
+				# Lidded crock with glaze band
+				var ch: float = 0.12 + float((i + seed0) % 3) * 0.02
+				var cr: float = 0.055 + float(i % 2) * 0.01
+				var cmat := mat_clay if i % 2 == 0 else mat_clay_d
+				_add_mesh_cyl(root, Vector3(x, y + ch * 0.45, 0.055), cr, ch, cmat, false)
+				_add_mesh_cyl(root, Vector3(x, y + ch * 0.55, 0.055), cr + 0.008, 0.018, mat_blue_d if (i + seed0) % 2 == 0 else mat_clay_l, false)
+				_add_mesh_cyl(root, Vector3(x, y + ch + 0.02, 0.055), cr * 0.85, 0.03, mat_clay_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + ch + 0.04, 0.055), cr * 0.45, 0.02, mat_clay_l, false)
+			3:
+				# Copper basin / skillet
+				var cr: float = 0.07 + float((i + seed0) % 3) * 0.012
+				var cmat := mat_cop if i % 2 == 0 else mat_cop_d
+				_add_mesh_cyl(root, Vector3(x, y + 0.04, 0.06), cr * 0.7, 0.016, mat_cop_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.075, 0.06), cr, 0.06, cmat, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.11, 0.06), cr + 0.014, 0.016, mat_cop_l, false)
+				_add_mesh_box(root, Vector3(x + cr * 0.9, y + 0.075, 0.06), Vector3(0.055, 0.028, 0.03), cmat)
+			4:
+				# Cream jug with handle + spout mass
+				_add_mesh_cyl(root, Vector3(x, y + 0.08, 0.055), 0.045, 0.12, mat_cream_d, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.15, 0.055), 0.035, 0.04, mat_cream, false)
+				_add_mesh_cyl(root, Vector3(x, y + 0.05, 0.055), 0.05, 0.025, mat_cream, false)
+				_add_mesh_box(root, Vector3(x + 0.05, y + 0.09, 0.055), Vector3(0.035, 0.06, 0.025), mat_cream_d)
+				_add_mesh_box(root, Vector3(x - 0.04, y + 0.14, 0.055), Vector3(0.04, 0.02, 0.03), mat_cream)
+			_:
+				# Pewter tankard or blue-band jar
+				if (i + seed0) % 2 == 0:
+					_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.055), 0.042, 0.1, mat_pewter, false)
+					_add_mesh_cyl(root, Vector3(x, y + 0.13, 0.055), 0.045, 0.02, mat_pewter, false)
+					_add_mesh_box(root, Vector3(x + 0.05, y + 0.08, 0.055), Vector3(0.03, 0.05, 0.022), mat_pewter)
+				else:
+					_add_mesh_cyl(root, Vector3(x, y + 0.07, 0.055), 0.048, 0.1, mat_cream, false)
+					_add_mesh_cyl(root, Vector3(x, y + 0.08, 0.055), 0.052, 0.02, mat_blue, false)
+					_add_mesh_cyl(root, Vector3(x, y + 0.13, 0.055), 0.04, 0.025, mat_cream_d, false)
+	# Secondary front row of small saucers (fills empty rail gaps)
+	var n2 := int(clampf(width / 0.35, 2.0, 6.0))
+	for j in n2:
+		var x2 := -width * 0.32 + float(j) * (width * 0.64 / float(maxi(n2 - 1, 1))) + float(seed0 % 3) * 0.02
+		_add_mesh_cyl(root, Vector3(x2, y + 0.03, 0.11), 0.055, 0.012, mat_cream_d if j % 2 == 0 else mat_cream, false)
 	return root
 
 
@@ -3021,7 +3055,7 @@ static func _make_tool_rack(prop: Dictionary) -> Node3D:
 	return root
 
 static func _make_wicker_basket(prop: Dictionary) -> Node3D:
-	## Loop 203: garden trug — solid-mat willow weave + fills (no wood/clay washout).
+	## Loop 211: oval willow trug — cylinder body + weave ribs (not pale wood crate mid-FOV).
 	var root := Node3D.new()
 	root.name = "WickerBasket"
 	var s: float = float(prop.get("scale", 1.0))
@@ -3031,70 +3065,86 @@ static func _make_wicker_basket(prop: Dictionary) -> Node3D:
 		fill = "apples"
 	elif fill == "" and seed0 % 3 == 1:
 		fill = "linen"
-	var wick := Color(0.62, 0.48, 0.3) if seed0 % 2 == 0 else Color(0.55, 0.42, 0.26)
+	# Warmer darker willow (pale cream read as Minecraft crate)
+	var wick := Color(0.48, 0.34, 0.18) if seed0 % 2 == 0 else Color(0.42, 0.3, 0.16)
 	var mat_w := _solid_matte(wick, 0.9)
-	var mat_wd := _solid_matte(wick.darkened(0.16), 0.92)
-	var mat_wl := _solid_matte(wick.lightened(0.12), 0.88)
-	var mat_soil := _solid_matte(Color(0.2, 0.14, 0.08), 0.94)
-	var rx: float = 0.26 * s
-	var rz: float = 0.17 * s
-	var h: float = 0.18 * s
-	_add_mesh_box(root, Vector3(0, h * 0.42, 0), Vector3(rx * 1.7, h * 0.82, rz * 1.55), mat_w)
-	_add_mesh_cyl(root, Vector3(rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, mat_w, true)
-	_add_mesh_cyl(root, Vector3(-rx * 0.58, h * 0.42, 0), rz * 0.78, h * 0.82, mat_w, true)
-	_add_mesh_box(root, Vector3(0, 0.018 * s, 0), Vector3(rx * 1.75, 0.03 * s, rz * 1.6), mat_wd)
-	_add_mesh_box(root, Vector3(0, h * 0.5, 0), Vector3(rx * 1.35, 0.025 * s, rz * 1.2), mat_soil)
-	for bi in 4:
-		var by := 0.035 * s + float(bi) * (h * 0.22)
-		_add_mesh_box(root, Vector3(0, by, 0), Vector3(rx * 1.78, 0.016 * s, rz * 1.62), mat_wd if bi % 2 == 0 else mat_wl)
-	for vi in 6:
-		var t := (float(vi) / 5.0 - 0.5) * rx * 1.5
-		_add_mesh_box(root, Vector3(t, h * 0.42, rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), mat_wd)
-		_add_mesh_box(root, Vector3(t, h * 0.42, -rz * 0.74), Vector3(0.016 * s, h * 0.72, 0.016 * s), mat_wd)
-	for ei in 3:
-		var ez := (float(ei) / 2.0 - 0.5) * rz * 1.1
-		_add_mesh_box(root, Vector3(rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), mat_wd)
-		_add_mesh_box(root, Vector3(-rx * 0.82, h * 0.42, ez), Vector3(0.016 * s, h * 0.7, 0.016 * s), mat_wd)
-	_add_mesh_box(root, Vector3(0, h * 0.88, 0), Vector3(rx * 1.82, 0.03 * s, rz * 1.68), mat_wl)
-	_add_mesh_box(root, Vector3(0, h * 0.92, 0), Vector3(rx * 1.7, 0.018 * s, rz * 1.55), mat_wd)
+	var mat_wd := _solid_matte(wick.darkened(0.18), 0.92)
+	var mat_wl := _solid_matte(wick.lightened(0.1), 0.88)
+	var mat_soil := _solid_matte(Color(0.18, 0.12, 0.07), 0.94)
+	var rx: float = 0.24 * s
+	var rz: float = 0.16 * s
+	var h: float = 0.2 * s
+	# Oval body from overlapping cylinders (no main box slab)
+	_add_mesh_cyl(root, Vector3(0, h * 0.4, 0), rx * 0.55, h * 0.78, mat_w, true)
+	_add_mesh_cyl(root, Vector3(rx * 0.35, h * 0.4, 0), rz * 0.95, h * 0.78, mat_w, true)
+	_add_mesh_cyl(root, Vector3(-rx * 0.35, h * 0.4, 0), rz * 0.95, h * 0.78, mat_w, true)
+	_add_mesh_cyl(root, Vector3(0, h * 0.4, rz * 0.2), rx * 0.48, h * 0.75, mat_wl, false)
+	_add_mesh_cyl(root, Vector3(0, h * 0.4, -rz * 0.2), rx * 0.48, h * 0.75, mat_wd, false)
+	# Floor of trug
+	_add_mesh_cyl(root, Vector3(0, 0.02 * s, 0), rx * 0.7, 0.025 * s, mat_wd, false)
+	_add_mesh_box(root, Vector3(0, 0.02 * s, 0), Vector3(rx * 1.1, 0.02 * s, rz * 1.2), mat_wd)
+	# Interior soil/shadow bed
+	_add_mesh_cyl(root, Vector3(0, h * 0.55, 0), rx * 0.5, 0.02 * s, mat_soil, false)
+	# Horizontal weave bands (ribs)
+	for bi in 5:
+		var by := 0.04 * s + float(bi) * (h * 0.16)
+		_add_mesh_cyl(root, Vector3(0, by, 0), rx * 0.72, 0.014 * s, mat_wd if bi % 2 == 0 else mat_wl, false)
+		_add_mesh_cyl(root, Vector3(rx * 0.32, by, 0), rz * 1.05, 0.012 * s, mat_wd if bi % 2 == 0 else mat_w, false)
+		_add_mesh_cyl(root, Vector3(-rx * 0.32, by, 0), rz * 1.05, 0.012 * s, mat_wd if bi % 2 == 0 else mat_w, false)
+	# Vertical stakes around rim
+	for vi in 8:
+		var ang := float(vi) * TAU / 8.0 + float(seed0) * 0.1
+		var vx: float = cos(ang) * rx * 0.65
+		var vz: float = sin(ang) * rz * 0.85
+		_add_mesh_cyl(root, Vector3(vx, h * 0.42, vz), 0.01 * s, h * 0.7, mat_wd, false)
+	# Rim coil
+	_add_mesh_cyl(root, Vector3(0, h * 0.85, 0), rx * 0.75, 0.03 * s, mat_wl, false)
+	_add_mesh_cyl(root, Vector3(rx * 0.32, h * 0.85, 0), rz * 1.05, 0.028 * s, mat_w, false)
+	_add_mesh_cyl(root, Vector3(-rx * 0.32, h * 0.85, 0), rz * 1.05, 0.028 * s, mat_w, false)
+	_add_mesh_cyl(root, Vector3(0, h * 0.9, 0), rx * 0.7, 0.018 * s, mat_wd, false)
+	# Arched end handles
 	for sx in [-1.0, 1.0]:
-		var hx: float = sx * rx * 0.9
-		_add_mesh_box(root, Vector3(hx, h * 0.95, 0), Vector3(0.045 * s, 0.08 * s, 0.07 * s), mat_w)
-		_add_mesh_box(root, Vector3(hx, h * 1.12, 0), Vector3(0.04 * s, 0.12 * s, 0.05 * s), mat_wd)
-		_add_mesh_box(root, Vector3(hx, h * 1.22, 0), Vector3(0.055 * s, 0.035 * s, 0.08 * s), mat_wl)
+		var hx: float = sx * rx * 0.75
+		_add_mesh_cyl(root, Vector3(hx, h * 0.95, 0), 0.028 * s, 0.08 * s, mat_w, false)
+		_add_mesh_cyl(root, Vector3(hx, h * 1.12, 0), 0.022 * s, 0.14 * s, mat_wd, false)
+		_add_mesh_cyl_rot(root, Vector3(hx, h * 1.22, 0), 0.018 * s, 0.1 * s, mat_wl, Vector3(0, 0, PI * 0.5))
 	if seed0 % 2 == 0:
-		_add_mesh_box(root, Vector3(0, h * 1.18, 0), Vector3(rx * 1.65, 0.022 * s, 0.028 * s), mat_wd)
+		# Crossbar handle
+		_add_mesh_cyl_rot(root, Vector3(0, h * 1.2, 0), 0.014 * s, rx * 1.4, mat_wd, Vector3(0, 0, PI * 0.5))
 	if fill == "apples":
-		for ai in 6:
-			var ax := cos(float(ai) * 1.15) * rx * 0.42
-			var az := sin(float(ai) * 1.15) * rz * 0.38
-			var acol := Color(0.55, 0.18, 0.12) if ai % 2 == 0 else Color(0.48, 0.22, 0.1)
+		for ai in 7:
+			var ax := cos(float(ai) * 1.05 + float(seed0)) * rx * 0.38
+			var az := sin(float(ai) * 1.05) * rz * 0.4
+			var acol := Color(0.55, 0.16, 0.12) if ai % 2 == 0 else Color(0.48, 0.2, 0.1)
+			if ai % 3 == 2:
+				acol = Color(0.58, 0.28, 0.1)
 			var mat_a := _solid_matte(acol, 0.9)
-			var mat_al := _solid_matte(acol.lightened(0.08), 0.9)
-			_add_mesh_cyl(root, Vector3(ax, h * 0.72, az), 0.038 * s, 0.045 * s, mat_a, false)
-			_add_mesh_cyl(root, Vector3(ax, h * 0.78, az), 0.03 * s, 0.02 * s, mat_al, false)
+			_add_mesh_cyl(root, Vector3(ax, h * 0.68, az), 0.04 * s, 0.035 * s, mat_a, false)
+			_add_mesh_cyl(root, Vector3(ax, h * 0.75, az), 0.045 * s, 0.03 * s, mat_a, false)
+			_add_mesh_cyl(root, Vector3(ax, h * 0.8, az), 0.03 * s, 0.018 * s, mat_a, false)
 	elif fill == "linen":
-		var mat_lin := _solid_matte(Color(0.84, 0.8, 0.7), 0.92)
-		var mat_lin_d := _solid_matte(Color(0.8, 0.76, 0.66), 0.92)
-		var mat_lin_dd := _solid_matte(Color(0.78, 0.74, 0.64), 0.92)
-		_add_mesh_box(root, Vector3(0, h * 0.68, 0), Vector3(rx * 1.25, 0.055 * s, rz * 1.15), mat_lin)
-		_add_mesh_box(root, Vector3(0.02 * s, h * 0.78, 0.015 * s), Vector3(rx * 1.05, 0.04 * s, rz * 0.95), mat_lin_d)
-		_add_mesh_box(root, Vector3(-0.015 * s, h * 0.86, -0.01 * s), Vector3(rx * 0.9, 0.03 * s, rz * 0.8), mat_lin_dd)
+		var mat_lin := _solid_matte(Color(0.78, 0.72, 0.58), 0.92)
+		var mat_lin_d := _solid_matte(Color(0.7, 0.64, 0.5), 0.92)
+		var mat_lin_dd := _solid_matte(Color(0.66, 0.6, 0.46), 0.92)
+		_add_mesh_cyl(root, Vector3(0, h * 0.7, 0), rx * 0.55, 0.06 * s, mat_lin, false)
+		_add_mesh_box(root, Vector3(0.01 * s, h * 0.78, 0.01 * s), Vector3(rx * 0.95, 0.04 * s, rz * 0.85), mat_lin_d)
+		_add_mesh_box(root, Vector3(-0.01 * s, h * 0.86, -0.01 * s), Vector3(rx * 0.8, 0.03 * s, rz * 0.7), mat_lin_dd)
+		_add_mesh_box(root, Vector3(0.03 * s, h * 0.9, 0.02 * s), Vector3(rx * 0.55, 0.02 * s, rz * 0.5), mat_lin)
 	elif fill == "veg":
-		var mat_soil2 := _solid_matte(Color(0.28, 0.2, 0.1), 0.92)
+		var mat_soil2 := _solid_matte(Color(0.26, 0.18, 0.1), 0.92)
 		var mat_carrot := _solid_matte(Color(0.78, 0.42, 0.18), 0.88)
 		var mat_leaf := _solid_matte(Color(0.22, 0.4, 0.14), 0.9)
 		var mat_leaf_d := _solid_matte(Color(0.2, 0.38, 0.14), 0.9)
-		var mat_turnip := _solid_matte(Color(0.72, 0.62, 0.4), 0.9)
-		_add_mesh_box(root, Vector3(0, h * 0.58, 0), Vector3(rx * 1.2, 0.04 * s, rz * 1.05), mat_soil2)
-		for ci in 4:
-			var cx := (float(ci) / 3.0 - 0.5) * rx * 0.9
-			_add_mesh_cyl(root, Vector3(cx, h * 0.7, rz * 0.15), 0.018 * s, 0.09 * s, mat_carrot, false)
-			_add_mesh_box(root, Vector3(cx, h * 0.78, rz * 0.15), Vector3(0.04 * s, 0.02 * s, 0.03 * s), mat_leaf)
-		_add_mesh_box(root, Vector3(0.05 * s, h * 0.76, -rz * 0.2), Vector3(0.12 * s, 0.012 * s, 0.08 * s), mat_leaf)
-		_add_mesh_box(root, Vector3(-0.08 * s, h * 0.74, -rz * 0.1), Vector3(0.1 * s, 0.01 * s, 0.07 * s), mat_leaf_d)
-		_add_mesh_cyl(root, Vector3(rx * 0.25, h * 0.68, -rz * 0.15), 0.035 * s, 0.04 * s, mat_turnip, false)
-	_add_contact_shadow(root, rx * 1.25, rz * 1.25)
+		var mat_turnip := _solid_matte(Color(0.7, 0.6, 0.38), 0.9)
+		_add_mesh_cyl(root, Vector3(0, h * 0.58, 0), rx * 0.5, 0.035 * s, mat_soil2, false)
+		for ci in 5:
+			var cx := (float(ci) / 4.0 - 0.5) * rx * 0.85
+			_add_mesh_cyl(root, Vector3(cx, h * 0.72, rz * 0.12), 0.016 * s, 0.1 * s, mat_carrot, false)
+			_add_mesh_box(root, Vector3(cx, h * 0.82, rz * 0.12), Vector3(0.04 * s, 0.022 * s, 0.03 * s), mat_leaf)
+		_add_mesh_box(root, Vector3(0.04 * s, h * 0.78, -rz * 0.18), Vector3(0.12 * s, 0.014 * s, 0.08 * s), mat_leaf)
+		_add_mesh_box(root, Vector3(-0.06 * s, h * 0.76, -rz * 0.08), Vector3(0.1 * s, 0.012 * s, 0.07 * s), mat_leaf_d)
+		_add_mesh_cyl(root, Vector3(rx * 0.22, h * 0.7, -rz * 0.12), 0.038 * s, 0.045 * s, mat_turnip, false)
+	_add_contact_shadow(root, rx * 1.15, rz * 1.15)
 	return root
 
 

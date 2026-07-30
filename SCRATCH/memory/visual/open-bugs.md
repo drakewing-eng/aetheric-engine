@@ -132,6 +132,11 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-30 (loop 211)
+
+- **Wall shelf residual:** kitchen plate rails sparse nubs mid-FOV (width/0.38 packing, tiny ware). Dens → width/0.26, 6 kit types (plate stacks, edge-on plates, lidded crocks, copper basins, jugs, pewter/blue jars) + front saucer row.  
+- **Wicker basket residual:** pale box body read as Minecraft crate. Oval multi-cylinder willow body, darker weave, arched handles, stronger fills. Art + door suite PASS.  
+
 ## Status update 2026-07-30 (loop 210)
 
 - **Prep kit 0 residual:** flour sack/log + brick loaf + red nub apples mid-FOV kitchen doorway. Rewrote plump multi-mass hessian sack, cottage loaf (base+top+scores), tiered apples with stems/leaf, rolling pin, thicker board, copper basin with dust fill.  
