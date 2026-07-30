@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 184)
+
+- **Chandelier residual:** frosted shades read as cream ice-cream cone cluster mid-FOV. Brass gasolier rewrite — solid-metal brass ring/arms/body, shorter alpha frosted bell shades with emission, gallery rings, compact crystal drops.  
+
 ## Status update 2026-07-29 (loop 183)
 
 - **Classical urn residual:** amphora cylinder stack still read as milk-churn mid-FOV after 180. Rewrote Victorian pedestal garden urn — round base disc, narrow turned stem, wide bowl + rolled rim, dark sandstone (not pale cream), small loop handles, trailing ivy drape.  

@@ -3666,52 +3666,98 @@ static func _make_umbrella_stand(prop: Dictionary) -> Node3D:
 # ─── Features ────────────────────────────────────────────────────────────────
 
 static func _make_chandelier(_prop: Dictionary) -> Node3D:
-	## Loop 123 Victorian gasolier: brass rose + bowl + true tapered frosted shades
-	## (not stacked white tube lamps).
+	## Loop 184: Victorian brass gasolier — ring arms + frosted alpha shades
+	## (not cream ice-cream cone cluster mid-FOV).
 	var root := Node3D.new()
 	root.name = "Chandelier"
 	var hang: float = float(_prop.get("hang", 2.95))
-	var glass := Color(0.82, 0.72, 0.48)  # frosted amber, not pure white
-	var glass_hi := Color(0.92, 0.84, 0.58)
-	var iron_mid := Color(0.3, 0.3, 0.32)
-	# Ceiling rose (plaster disc) + brass drop
-	_add_cylinder(root, Vector3(0, hang + 0.32, 0), 0.18, 0.05, Color(0.88, 0.84, 0.76), false, 0.75)
-	_add_cylinder(root, Vector3(0, hang + 0.28, 0), 0.1, 0.04, BRASS.darkened(0.08), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang + 0.12, 0), 0.02, 0.28, BRASS.darkened(0.05), false, 0.28, true)
-	# Central font / reservoir (brass-heavy mass, not glass stack)
-	_add_cylinder(root, Vector3(0, hang - 0.02, 0), 0.12, 0.06, BRASS.darkened(0.1), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang - 0.1, 0), 0.18, 0.1, BRASS, false, 0.28, true)
-	_add_cylinder(root, Vector3(0, hang - 0.18, 0), 0.14, 0.05, BRASS.darkened(0.08), false, 0.3, true)
-	_add_cylinder(root, Vector3(0, hang - 0.22, 0), 0.08, 0.04, BRASS.lightened(0.05), false, 0.28, true)
-	# Six arms + inverted frosted cone shades
+	var mat_br := _solid_metal(BRASS, 0.28)
+	var mat_br_d := _solid_metal(BRASS.darkened(0.12), 0.32)
+	var mat_br_l := _solid_metal(BRASS.lightened(0.08), 0.25)
+	var mat_rose := _solid_matte(Color(0.82, 0.78, 0.7), 0.85)
+	# Frosted amber glass — alpha so never brass path; soft emission
+	var mat_shade := StandardMaterial3D.new()
+	mat_shade.albedo_color = Color(0.92, 0.78, 0.48, 0.55)
+	mat_shade.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_shade.metallic = 0.0
+	mat_shade.roughness = 0.35
+	mat_shade.emission_enabled = true
+	mat_shade.emission = Color(1.0, 0.82, 0.45)
+	mat_shade.emission_energy_multiplier = 0.55
+	mat_shade.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	var mat_shade_i := StandardMaterial3D.new()
+	mat_shade_i.albedo_color = Color(1.0, 0.9, 0.6, 0.35)
+	mat_shade_i.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_shade_i.metallic = 0.0
+	mat_shade_i.roughness = 0.25
+	mat_shade_i.emission_enabled = true
+	mat_shade_i.emission = Color(1.0, 0.88, 0.55)
+	mat_shade_i.emission_energy_multiplier = 0.9
+	mat_shade_i.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+	# Ceiling rose + brass drop rod
+	_add_mesh_cyl(root, Vector3(0, hang + 0.3, 0), 0.16, 0.04, mat_rose, false)
+	_add_mesh_cyl(root, Vector3(0, hang + 0.26, 0), 0.08, 0.035, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, hang + 0.08, 0), 0.018, 0.32, mat_br, false)
+	# Central body (compact brass reservoir — not tall glass stack)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.05, 0), 0.1, 0.05, mat_br_d, false)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.12, 0), 0.15, 0.09, mat_br, false)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.18, 0), 0.1, 0.04, mat_br_l, false)
+	# Brass arm ring (identity of gasolier)
+	_add_mesh_cyl(root, Vector3(0, hang - 0.08, 0), 0.32, 0.02, mat_br_d, false)
+	# Six curved arms + compact bell shades
 	for i in 6:
 		var a := float(i) * 60.0
 		var rad := deg_to_rad(a)
-		var ax: float = cos(rad) * 0.38
-		var az: float = sin(rad) * 0.38
-		# Curved brass arm (outer segment lower)
-		_add_box(root, Vector3(ax * 0.3, hang - 0.05, az * 0.3), Vector3(0.2, 0.035, 0.035), BRASS, false, 0.3)
-		_add_box(root, Vector3(ax * 0.65, hang - 0.1, az * 0.65), Vector3(0.18, 0.03, 0.03), BRASS.darkened(0.06), false, 0.3)
-		# Gas jet cup
-		_add_cylinder(root, Vector3(ax, hang - 0.14, az), 0.045, 0.05, BRASS, false, 0.28, true)
-		_add_cylinder(root, Vector3(ax, hang - 0.18, az), 0.06, 0.025, BRASS.darkened(0.1), false, 0.3, true)
-		# True inverted cone shade (wide bottom, narrow top) via tapered mesh
-		_add_tapered_cylinder(root, Vector3(ax, hang - 0.28, az), 0.035, 0.1, 0.16, glass, 0.42)
-		_add_tapered_cylinder(root, Vector3(ax, hang - 0.26, az), 0.025, 0.07, 0.1, glass_hi, 0.4)
-		# Dark iron gallery ring under shade
-		_add_cylinder(root, Vector3(ax, hang - 0.36, az), 0.095, 0.02, iron_mid, false, 0.45)
-		# Warm flame
-		_add_sphere_blob(root, Vector3(ax, hang - 0.22, az), 0.028, Color(1.0, 0.78, 0.35))
-	# Crystal drops under central bowl
-	for j in 5:
-		var ja := float(j) * 72.0 + 15.0
+		var ax: float = cos(rad) * 0.42
+		var az: float = sin(rad) * 0.42
+		# Arm segments (stepped curve outward + down)
+		_add_mesh_box(root, Vector3(ax * 0.35, hang - 0.06, az * 0.35), Vector3(0.16, 0.028, 0.028), mat_br)
+		_add_mesh_box(root, Vector3(ax * 0.7, hang - 0.12, az * 0.7), Vector3(0.14, 0.024, 0.024), mat_br_d)
+		# Cup + nozzle
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.16, az), 0.035, 0.04, mat_br, false)
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.19, az), 0.05, 0.02, mat_br_d, false)
+		# Bell shade: wider OPEN mouth DOWN, shorter (not tall ice-cream cone)
+		# top narrow (at jet), bottom wider (mouth)
+		var shade := MeshInstance3D.new()
+		var sm := CylinderMesh.new()
+		sm.top_radius = 0.04
+		sm.bottom_radius = 0.09
+		sm.height = 0.12
+		sm.radial_segments = 12
+		shade.mesh = sm
+		shade.material_override = mat_shade
+		shade.position = Vector3(ax, hang - 0.26, az)
+		root.add_child(shade)
+		# Inner glow
+		var inner := MeshInstance3D.new()
+		var im := CylinderMesh.new()
+		im.top_radius = 0.02
+		im.bottom_radius = 0.05
+		im.height = 0.08
+		im.radial_segments = 10
+		inner.mesh = im
+		inner.material_override = mat_shade_i
+		inner.position = Vector3(ax, hang - 0.24, az)
+		root.add_child(inner)
+		# Gallery ring at mouth
+		_add_mesh_cyl(root, Vector3(ax, hang - 0.32, az), 0.085, 0.012, mat_br_d, false)
+		# Flame
+		_add_sphere_blob(root, Vector3(ax, hang - 0.2, az), 0.022, Color(1.0, 0.8, 0.4))
+	# Crystal pendants under bowl (subtle, not long sticks)
+	for j in 6:
+		var ja := float(j) * 60.0 + 20.0
 		var jr := deg_to_rad(ja)
-		_add_box(root, Vector3(cos(jr) * 0.1, hang - 0.28, sin(jr) * 0.1), Vector3(0.018, 0.1, 0.018), Color(0.78, 0.8, 0.82), false, 0.35)
+		_add_mesh_box(
+			root,
+			Vector3(cos(jr) * 0.1, hang - 0.26, sin(jr) * 0.1),
+			Vector3(0.014, 0.07, 0.014),
+			_solid_matte(Color(0.75, 0.78, 0.82), 0.25)
+		)
 	var light := OmniLight3D.new()
 	light.light_color = Color(1.0, 0.86, 0.58)
-	light.light_energy = 1.15
-	light.omni_range = 7.5
-	light.position = Vector3(0, hang - 0.22, 0)
+	light.light_energy = 1.25
+	light.omni_range = 7.8
+	light.position = Vector3(0, hang - 0.2, 0)
 	root.add_child(light)
 	return root
 
