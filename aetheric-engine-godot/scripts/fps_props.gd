@@ -2485,58 +2485,72 @@ static func _make_wall_shelf(prop: Dictionary) -> Node3D:
 
 
 static func _make_pot_rack(prop: Dictionary) -> Node3D:
-	## Wall copper pan rail — wide pans + ladles (loop 119: readable vessels, not coils).
+	## Loop 188: iron pot rail — wall brackets + S-hooks + copper pans
+	## (not stick lumber T-frame mid-FOV).
 	var root := Node3D.new()
 	root.name = "PotRack"
 	var seed0: int = int(prop.get("seed", 0))
-	_add_box(root, Vector3(0, 2.2, 0), Vector3(2.05, 0.08, 0.12), MAHOGANY_DARK, true, 0.5)
-	_add_box(root, Vector3(-0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
-	_add_box(root, Vector3(0.95, 1.75, 0), Vector3(0.07, 0.95, 0.07), MAHOGANY, true, 0.5)
-	# Cross brace
-	_add_box(root, Vector3(0, 1.85, 0), Vector3(1.85, 0.04, 0.05), MAHOGANY_DARK, false, 0.5)
-	# 5 hangers: wide pans + ladle/spoon mix (hang lower so silhouette reads)
+	var mat_iron := _solid_metal(Color(0.28, 0.28, 0.3), 0.5)
+	var mat_iron_d := _solid_metal(Color(0.2, 0.2, 0.22), 0.55)
+	var mat_wood := _solid_matte(Color(0.32, 0.2, 0.1), 0.75)
+	# Twin iron rails (horizontal) — kitchen rack identity
+	_add_mesh_box(root, Vector3(0, 2.15, 0.02), Vector3(2.0, 0.04, 0.05), mat_iron)
+	_add_mesh_box(root, Vector3(0, 1.95, 0.02), Vector3(2.0, 0.035, 0.045), mat_iron_d)
+	# Wall brackets (oak plate + iron strut) — not free stick posts
+	for sx in [-0.9, 0.9]:
+		_add_mesh_box(root, Vector3(sx, 2.05, -0.04), Vector3(0.1, 0.35, 0.04), mat_wood)
+		_add_mesh_box(root, Vector3(sx, 2.05, 0.06), Vector3(0.05, 0.06, 0.18), mat_iron)
+		_add_mesh_box(root, Vector3(sx, 1.95, 0.12), Vector3(0.04, 0.2, 0.04), mat_iron_d)
+	# End caps on rails
+	_add_mesh_cyl(root, Vector3(-1.0, 2.15, 0.02), 0.03, 0.05, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(1.0, 2.15, 0.02), 0.03, 0.05, mat_iron, false)
+	_add_mesh_cyl(root, Vector3(-1.0, 1.95, 0.02), 0.025, 0.04, mat_iron_d, false)
+	_add_mesh_cyl(root, Vector3(1.0, 1.95, 0.02), 0.025, 0.04, mat_iron_d, false)
+	# 5 hangers: S-hooks + copper pans (solid metal)
 	for i in 5:
-		var x := -0.7 + i * 0.35
-		# Hook from rail
-		_add_cylinder(root, Vector3(x, 2.1, 0.06), 0.012, 0.18, IRON, false, 0.4)
-		_add_box(root, Vector3(x, 1.98, 0.1), Vector3(0.04, 0.025, 0.05), IRON.lightened(0.1), false, 0.4)
-		var pr: float = 0.11 + float((i * 3 + seed0) % 5) * 0.022
-		var pcols: Array[Color] = [
-			COPPER,
-			COPPER.darkened(0.12),
-			COPPER.lightened(0.08),
-			Color(0.55, 0.32, 0.18),
-			BRASS.darkened(0.1),
+		var x := -0.7 + float(i) * 0.35
+		# S-hook from upper rail
+		_add_mesh_cyl(root, Vector3(x, 2.05, 0.08), 0.012, 0.16, mat_iron, false)
+		_add_mesh_box(root, Vector3(x, 1.95, 0.12), Vector3(0.035, 0.02, 0.05), mat_iron_d)
+		var pr: float = 0.11 + float((i * 3 + seed0) % 5) * 0.02
+		var pcols: Array = [
+			Color(0.72, 0.42, 0.18),
+			Color(0.62, 0.36, 0.15),
+			Color(0.78, 0.48, 0.22),
+			Color(0.55, 0.32, 0.16),
+			Color(0.68, 0.5, 0.22),
 		]
 		var pcol: Color = pcols[(i + seed0) % 5]
+		var mat_c := _solid_metal(pcol, 0.32)
+		var mat_cd := _solid_metal(pcol.darkened(0.1), 0.36)
+		var mat_cl := _solid_metal(pcol.lightened(0.08), 0.28)
 		var shape := (i + seed0) % 4
 		if shape == 0:
-			# Wide skillet: solid bottom + short wall + long handle
-			_add_cylinder(root, Vector3(x, 1.72, 0.12), pr * 0.9, 0.022, pcol.darkened(0.12), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr, 0.06, pcol, false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.8, 0.12), pr + 0.02, 0.02, pcol.lightened(0.1), false, 0.32, true)
-			_add_box(root, Vector3(x + pr * 0.95, 1.76, 0.12), Vector3(0.16, 0.025, 0.04), pcol.darkened(0.05), false, 0.35)
+			# Skillet
+			_add_mesh_cyl(root, Vector3(x, 1.72, 0.14), pr * 0.9, 0.02, mat_cd, false)
+			_add_mesh_cyl(root, Vector3(x, 1.76, 0.14), pr, 0.055, mat_c, false)
+			_add_mesh_cyl(root, Vector3(x, 1.8, 0.14), pr + 0.015, 0.018, mat_cl, false)
+			_add_mesh_box(root, Vector3(x + pr * 0.95, 1.76, 0.14), Vector3(0.16, 0.022, 0.035), mat_cd)
 		elif shape == 1:
-			# Deep saute: bottom + taller wall + helper loop
-			_add_cylinder(root, Vector3(x, 1.7, 0.12), pr * 0.85, 0.02, pcol.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr * 1.05, 0.1, pcol, false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.82, 0.12), pr * 1.1, 0.02, pcol.lightened(0.08), false, 0.32, true)
-			_add_box(root, Vector3(x + pr * 0.95, 1.76, 0.12), Vector3(0.12, 0.03, 0.04), pcol, false, 0.35)
-			_add_box(root, Vector3(x - pr * 0.9, 1.78, 0.12), Vector3(0.05, 0.035, 0.04), pcol, false, 0.35)
+			# Deep saute
+			_add_mesh_cyl(root, Vector3(x, 1.7, 0.14), pr * 0.85, 0.018, mat_cd, false)
+			_add_mesh_cyl(root, Vector3(x, 1.76, 0.14), pr * 1.02, 0.1, mat_c, false)
+			_add_mesh_cyl(root, Vector3(x, 1.82, 0.14), pr * 1.08, 0.018, mat_cl, false)
+			_add_mesh_box(root, Vector3(x + pr * 0.95, 1.76, 0.14), Vector3(0.12, 0.028, 0.035), mat_c)
 		elif shape == 2:
-			# Covered pot: belly + lid knob
-			_add_cylinder(root, Vector3(x, 1.68, 0.12), pr * 0.65, 0.02, pcol.darkened(0.12), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.76, 0.12), pr * 0.85, 0.14, pcol.darkened(0.05), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.84, 0.12), pr * 0.9, 0.025, pcol.lightened(0.08), false, 0.32, true)
-			_add_cylinder(root, Vector3(x, 1.88, 0.12), 0.04, 0.04, BRASS, false, 0.3, true)
-			_add_box(root, Vector3(x + pr * 0.75, 1.76, 0.12), Vector3(0.05, 0.06, 0.04), pcol, false, 0.35)
+			# Covered pot
+			_add_mesh_cyl(root, Vector3(x, 1.68, 0.14), pr * 0.65, 0.018, mat_cd, false)
+			_add_mesh_cyl(root, Vector3(x, 1.76, 0.14), pr * 0.85, 0.13, mat_c, false)
+			_add_mesh_cyl(root, Vector3(x, 1.84, 0.14), pr * 0.9, 0.022, mat_cl, false)
+			_add_mesh_cyl(root, Vector3(x, 1.88, 0.14), 0.035, 0.035, _solid_metal(BRASS, 0.3), false)
 		else:
-			# Ladle with bowl + wood handle end
-			_add_cylinder(root, Vector3(x, 1.82, 0.1), 0.012, 0.38, IRON.lightened(0.08), false, 0.4)
-			_add_cylinder(root, Vector3(x, 1.58, 0.14), 0.06, 0.02, pcol.darkened(0.1), false, 0.35, true)
-			_add_cylinder(root, Vector3(x, 1.62, 0.14), 0.07, 0.06, pcol, false, 0.35, true)
-			_add_box(root, Vector3(x, 2.0, 0.08), Vector3(0.035, 0.05, 0.06), OAK, false, 0.55)
+			# Ladle
+			_add_mesh_cyl(root, Vector3(x, 1.8, 0.12), 0.012, 0.35, mat_iron, false)
+			_add_mesh_cyl(root, Vector3(x, 1.58, 0.16), 0.055, 0.018, mat_cd, false)
+			_add_mesh_cyl(root, Vector3(x, 1.62, 0.16), 0.065, 0.055, mat_c, false)
+			_add_mesh_box(root, Vector3(x, 1.98, 0.1), Vector3(0.03, 0.04, 0.05), _solid_matte(OAK, 0.7))
 	return root
+
 
 static func _make_copper_pot(prop: Dictionary) -> Node3D:
 	## Loop 118: bulbous copper vessels with rims/handles (not flat coil stacks).

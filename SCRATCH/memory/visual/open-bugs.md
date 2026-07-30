@@ -132,6 +132,10 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 
 - **Kitchen range flue residual:** stepped grey boxes read as Minecraft ziggurat mid-FOV. Continuous rectangular iron shaft, surface bands only, front damper plate, single cornice cap + chimney pot. Solid matte iron (no width-step tiers).  
 
+## Status update 2026-07-29 (loop 188)
+
+- **Kitchen pot rack residual:** mahogany stick T-frame mid-FOV. Twin iron rails + oak wall brackets + iron struts, S-hooks, solid-metal copper skillets/saute/covered pot/ladle (not stick lumber).  
+
 ## Status update 2026-07-29 (loop 187)
 
 - **Wall sconce residual:** thin brass L-stick + nub mid-FOV house-wide. Victorian gas sconce rewrite — solid-metal brass backplate, arm (straight/curved/candle-plate by seed), frosted alpha shade or globe with emission, stronger omni.  
