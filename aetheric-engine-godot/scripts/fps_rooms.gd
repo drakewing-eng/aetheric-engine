@@ -51,8 +51,7 @@ const ROOMS := {
 			# Loop 93: south door wall densify (from_north empty damask around hall door)
 			{"kind": "painting", "pos": [-2.5, 2.05, 4.55], "yaw": 180.0, "width": 0.75, "height": 0.9,
 				"art": "landscape", "seed": 2, "frame": 1},
-			{"kind": "painting", "pos": [2.5, 2.05, 4.55], "yaw": 180.0, "width": 0.7, "height": 0.85,
-				"art": "still_life", "seed": 0, "frame": 2},
+			# Removed still-life at +2.5 (read as hanging on the hall door leaf)
 		],
 		"props": [
 			# ── Loop 67: clear circulation paths — no stacked chairs/desks ──
