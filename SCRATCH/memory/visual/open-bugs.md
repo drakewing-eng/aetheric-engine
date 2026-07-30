@@ -106,6 +106,13 @@ Source: user after 7h density loops + image feedback. Full paste: [../../NEXT_SE
 - **Morning room chair scrap:** too many cross_plane chairs caused extreme edge-on double-card ghosts. Thinned to wing + desk + one SE chair; clear centre walk.  
 - **Hall kitchen runner:** freestanding oil lamps moved off carpet to side flanks.  
 
+## Status update 2026-07-29 (loop 157)
+
+- **Hall/gallery cutout chairs:** all converted to solid mesh chairs (edge-on volume).  
+- **Kitchen:** formal cutout chair → stool (service identity).  
+- **Wings:** drawing red + morning sage → full mesh armchair (no card/bulk colour ghost).  
+- **Material:** fabric (velvet red/green) classified before wood so oxblood seats no longer read as mahogany timber.  
+
 ## Status update 2026-07-29 (loop 156)
 
 - **Tea at four:** redesigned `_make_tea_tray` — silvered rim tray, belly teapot with spout/C-handle/lid knop, saucers+cups, jug, sugar (not white box stack).  
