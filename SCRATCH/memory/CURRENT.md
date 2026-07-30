@@ -43,6 +43,7 @@
 ## Design notes
 
 - **Iron `floor_path` retired** (workshop + gallery): factory diamond-tread fought Victorian house language. Workshop aisle is wood boards + work runners; conservatory keeps stone garden path.
+- **Bell walk cycle** (`86cb87e`): 4 hard-alpha frames, no-mip scissor material, distance frame advance + idle on dwell. **Human playtest:** Drawing Room — legs should stay solid (not freckled) while he patrols.
 
 ## Solid-mat / residual status
 
