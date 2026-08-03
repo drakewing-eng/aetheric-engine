@@ -430,8 +430,11 @@ func _play_anim(clip: String, speed: float = 1.0) -> void:
 		return
 	if not _anim.has_animation(clip):
 		return
-	if _anim.current_animation != clip:
+	# Always restart so walk→idle reapplies rest-pose keys (no sticky mid-stride).
+	if _anim.current_animation != clip or not _anim.is_playing():
 		_anim.play(clip)
+	else:
+		_anim.seek(0.0, true)
 	_anim.speed_scale = speed
 
 

@@ -184,21 +184,64 @@ func _init() -> void:
 					print("OK sit state plays sit clip")
 				elif ap2:
 					print("NOTE sit state anim=", ap2.current_animation)
-			# Walk state
+			# Walk state — advance into mid-stride so rest-pose reset is meaningful
 			if npc.has_method("_set_state_walk"):
 				npc._set_state_walk()
+				if ap2:
+					ap2.seek(0.42, true)
+				if npc.has_method("_physics_process"):
+					npc._physics_process(0.05)
 				if ap2 and ap2.current_animation == "walk":
 					print("OK walk state plays walk clip")
 				elif ap2:
 					print("FAIL walk state anim=", ap2.current_animation)
 					failed += 1
+				# Capture mid-walk leg pose (should be non-zero)
+				var mid_leg := _leg_rot_deg(npc, "LegL")
+				print("OK mid-walk LegL.rotation_degrees=", mid_leg)
 			if npc.has_method("_set_state_idle"):
+				# Hold idle: prevent patrol physics from immediately re-entering walk
+				if "npc_data" in npc:
+					pass
+				if npc.get("_dwell_left") != null:
+					npc.set("_dwell_left", 30.0)
+				if npc.has_method("set_talking"):
+					npc.set_talking(false)
 				npc._set_state_idle()
-				if ap2 and ap2.current_animation == "idle":
+				if ap2:
+					ap2.play("idle")
+					ap2.seek(0.0, true)
+				# Process while dwelling so state machine stays on idle
+				if npc.get("_dwell_left") != null:
+					npc.set("_dwell_left", 30.0)
+				if npc.has_method("_physics_process"):
+					npc._physics_process(0.05)
+				var cur_idle := ap2.current_animation if ap2 else ""
+				if cur_idle == "idle":
 					print("OK idle state plays idle clip")
-				elif ap2:
-					print("FAIL idle state anim=", ap2.current_animation)
+				else:
+					print("FAIL idle state anim=", cur_idle)
 					failed += 1
+				# After walk→idle: limbs must return near rest (not frozen mid-stride)
+				failed += _assert_rest_pose(npc, "walk→idle")
+			# sit→idle rest pose
+			if npc.has_method("_set_state_sit"):
+				npc._set_state_sit()
+				if ap2:
+					ap2.play("sit")
+					ap2.seek(0.5, true)
+			if npc.has_method("_set_state_idle"):
+				if npc.get("_dwell_left") != null:
+					npc.set("_dwell_left", 30.0)
+				npc._set_state_idle()
+				if ap2:
+					ap2.play("idle")
+					ap2.seek(0.0, true)
+				if npc.get("_dwell_left") != null:
+					npc.set("_dwell_left", 30.0)
+				if npc.has_method("_physics_process"):
+					npc._physics_process(0.05)
+				failed += _assert_rest_pose(npc, "sit→idle")
 			print("OK physics ticks without crash")
 			holder2.queue_free()
 		else:
@@ -306,3 +349,53 @@ func _collect_meshes(n: Node) -> Array[MeshInstance3D]:
 	for c in n.get_children():
 		out.append_array(_collect_meshes(c))
 	return out
+
+
+func _find_node_named(n: Node, name: String) -> Node3D:
+	if n.name == name and n is Node3D:
+		return n as Node3D
+	for c in n.get_children():
+		var f := _find_node_named(c, name)
+		if f:
+			return f
+	return null
+
+
+func _leg_rot_deg(npc: Node, leg_name: String) -> Vector3:
+	var n := _find_node_named(npc, leg_name)
+	if n == null:
+		return Vector3(999, 999, 999)
+	return n.rotation_degrees
+
+
+func _body_root_pos(npc: Node) -> Vector3:
+	var n := _find_node_named(npc, "BodyRoot")
+	if n == null:
+		return Vector3(999, 999, 999)
+	return n.position
+
+
+func _assert_rest_pose(npc: Node, label: String) -> int:
+	## Rest: legs/calves ~0°, BodyRoot.y ~0 (plant). Arms have default hold pose.
+	var fails := 0
+	var leg_l := _leg_rot_deg(npc, "LegL")
+	var leg_r := _leg_rot_deg(npc, "LegR")
+	var calf_l := _leg_rot_deg(npc, "CalfL")
+	var calf_r := _leg_rot_deg(npc, "CalfR")
+	var body_y := _body_root_pos(npc).y
+	print("OK ", label, " rest LegL=", leg_l, " LegR=", leg_r, " BodyRoot.y=", body_y)
+	if absf(leg_l.x) > 8.0 or absf(leg_l.y) > 8.0 or absf(leg_l.z) > 8.0:
+		print("FAIL ", label, " LegL not near rest: ", leg_l)
+		fails += 1
+	if absf(leg_r.x) > 8.0 or absf(leg_r.y) > 8.0 or absf(leg_r.z) > 8.0:
+		print("FAIL ", label, " LegR not near rest: ", leg_r)
+		fails += 1
+	if absf(calf_l.x) > 12.0 or absf(calf_r.x) > 12.0:
+		print("FAIL ", label, " calves not near rest: ", calf_l, calf_r)
+		fails += 1
+	if absf(body_y) > 0.03:
+		print("FAIL ", label, " BodyRoot.y not near plant rest: ", body_y)
+		fails += 1
+	if fails == 0:
+		print("OK ", label, " limbs+BodyRoot near rest pose")
+	return fails

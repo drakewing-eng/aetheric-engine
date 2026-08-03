@@ -216,13 +216,30 @@ func _build_animations(
 
 	var lib := AnimationLibrary.new()
 
-	# idle: head/chest only — do NOT lift BodyRoot (that reads as floating)
+	# idle: MUST key every property walk/sit touch, else Godot freezes mid-stride
+	# on clip switch (no automatic RESET). Rest pose + subtle head/arm motion.
 	var idle := Animation.new()
 	idle.length = 2.4
 	idle.loop_mode = Animation.LOOP_LINEAR
+	# Rest limbs (same defaults as after _build arm/leg setup)
+	var rest_leg := Vector3.ZERO
+	var rest_calf := Vector3.ZERO
+	var rest_arm_l := Vector3(14, 8, 20)
+	var rest_arm_r := Vector3(6, 0, -10)
+	_rot_track(idle, leg_l, 0.0, rest_leg, 1.2, rest_leg, 2.4, rest_leg)
+	_rot_track(idle, leg_r, 0.0, rest_leg, 1.2, rest_leg, 2.4, rest_leg)
+	_rot_track(idle, calf_l, 0.0, rest_calf, 1.2, rest_calf, 2.4, rest_calf)
+	_rot_track(idle, calf_r, 0.0, rest_calf, 1.2, rest_calf, 2.4, rest_calf)
+	_rot_track(idle, arm_l, 0.0, rest_arm_l, 1.2, rest_arm_l, 2.4, rest_arm_l)
+	_rot_track(idle, arm_r, 0.0, rest_arm_r, 1.2, Vector3(8, 0, -12), 2.4, rest_arm_r)
 	_rot_track(idle, head, 0.0, Vector3(0, 0, 0), 1.2, Vector3(2, 3, 0), 2.4, Vector3(0, 0, 0))
-	# slight arm settle
-	_rot_track(idle, arm_r, 0.0, Vector3(6, 0, -10), 1.2, Vector3(8, 0, -12), 2.4, Vector3(6, 0, -10))
+	# BodyRoot must return to plant rest (y=0 local) after walk bounce
+	var it := idle.add_track(Animation.TYPE_VALUE)
+	idle.track_set_path(it, NodePath("BodyRoot:position"))
+	idle.value_track_set_update_mode(it, Animation.UPDATE_CONTINUOUS)
+	idle.track_insert_key(it, 0.0, Vector3(0, 0, 0))
+	idle.track_insert_key(it, 1.2, Vector3(0, 0, 0))
+	idle.track_insert_key(it, 2.4, Vector3(0, 0, 0))
 	lib.add_animation("idle", idle)
 
 	# walk: alternating legs, small bounce on BodyRoot (≤2 cm)
