@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-08-03 — Bell walk gait alternating L/pass/R/pass
+**Updated:** 2026-08-03 — NPC life Phase 1 (breath/attend) + Bell walk test case
 **HEAD:** (local) iron path removed workshop + gallery  
 **15m overnight scheduler:** OFF (user stopped)  
 **Do not mark goal complete after one pass** — living priority queue.
