@@ -149,6 +149,8 @@ func _talk_to_npc(npc: Node3D) -> void:
 	var data: Dictionary = npc.get_meta("npc")
 	player.set_movement_enabled(false)
 	player.release_mouse()
+	if npc.has_method("set_talking"):
+		npc.set_talking(true)
 	var tex: Texture2D = load(data.get("portrait", ""))
 	dialogue.open(str(data.get("id", "")), str(data.get("name", "")), tex, str(data.get("intro", "")))
 
@@ -198,6 +200,12 @@ func _facing_into_room_yaw(spawn: Array) -> float:
 	return rad_to_deg(atan2(sx, sz))
 
 func _on_dialogue_closed() -> void:
+	if _near_npc and _near_npc.has_method("set_talking"):
+		_near_npc.set_talking(false)
+	# Also clear talking on any NPC that might still be flagged
+	for npc in npc_root.get_children():
+		if npc.has_method("set_talking"):
+			npc.set_talking(false)
 	player.set_movement_enabled(true)
 	player.capture_mouse()
 	_update_prompt()

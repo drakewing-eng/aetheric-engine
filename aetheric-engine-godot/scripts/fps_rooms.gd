@@ -137,6 +137,9 @@ const ROOMS := {
 				"name": "Ignatius Bell",
 				"portrait": "res://assets/portraits/portrait_bell.jpg",
 				"sprite": "res://assets/characters/sprites/sprite_bell.png",
+				## Phase 1: 3D skeletal stub (CesiumMan-based). Cutout sprite is fallback only.
+				"model": "res://assets/characters/models/bell/humanoid_stub.glb",
+				"tint_victorian": true,
 				"intro": "Bell looks up from his papers. Ink on his fingers.",
 				"height": 1.78,
 				"patrol": [
@@ -144,7 +147,11 @@ const ROOMS := {
 					[2.9, 0.0, -0.4],
 					[2.1, 0.0, 0.7],
 				],
+				## Phase 2: after a circuit, Bell may walk to this seat and "sit" (idle hold).
+				"seat": [3.2, 0.0, -1.4],
+				"sit_sec": 14.0,
 				"dwell_sec": 8.0,
+				"speed": 0.85,
 			},
 			{
 				"id": "selina",

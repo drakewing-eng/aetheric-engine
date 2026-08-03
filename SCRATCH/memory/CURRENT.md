@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-08-03 — NPC life Phase 1 (breath/attend) + Bell walk test case
+**Updated:** 2026-08-03 — Phase 1 3D Bell skeletal + Phase 2 seat sit
 **HEAD:** (local) iron path removed workshop + gallery  
 **15m overnight scheduler:** OFF (user stopped)  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -41,6 +41,8 @@
 - Intentional textures kept (wallpaper, rugs, oils, views, plant cards)
 
 ## Design notes
+
+- **NPC 3D Phase 1+2:** Bell uses `models/bell/humanoid_stub.glb` (skeletal walk/idle, face travel, look-at/talk). Seat marker after circuit. Other NPCs still cutout. Tests: `test_npc_skeletal.gd`. Next: Bell-identity mesh + real sit clip.
 
 - **Iron `floor_path` retired** (workshop + gallery): factory diamond-tread fought Victorian house language. Workshop aisle is wood boards + work runners; conservatory keeps stone garden path.
 - **Bell walk cycle** (gait fix 2026-08-03): 4 hard-alpha frames ordered **contact_L | pass | contact_R | pass** (walk_0 = H-flip opposite of walk_2 contact so lead feet alternate; walk_1/3 near-stance passes). No-mip scissor material, distance frame advance + idle on dwell. **Human playtest:** Drawing Room — steps should read alternating, not crossed-leg glide; coat solid (not freckled).

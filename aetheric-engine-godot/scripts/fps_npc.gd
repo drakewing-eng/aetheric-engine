@@ -1,71 +1,94 @@
 extends Node3D
 
-## In-world NPC: camera-facing full-figure sprite billboard + collision for E-talk.
-## Sprites: res://assets/characters/sprites/sprite_<id>.png (hard alpha cutout)
-## Optional walk cycle: sprite_<id>_walk_0.png … walk_3.png (distance-driven while patrolling)
-## Phase 1 life (all NPCs): breath/sway, idle fidget timer, attend-player when near.
-## All NPCs will walk eventually; Bell is the walk-art test case.
+## In-world NPC: cutout billboard (legacy) OR 3D skeletal mesh (target).
+## Presentation selected by data.model / auto path models/<id>/humanoid_stub.glb
+## Behavior: patrol circuit, dwell idle, face travel dir (skeletal), look-at player when near.
 
 const SPRITE_DIR := "res://assets/characters/sprites/"
-## Metres of travel per full walk cycle (tuned for clear step cadence, less glide)
+const MODEL_DIR := "res://assets/characters/models/"
 const WALK_CYCLE_METRES := 0.55
 const WALK_FRAME_COUNT := 4
 
-## --- Life / attention (Oblivion-style presentation layer on billboards) ---
-const BREATH_AMPLITUDE_IDLE := 0.004   # tiny Y bob — large bob reads as floating
-const BREATH_AMPLITUDE_WALK := 0.006
-const BREATH_HZ_IDLE := 0.32
-const BREATH_HZ_WALK := 0.85
-const BREATH_SCALE_IDLE := 0.004       # fractional scale pulse (keep subtle)
 const ATTEND_RADIUS_M := 3.5
-## NEVER disable FIXED_Y to yaw — edge-on billboard becomes a paper plane.
-const ATTEND_USES_BILLBOARD_YAW := false
+const YAW_SPEED := 6.0
+const DWELL_JITTER_FRAC := 0.15
 const FIDGET_MIN_SEC := 3.5
 const FIDGET_MAX_SEC := 7.5
-const DWELL_JITTER_FRAC := 0.15
-const GLANCE_YAW_DEG := 0.0            # disabled until multi-angle sprites exist
+
+## Cutout-only micro-motion (legacy; skipped when skeletal)
+const BREATH_HZ_IDLE := 0.32
+const BREATH_HZ_WALK := 0.85
+const BREATH_SCALE_IDLE := 0.004
+
+enum Present { CUTOUT, SKELETAL }
+enum State { IDLE, WALK, TALK, SIT }
 
 var npc_data: Dictionary = {}
 var _points: Array[Vector3] = []
 var _index := 0
 var _dwell_left := 0.0
 var _speed := 0.9
-var _sprite: Sprite3D = null
+var _base_dwell := 6.0
+var _world_h := 1.7
+var _present: Present = Present.CUTOUT
+var _state: State = State.IDLE
 
-## Walk cycle state
+## Cutout
 var _char_mesh: MeshInstance3D = null
 var _char_mat: StandardMaterial3D = null
 var _idle_tex: Texture2D = null
-var _idle_texs: Array = []  # optional multi-frame idle (Phase 2)
-var _walk_texs: Array = []  # Texture2D, empty if no cycle
+var _idle_texs: Array = []
+var _walk_texs: Array = []
 var _walk_dist := 0.0
 var _walk_frame := -1
 var _idle_frame := 0
-var _world_h := 1.7
-var _foot_shadow: MeshInstance3D = null
 var _was_dwelling := true
-var _mesh_base_y := 0.0
 var _mesh_base_scale := Vector3.ONE
-
-## Life state
 var _life_t := 0.0
 var _fidget_left := 0.0
-var _glance_yaw := 0.0          # radians target offset when not attending
+
+## Skeletal
+var _visual: Node3D = null          # yaw pivot (faces travel / player)
+var _model_root: Node3D = null
+var _anim: AnimationPlayer = null
+var _skeleton: Skeleton3D = null
+var _anim_walk := ""
+var _anim_idle := ""
+var _neck_bone := -1
+var _face_yaw := 0.0
+var _moving := false
 var _attending := false
-var _base_dwell := 6.0
+var _talking := false
+var _last_move_dir := Vector3(0, 0, 1)
+var _has_seat := false
+var _seat := Vector3.ZERO
+var _sit_sec := 12.0
+var _sit_left := 0.0
+var _going_to_seat := false
+
 var _player: Node3D = null
 var _player_search_cd := 0.0
+var _foot_shadow: MeshInstance3D = null
 
 @onready var body_mesh: MeshInstance3D = $BodyMesh
 @onready var body: StaticBody3D = $Body
 @onready var label: Label3D = $Label3D
 
+
 func setup(data: Dictionary) -> void:
+	## May run before @onready when tests instantiate + setup same frame.
+	if body_mesh == null:
+		body_mesh = get_node_or_null("BodyMesh") as MeshInstance3D
+	if body == null:
+		body = get_node_or_null("Body") as StaticBody3D
+	if label == null:
+		label = get_node_or_null("Label3D") as Label3D
+
 	npc_data = data
 	var patrol: Array = data.get("patrol", [])
 	_points.clear()
 	for p in patrol:
-		_points.append(Vector3(p[0], 0.0, p[2]))
+		_points.append(Vector3(float(p[0]), 0.0, float(p[2])))
 	if _points.is_empty():
 		_points.append(Vector3.ZERO)
 	global_position = _points[0]
@@ -73,38 +96,66 @@ func setup(data: Dictionary) -> void:
 	_dwell_left = _dwell_with_jitter(_base_dwell)
 	_speed = float(data.get("speed", 0.9))
 	_life_t = randf() * TAU
-	_fidget_left = _next_fidget_interval()
+	_fidget_left = fidget_interval(FIDGET_MIN_SEC, FIDGET_MAX_SEC, randf())
 
-	var h: float = data.get("height", 1.7)
+	_has_seat = false
+	_going_to_seat = false
+	_sit_left = 0.0
+	_sit_sec = float(data.get("sit_sec", 12.0))
+	if data.has("seat") and data.get("seat") is Array:
+		var s: Array = data.get("seat")
+		if s.size() >= 3:
+			_seat = Vector3(float(s[0]), 0.0, float(s[2]))
+			_has_seat = true
+
+	var h: float = float(data.get("height", 1.7))
 	_world_h = h
 	var npc_id := str(data.get("id", "")).to_lower()
 
 	if body_mesh:
 		body_mesh.visible = false
 
-	_setup_sprite(npc_id, h, data)
+	var model_path := _resolve_model_path(npc_id, data)
+	if model_path != "" and _setup_skeletal(model_path, h, data):
+		_present = Present.SKELETAL
+	else:
+		_present = Present.CUTOUT
+		_setup_sprite(npc_id, h, data)
+
 	_setup_foot_shadow()
 
-	label.text = data.get("name", "")
-	label.font_size = 28
-	label.position = Vector3(0, h + 0.22, 0)
-	label.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	label.modulate = Color(0.95, 0.88, 0.68, 1.0)
-	label.outline_size = 8
+	if label:
+		label.text = str(data.get("name", ""))
+		label.font_size = 28
+		label.position = Vector3(0, h + 0.22, 0)
+		label.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		label.modulate = Color(0.95, 0.88, 0.68, 1.0)
+		label.outline_size = 8
 
-	var col := body.get_node("CollisionShape3D") as CollisionShape3D
-	if col:
-		var shape := col.shape as CapsuleShape3D
-		if shape:
-			shape.height = h * 0.85
-			shape.radius = 0.28
-		body.position = Vector3(0, h * 0.5, 0)
+	if body:
+		var col := body.get_node_or_null("CollisionShape3D") as CollisionShape3D
+		if col:
+			var shape := col.shape as CapsuleShape3D
+			if shape:
+				shape.height = h * 0.85
+				shape.radius = 0.28
+			body.position = Vector3(0, h * 0.5, 0)
 
 	set_meta("npc", data)
-	_set_idle()
+	_set_state_idle()
 
 
-## Pure: which walk frame for distance traveled (0 .. n_frames-1).
+func set_talking(active: bool) -> void:
+	## Called from dialogue / proximity if available.
+	_talking = active
+	if active and _present == Present.SKELETAL:
+		_set_state_talk()
+	elif not active and _state == State.TALK:
+		_set_state_idle()
+
+
+# --- Pure helpers (tests) -----------------------------------------------------
+
 static func select_walk_frame(distance_m: float, cycle_m: float, n_frames: int) -> int:
 	if n_frames <= 0:
 		return 0
@@ -113,27 +164,22 @@ static func select_walk_frame(distance_m: float, cycle_m: float, n_frames: int) 
 	return int(t * float(n_frames)) % n_frames
 
 
-## Pure: while dwelling at a waypoint, show idle (not a walk frame).
 static func should_use_idle(dwelling: bool) -> bool:
 	return dwelling
 
 
-## Pure: player within attend radius?
 static func should_attend_player(dist_m: float, radius_m: float) -> bool:
 	return dist_m <= radius_m
 
 
-## Pure: breath vertical offset (metres). phase in radians.
 static func breath_offset_y(phase: float, amplitude: float) -> float:
 	return sin(phase) * amplitude
 
 
-## Pure: breath scale factor (1 + small pulse).
 static func breath_scale_factor(phase: float, amount: float) -> float:
 	return 1.0 + sin(phase) * amount
 
 
-## Pure: dwell with symmetric jitter in [base*(1-j), base*(1+j)], min 0.5s.
 static func dwell_with_jitter(base_sec: float, jitter_frac: float, rand01: float) -> float:
 	var b: float = maxf(base_sec, 0.5)
 	var j: float = clampf(jitter_frac, 0.0, 0.9)
@@ -142,11 +188,17 @@ static func dwell_with_jitter(base_sec: float, jitter_frac: float, rand01: float
 	return maxf(0.5, b * mul)
 
 
-## Pure: next fidget interval from u01 in [min,max].
 static func fidget_interval(min_sec: float, max_sec: float, rand01: float) -> float:
 	var lo: float = minf(min_sec, max_sec)
 	var hi: float = maxf(min_sec, max_sec)
 	return lo + clampf(rand01, 0.0, 1.0) * (hi - lo)
+
+
+static func yaw_from_dir(dir: Vector3) -> float:
+	## Godot Y-yaw: 0 faces -Z by default for look_at; use atan2(x,z).
+	if dir.length_squared() < 0.000001:
+		return 0.0
+	return atan2(dir.x, dir.z)
 
 
 static func sprite_path_for(npc_id: String) -> String:
@@ -157,16 +209,162 @@ static func sprite_path_for(npc_id: String) -> String:
 
 
 static func walk_frame_path(npc_id: String, frame: int) -> String:
-	var id := npc_id.to_lower().strip_edges()
-	return SPRITE_DIR + "sprite_%s_walk_%d.png" % [id, frame]
+	return SPRITE_DIR + "sprite_%s_walk_%d.png" % [npc_id.to_lower().strip_edges(), frame]
 
 
 static func idle_frame_path(npc_id: String, frame: int) -> String:
+	return SPRITE_DIR + "sprite_%s_idle_%d.png" % [npc_id.to_lower().strip_edges(), frame]
+
+
+static func default_model_path(npc_id: String) -> String:
 	var id := npc_id.to_lower().strip_edges()
-	return SPRITE_DIR + "sprite_%s_idle_%d.png" % [id, frame]
+	return MODEL_DIR + "%s/humanoid_stub.glb" % id
 
 
-## Load texture without mipmaps (avoids alpha-scissor holes in dark cloth).
+func _resolve_model_path(npc_id: String, data: Dictionary) -> String:
+	if data.has("model") and str(data.get("model", "")) != "":
+		var mp := str(data.get("model"))
+		if ResourceLoader.exists(mp) or FileAccess.file_exists(ProjectSettings.globalize_path(mp)):
+			return mp
+	var auto_p := default_model_path(npc_id)
+	if ResourceLoader.exists(auto_p) or FileAccess.file_exists(ProjectSettings.globalize_path(auto_p)):
+		return auto_p
+	return ""
+
+
+# --- Skeletal setup -----------------------------------------------------------
+
+func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> bool:
+	if not ResourceLoader.exists(model_path):
+		# Trigger import path via FileAccess existence
+		if not FileAccess.file_exists(ProjectSettings.globalize_path(model_path)):
+			return false
+	var packed = load(model_path)
+	if packed == null or not (packed is PackedScene):
+		push_warning("fps_npc: model not PackedScene: " + model_path)
+		return false
+
+	_visual = Node3D.new()
+	_visual.name = "Visual"
+	add_child(_visual)
+
+	_model_root = (packed as PackedScene).instantiate()
+	_model_root.name = "Model"
+	_visual.add_child(_model_root)
+
+	_anim = _find_animation_player(_model_root)
+	_skeleton = _find_skeleton(_model_root)
+	if _skeleton:
+		for i in _skeleton.get_bone_count():
+			var bn := _skeleton.get_bone_name(i).to_lower()
+			if "neck" in bn:
+				_neck_bone = i  # last neck bone preferred
+		# Prefer highest neck joint
+		for i in range(_skeleton.get_bone_count() - 1, -1, -1):
+			var bn2 := _skeleton.get_bone_name(i).to_lower()
+			if "neck" in bn2:
+				_neck_bone = i
+				break
+
+	# Fit height from mesh AABB
+	var aabb := _combined_mesh_aabb(_model_root)
+	var model_h: float = maxf(aabb.size.y, 0.5)
+	var sc: float = height / model_h
+	_model_root.scale = Vector3(sc, sc, sc)
+	# Plant feet: local aabb min.y * scale → 0
+	var foot_y: float = aabb.position.y * sc
+	_model_root.position = Vector3(0.0, -foot_y, 0.0)
+
+	# Optional Victorian tint (Phase 1.5 / 2 light identity)
+	if bool(data.get("tint_victorian", true)):
+		_apply_victorian_tint(_model_root)
+
+	if _anim:
+		var clips := _anim.get_animation_list()
+		if clips.size() > 0:
+			_anim_walk = clips[0]
+			_anim_idle = clips[0]
+			# Prefer names if present
+			for c in clips:
+				var cl := c.to_lower()
+				if "walk" in cl or "run" in cl:
+					_anim_walk = c
+				if "idle" in cl or "stand" in cl:
+					_anim_idle = c
+		_play_anim(_anim_idle, 0.35)
+	return true
+
+
+func _apply_victorian_tint(n: Node) -> void:
+	## Dark coat-ish material until custom Bell mesh exists.
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.18, 0.16, 0.15)
+		mat.roughness = 0.85
+		mat.metallic = 0.05
+		mi.material_override = mat
+	for c in n.get_children():
+		_apply_victorian_tint(c)
+
+
+func _find_animation_player(n: Node) -> AnimationPlayer:
+	if n is AnimationPlayer:
+		return n
+	for c in n.get_children():
+		var f := _find_animation_player(c)
+		if f:
+			return f
+	return null
+
+
+func _find_skeleton(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n
+	for c in n.get_children():
+		var f := _find_skeleton(c)
+		if f:
+			return f
+	return null
+
+
+func _combined_mesh_aabb(n: Node) -> AABB:
+	var out := AABB()
+	var first := true
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		if mi.mesh:
+			var a := mi.get_aabb()
+			# Include node local transform roughly
+			a.position = mi.position + a.position
+			out = a
+			first = false
+	for c in n.get_children():
+		var a2 := _combined_mesh_aabb(c)
+		if a2.size.length_squared() < 0.0000001:
+			continue
+		if first:
+			out = a2
+			first = false
+		else:
+			out = out.merge(a2)
+	if first:
+		out = AABB(Vector3(-0.3, 0, -0.3), Vector3(0.6, 1.7, 0.6))
+	return out
+
+
+func _play_anim(clip: String, speed: float = 1.0) -> void:
+	if _anim == null or clip == "":
+		return
+	if not _anim.has_animation(clip):
+		return
+	if _anim.current_animation != clip:
+		_anim.play(clip)
+	_anim.speed_scale = speed
+
+
+# --- Cutout setup (legacy) ----------------------------------------------------
+
 static func _load_texture(tex_path: String) -> Texture2D:
 	if tex_path == "":
 		return null
@@ -174,7 +372,6 @@ static func _load_texture(tex_path: String) -> Texture2D:
 	if FileAccess.file_exists(abs_path):
 		var img := Image.new()
 		if img.load(abs_path) == OK:
-			# Do not generate mipmaps — dark coat/trousers + scissor + mips = fuzzy holes.
 			return ImageTexture.create_from_image(img)
 	if ResourceLoader.exists(tex_path):
 		var res = load(tex_path)
@@ -190,7 +387,6 @@ func _make_char_material(tex: Texture2D) -> StandardMaterial3D:
 	mat.alpha_scissor_threshold = 0.5
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	# No mipmaps: LINEAR only (not LINEAR_WITH_MIPMAPS)
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_OPAQUE_ONLY
@@ -204,7 +400,6 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 	_idle_texs.clear()
 	_walk_texs.clear()
 
-	# Optional multi-frame idle (Phase 2): sprite_<id>_idle_0..n
 	var idle_loaded: Array = []
 	for fi in 4:
 		var it := _load_texture(idle_frame_path(npc_id, fi))
@@ -236,7 +431,6 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 			body_mesh.mesh = capsule
 			var mat := StandardMaterial3D.new()
 			mat.albedo_color = Color(0.35, 0.28, 0.22)
-			mat.roughness = 0.9
 			body_mesh.material_override = mat
 			body_mesh.position = Vector3(0, height * 0.5, 0)
 		return
@@ -254,7 +448,6 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 		tex_h = 1024.0
 	if tex_w < 1.0:
 		tex_w = 512.0
-	# Prefer walk-frame pixel size when present so all frames share one quad aspect
 	if not _walk_texs.is_empty():
 		tex_w = float(_walk_texs[0].get_width())
 		tex_h = float(_walk_texs[0].get_height())
@@ -273,9 +466,7 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 	add_child(mi)
 	_char_mesh = mi
 	_char_mat = mat2
-	_mesh_base_y = mi.position.y
 	_mesh_base_scale = mi.scale
-	_sprite = null
 
 
 func _setup_foot_shadow() -> void:
@@ -292,11 +483,55 @@ func _setup_foot_shadow() -> void:
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.no_depth_test = false
 	mi.material_override = mat
 	mi.position = Vector3(0, 0.008, 0)
 	add_child(mi)
 	_foot_shadow = mi
+
+
+# --- State / presentation -----------------------------------------------------
+
+func _set_state_idle() -> void:
+	_state = State.IDLE
+	_walk_dist = 0.0
+	_walk_frame = -1
+	_was_dwelling = true
+	_moving = false
+	if _present == Present.SKELETAL:
+		_play_anim(_anim_idle, 0.35)
+	else:
+		if not _idle_texs.is_empty():
+			_set_sprite_tex(_idle_texs[_idle_frame])
+		elif _idle_tex:
+			_set_sprite_tex(_idle_tex)
+		elif not _walk_texs.is_empty():
+			_set_sprite_tex(_walk_texs[0])
+
+
+func _set_state_walk() -> void:
+	_state = State.WALK
+	_was_dwelling = false
+	_moving = true
+	if _present == Present.SKELETAL:
+		_play_anim(_anim_walk, 1.0)
+
+
+func _set_state_talk() -> void:
+	_state = State.TALK
+	_moving = false
+	_going_to_seat = false
+	if _present == Present.SKELETAL:
+		_play_anim(_anim_idle, 0.4)
+
+
+func _set_state_sit() -> void:
+	_state = State.SIT
+	_moving = false
+	_going_to_seat = false
+	_sit_left = _sit_sec
+	if _present == Present.SKELETAL:
+		# No dedicated sit clip on stub — slow idle stands in until Phase 2 mesh.
+		_play_anim(_anim_idle, 0.2)
 
 
 func _set_sprite_tex(tex: Texture2D) -> void:
@@ -316,35 +551,160 @@ func _set_walk_frame(frame: int) -> void:
 	_was_dwelling = false
 
 
-func _set_idle() -> void:
-	_walk_dist = 0.0
-	_walk_frame = -1
-	_was_dwelling = true
-	if not _idle_texs.is_empty():
-		_idle_frame = posmod(_idle_frame, _idle_texs.size())
-		_set_sprite_tex(_idle_texs[_idle_frame])
-	elif _idle_tex:
-		_set_sprite_tex(_idle_tex)
-	elif not _walk_texs.is_empty():
-		_set_sprite_tex(_walk_texs[0])
-
-
 func _dwell_with_jitter(base: float) -> float:
 	return dwell_with_jitter(base, DWELL_JITTER_FRAC, randf())
 
 
-func _next_fidget_interval() -> float:
-	return fidget_interval(FIDGET_MIN_SEC, FIDGET_MAX_SEC, randf())
+# --- Process ------------------------------------------------------------------
+
+func _physics_process(delta: float) -> void:
+	_life_t += delta
+	_moving = false
+
+	if _talking and _present == Present.SKELETAL:
+		_state = State.TALK
+	elif _points.size() >= 2:
+		_moving = _process_patrol(delta)
+	else:
+		if _state != State.TALK:
+			_set_state_idle()
+
+	_update_attention(delta)
+	_update_facing(delta)
+	_update_neck_look()
+	if _present == Present.CUTOUT:
+		_process_cutout_breath(delta)
+
+
+func _process_patrol(delta: float) -> bool:
+	if _talking:
+		return false
+
+	# Sitting at activity marker (Phase 2)
+	if _state == State.SIT:
+		_sit_left -= delta
+		if _sit_left <= 0.0:
+			_set_state_idle()
+			_dwell_left = _dwell_with_jitter(_base_dwell * 0.5)
+		return false
+
+	if _dwell_left > 0.0:
+		_dwell_left -= delta
+		if _state != State.IDLE:
+			_set_state_idle()
+		return false
+
+	var target: Vector3
+	if _going_to_seat and _has_seat:
+		target = _seat
+	else:
+		target = _points[_index]
+
+	var flat := Vector2(global_position.x - target.x, global_position.z - target.z)
+	if flat.length() < 0.2:
+		if _going_to_seat and _has_seat:
+			_set_state_sit()
+			return false
+		_index = (_index + 1) % _points.size()
+		# After a full circuit, skeletal NPCs with a seat may go sit/work.
+		if _index == 0 and _has_seat and _present == Present.SKELETAL and randf() < 0.55:
+			_going_to_seat = true
+			return false
+		_dwell_left = _dwell_with_jitter(_base_dwell)
+		_set_state_idle()
+		return false
+
+	var dir := Vector3(target.x - global_position.x, 0.0, target.z - global_position.z).normalized()
+	_last_move_dir = dir
+	var step := _speed * delta
+	global_position += dir * step
+
+	if _present == Present.SKELETAL:
+		if _state != State.WALK:
+			_set_state_walk()
+	else:
+		if not _walk_texs.is_empty():
+			_walk_dist += step
+			var frame := select_walk_frame(_walk_dist, WALK_CYCLE_METRES, _walk_texs.size())
+			_set_walk_frame(frame)
+			_state = State.WALK
+		elif _state != State.WALK:
+			_state = State.WALK
+	return true
+
+
+func _update_attention(_delta: float) -> void:
+	var player := _resolve_player()
+	var want := false
+	if player:
+		want = should_attend_player(distance_to_player(player.global_position), ATTEND_RADIUS_M)
+	_attending = want or _talking
+
+
+func _update_facing(delta: float) -> void:
+	if _present != Present.SKELETAL or _visual == null:
+		return
+	var target_yaw := _face_yaw
+	if _moving:
+		target_yaw = yaw_from_dir(_last_move_dir)
+	elif _attending:
+		var player := _resolve_player()
+		if player:
+			var to_p := player.global_position - global_position
+			to_p.y = 0.0
+			if to_p.length_squared() > 0.0001:
+				target_yaw = yaw_from_dir(to_p.normalized())
+	_face_yaw = lerp_angle(_face_yaw, target_yaw, clampf(YAW_SPEED * delta, 0.0, 1.0))
+	_visual.rotation.y = _face_yaw
+
+
+func _update_neck_look() -> void:
+	if _present != Present.SKELETAL or _skeleton == null or _neck_bone < 0:
+		return
+	if not _attending or _moving:
+		# Clear extra neck pose when not attending
+		_skeleton.set_bone_pose_rotation(_neck_bone, Quaternion.IDENTITY)
+		return
+	var player := _resolve_player()
+	if player == null:
+		return
+	# Soft neck tilt toward player in skeleton space (limited)
+	var head_rest := _skeleton.get_bone_global_pose(_neck_bone)
+	var head_pos := _skeleton.to_global(head_rest.origin)
+	var to_p := player.global_position + Vector3(0, 1.5, 0) - head_pos
+	if to_p.length_squared() < 0.0001:
+		return
+	# Project into visual-local and dampen
+	var local := _visual.global_transform.basis.inverse() * to_p.normalized()
+	var yaw := clampf(atan2(local.x, local.z), -0.45, 0.45)
+	var pitch := clampf(atan2(-local.y, Vector2(local.x, local.z).length()), -0.25, 0.35)
+	var q := Quaternion.from_euler(Vector3(pitch, yaw, 0.0))
+	_skeleton.set_bone_pose_rotation(_neck_bone, q)
+
+
+func _process_cutout_breath(_delta: float) -> void:
+	if _char_mesh == null:
+		return
+	var hz := BREATH_HZ_WALK if _moving else BREATH_HZ_IDLE
+	var scale_amt := BREATH_SCALE_IDLE * (1.2 if _moving else 1.0)
+	var phase := _life_t * TAU * hz
+	var sc := breath_scale_factor(phase, scale_amt)
+	_char_mesh.scale = Vector3(_mesh_base_scale.x * sc, _mesh_base_scale.y * sc, _mesh_base_scale.z)
+	var half_h := _world_h * 0.5
+	_char_mesh.position.y = half_h * sc + 0.01
 
 
 func _resolve_player() -> Node3D:
 	if _player != null and is_instance_valid(_player):
 		return _player
+	var tree := get_tree()
+	if tree == null:
+		return null
 	_player_search_cd -= get_physics_process_delta_time()
 	if _player_search_cd > 0.0:
 		return null
 	_player_search_cd = 0.75
-	var scene := get_tree().current_scene if get_tree() else null
+	var scene := tree.current_scene
 	if scene:
 		var p = scene.get_node_or_null("Player")
 		if p is Node3D:
@@ -360,99 +720,9 @@ func _resolve_player() -> Node3D:
 	return null
 
 
-func _physics_process(delta: float) -> void:
-	_life_t += delta
-
-	# Always run presentation life (even single-point / no patrol).
-	var moving := false
-	if _points.size() >= 2:
-		moving = _process_patrol(delta)
-
-	_process_attention(delta, moving)
-	_process_fidget(delta, moving)
-	_process_breath(delta, moving)
-
-
-func _process_patrol(delta: float) -> bool:
-	## Returns true while translating between waypoints.
-	if _dwell_left > 0.0:
-		_dwell_left -= delta
-		if not _was_dwelling or _walk_frame != -1:
-			_set_idle()
-		return false
-	var target := _points[_index]
-	var flat := Vector2(global_position.x - target.x, global_position.z - target.z)
-	if flat.length() < 0.2:
-		_index = (_index + 1) % _points.size()
-		_dwell_left = _dwell_with_jitter(_base_dwell)
-		_set_idle()
-		return false
-	var dir := Vector3(target.x - global_position.x, 0.0, target.z - global_position.z).normalized()
-	var step := _speed * delta
-	global_position += dir * step
-
-	if not _walk_texs.is_empty():
-		_walk_dist += step
-		var frame := select_walk_frame(_walk_dist, WALK_CYCLE_METRES, _walk_texs.size())
-		_set_walk_frame(frame)
-	return true
-
-
-func _process_attention(_delta: float, _moving: bool) -> void:
-	## FIXED_Y billboards must stay camera-facing. Yawing with billboard disabled
-	## turns the character into a paper-thin plane — that was a Phase-1 regression.
-	## "Attend" is tracked for breath emphasis only until we have multi-angle art.
-	var player := _resolve_player()
-	var want_attend := false
-	if player:
-		var dist := distance_to_player(player.global_position)
-		want_attend = should_attend_player(dist, ATTEND_RADIUS_M)
-	_attending = want_attend
-	_glance_yaw = 0.0
-	if _char_mat:
-		_char_mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
-	if _char_mesh:
-		_char_mesh.rotation.y = 0.0
-
-
-func _process_fidget(delta: float, moving: bool) -> void:
-	## Fidget texture swaps are disabled until idle frames share identical canvas,
-	## foot baseline, and silhouette mass — mismatched idles read as glitching.
-	if moving:
-		return
-	_fidget_left -= delta
-	if _fidget_left > 0.0:
-		return
-	_fidget_left = _next_fidget_interval()
-	_glance_yaw = 0.0
-	# Procedural breath already provides idle life; keep single idle texture.
-
-
-func _process_breath(_delta: float, moving: bool) -> void:
-	if _char_mesh == null:
-		return
-	# Scale-only breath (no Y lift) so feet stay planted — Y bob read as floating.
-	var hz := BREATH_HZ_WALK if moving else BREATH_HZ_IDLE
-	var scale_amt := BREATH_SCALE_IDLE * (1.2 if moving else 1.0)
-	if _attending:
-		scale_amt *= 1.1
-		hz *= 1.05
-	var phase := _life_t * TAU * hz
-	var sc := breath_scale_factor(phase, scale_amt)
-	# Pivot scale from feet: keep bottom of quad near ground.
-	_char_mesh.position.y = _mesh_base_y
-	_char_mesh.scale = Vector3(_mesh_base_scale.x * sc, _mesh_base_scale.y * sc, _mesh_base_scale.z)
-	# Counter Y so uniform scale expands upward from feet, not both ways.
-	var half_h := _world_h * 0.5
-	_char_mesh.position.y = half_h * sc + 0.01
-	if _foot_shadow:
-		var shadow_a := 0.42 + 0.05 * sin(phase)
-		var sm := _foot_shadow.material_override as StandardMaterial3D
-		if sm:
-			var c := sm.albedo_color
-			c.a = shadow_a
-			sm.albedo_color = c
-
-
 func distance_to_player(player_pos: Vector3) -> float:
 	return Vector2(global_position.x - player_pos.x, global_position.z - player_pos.z).length()
+
+
+func is_skeletal() -> bool:
+	return _present == Present.SKELETAL
