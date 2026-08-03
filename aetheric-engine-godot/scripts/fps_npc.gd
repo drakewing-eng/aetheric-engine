@@ -65,6 +65,7 @@ var _seat := Vector3.ZERO
 var _sit_sec := 12.0
 var _sit_left := 0.0
 var _going_to_seat := false
+var _feet_planted := false
 
 var _player: Node3D = null
 var _player_search_cd := 0.0
@@ -255,36 +256,34 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 	_anim = _find_animation_player(_model_root)
 	_skeleton = _find_skeleton(_model_root)
 	if _skeleton:
-		for i in _skeleton.get_bone_count():
-			var bn := _skeleton.get_bone_name(i).to_lower()
-			if "neck" in bn:
-				_neck_bone = i  # last neck bone preferred
-		# Prefer highest neck joint
+		# Prefer highest neck joint for look-at (limited yaw only — pitch looked broken).
 		for i in range(_skeleton.get_bone_count() - 1, -1, -1):
 			var bn2 := _skeleton.get_bone_name(i).to_lower()
 			if "neck" in bn2:
 				_neck_bone = i
 				break
 
-	# Fit height from mesh AABB
+	# Fit height, then plant feet using transformed mesh AABBs (not local-only).
 	var aabb := _combined_mesh_aabb(_model_root)
 	var model_h: float = maxf(aabb.size.y, 0.5)
 	var sc: float = height / model_h
 	_model_root.scale = Vector3(sc, sc, sc)
-	# Plant feet: local aabb min.y * scale → 0
-	var foot_y: float = aabb.position.y * sc
-	_model_root.position = Vector3(0.0, -foot_y, 0.0)
+	_model_root.position = Vector3.ZERO
+	_plant_feet_to_ground()
 
-	# Optional Victorian tint (Phase 1.5 / 2 light identity)
+	# Soft Victorian body tint (faceless stub until real Bell mesh).
 	if bool(data.get("tint_victorian", true)):
 		_apply_victorian_tint(_model_root)
+
+	# Interim identity: face card from portrait so "facing player" is readable.
+	if bool(data.get("face_card", true)):
+		_attach_face_card(str(data.get("portrait", "")), height)
 
 	if _anim:
 		var clips := _anim.get_animation_list()
 		if clips.size() > 0:
 			_anim_walk = clips[0]
 			_anim_idle = clips[0]
-			# Prefer names if present
 			for c in clips:
 				var cl := c.to_lower()
 				if "walk" in cl or "run" in cl:
@@ -295,17 +294,89 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 	return true
 
 
+func _plant_feet_to_ground() -> void:
+	## Snap lowest mesh vertex (AABB corners) to y≈0 in NPC space.
+	if _model_root == null or _visual == null:
+		return
+	var bottom := INF
+	var found := false
+	if is_inside_tree() and _visual.is_inside_tree():
+		for mi in _all_mesh_instances(_model_root):
+			if mi.mesh == null:
+				continue
+			var a: AABB = mi.get_aabb()
+			for i in 8:
+				var corner := a.get_endpoint(i)
+				var world: Vector3 = mi.global_transform * corner
+				var local: Vector3 = to_local(world)
+				if local.y < bottom:
+					bottom = local.y
+					found = true
+	if not found:
+		# Transform chain estimate before in-tree globals exist
+		var aabb := _combined_mesh_aabb(_model_root)
+		bottom = _model_root.position.y + aabb.position.y * _model_root.scale.y
+		found = true
+	if not found or bottom == INF:
+		return
+	_model_root.position.y -= bottom
+	_model_root.position.y += 0.015
+	_feet_planted = true
+
+
+func _all_mesh_instances(n: Node) -> Array[MeshInstance3D]:
+	var out: Array[MeshInstance3D] = []
+	if n is MeshInstance3D:
+		out.append(n as MeshInstance3D)
+	for c in n.get_children():
+		out.append_array(_all_mesh_instances(c))
+	return out
+
+
 func _apply_victorian_tint(n: Node) -> void:
 	## Dark coat-ish material until custom Bell mesh exists.
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		var mat := StandardMaterial3D.new()
-		mat.albedo_color = Color(0.18, 0.16, 0.15)
-		mat.roughness = 0.85
-		mat.metallic = 0.05
+		mat.albedo_color = Color(0.22, 0.18, 0.16)
+		mat.roughness = 0.88
+		mat.metallic = 0.04
 		mi.material_override = mat
 	for c in n.get_children():
 		_apply_victorian_tint(c)
+
+
+func _attach_face_card(portrait_path: String, height: float) -> void:
+	## Temporary: portrait billboard at head height so facing/attention is readable.
+	## Replace when a real Bell mesh with a face ships.
+	if portrait_path == "" or _visual == null:
+		return
+	var tex: Texture2D = _load_texture(portrait_path)
+	if tex == null and ResourceLoader.exists(portrait_path):
+		var r = load(portrait_path)
+		if r is Texture2D:
+			tex = r
+	if tex == null:
+		return
+	var mi := MeshInstance3D.new()
+	mi.name = "FaceCard"
+	var quad := QuadMesh.new()
+	var face_h: float = clampf(height * 0.22, 0.28, 0.42)
+	var aspect: float = float(tex.get_width()) / maxf(float(tex.get_height()), 1.0)
+	quad.size = Vector2(face_h * aspect, face_h)
+	mi.mesh = quad
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = tex
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mat.alpha_scissor_threshold = 0.4
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	mi.material_override = mat
+	# Head height on body; slight forward so it sits in front of featureless head
+	mi.position = Vector3(0.0, height * 0.82, 0.12)
+	_visual.add_child(mi)
 
 
 func _find_animation_player(n: Node) -> AnimationPlayer:
@@ -561,6 +632,10 @@ func _physics_process(delta: float) -> void:
 	_life_t += delta
 	_moving = false
 
+	# Re-plant once globals are valid (setup may run before full in-tree transforms).
+	if _present == Present.SKELETAL and not _feet_planted:
+		_plant_feet_to_ground()
+
 	if _talking and _present == Present.SKELETAL:
 		_state = State.TALK
 	elif _points.size() >= 2:
@@ -659,27 +734,11 @@ func _update_facing(delta: float) -> void:
 
 
 func _update_neck_look() -> void:
+	## CesiumMan neck bones + pitch looked like a permanent head-down. For the stub,
+	## body yaw toward player is enough; keep neck at rest.
 	if _present != Present.SKELETAL or _skeleton == null or _neck_bone < 0:
 		return
-	if not _attending or _moving:
-		# Clear extra neck pose when not attending
-		_skeleton.set_bone_pose_rotation(_neck_bone, Quaternion.IDENTITY)
-		return
-	var player := _resolve_player()
-	if player == null:
-		return
-	# Soft neck tilt toward player in skeleton space (limited)
-	var head_rest := _skeleton.get_bone_global_pose(_neck_bone)
-	var head_pos := _skeleton.to_global(head_rest.origin)
-	var to_p := player.global_position + Vector3(0, 1.5, 0) - head_pos
-	if to_p.length_squared() < 0.0001:
-		return
-	# Project into visual-local and dampen
-	var local := _visual.global_transform.basis.inverse() * to_p.normalized()
-	var yaw := clampf(atan2(local.x, local.z), -0.45, 0.45)
-	var pitch := clampf(atan2(-local.y, Vector2(local.x, local.z).length()), -0.25, 0.35)
-	var q := Quaternion.from_euler(Vector3(pitch, yaw, 0.0))
-	_skeleton.set_bone_pose_rotation(_neck_bone, q)
+	_skeleton.set_bone_pose_rotation(_neck_bone, Quaternion.IDENTITY)
 
 
 func _process_cutout_breath(_delta: float) -> void:
