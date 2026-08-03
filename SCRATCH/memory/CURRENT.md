@@ -1,6 +1,6 @@
 # CURRENT — Aetheric Engine (agent one-screen)
 
-**Updated:** 2026-07-30 — retired iron floor_path  
+**Updated:** 2026-08-03 — Bell walk gait alternating L/pass/R/pass
 **HEAD:** (local) iron path removed workshop + gallery  
 **15m overnight scheduler:** OFF (user stopped)  
 **Do not mark goal complete after one pass** — living priority queue.
@@ -43,7 +43,7 @@
 ## Design notes
 
 - **Iron `floor_path` retired** (workshop + gallery): factory diamond-tread fought Victorian house language. Workshop aisle is wood boards + work runners; conservatory keeps stone garden path.
-- **Bell walk cycle** (`86cb87e`): 4 hard-alpha frames, no-mip scissor material, distance frame advance + idle on dwell. **Human playtest:** Drawing Room — legs should stay solid (not freckled) while he patrols.
+- **Bell walk cycle** (gait fix 2026-08-03): 4 hard-alpha frames ordered **contact_L | pass | contact_R | pass** (walk_0 = H-flip opposite of walk_2 contact so lead feet alternate; walk_1/3 near-stance passes). No-mip scissor material, distance frame advance + idle on dwell. **Human playtest:** Drawing Room — steps should read alternating, not crossed-leg glide; coat solid (not freckled).
 
 ## Solid-mat / residual status
 
