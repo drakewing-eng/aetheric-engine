@@ -274,13 +274,28 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 				_neck_bone = i
 				break
 
-	# Fit height, then plant feet using transformed mesh AABBs (not local-only).
-	var aabb := _combined_mesh_aabb(_model_root)
-	var model_h: float = maxf(aabb.size.y, 0.5)
-	var sc: float = height / model_h
+	# Height fit: custom Bell ships native ~1.78 m; only rescale if needed.
+	var sc := 1.0
+	if _model_root.has_meta("native_height"):
+		var nh: float = float(_model_root.get_meta("native_height"))
+		if nh > 0.1:
+			sc = height / nh
+	elif _model_root.has_method("get_mesh_height"):
+		var mh: float = float(_model_root.call("get_mesh_height"))
+		if mh > 0.1:
+			sc = height / mh
+	else:
+		var aabb := _combined_mesh_aabb(_model_root)
+		var model_h: float = maxf(aabb.size.y, 0.5)
+		sc = height / model_h
 	_model_root.scale = Vector3(sc, sc, sc)
 	_model_root.position = Vector3.ZERO
+	# Mesh may already plant itself; re-plant in NPC space after scale.
+	if _model_root.has_method("ensure_built"):
+		# Re-run plant inside mesh after scale applied on Model node
+		pass
 	_plant_feet_to_ground()
+	_feet_planted = false  # force re-plant first physics with globals
 
 	# Only force flat tint on generic stubs — custom Bell mesh keeps its materials.
 	if bool(data.get("tint_victorian", false)):
@@ -292,42 +307,53 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 			_anim_walk = clips[0]
 			_anim_idle = clips[0]
 			for c in clips:
-				var cl := c.to_lower()
-				if "walk" in cl or "run" in cl:
+				var cl := String(c).to_lower()
+				if cl == "walk" or "walk" in cl or "run" in cl:
 					_anim_walk = c
-				if "idle" in cl or "stand" in cl:
+				if cl == "idle" or "idle" in cl or "stand" in cl:
 					_anim_idle = c
-		_play_anim(_anim_idle, 0.35)
+			# Prefer exact names
+			if _anim.has_animation("walk"):
+				_anim_walk = "walk"
+			if _anim.has_animation("idle"):
+				_anim_idle = "idle"
+		_play_anim(_anim_idle, 1.0)
 	return true
 
 
 func _plant_feet_to_ground() -> void:
-	## Snap lowest mesh vertex (AABB corners) to y≈0 in NPC space.
+	## Snap lowest mesh geometry to y≈0 in NPC space.
 	if _model_root == null or _visual == null:
 		return
 	var bottom := INF
-	var found := false
-	if is_inside_tree() and _visual.is_inside_tree():
+	# Prefer character-authored measurement (works without globals).
+	if _model_root.has_method("get_mesh_bottom_y"):
+		bottom = float(_model_root.call("get_mesh_bottom_y"))
+	else:
+		var found := false
 		for mi in _all_mesh_instances(_model_root):
 			if mi.mesh == null:
 				continue
 			var a: AABB = mi.get_aabb()
 			for i in 8:
 				var corner := a.get_endpoint(i)
-				var world: Vector3 = mi.global_transform * corner
-				var local: Vector3 = to_local(world)
-				if local.y < bottom:
-					bottom = local.y
-					found = true
-	if not found:
-		# Transform chain estimate before in-tree globals exist
-		var aabb := _combined_mesh_aabb(_model_root)
-		bottom = _model_root.position.y + aabb.position.y * _model_root.scale.y
-		found = true
-	if not found or bottom == INF:
+				var world: Vector3
+				if mi.is_inside_tree():
+					world = mi.global_transform * corner
+					var local: Vector3 = to_local(world)
+					if local.y < bottom:
+						bottom = local.y
+						found = true
+		if not found:
+			var aabb := _combined_mesh_aabb(_model_root)
+			bottom = _model_root.position.y + aabb.position.y * _model_root.scale.y
+	if bottom == INF:
 		return
-	_model_root.position.y -= bottom
-	_model_root.position.y += 0.015
+	# Account for current Model scale: get_mesh_bottom_y is in unscaled model space
+	# if measured before scale; after scale, bottom scales with Model.scale.y
+	var scaled_bottom := bottom * _model_root.scale.y
+	# bottom is relative to Model origin in Model local units
+	_model_root.position.y = -scaled_bottom + 0.01
 	_feet_planted = true
 
 
