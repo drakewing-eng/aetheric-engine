@@ -1,17 +1,13 @@
 # Bell 3D model
 
-## Phase 1 (current)
-- `humanoid_stub.glb` — Khronos glTF-Sample **CesiumMan** (skeleton + walk animation).
-- Used as a **scaffold** so patrol, facing, look-at, and talk states work in-engine.
-- Victorian dark tint applied at runtime (`tint_victorian`).
+## Current (custom)
+- **`bell_character.tscn` + `bell_character.gd`** — stylized Victorian gentleman built to match
+  `sprite_bell` palette (charcoal coat, grey hair, vest, book, stern face).
+- AnimationPlayer clips: **`idle`**, **`walk`**, **`sit`** (articulated limbs, not CesiumMan).
+- Wired in Drawing Room via `"model": "res://assets/characters/models/bell/bell_character.tscn"`.
 
-## Phase 2+
-Replace with a Bell-identity humanoid (coat, hair, book) that keeps:
-- Skeleton3D
-- AnimationPlayer clips ideally named `idle` / `walk` / `sit` (or first clip used as walk)
+## Legacy
+- `humanoid_stub.glb` — CesiumMan scaffold (kept only as fallback). Do not use for Bell identity.
 
-Path stays: `res://assets/characters/models/bell/`  
-NPC data: `"model": "res://assets/characters/models/bell/<file>.glb"`
-
-## License
-CesiumMan is from Khronos glTF-Sample-Models (see upstream repo license).
+## Later upgrades
+- Higher-detail sculpted mesh / textured GLB can replace the scene; keep clip names `idle`/`walk`/`sit`.

@@ -7,14 +7,19 @@ func _init() -> void:
 	var failed := 0
 	print("=== test_npc_skeletal ===")
 
-	var model_path := "res://assets/characters/models/bell/humanoid_stub.glb"
-	if not ResourceLoader.exists(model_path):
+	var model_path := "res://assets/characters/models/bell/bell_character.tscn"
+	if not ResourceLoader.exists(model_path) and not FileAccess.file_exists(ProjectSettings.globalize_path(model_path)):
 		print("FAIL model missing ", model_path)
 		failed += 1
 	else:
 		var packed = load(model_path)
 		if packed is PackedScene:
+			var holder := Node3D.new()
+			root.add_child(holder)
 			var inst: Node = packed.instantiate()
+			holder.add_child(inst)
+			if inst.has_method("ensure_built"):
+				inst.ensure_built()
 			print("OK model PackedScene root=", inst.name)
 			var ap := _find_ap(inst)
 			if ap == null:
@@ -23,16 +28,15 @@ func _init() -> void:
 			else:
 				var clips := ap.get_animation_list()
 				print("OK AnimationPlayer clips=", clips)
-				if clips.is_empty():
-					print("FAIL empty clips")
+				if not ("idle" in clips and "walk" in clips):
+					print("FAIL need idle+walk clips, got ", clips)
 					failed += 1
-			var sk := _find_sk(inst)
-			if sk == null:
-				print("FAIL no Skeleton3D")
+			if not inst.has_node("BodyRoot"):
+				print("FAIL no BodyRoot mesh")
 				failed += 1
 			else:
-				print("OK Skeleton3D bones=", sk.get_bone_count())
-			inst.free()
+				print("OK BodyRoot present (custom Bell mesh)")
+			holder.queue_free()
 		else:
 			print("FAIL not PackedScene")
 			failed += 1
@@ -80,7 +84,8 @@ func _init() -> void:
 					"name": "Ignatius Bell",
 					"height": 1.78,
 					"model": model_path,
-					"tint_victorian": true,
+					"tint_victorian": false,
+					"portrait": "res://assets/portraits/portrait_bell.jpg",
 					"patrol": [[0, 0, 0], [1, 0, 0], [1, 0, 1]],
 					"dwell_sec": 2.0,
 					"speed": 0.9,

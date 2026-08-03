@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bell_character_v1"]
+
+[ext_resource type="Script" path="res://assets/characters/models/bell/bell_character.gd" id="1_bell"]
+
+[node name="BellCharacter" type="Node3D"]
+script = ExtResource("1_bell")

@@ -219,6 +219,10 @@ static func idle_frame_path(npc_id: String, frame: int) -> String:
 
 static func default_model_path(npc_id: String) -> String:
 	var id := npc_id.to_lower().strip_edges()
+	# Prefer custom character scene, then humanoid stub GLB.
+	var custom := MODEL_DIR + "%s/bell_character.tscn" % id if id == "bell" else ""
+	if custom != "":
+		return custom
 	return MODEL_DIR + "%s/humanoid_stub.glb" % id
 
 
@@ -227,7 +231,12 @@ func _resolve_model_path(npc_id: String, data: Dictionary) -> String:
 		var mp := str(data.get("model"))
 		if ResourceLoader.exists(mp) or FileAccess.file_exists(ProjectSettings.globalize_path(mp)):
 			return mp
-	var auto_p := default_model_path(npc_id)
+	# Bell: custom mesh scene first
+	if npc_id == "bell":
+		var bell_p := MODEL_DIR + "bell/bell_character.tscn"
+		if ResourceLoader.exists(bell_p) or FileAccess.file_exists(ProjectSettings.globalize_path(bell_p)):
+			return bell_p
+	var auto_p := MODEL_DIR + "%s/humanoid_stub.glb" % npc_id
 	if ResourceLoader.exists(auto_p) or FileAccess.file_exists(ProjectSettings.globalize_path(auto_p)):
 		return auto_p
 	return ""
@@ -252,6 +261,8 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 	_model_root = (packed as PackedScene).instantiate()
 	_model_root.name = "Model"
 	_visual.add_child(_model_root)
+	if _model_root.has_method("ensure_built"):
+		_model_root.ensure_built()
 
 	_anim = _find_animation_player(_model_root)
 	_skeleton = _find_skeleton(_model_root)
@@ -271,13 +282,9 @@ func _setup_skeletal(model_path: String, height: float, data: Dictionary) -> boo
 	_model_root.position = Vector3.ZERO
 	_plant_feet_to_ground()
 
-	# Soft Victorian body tint (faceless stub until real Bell mesh).
-	if bool(data.get("tint_victorian", true)):
+	# Only force flat tint on generic stubs — custom Bell mesh keeps its materials.
+	if bool(data.get("tint_victorian", false)):
 		_apply_victorian_tint(_model_root)
-
-	# Interim identity: face card from portrait so "facing player" is readable.
-	if bool(data.get("face_card", true)):
-		_attach_face_card(str(data.get("portrait", "")), height)
 
 	if _anim:
 		var clips := _anim.get_animation_list()
@@ -345,38 +352,6 @@ func _apply_victorian_tint(n: Node) -> void:
 	for c in n.get_children():
 		_apply_victorian_tint(c)
 
-
-func _attach_face_card(portrait_path: String, height: float) -> void:
-	## Temporary: portrait billboard at head height so facing/attention is readable.
-	## Replace when a real Bell mesh with a face ships.
-	if portrait_path == "" or _visual == null:
-		return
-	var tex: Texture2D = _load_texture(portrait_path)
-	if tex == null and ResourceLoader.exists(portrait_path):
-		var r = load(portrait_path)
-		if r is Texture2D:
-			tex = r
-	if tex == null:
-		return
-	var mi := MeshInstance3D.new()
-	mi.name = "FaceCard"
-	var quad := QuadMesh.new()
-	var face_h: float = clampf(height * 0.22, 0.28, 0.42)
-	var aspect: float = float(tex.get_width()) / maxf(float(tex.get_height()), 1.0)
-	quad.size = Vector2(face_h * aspect, face_h)
-	mi.mesh = quad
-	var mat := StandardMaterial3D.new()
-	mat.albedo_texture = tex
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-	mat.alpha_scissor_threshold = 0.4
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
-	mi.material_override = mat
-	# Head height on body; slight forward so it sits in front of featureless head
-	mi.position = Vector3(0.0, height * 0.82, 0.12)
-	_visual.add_child(mi)
 
 
 func _find_animation_player(n: Node) -> AnimationPlayer:
@@ -601,8 +576,10 @@ func _set_state_sit() -> void:
 	_going_to_seat = false
 	_sit_left = _sit_sec
 	if _present == Present.SKELETAL:
-		# No dedicated sit clip on stub — slow idle stands in until Phase 2 mesh.
-		_play_anim(_anim_idle, 0.2)
+		if _anim and _anim.has_animation("sit"):
+			_play_anim("sit", 1.0)
+		else:
+			_play_anim(_anim_idle, 0.2)
 
 
 func _set_sprite_tex(tex: Texture2D) -> void:

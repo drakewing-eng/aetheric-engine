@@ -137,9 +137,9 @@ const ROOMS := {
 				"name": "Ignatius Bell",
 				"portrait": "res://assets/portraits/portrait_bell.jpg",
 				"sprite": "res://assets/characters/sprites/sprite_bell.png",
-				## Phase 1: 3D skeletal stub (CesiumMan-based). Cutout sprite is fallback only.
-				"model": "res://assets/characters/models/bell/humanoid_stub.glb",
-				"tint_victorian": true,
+				## Custom stylized Bell mesh (Victorian coat/face/book) — not cutout, not CesiumMan.
+				"model": "res://assets/characters/models/bell/bell_character.tscn",
+				"tint_victorian": false,
 				"intro": "Bell looks up from his papers. Ink on his fingers.",
 				"height": 1.78,
 				"patrol": [
