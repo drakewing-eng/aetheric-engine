@@ -12,17 +12,18 @@ const WALK_CYCLE_METRES := 0.55
 const WALK_FRAME_COUNT := 4
 
 ## --- Life / attention (Oblivion-style presentation layer on billboards) ---
-const BREATH_AMPLITUDE_IDLE := 0.012   # metres of Y bob at rest
-const BREATH_AMPLITUDE_WALK := 0.018
-const BREATH_HZ_IDLE := 0.35
-const BREATH_HZ_WALK := 0.9
-const BREATH_SCALE_IDLE := 0.008       # fractional scale pulse
+const BREATH_AMPLITUDE_IDLE := 0.004   # tiny Y bob — large bob reads as floating
+const BREATH_AMPLITUDE_WALK := 0.006
+const BREATH_HZ_IDLE := 0.32
+const BREATH_HZ_WALK := 0.85
+const BREATH_SCALE_IDLE := 0.004       # fractional scale pulse (keep subtle)
 const ATTEND_RADIUS_M := 3.5
-const ATTEND_YAW_SPEED := 3.2          # rad/s when facing player (billboard off)
-const FIDGET_MIN_SEC := 2.8
-const FIDGET_MAX_SEC := 6.5
-const DWELL_JITTER_FRAC := 0.22        # ± fraction of dwell_sec
-const GLANCE_YAW_DEG := 18.0           # small free-look yaw while dwelling (billboard off briefly)
+## NEVER disable FIXED_Y to yaw — edge-on billboard becomes a paper plane.
+const ATTEND_USES_BILLBOARD_YAW := false
+const FIDGET_MIN_SEC := 3.5
+const FIDGET_MAX_SEC := 7.5
+const DWELL_JITTER_FRAC := 0.15
+const GLANCE_YAW_DEG := 0.0            # disabled until multi-angle sprites exist
 
 var npc_data: Dictionary = {}
 var _points: Array[Vector3] = []
@@ -397,74 +398,55 @@ func _process_patrol(delta: float) -> bool:
 	return true
 
 
-func _process_attention(delta: float, moving: bool) -> void:
+func _process_attention(_delta: float, _moving: bool) -> void:
+	## FIXED_Y billboards must stay camera-facing. Yawing with billboard disabled
+	## turns the character into a paper-thin plane — that was a Phase-1 regression.
+	## "Attend" is tracked for breath emphasis only until we have multi-angle art.
 	var player := _resolve_player()
 	var want_attend := false
-	var to_player := Vector3.ZERO
 	if player:
 		var dist := distance_to_player(player.global_position)
 		want_attend = should_attend_player(dist, ATTEND_RADIUS_M)
-		to_player = player.global_position - global_position
-		to_player.y = 0.0
-	_attending = want_attend and to_player.length_squared() > 0.0001
-
-	if _char_mat == null or _char_mesh == null:
-		return
-
-	# FIXED_Y always faces camera — true face-player needs billboard off while attending.
-	# Plan default: disable billboard when attending (or free-glancing); restore FIXED_Y otherwise.
-	if _attending and not moving:
-		_char_mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
-		var target_yaw := atan2(to_player.x, to_player.z)
-		var cur := _char_mesh.rotation.y
-		_char_mesh.rotation.y = lerp_angle(cur, target_yaw, clampf(ATTEND_YAW_SPEED * delta, 0.0, 1.0))
-	elif not moving and absf(_glance_yaw) > 0.001:
-		_char_mat.billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
-		var cur2 := _char_mesh.rotation.y
-		_char_mesh.rotation.y = lerp_angle(cur2, _glance_yaw, clampf(2.0 * delta, 0.0, 1.0))
-	else:
+	_attending = want_attend
+	_glance_yaw = 0.0
+	if _char_mat:
 		_char_mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	if _char_mesh:
 		_char_mesh.rotation.y = 0.0
 
 
 func _process_fidget(delta: float, moving: bool) -> void:
+	## Fidget texture swaps are disabled until idle frames share identical canvas,
+	## foot baseline, and silhouette mass — mismatched idles read as glitching.
 	if moving:
 		return
 	_fidget_left -= delta
 	if _fidget_left > 0.0:
 		return
 	_fidget_left = _next_fidget_interval()
-
-	# Cycle multi-frame idle if present
-	if _idle_texs.size() >= 2:
-		_idle_frame = (_idle_frame + 1) % _idle_texs.size()
-		if _was_dwelling:
-			_set_sprite_tex(_idle_texs[_idle_frame])
-
-	# Random glance (small yaw) when not locked on player
-	if not _attending:
-		var deg := (randf() * 2.0 - 1.0) * GLANCE_YAW_DEG
-		_glance_yaw = deg_to_rad(deg)
-	else:
-		_glance_yaw = 0.0
+	_glance_yaw = 0.0
+	# Procedural breath already provides idle life; keep single idle texture.
 
 
 func _process_breath(_delta: float, moving: bool) -> void:
 	if _char_mesh == null:
 		return
-	var amp := BREATH_AMPLITUDE_WALK if moving else BREATH_AMPLITUDE_IDLE
+	# Scale-only breath (no Y lift) so feet stay planted — Y bob read as floating.
 	var hz := BREATH_HZ_WALK if moving else BREATH_HZ_IDLE
-	var scale_amt := BREATH_SCALE_IDLE * (1.35 if moving else 1.0)
+	var scale_amt := BREATH_SCALE_IDLE * (1.2 if moving else 1.0)
 	if _attending:
-		amp *= 1.15
+		scale_amt *= 1.1
 		hz *= 1.05
 	var phase := _life_t * TAU * hz
-	var dy := breath_offset_y(phase, amp)
 	var sc := breath_scale_factor(phase, scale_amt)
-	_char_mesh.position.y = _mesh_base_y + dy
-	_char_mesh.scale = _mesh_base_scale * sc
+	# Pivot scale from feet: keep bottom of quad near ground.
+	_char_mesh.position.y = _mesh_base_y
+	_char_mesh.scale = Vector3(_mesh_base_scale.x * sc, _mesh_base_scale.y * sc, _mesh_base_scale.z)
+	# Counter Y so uniform scale expands upward from feet, not both ways.
+	var half_h := _world_h * 0.5
+	_char_mesh.position.y = half_h * sc + 0.01
 	if _foot_shadow:
-		var shadow_a := 0.40 + 0.08 * sin(phase)
+		var shadow_a := 0.42 + 0.05 * sin(phase)
 		var sm := _foot_shadow.material_override as StandardMaterial3D
 		if sm:
 			var c := sm.albedo_color
