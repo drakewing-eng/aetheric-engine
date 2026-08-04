@@ -1,13 +1,20 @@
-# Bell 3D model
+# Bell 3D character
 
-## Current (custom)
-- **`bell_character.tscn` + `bell_character.gd`** — stylized Victorian gentleman built to match
-  `sprite_bell` palette (charcoal coat, grey hair, vest, book, stern face).
-- AnimationPlayer clips: **`idle`**, **`walk`**, **`sit`** (articulated limbs, not CesiumMan).
-- Wired in Drawing Room via `"model": "res://assets/characters/models/bell/bell_character.tscn"`.
+## Runtime (now)
+| Asset | Role |
+|-------|------|
+| **`bell_character.tscn` + `.gd`** | Improved **procedural placeholder** — longer coat, hair mass, stern face, book, idle/walk/sit |
+| `humanoid_stub.glb` | Legacy CesiumMan — **do not use** for Bell identity |
 
-## Legacy
-- `humanoid_stub.glb` — CesiumMan scaffold (kept only as fallback). Do not use for Bell identity.
+Drawing Room: `"model": "res://assets/characters/models/bell/bell_character.tscn"`
 
-## Later upgrades
-- Higher-detail sculpted mesh / textured GLB can replace the scene; keep clip names `idle`/`walk`/`sit`.
+## Art direction & pipeline
+| Doc | Purpose |
+|-----|---------|
+| `ART_DIRECTION.md` | Stylized-realist lock, orthos, materials |
+| `GLB_CONTRACT.md` | Drop-in GLB requirements for Godot |
+| `BLENDER_BRIEF.md` | Steps / commission brief for final mesh |
+| `final/` | Put production `bell.glb` here |
+
+## Highest-leverage next step
+**Author or commission a skinned GLB** (see `BLENDER_BRIEF.md`) and drop into `final/bell.glb`. Controller already supports clip names + plant. Procedural mesh is only a silhouette scaffold.

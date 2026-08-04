@@ -1,7 +1,8 @@
 extends Node3D
-## Custom stylized Ignatius Bell — Victorian gentleman mesh + idle/walk/sit.
-## Palette matches sprite_bell: charcoal coat, grey hair, book, stern face.
-## Built ~1.78 m tall with feet at y=0 after ensure_built(); faces +Z.
+## Improved stylized-realist *placeholder* for Ignatius Bell.
+## Goal: Oblivion-readable silhouette at game distance (hair mass, long coat,
+## stern face, book) — still procedural until final/GLB ships.
+## ~1.78 m, feet at y=0 after ensure_built(); faces +Z.
 
 const NATIVE_HEIGHT := 1.78
 
@@ -10,7 +11,6 @@ func _enter_tree() -> void:
 
 
 func ensure_built() -> void:
-	## Idempotent — fps_npc calls this right after instantiate.
 	if has_node("BodyRoot"):
 		return
 	_build()
@@ -20,7 +20,6 @@ func ensure_built() -> void:
 
 
 func get_mesh_bottom_y() -> float:
-	## Lowest mesh point in this node's local space (0 = on floor after plant).
 	return _scan_bottom_local()
 
 
@@ -37,19 +36,14 @@ func get_mesh_height() -> float:
 		var xf := _accum_transform(mi, root)
 		var a: AABB = mi.get_aabb()
 		for i in 8:
-			var p: Vector3 = xf * a.get_endpoint(i)
-			# Include BodyRoot offset
-			p = root.transform * p
+			var p: Vector3 = root.transform * (xf * a.get_endpoint(i))
 			lo = minf(lo, p.y)
 			hi = maxf(hi, p.y)
 			found = true
-	if not found:
-		return NATIVE_HEIGHT
-	return hi - lo
+	return (hi - lo) if found else NATIVE_HEIGHT
 
 
 func has_identity_parts() -> bool:
-	## Structural identity checklist for tests.
 	var need := ["Coat", "Vest", "Hair", "EyeL", "EyeR", "Book", "BootL", "BootR", "Skull"]
 	for n in need:
 		if _find_named(self, n) == null:
@@ -62,111 +56,119 @@ func _build() -> void:
 	root.name = "BodyRoot"
 	add_child(root)
 
-	# --- Materials (sprite_bell palette) ---
-	var mat_coat := _mat(Color(0.09, 0.085, 0.09))
-	var mat_vest := _mat(Color(0.30, 0.27, 0.24))
-	var mat_shirt := _mat(Color(0.90, 0.88, 0.84))
-	var mat_trousers := _mat(Color(0.20, 0.18, 0.19))
-	var mat_skin := _mat(Color(0.74, 0.60, 0.50))
-	var mat_hair := _mat(Color(0.42, 0.40, 0.42))
-	var mat_boot := _mat(Color(0.05, 0.04, 0.04))
-	var mat_book := _mat(Color(0.45, 0.30, 0.16))
-	var mat_book_page := _mat(Color(0.85, 0.80, 0.70))
-	var mat_eye := _mat(Color(0.10, 0.09, 0.09))
-	var mat_brow := _mat(Color(0.28, 0.25, 0.25))
-	var mat_chain := _mat(Color(0.75, 0.64, 0.36), 0.45, 0.55)
-	var mat_lip := _mat(Color(0.55, 0.38, 0.35))
+	# Palette from sprite_bell / ART_DIRECTION
+	var mat_coat := _mat(Color(0.09, 0.085, 0.09), 0.90)
+	var mat_vest := _mat(Color(0.32, 0.28, 0.25), 0.82)
+	var mat_shirt := _mat(Color(0.90, 0.88, 0.84), 0.78)
+	var mat_trousers := _mat(Color(0.18, 0.16, 0.17), 0.88)
+	var mat_skin := _mat(Color(0.74, 0.58, 0.48), 0.68)
+	var mat_hair := _mat(Color(0.48, 0.45, 0.47), 0.72)
+	var mat_hair_dark := _mat(Color(0.28, 0.26, 0.28), 0.75)
+	var mat_boot := _mat(Color(0.05, 0.04, 0.04), 0.42)
+	var mat_book := _mat(Color(0.42, 0.27, 0.15), 0.78)
+	var mat_page := _mat(Color(0.86, 0.82, 0.72), 0.85)
+	var mat_eye := _mat(Color(0.08, 0.07, 0.07), 0.4)
+	var mat_brow := _mat(Color(0.22, 0.18, 0.17), 0.85)
+	var mat_chain := _mat(Color(0.78, 0.65, 0.35), 0.35, 0.65)
+	var mat_lip := _mat(Color(0.52, 0.36, 0.32), 0.7)
 
-	# Hip height: legs hang so boots rest at y=0
-	# thigh 0.46 + shin 0.42 + boot half 0.05 ≈ 0.93 from hip → hip_y = 0.93
-	var hip_y := 0.93
-	var leg_l := _pivot(root, "LegL", Vector3(-0.12, hip_y, 0.0))
-	var leg_r := _pivot(root, "LegR", Vector3(0.12, hip_y, 0.0))
-	_limb(leg_l, "ThighL", Vector3(0, -0.23, 0), Vector3(0.12, 0.46, 0.13), mat_trousers)
-	_limb(leg_r, "ThighR", Vector3(0, -0.23, 0), Vector3(0.12, 0.46, 0.13), mat_trousers)
-	var calf_l := _pivot(leg_l, "CalfL", Vector3(0, -0.46, 0))
-	var calf_r := _pivot(leg_r, "CalfR", Vector3(0, -0.46, 0))
-	_limb(calf_l, "ShinL", Vector3(0, -0.21, 0), Vector3(0.105, 0.42, 0.12), mat_trousers)
-	_limb(calf_r, "ShinR", Vector3(0, -0.21, 0), Vector3(0.105, 0.42, 0.12), mat_trousers)
-	# Boots: bottom of box at local y = -0.47 - 0.05 = -0.52 from calf; calf at 0.93-0.46=0.47
-	# 0.47 - 0.47 = 0.0 ✓
-	_box(calf_l, "BootL", Vector3(0, -0.47, 0.05), Vector3(0.13, 0.10, 0.24), mat_boot)
-	_box(calf_r, "BootR", Vector3(0, -0.47, 0.05), Vector3(0.13, 0.10, 0.24), mat_boot)
+	# --- Legs (slim; hip so boots at y≈0) ---
+	var hip_y := 0.94
+	var leg_l := _pivot(root, "LegL", Vector3(-0.11, hip_y, 0.02))
+	var leg_r := _pivot(root, "LegR", Vector3(0.11, hip_y, 0.02))
+	_cyl(leg_l, "ThighL", Vector3(0, -0.24, 0), 0.055, 0.48, mat_trousers)
+	_cyl(leg_r, "ThighR", Vector3(0, -0.24, 0), 0.055, 0.48, mat_trousers)
+	var calf_l := _pivot(leg_l, "CalfL", Vector3(0, -0.48, 0))
+	var calf_r := _pivot(leg_r, "CalfR", Vector3(0, -0.48, 0))
+	_cyl(calf_l, "ShinL", Vector3(0, -0.22, 0), 0.048, 0.44, mat_trousers)
+	_cyl(calf_r, "ShinR", Vector3(0, -0.22, 0), 0.048, 0.44, mat_trousers)
+	_box(calf_l, "BootL", Vector3(0, -0.48, 0.06), Vector3(0.12, 0.09, 0.26), mat_boot)
+	_box(calf_r, "BootR", Vector3(0, -0.48, 0.06), Vector3(0.12, 0.09, 0.26), mat_boot)
 
-	# --- Torso / coat silhouette ---
-	_capsule(root, "Coat", Vector3(0, 1.24, 0), 0.20, 0.56, mat_coat)
-	_box(root, "CoatSkirt", Vector3(0, 0.96, 0.03), Vector3(0.50, 0.42, 0.30), mat_coat)
-	_box(root, "CoatLapelL", Vector3(-0.10, 1.36, 0.14), Vector3(0.10, 0.28, 0.06), mat_coat)
-	_box(root, "CoatLapelR", Vector3(0.10, 1.36, 0.14), Vector3(0.10, 0.28, 0.06), mat_coat)
-	_box(root, "Vest", Vector3(0, 1.28, 0.08), Vector3(0.28, 0.40, 0.16), mat_vest)
-	_box(root, "ShirtFront", Vector3(0, 1.34, 0.14), Vector3(0.10, 0.24, 0.05), mat_shirt)
-	_box(root, "TailL", Vector3(-0.14, 0.76, -0.08), Vector3(0.18, 0.48, 0.12), mat_coat)
-	_box(root, "TailR", Vector3(0.14, 0.76, -0.08), Vector3(0.18, 0.48, 0.12), mat_coat)
-	# Shoulder pads for coat bulk
-	_sphere(root, "ShoulderL", Vector3(-0.26, 1.46, 0.0), 0.08, mat_coat)
-	_sphere(root, "ShoulderR", Vector3(0.26, 1.46, 0.0), 0.08, mat_coat)
+	# --- Torso: broader shoulders, long coat with hem weight ---
+	_capsule(root, "TorsoCore", Vector3(0, 1.28, 0.0), 0.16, 0.42, mat_vest)
+	_capsule(root, "Coat", Vector3(0, 1.26, 0.0), 0.22, 0.62, mat_coat)
+	# Long coat body (mid-thigh to near knee)
+	_box(root, "CoatSkirt", Vector3(0, 0.88, 0.04), Vector3(0.56, 0.55, 0.34), mat_coat)
+	_box(root, "CoatHem", Vector3(0, 0.58, 0.02), Vector3(0.58, 0.10, 0.36), mat_coat)
+	# Rear tails (split frock coat)
+	_box(root, "TailL", Vector3(-0.14, 0.62, -0.12), Vector3(0.20, 0.58, 0.14), mat_coat)
+	_box(root, "TailR", Vector3(0.14, 0.62, -0.12), Vector3(0.20, 0.58, 0.14), mat_coat)
+	# Open front: vest + shirt + cravat
+	_box(root, "Vest", Vector3(0, 1.30, 0.12), Vector3(0.30, 0.44, 0.14), mat_vest)
+	_box(root, "ShirtFront", Vector3(0, 1.36, 0.18), Vector3(0.11, 0.28, 0.05), mat_shirt)
+	_box(root, "Cravat", Vector3(0, 1.48, 0.20), Vector3(0.07, 0.12, 0.06), mat_coat)
+	_box(root, "Collar", Vector3(0, 1.54, 0.14), Vector3(0.18, 0.06, 0.14), mat_shirt)
+	# Lapels (angular)
+	_box(root, "CoatLapelL", Vector3(-0.12, 1.40, 0.20), Vector3(0.12, 0.32, 0.05), mat_coat)
+	_box(root, "CoatLapelR", Vector3(0.12, 1.40, 0.20), Vector3(0.12, 0.32, 0.05), mat_coat)
+	# Shoulder bulk
+	_sphere(root, "ShoulderL", Vector3(-0.30, 1.50, 0.0), 0.10, mat_coat)
+	_sphere(root, "ShoulderR", Vector3(0.30, 1.50, 0.0), 0.10, mat_coat)
+	_sphere(root, "Chain", Vector3(0.10, 1.22, 0.22), 0.02, mat_chain)
 
 	# --- Arms ---
-	var arm_l := _pivot(root, "ArmL", Vector3(-0.30, 1.44, 0.0))
-	var arm_r := _pivot(root, "ArmR", Vector3(0.30, 1.44, 0.0))
-	_limb(arm_l, "UpperL", Vector3(-0.02, -0.17, 0), Vector3(0.09, 0.34, 0.09), mat_coat)
-	_limb(arm_r, "UpperR", Vector3(0.02, -0.17, 0), Vector3(0.09, 0.34, 0.09), mat_coat)
-	var forearm_l := _pivot(arm_l, "ForeL", Vector3(0, -0.34, 0))
-	var forearm_r := _pivot(arm_r, "ForeR", Vector3(0, -0.34, 0))
-	_limb(forearm_l, "LowerL", Vector3(0, -0.15, 0), Vector3(0.08, 0.30, 0.08), mat_coat)
-	_limb(forearm_r, "LowerR", Vector3(0, -0.15, 0), Vector3(0.08, 0.30, 0.08), mat_coat)
-	_sphere(forearm_l, "HandL", Vector3(0, -0.32, 0.02), 0.055, mat_skin)
-	_sphere(forearm_r, "HandR", Vector3(0, -0.32, 0.02), 0.055, mat_skin)
-	# Book (left hand) + page edge
-	_box(forearm_l, "Book", Vector3(-0.02, -0.30, 0.11), Vector3(0.05, 0.20, 0.15), mat_book)
-	_box(forearm_l, "BookPages", Vector3(0.0, -0.30, 0.11), Vector3(0.03, 0.18, 0.13), mat_book_page)
-	_sphere(root, "Chain", Vector3(0.09, 1.20, 0.17), 0.022, mat_chain)
+	var arm_l := _pivot(root, "ArmL", Vector3(-0.34, 1.48, 0.0))
+	var arm_r := _pivot(root, "ArmR", Vector3(0.34, 1.48, 0.0))
+	_cyl(arm_l, "UpperL", Vector3(-0.02, -0.18, 0), 0.048, 0.36, mat_coat)
+	_cyl(arm_r, "UpperR", Vector3(0.02, -0.18, 0), 0.048, 0.36, mat_coat)
+	var forearm_l := _pivot(arm_l, "ForeL", Vector3(0, -0.36, 0))
+	var forearm_r := _pivot(arm_r, "ForeR", Vector3(0, -0.36, 0))
+	_cyl(forearm_l, "LowerL", Vector3(0, -0.16, 0), 0.042, 0.32, mat_coat)
+	_cyl(forearm_r, "LowerR", Vector3(0, -0.16, 0), 0.042, 0.32, mat_coat)
+	_sphere(forearm_l, "HandL", Vector3(0, -0.34, 0.02), 0.052, mat_skin)
+	_sphere(forearm_r, "HandR", Vector3(0, -0.34, 0.02), 0.052, mat_skin)
+	# Book held at chest (scholar pose)
+	_box(forearm_l, "Book", Vector3(0.02, -0.22, 0.14), Vector3(0.055, 0.22, 0.16), mat_book)
+	_box(forearm_l, "BookPages", Vector3(0.04, -0.22, 0.14), Vector3(0.03, 0.20, 0.14), mat_page)
 
-	arm_l.rotation_degrees = Vector3(14, 8, 20)
-	forearm_l.rotation_degrees = Vector3(-40, 30, 5)
-	arm_r.rotation_degrees = Vector3(6, 0, -10)
+	arm_l.rotation_degrees = Vector3(18, 15, 28)
+	forearm_l.rotation_degrees = Vector3(-55, 35, 10)
+	arm_r.rotation_degrees = Vector3(8, -5, -12)
 
-	# --- Head / face ---
-	var head := _pivot(root, "Head", Vector3(0, 1.60, 0))
-	_sphere(head, "Skull", Vector3(0, 0.11, 0.02), 0.125, mat_skin)
-	# Wild grey hair mass
-	_sphere(head, "Hair", Vector3(0, 0.18, -0.02), 0.15, mat_hair)
-	_box(head, "HairSideL", Vector3(-0.12, 0.12, 0.0), Vector3(0.07, 0.16, 0.14), mat_hair)
-	_box(head, "HairSideR", Vector3(0.12, 0.12, 0.0), Vector3(0.07, 0.16, 0.14), mat_hair)
-	_box(head, "HairTop", Vector3(0, 0.24, 0.0), Vector3(0.20, 0.08, 0.18), mat_hair)
-	_box(head, "HairFront", Vector3(0, 0.18, 0.10), Vector3(0.16, 0.06, 0.06), mat_hair)
-	# Stern brows / deep eyes
-	_box(head, "BrowL", Vector3(-0.045, 0.145, 0.115), Vector3(0.055, 0.018, 0.025), mat_brow)
-	_box(head, "BrowR", Vector3(0.045, 0.145, 0.115), Vector3(0.055, 0.018, 0.025), mat_brow)
-	_sphere(head, "EyeL", Vector3(-0.04, 0.115, 0.125), 0.02, mat_eye)
-	_sphere(head, "EyeR", Vector3(0.04, 0.115, 0.125), 0.02, mat_eye)
-	_box(head, "Nose", Vector3(0, 0.09, 0.135), Vector3(0.028, 0.045, 0.045), mat_skin)
-	_box(head, "Mouth", Vector3(0, 0.045, 0.125), Vector3(0.055, 0.014, 0.022), mat_lip)
-	# Ears
-	_sphere(head, "EarL", Vector3(-0.12, 0.10, 0.0), 0.03, mat_skin)
-	_sphere(head, "EarR", Vector3(0.12, 0.10, 0.0), 0.03, mat_skin)
-	# Collar / cravat
-	_box(root, "Collar", Vector3(0, 1.52, 0.09), Vector3(0.18, 0.07, 0.14), mat_shirt)
-	_box(root, "Cravat", Vector3(0, 1.46, 0.14), Vector3(0.07, 0.12, 0.06), mat_coat)
+	# --- Head: gaunt + intense brow + wild hair mass ---
+	var head := _pivot(root, "Head", Vector3(0, 1.62, 0.02))
+	_sphere(head, "Skull", Vector3(0, 0.10, 0.02), 0.12, mat_skin)
+	# Cheek hollows (slightly inset dark skin)
+	_sphere(head, "CheekL", Vector3(-0.07, 0.06, 0.06), 0.05, mat_skin)
+	_sphere(head, "CheekR", Vector3(0.07, 0.06, 0.06), 0.05, mat_skin)
+	_box(head, "Jaw", Vector3(0, 0.02, 0.04), Vector3(0.14, 0.06, 0.12), mat_skin)
+	# Deep sockets + stern brows
+	_box(head, "BrowRidge", Vector3(0, 0.15, 0.10), Vector3(0.16, 0.04, 0.06), mat_skin)
+	_box(head, "BrowL", Vector3(-0.05, 0.16, 0.13), Vector3(0.06, 0.02, 0.03), mat_brow)
+	_box(head, "BrowR", Vector3(0.05, 0.16, 0.13), Vector3(0.06, 0.02, 0.03), mat_brow)
+	_sphere(head, "EyeL", Vector3(-0.04, 0.12, 0.13), 0.018, mat_eye)
+	_sphere(head, "EyeR", Vector3(0.04, 0.12, 0.13), 0.018, mat_eye)
+	_box(head, "Nose", Vector3(0, 0.09, 0.145), Vector3(0.03, 0.05, 0.05), mat_skin)
+	_box(head, "Mouth", Vector3(0, 0.04, 0.13), Vector3(0.055, 0.014, 0.025), mat_lip)
+	_sphere(head, "EarL", Vector3(-0.12, 0.10, 0.0), 0.028, mat_skin)
+	_sphere(head, "EarR", Vector3(0.12, 0.10, 0.0), 0.028, mat_skin)
+
+	# Hair: multi-sphere wild volume (not a single helmet)
+	_sphere(head, "Hair", Vector3(0, 0.20, -0.02), 0.155, mat_hair)  # required name
+	_sphere(head, "HairCrown", Vector3(0, 0.28, -0.02), 0.12, mat_hair)
+	_sphere(head, "HairFront", Vector3(0, 0.18, 0.10), 0.10, mat_hair_dark)
+	_sphere(head, "HairL", Vector3(-0.12, 0.18, 0.0), 0.11, mat_hair)
+	_sphere(head, "HairR", Vector3(0.12, 0.18, 0.0), 0.11, mat_hair)
+	_sphere(head, "HairBack", Vector3(0, 0.14, -0.12), 0.12, mat_hair_dark)
+	_sphere(head, "HairTuftL", Vector3(-0.08, 0.30, 0.04), 0.07, mat_hair)
+	_sphere(head, "HairTuftR", Vector3(0.08, 0.30, 0.04), 0.07, mat_hair)
+	_box(head, "HairSideL", Vector3(-0.13, 0.12, 0.02), Vector3(0.07, 0.18, 0.14), mat_hair)
+	_box(head, "HairSideR", Vector3(0.13, 0.12, 0.02), Vector3(0.07, 0.18, 0.14), mat_hair)
 
 	_build_animations(leg_l, leg_r, arm_l, arm_r, calf_l, calf_r, head)
 
 
 func _plant_mesh_to_ground() -> void:
-	## Shift BodyRoot so lowest geometry is at y=0 in character space.
 	var root := get_node_or_null("BodyRoot") as Node3D
 	if root == null:
 		return
-	# Approximate without globals: measure boot bottoms from known layout
-	# Prefer live mesh scan when possible
 	var bottom := _scan_bottom_local()
 	root.position.y -= bottom
-	# Micro lift to avoid z-fight with floor shadow
 	root.position.y += 0.005
 
 
 func _scan_bottom_local() -> float:
-	## Bottom Y in character (self) local space, including BodyRoot.position.
 	var bottom := INF
 	var found := false
 	var root := get_node_or_null("BodyRoot") as Node3D
@@ -194,9 +196,6 @@ func _accum_transform(node: Node3D, stop_at: Node3D) -> Transform3D:
 		n = n.get_parent()
 		if n == null:
 			break
-	t = stop_at.transform if false else Transform3D.IDENTITY
-	# From stop_at down to node: start identity in stop_at space
-	t = Transform3D.IDENTITY
 	for sn in stack:
 		t = t * sn.transform
 	return t
@@ -215,34 +214,30 @@ func _build_animations(
 		add_child(ap)
 
 	var lib := AnimationLibrary.new()
+	var rest_leg := Vector3.ZERO
+	var rest_calf := Vector3.ZERO
+	var rest_arm_l := Vector3(18, 15, 28)
+	var rest_arm_r := Vector3(8, -5, -12)
 
-	# idle: MUST key every property walk/sit touch, else Godot freezes mid-stride
-	# on clip switch (no automatic RESET). Rest pose + subtle head/arm motion.
+	# idle: rest all walk/sit tracks + subtle head
 	var idle := Animation.new()
 	idle.length = 2.4
 	idle.loop_mode = Animation.LOOP_LINEAR
-	# Rest limbs (same defaults as after _build arm/leg setup)
-	var rest_leg := Vector3.ZERO
-	var rest_calf := Vector3.ZERO
-	var rest_arm_l := Vector3(14, 8, 20)
-	var rest_arm_r := Vector3(6, 0, -10)
 	_rot_track(idle, leg_l, 0.0, rest_leg, 1.2, rest_leg, 2.4, rest_leg)
 	_rot_track(idle, leg_r, 0.0, rest_leg, 1.2, rest_leg, 2.4, rest_leg)
 	_rot_track(idle, calf_l, 0.0, rest_calf, 1.2, rest_calf, 2.4, rest_calf)
 	_rot_track(idle, calf_r, 0.0, rest_calf, 1.2, rest_calf, 2.4, rest_calf)
 	_rot_track(idle, arm_l, 0.0, rest_arm_l, 1.2, rest_arm_l, 2.4, rest_arm_l)
-	_rot_track(idle, arm_r, 0.0, rest_arm_r, 1.2, Vector3(8, 0, -12), 2.4, rest_arm_r)
-	_rot_track(idle, head, 0.0, Vector3(0, 0, 0), 1.2, Vector3(2, 3, 0), 2.4, Vector3(0, 0, 0))
-	# BodyRoot must return to plant rest (y=0 local) after walk bounce
+	_rot_track(idle, arm_r, 0.0, rest_arm_r, 1.2, Vector3(10, -5, -14), 2.4, rest_arm_r)
+	_rot_track(idle, head, 0.0, Vector3(0, 0, 0), 1.2, Vector3(2, 4, 0), 2.4, Vector3(0, 0, 0))
 	var it := idle.add_track(Animation.TYPE_VALUE)
 	idle.track_set_path(it, NodePath("BodyRoot:position"))
 	idle.value_track_set_update_mode(it, Animation.UPDATE_CONTINUOUS)
-	idle.track_insert_key(it, 0.0, Vector3(0, 0, 0))
-	idle.track_insert_key(it, 1.2, Vector3(0, 0, 0))
-	idle.track_insert_key(it, 2.4, Vector3(0, 0, 0))
+	idle.track_insert_key(it, 0.0, Vector3.ZERO)
+	idle.track_insert_key(it, 1.2, Vector3.ZERO)
+	idle.track_insert_key(it, 2.4, Vector3.ZERO)
 	lib.add_animation("idle", idle)
 
-	# walk: alternating legs, small bounce on BodyRoot (≤2 cm)
 	var walk := Animation.new()
 	walk.length = 0.85
 	walk.loop_mode = Animation.LOOP_LINEAR
@@ -250,25 +245,31 @@ func _build_animations(
 	_rot_track(walk, leg_r, 0.0, Vector3(-34, 0, 0), 0.425, Vector3(30, 0, 0), 0.85, Vector3(-34, 0, 0))
 	_rot_track(walk, calf_l, 0.0, Vector3(8, 0, 0), 0.425, Vector3(28, 0, 0), 0.85, Vector3(8, 0, 0))
 	_rot_track(walk, calf_r, 0.0, Vector3(28, 0, 0), 0.425, Vector3(8, 0, 0), 0.85, Vector3(28, 0, 0))
-	_rot_track(walk, arm_r, 0.0, Vector3(22, 0, -10), 0.425, Vector3(-14, 0, -10), 0.85, Vector3(22, 0, -10))
-	_rot_track(walk, arm_l, 0.0, Vector3(12, 8, 18), 0.425, Vector3(18, 8, 20), 0.85, Vector3(12, 8, 18))
+	_rot_track(walk, arm_r, 0.0, Vector3(22, -5, -12), 0.425, Vector3(-12, -5, -12), 0.85, Vector3(22, -5, -12))
+	_rot_track(walk, arm_l, 0.0, Vector3(16, 15, 26), 0.425, Vector3(22, 15, 28), 0.85, Vector3(16, 15, 26))
 	var wt := walk.add_track(Animation.TYPE_VALUE)
 	walk.track_set_path(wt, NodePath("BodyRoot:position"))
 	walk.value_track_set_update_mode(wt, Animation.UPDATE_CONTINUOUS)
-	walk.track_insert_key(wt, 0.0, Vector3(0, 0.0, 0))
-	walk.track_insert_key(wt, 0.21, Vector3(0, 0.018, 0))
-	walk.track_insert_key(wt, 0.425, Vector3(0, 0.0, 0))
-	walk.track_insert_key(wt, 0.64, Vector3(0, 0.018, 0))
-	walk.track_insert_key(wt, 0.85, Vector3(0, 0.0, 0))
+	walk.track_insert_key(wt, 0.0, Vector3(0, 0, 0))
+	walk.track_insert_key(wt, 0.21, Vector3(0, 0.016, 0))
+	walk.track_insert_key(wt, 0.425, Vector3(0, 0, 0))
+	walk.track_insert_key(wt, 0.64, Vector3(0, 0.016, 0))
+	walk.track_insert_key(wt, 0.85, Vector3(0, 0, 0))
 	lib.add_animation("walk", walk)
 
 	var sit := Animation.new()
 	sit.length = 0.55
 	sit.loop_mode = Animation.LOOP_NONE
-	_rot_track(sit, leg_l, 0.0, Vector3(0, 0, 0), 0.55, Vector3(-72, 12, 0), 0.55, Vector3(-72, 12, 0))
-	_rot_track(sit, leg_r, 0.0, Vector3(0, 0, 0), 0.55, Vector3(-72, -12, 0), 0.55, Vector3(-72, -12, 0))
-	_rot_track(sit, calf_l, 0.0, Vector3(0, 0, 0), 0.55, Vector3(70, 0, 0), 0.55, Vector3(70, 0, 0))
-	_rot_track(sit, calf_r, 0.0, Vector3(0, 0, 0), 0.55, Vector3(70, 0, 0), 0.55, Vector3(70, 0, 0))
+	_rot_track(sit, leg_l, 0.0, rest_leg, 0.55, Vector3(-72, 12, 0), 0.55, Vector3(-72, 12, 0))
+	_rot_track(sit, leg_r, 0.0, rest_leg, 0.55, Vector3(-72, -12, 0), 0.55, Vector3(-72, -12, 0))
+	_rot_track(sit, calf_l, 0.0, rest_calf, 0.55, Vector3(70, 0, 0), 0.55, Vector3(70, 0, 0))
+	_rot_track(sit, calf_r, 0.0, rest_calf, 0.55, Vector3(70, 0, 0), 0.55, Vector3(70, 0, 0))
+	_rot_track(sit, arm_l, 0.0, rest_arm_l, 0.55, rest_arm_l, 0.55, rest_arm_l)
+	_rot_track(sit, arm_r, 0.0, rest_arm_r, 0.55, rest_arm_r, 0.55, rest_arm_r)
+	var st := sit.add_track(Animation.TYPE_VALUE)
+	sit.track_set_path(st, NodePath("BodyRoot:position"))
+	sit.track_insert_key(st, 0.0, Vector3.ZERO)
+	sit.track_insert_key(st, 0.55, Vector3.ZERO)
 	lib.add_animation("sit", sit)
 
 	if ap.has_animation_library(""):
@@ -319,14 +320,6 @@ func _find_named(n: Node, name: String) -> Node:
 	return null
 
 
-func _local_to_self(mi: Node3D, corner: Vector3) -> Vector3:
-	return _accum_transform(mi, self) * corner
-
-
-func _approx_local(mi: Node3D, corner: Vector3) -> Vector3:
-	return _accum_transform(mi, self) * corner
-
-
 func _mat(color: Color, rough: float = 0.9, metal: float = 0.0) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = color
@@ -362,8 +355,8 @@ func _sphere(parent: Node3D, n: String, pos: Vector3, r: float, mat: Material) -
 	var mesh := SphereMesh.new()
 	mesh.radius = r
 	mesh.height = r * 2.0
-	mesh.radial_segments = 14
-	mesh.rings = 10
+	mesh.radial_segments = 16
+	mesh.rings = 12
 	mi.mesh = mesh
 	mi.position = pos
 	mi.material_override = mat
@@ -377,7 +370,7 @@ func _capsule(parent: Node3D, n: String, pos: Vector3, r: float, h: float, mat: 
 	var mesh := CapsuleMesh.new()
 	mesh.radius = r
 	mesh.height = h
-	mesh.radial_segments = 14
+	mesh.radial_segments = 16
 	mi.mesh = mesh
 	mi.position = pos
 	mi.material_override = mat
@@ -385,5 +378,16 @@ func _capsule(parent: Node3D, n: String, pos: Vector3, r: float, h: float, mat: 
 	return mi
 
 
-func _limb(parent: Node3D, n: String, pos: Vector3, size: Vector3, mat: Material) -> MeshInstance3D:
-	return _box(parent, n, pos, size, mat)
+func _cyl(parent: Node3D, n: String, pos: Vector3, r: float, h: float, mat: Material) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = n
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = r
+	mesh.bottom_radius = r * 1.05
+	mesh.height = h
+	mesh.radial_segments = 14
+	mi.mesh = mesh
+	mi.position = pos
+	mi.material_override = mat
+	parent.add_child(mi)
+	return mi
