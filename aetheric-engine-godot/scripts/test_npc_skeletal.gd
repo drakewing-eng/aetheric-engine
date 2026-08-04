@@ -281,6 +281,49 @@ func _init() -> void:
 	else:
 		print("OK no face-card path in fps_npc.gd")
 
+	# Pipeline / art-direction artifacts (improved goal: handoff ready)
+	var pipeline := [
+		"res://assets/characters/models/bell/ART_DIRECTION.md",
+		"res://assets/characters/models/bell/GLB_CONTRACT.md",
+		"res://assets/characters/models/bell/BLENDER_BRIEF.md",
+		"res://assets/characters/models/bell/README.md",
+	]
+	for ppath in pipeline:
+		var abs_p := ProjectSettings.globalize_path(ppath)
+		if not FileAccess.file_exists(abs_p):
+			print("FAIL missing pipeline doc ", ppath)
+			failed += 1
+		else:
+			print("OK pipeline doc ", ppath)
+	var final_dir := ProjectSettings.globalize_path("res://assets/characters/models/bell/final")
+	if not DirAccess.dir_exists_absolute(final_dir):
+		print("FAIL missing final/ production folder")
+		failed += 1
+	else:
+		print("OK final/ production folder exists")
+	# Honest handoff language present in README
+	var readme := FileAccess.get_file_as_string("res://assets/characters/models/bell/README.md")
+	if readme.find("final/bell.glb") < 0 or readme.find("does not claim") < 0:
+		print("FAIL README missing honest handoff / next-action language")
+		failed += 1
+	else:
+		print("OK README honest boundary + next-action handoff")
+	var ad := FileAccess.get_file_as_string("res://assets/characters/models/bell/ART_DIRECTION.md")
+	if ad.find("stylized realist") < 0 and ad.find("Stylized realist") < 0 and ad.find("stylized-realist") < 0:
+		# ART_DIRECTION uses "stylized realist" in title
+		if ad.find("Stylized realist") < 0 and ad.to_lower().find("stylized") < 0:
+			print("FAIL ART_DIRECTION missing stylized-realist bar")
+			failed += 1
+		else:
+			print("OK ART_DIRECTION stylized-realist bar")
+	else:
+		print("OK ART_DIRECTION stylized-realist bar")
+	if ad.to_lower().find("metahuman") < 0 and ad.find("MetaHuman") < 0:
+		print("FAIL ART_DIRECTION should reject MetaHuman photoreal")
+		failed += 1
+	else:
+		print("OK ART_DIRECTION non-photoreal bar")
+
 	if failed == 0:
 		print("=== ALL PASS ===")
 		quit(0)
