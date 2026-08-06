@@ -222,15 +222,22 @@ func _resume_after_talk() -> void:
 			if claimant == "":
 				NpcActivity.claim_slot(_room_id, _resume_slot_id, _npc_id)
 			_slot_id = _resume_slot_id
-			_slot_target = NpcActivity.slot_position(entry)
 			_slot_yaw = NpcActivity.slot_yaw_rad(entry)
 			_slot_seat_height = NpcActivity.slot_seat_height(entry)
-			var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
 			var intended := _intended_activity
 			if intended == State.WALK or intended == State.TALK:
 				var act_name := NpcActivity.pick_activity_for_slot(entry, _npc_id, 0.5)
 				intended = _name_to_state(act_name)
 				_intended_activity = intended
+			if _present == Present.CUTOUT and intended == State.SIT:
+				var al: Array = entry.get("allowed", [])
+				if NpcActivity.STATE_READ in al:
+					intended = State.READ
+				elif NpcActivity.STATE_IDLE in al:
+					intended = State.IDLE
+				_intended_activity = intended
+			_slot_target = NpcActivity.slot_travel_position(entry, _state_to_name(intended))
+			var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
 			# Near slot → enter intended activity; else resume travel on floor.
 			if dist < 0.4:
 				global_position = Vector3(_slot_target.x, 0.0, _slot_target.z)
@@ -937,11 +944,9 @@ func _enter_activity_state(s: State) -> void:
 			_set_state_sit()
 		State.READ:
 			_state = State.READ
-			# Desk/armchair read also plants on seat when seat_height is set.
-			if _slot_seat_height > 0.01:
-				_apply_seat_plant()
-			else:
-				_apply_floor_height()
+			# Standing read/idle presentation — always on the floor (never on a chair seat).
+			# Seat plant is Sit-only; cutouts raised by seat_height stood ON furniture.
+			_apply_floor_height()
 			_apply_pose_for_state(State.READ)
 		State.WORK_MACHINE:
 			_state = State.WORK_MACHINE
@@ -964,19 +969,23 @@ func _apply_floor_height() -> void:
 
 
 func _apply_seat_plant() -> void:
-	## Sit / seated read on furniture.
-	## Underlying model: Mixamo sit already places hips ~0.55m above root when root is on
-	## the floor. Raising root by full seat_height *double-counts* and looks broken.
-	## Instead: align XZ to the seat slot, tiny root_y from sit_root_y_for_seat(), face yaw.
+	## Sit only (never standing Read/Idle). Align to the seat prop, not stand-beside target.
+	## Mixamo sit already places hips ~0.55m above root at floor; do not add full seat_height.
 	var seat_y := _slot_seat_height
 	if seat_y < 0.05:
 		seat_y = NpcActivity.DEFAULT_SEAT_HEIGHT_CHAIR
 	var root_y := NpcActivity.sit_root_y_for_seat(seat_y)
-	var px := _slot_target.x if _slot_id != "" else (global_position.x if is_inside_tree() else position.x)
-	var pz := _slot_target.z if _slot_id != "" else (global_position.z if is_inside_tree() else position.z)
-	# Sit slightly into the chair (toward seat back) so pelvis rests on the cushion.
+	# Use true seat XZ from registry (not stand-beside travel target).
+	var seat_xz := _slot_target
+	if _slot_id != "" and _room_id != "":
+		var entry := NpcActivity.get_slot(_room_id, _slot_id)
+		if not entry.is_empty():
+			seat_xz = NpcActivity.slot_position(entry)
+	var px := seat_xz.x
+	var pz := seat_xz.z
 	_face_yaw = _slot_yaw
 	var forward := Vector3(sin(_face_yaw), 0.0, cos(_face_yaw))
+	# Slightly into the seat so pelvis rests on the cushion, not in front of it.
 	px -= forward.x * 0.08
 	pz -= forward.z * 0.08
 	if is_inside_tree():
@@ -1010,7 +1019,6 @@ func _try_begin_activity(force: bool = false) -> void:
 		_going_to_slot = false
 		return
 	_slot_id = sid
-	_slot_target = NpcActivity.slot_position(slot)
 	_slot_yaw = NpcActivity.slot_yaw_rad(slot)
 	_slot_seat_height = NpcActivity.slot_seat_height(slot)
 	_activity_elapsed = 0.0
@@ -1019,6 +1027,15 @@ func _try_begin_activity(force: bool = false) -> void:
 	_intended_activity = _name_to_state(act_name)
 	if _intended_activity == State.WALK or _intended_activity == State.TALK:
 		_intended_activity = State.IDLE
+	# Cutouts cannot sit convincingly — prefer floor stand-beside for seated furniture.
+	if _present == Present.CUTOUT and _intended_activity == State.SIT:
+		var allowed: Array = slot.get("allowed", [])
+		if NpcActivity.STATE_READ in allowed:
+			_intended_activity = State.READ
+		elif NpcActivity.STATE_IDLE in allowed:
+			_intended_activity = State.IDLE
+		# else keep Sit (will use sit scale/prop on floor via stand-beside)
+	_slot_target = NpcActivity.slot_travel_position(slot, _state_to_name(_intended_activity))
 	# Travel on floor (XZ only)
 	var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
 	if dist < 0.35:

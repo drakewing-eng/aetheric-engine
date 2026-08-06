@@ -77,6 +77,19 @@ func _run() -> void:
 		_failed += 1
 	else:
 		print("OK desk_write aligned to chair ", dpos)
+	# Standing read must NOT target the cushion (travel beside the seat)
+	var stand_pos: Vector3 = NpcActivityScr.slot_travel_position(desk_slot, NpcActivityScr.STATE_READ)
+	var sit_pos: Vector3 = NpcActivityScr.slot_travel_position(desk_slot, NpcActivityScr.STATE_SIT)
+	if stand_pos.distance_to(sit_pos) < 0.35:
+		print("FAIL stand travel too close to sit cushion ", stand_pos, sit_pos)
+		_failed += 1
+	else:
+		print("OK stand-beside travel ", stand_pos, " sit ", sit_pos)
+	if absf(sit_pos.x - dpos.x) > 0.05:
+		print("FAIL sit travel left the seat ", sit_pos)
+		_failed += 1
+	else:
+		print("OK sit travel stays on seat")
 
 	if _failed == 0:
 		print("=== ALL PASS ===")

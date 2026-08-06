@@ -268,7 +268,7 @@ static func cooldown_elapsed(elapsed_sec: float, required_sec: float) -> bool:
 
 
 static func slot_position(slot: Dictionary) -> Vector3:
-	## Floor XZ for navigation / travel. Vertical plant uses slot_seat_height.
+	## Seat / furniture XZ (floor plane). Vertical plant uses sit_root_y_for_seat.
 	var p: Array = slot.get("pos", [0, 0, 0])
 	if p.size() < 3:
 		return Vector3.ZERO
@@ -298,6 +298,21 @@ static func sit_root_y_for_seat(seat_surface_y: float) -> float:
 
 static func slot_yaw_rad(slot: Dictionary) -> float:
 	return deg_to_rad(float(slot.get("yaw", 0.0)))
+
+
+static func slot_travel_position(slot: Dictionary, activity_name: String) -> Vector3:
+	## Where the NPC walks to. Sit → on the seat. Standing activities near a seat
+	## → beside the furniture so cutouts/standing poses are not on the cushion.
+	var base := slot_position(slot)
+	if activity_name == STATE_SIT:
+		return base
+	if slot_seat_height(slot) < 0.05:
+		return base
+	# Stand beside the seat (not on it). Prefer a lateral offset in the seat's local frame.
+	var yaw := slot_yaw_rad(slot)
+	var forward := Vector3(sin(yaw), 0.0, cos(yaw))
+	var right := Vector3(forward.z, 0.0, -forward.x)
+	return base + right * 0.62 - forward * 0.12
 
 
 static func pose_clip_for_state(state_name: String) -> String:
