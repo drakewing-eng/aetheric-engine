@@ -40,10 +40,17 @@ Room data:
 
 | Do | Don't |
 |----|--------|
-| Skinned humanoid body only | Projected face sheet / portrait albedo |
-| Flat grey mannequin materials | Coat cylinder / hair sphere prop shells |
-| Native idle / walk / sit on this armature | Raw foreign Mixamo FBX (explodes mesh) |
+| **Your Mixamo pack** body (`mixamo_activity_pack.glb` / Beta_Surface) | Old frankenstein `bell.glb` face sheet |
+| Flat grey mannequin (no joint helper mesh) | `Beta_Joints` skeleton viz / coat shells |
+| Clips from **same pack**: Standing Idle, **Start Walking**, Sitting Idle | Foreign clips remapped onto a different rest pose |
 | Judge motion, plant, height | Claim likeness / Victorian costume |
+
+Source FBX (playground → `assets/characters/mixamo/source/`):
+- `standing_idle.fbx` → idle  
+- `start_walking.fbx` → walk  
+- `sitting_idle.fbx` → sit  
+
+Note: Mixamo **Start Walking** is a start-up cycle (~3s), not a pure treadmill loop — may look slightly odd if looped; a full **Walking** download will improve later.
 
 You should **not** see Bell's painted face until we deliberately exit skeleton-first and drop a likeness GLB.
 

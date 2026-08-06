@@ -9,12 +9,10 @@ extends Node3D
 ## Single root AnimationPlayer (no nested AP). Planted ~1.78 m.
 
 const GLB_PATH := "res://assets/characters/models/bell/final/bell.glb"
-## Kept for future Blender-retargeted libraries only (same rest pose as bell.glb).
-const MIXAMO_CLIPS_PATH := "res://assets/characters/mixamo/mixamo_activity_clips.res"
+## Your Mixamo downloads converted together: same mesh rest pose as idle/walk/sit.
 const MIXAMO_PACK_PATH := "res://assets/characters/mixamo/mixamo_activity_pack.glb"
-## Hard-off until clips are retargeted onto Bell's rest pose (see README).
-const USE_EXTERNAL_MIXAMO_CLIPS := false
-## Skeleton-first: no projected face sheet / coat shells until motion is solid.
+const MIXAMO_CLIPS_PATH := "res://assets/characters/mixamo/mixamo_activity_clips.res"
+## Skeleton-first: Mixamo mannequin + Start Walking / Standing Idle / Sitting Idle.
 const SKELETON_FIRST := true
 const NATIVE_HEIGHT := 1.78
 ## Flat mannequin grey (no albedo textures) so we judge bone motion only.
@@ -62,17 +60,31 @@ func is_skeleton_first() -> bool:
 
 
 func _apply_skeleton_first_presentation(model: Node) -> void:
-	## Phase: get bones + idle/walk/sit readable before any likeness skin.
-	## 1) Drop non-body prop meshes (coat cylinder, hair sphere, etc.).
-	## 2) Keep skinned body only; force flat unshaded grey (no projected face).
+	## Mannequin only: keep one skinned Beta_Surface, drop joint helpers + dupes + props.
 	var remove: Array[Node] = []
-	_collect_non_body_meshes(model, remove)
+	_collect_meshes_to_strip(model, remove, true)
+	# Keep only the first Beta_Surface; drop later imports (.001) and Beta_Joints.
+	var seen_body := false
+	for mi in _all_meshes(model):
+		if mi in remove:
+			continue
+		var nm := String(mi.name).to_lower()
+		if "joints" in nm:
+			remove.append(mi)
+			continue
+		if "surface" in nm or "beta" in nm or "body" in nm:
+			if seen_body:
+				remove.append(mi)
+			else:
+				seen_body = true
 	for n in remove:
 		if is_instance_valid(n):
 			var p := n.get_parent()
 			if p:
 				p.remove_child(n)
 			n.free()
+	# Drop empty extra armatures (pack merges 3 FBX → 3 Armatures)
+	_prune_empty_armatures(model)
 
 	var kept := 0
 	for mi in _all_meshes(model):
@@ -81,7 +93,6 @@ func _apply_skeleton_first_presentation(model: Node) -> void:
 		mat.roughness = 0.9
 		mat.metallic = 0.0
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-		# Explicitly no albedo texture — kills projected face sheet.
 		mat.albedo_texture = null
 		mi.material_override = mat
 		mi.material_overlay = null
@@ -89,59 +100,104 @@ func _apply_skeleton_first_presentation(model: Node) -> void:
 	if kept == 0:
 		push_warning("bell_runtime: skeleton_first left zero meshes")
 	else:
-		print("bell_runtime: skeleton_first body meshes=", kept, " props_removed=", remove.size())
+		print("bell_runtime: skeleton_first body meshes=", kept)
 
 
-func _collect_non_body_meshes(n: Node, out: Array[Node]) -> void:
-	## Remove prop shells that are not the main skinned humanoid surface.
+func _collect_meshes_to_strip(n: Node, out: Array[Node], skeleton_first: bool) -> void:
 	if n is MeshInstance3D:
 		var nm := String(n.name).to_lower()
-		var path := String(n.get_path()).to_lower() if n.is_inside_tree() else nm
-		var is_prop := (
+		var drop := (
 			"coat" in nm
 			or "hair" in nm
 			or "book" in nm
 			or "hat" in nm
-			or nm.begins_with("bellcoat")
-			or nm.begins_with("bellhair")
 			or "cylinder" in nm
 			or "sphere" in nm
+			or "joints" in nm  # Mixamo joint visualization — looks like a "skeleton"
 		)
-		# Keep Beta_Surface / body / character / mesh with skin
-		var is_body := (
-			"beta" in nm
-			or "surface" in nm
-			or "body" in nm
-			or "character" in nm
-			or "xbot" in nm
-			or "man" in nm
-		)
-		if is_prop and not is_body:
+		if drop:
 			out.append(n)
-		elif is_prop and is_body:
-			# Prefer body; still strip pure prop names
-			if "coat" in nm or "hair" in nm:
-				out.append(n)
 	for c in n.get_children():
-		_collect_non_body_meshes(c, out)
+		_collect_meshes_to_strip(c, out, skeleton_first)
+
+
+func _prune_empty_armatures(model: Node) -> void:
+	## Pack imports multiple Armatures; keep the one that still has a skinned mesh.
+	var arms: Array[Node3D] = []
+	_collect_armatures(model, arms)
+	if arms.size() <= 1:
+		return
+	var keep: Node3D = null
+	for a in arms:
+		for mi in _all_meshes(model):
+			# Mesh under same armature branch or skin bound
+			if _is_under(mi, a) or (mi.skin != null and mi.get_parent() == a):
+				keep = a
+				break
+		if keep:
+			break
+	if keep == null:
+		keep = arms[0]
+	for a in arms:
+		if a != keep and is_instance_valid(a):
+			# Only remove if no remaining mesh under it
+			var has_mesh := false
+			for mi in _all_meshes(a):
+				has_mesh = true
+				break
+			if not has_mesh:
+				var p := a.get_parent()
+				if p:
+					p.remove_child(a)
+				a.free()
+
+
+func _collect_armatures(n: Node, out: Array[Node3D]) -> void:
+	if n is Node3D and String(n.name).begins_with("Armature"):
+		out.append(n as Node3D)
+	for c in n.get_children():
+		_collect_armatures(c, out)
+
+
+func _is_under(node: Node, ancestor: Node) -> bool:
+	var p := node.get_parent()
+	while p:
+		if p == ancestor:
+			return true
+		p = p.get_parent()
+	return false
+
+
+func _mesh_source_path() -> String:
+	## Skeleton-first uses the Mixamo pack (your downloads). Likeness uses final/bell.glb.
+	if SKELETON_FIRST:
+		if ResourceLoader.exists(MIXAMO_PACK_PATH) or FileAccess.file_exists(ProjectSettings.globalize_path(MIXAMO_PACK_PATH)):
+			return MIXAMO_PACK_PATH
+		push_warning("bell_runtime: Mixamo pack missing, falling back to bell.glb")
+	return GLB_PATH
 
 
 func _build() -> void:
-	if not ResourceLoader.exists(GLB_PATH) and not FileAccess.file_exists(ProjectSettings.globalize_path(GLB_PATH)):
-		push_error("bell_runtime: missing " + GLB_PATH)
+	var src_path := _mesh_source_path()
+	if not ResourceLoader.exists(src_path) and not FileAccess.file_exists(ProjectSettings.globalize_path(src_path)):
+		push_error("bell_runtime: missing " + src_path)
 		return
-	var packed = load(GLB_PATH)
+	var packed = load(src_path)
 	if packed == null or not (packed is PackedScene):
-		push_error("bell_runtime: GLB not PackedScene")
+		push_error("bell_runtime: not PackedScene " + src_path)
 		return
 	var model: Node = (packed as PackedScene).instantiate()
 	model.name = "SkinnedMesh"
 	add_child(model)
 
+	# Capture anims from this scene BEFORE stripping APs (same rest pose as mesh).
+	var pack_anims := {}
+	if SKELETON_FIRST:
+		pack_anims = _extract_anims_from_node(model)
+
 	# Strip nested AnimationPlayers so fps_npc / tests find OUR root AP only.
 	_strip_animation_players(model)
 
-	# Skeleton-first: mannequin only — no face sheet, no prop shells.
 	if SKELETON_FIRST:
 		_apply_skeleton_first_presentation(model)
 
@@ -159,52 +215,22 @@ func _build() -> void:
 	model.position.y -= bottom
 	model.position.y += 0.01
 
-	if SKELETON_FIRST:
-		print("bell_runtime: SKELETON_FIRST — flat mannequin, no face/skin textures")
-	# else: keep authored multi-materials when full likeness GLB is ready.
-
 	var ap := AnimationPlayer.new()
 	ap.name = "AnimationPlayer"
 	add_child(ap)
-	# Ensure AP is first child so depth-first find prefers it if reparented later.
 	move_child(ap, 0)
 
 	var has_idle := false
 	var has_walk := false
 	var has_sit := false
 
-	# 1) Native clips authored on THIS mesh's rest pose (safe).
-	var src_anims := _extract_native_anims_from_glb()
-	if src_anims.has("idle"):
-		_ensure_lib_anim(ap, "idle", src_anims["idle"] as Animation)
-		has_idle = true
-	if src_anims.has("walk"):
-		_ensure_lib_anim(ap, "walk", src_anims["walk"] as Animation)
-		has_walk = true
-	if src_anims.has("sit"):
-		_ensure_lib_anim(ap, "sit", src_anims["sit"] as Animation)
-		has_sit = true
-	if has_idle or has_walk or has_sit:
-		print("bell_runtime: using native GLB clips idle=%s walk=%s sit=%s" % [has_idle, has_walk, has_sit])
-
-	# 2) Optional external Mixamo library — only if explicitly enabled AND clips
-	#    pass a rest-pose compatibility check (rotation-heavy, no foreign pos).
-	if USE_EXTERNAL_MIXAMO_CLIPS:
-		var mixamo := _extract_mixamo_activity_clips()
+	if SKELETON_FIRST:
+		# Clips from the SAME Mixamo pack as the body (Start Walking / Standing Idle / Sitting Idle).
 		for k in ["idle", "walk", "sit"]:
-			if not mixamo.has(k):
+			if not pack_anims.has(k):
 				continue
-			var anim: Animation = mixamo[k] as Animation
-			if not _mixamo_clip_compatible(anim, sk):
-				push_warning("bell_runtime: refusing incompatible Mixamo clip '%s' (would explode mesh)" % k)
-				continue
-			# Prefer native when present; only fill gaps
-			if k == "idle" and has_idle:
-				continue
-			if k == "walk" and has_walk:
-				continue
-			if k == "sit" and has_sit:
-				continue
+			var anim: Animation = (pack_anims[k] as Animation).duplicate(true) as Animation
+			_prepare_mixamo_locomotion(anim, k)
 			_ensure_lib_anim(ap, k, anim)
 			if k == "idle":
 				has_idle = true
@@ -212,15 +238,74 @@ func _build() -> void:
 				has_walk = true
 			elif k == "sit":
 				has_sit = true
-			print("bell_runtime: accepted external Mixamo clip ", k)
+		print(
+			"bell_runtime: SKELETON_FIRST Mixamo pack mesh+clips idle=%s walk=%s sit=%s src=%s"
+			% [has_idle, has_walk, has_sit, src_path]
+		)
+	else:
+		# Likeness path: native final/bell.glb clips only.
+		var src_anims := _extract_native_anims_from_glb()
+		if src_anims.has("idle"):
+			_ensure_lib_anim(ap, "idle", src_anims["idle"] as Animation)
+			has_idle = true
+		if src_anims.has("walk"):
+			_ensure_lib_anim(ap, "walk", src_anims["walk"] as Animation)
+			has_walk = true
+		if src_anims.has("sit"):
+			_ensure_lib_anim(ap, "sit", src_anims["sit"] as Animation)
+			has_sit = true
+		print("bell_runtime: likeness GLB clips idle=%s walk=%s sit=%s" % [has_idle, has_walk, has_sit])
 
-	# 3) Synthesize only what is still missing (procedural bone keys).
+	# Synthesize only what is still missing.
 	_build_bone_anims(ap, sk, not has_idle, not has_walk, not has_sit)
 
 	if ap.has_animation("idle"):
 		ap.play("idle")
 	elif ap.get_animation_list().size() > 0:
 		ap.play(ap.get_animation_list()[0])
+
+
+func _prepare_mixamo_locomotion(anim: Animation, clip_name: String) -> void:
+	## Loop locomotion; strip hip root translation so NavigationAgent owns travel.
+	if clip_name == "walk" or clip_name == "idle":
+		anim.loop_mode = Animation.LOOP_LINEAR
+	elif clip_name == "sit":
+		anim.loop_mode = Animation.LOOP_LINEAR if anim.length >= 1.0 else Animation.LOOP_NONE
+	var remove: Array[int] = []
+	for ti in anim.get_track_count():
+		if anim.track_get_type(ti) != Animation.TYPE_POSITION_3D:
+			continue
+		var p := String(anim.track_get_path(ti)).to_lower()
+		if "hips" in p or p.ends_with(":root") or "/root" in p:
+			remove.append(ti)
+	remove.sort()
+	remove.reverse()
+	for ti in remove:
+		anim.remove_track(ti)
+
+
+func _extract_anims_from_node(root: Node) -> Dictionary:
+	## Pull idle/walk/sit from an already-instanced scene (before AP strip).
+	var out := {}
+	var ap := _find_animation_player(root)
+	if ap == null:
+		return out
+	for c in ap.get_animation_list():
+		var cl := String(c).to_lower()
+		var anim: Animation = ap.get_animation(c)
+		if anim == null:
+			continue
+		var copy: Animation = anim.duplicate(true) as Animation
+		if cl == "idle" or (cl.contains("idle") and not cl.contains("sit") and not cl.contains("walk")):
+			if not out.has("idle"):
+				out["idle"] = copy
+		elif cl == "walk" or cl.contains("walk"):
+			if not out.has("walk"):
+				out["walk"] = copy
+		elif cl == "sit" or cl.contains("sit"):
+			if not out.has("sit"):
+				out["sit"] = copy
+	return out
 
 
 func _mixamo_clip_compatible(anim: Animation, sk: Skeleton3D) -> bool:
