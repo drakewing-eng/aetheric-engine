@@ -1,11 +1,19 @@
 extends Node3D
 ## Production Bell: skinned humanoid GLB (male Xbot / Mixamo base)
-## + Mixamo activity clips (idle/walk/sit) when baked; else native GLB; else synthesized.
-## Single root AnimationPlayer (no nested AP). Planted ~1.78 m. Not box primitives.
+## + native idle/walk/sit from final/bell.glb; synthesize only if missing.
+##
+## IMPORTANT: Do NOT force-apply raw Mixamo FBX clips from a different download
+## onto this mesh. They carry absolute position tracks for another rest pose and
+## explode the skinned mesh (detached limbs / inverted hull). Proper retarget
+## must happen in Blender onto THIS armature's rest pose first.
+## Single root AnimationPlayer (no nested AP). Planted ~1.78 m.
 
 const GLB_PATH := "res://assets/characters/models/bell/final/bell.glb"
+## Kept for future Blender-retargeted libraries only (same rest pose as bell.glb).
 const MIXAMO_CLIPS_PATH := "res://assets/characters/mixamo/mixamo_activity_clips.res"
 const MIXAMO_PACK_PATH := "res://assets/characters/mixamo/mixamo_activity_pack.glb"
+## Hard-off until clips are retargeted onto Bell's rest pose (see README).
+const USE_EXTERNAL_MIXAMO_CLIPS := false
 const NATIVE_HEIGHT := 1.78
 
 func _enter_tree() -> void:
@@ -82,36 +90,52 @@ func _build() -> void:
 	# Ensure AP is first child so depth-first find prefers it if reparented later.
 	move_child(ap, 0)
 
-	# Prefer baked Mixamo activity library (Start Walking / Sitting Idle / Standing Idle).
 	var has_idle := false
 	var has_walk := false
 	var has_sit := false
-	var mixamo := _extract_mixamo_activity_clips()
-	for k in ["idle", "walk", "sit"]:
-		if mixamo.has(k):
-			_ensure_lib_anim(ap, k, mixamo[k] as Animation)
+
+	# 1) Native clips authored on THIS mesh's rest pose (safe).
+	var src_anims := _extract_native_anims_from_glb()
+	if src_anims.has("idle"):
+		_ensure_lib_anim(ap, "idle", src_anims["idle"] as Animation)
+		has_idle = true
+	if src_anims.has("walk"):
+		_ensure_lib_anim(ap, "walk", src_anims["walk"] as Animation)
+		has_walk = true
+	if src_anims.has("sit"):
+		_ensure_lib_anim(ap, "sit", src_anims["sit"] as Animation)
+		has_sit = true
+	if has_idle or has_walk or has_sit:
+		print("bell_runtime: using native GLB clips idle=%s walk=%s sit=%s" % [has_idle, has_walk, has_sit])
+
+	# 2) Optional external Mixamo library — only if explicitly enabled AND clips
+	#    pass a rest-pose compatibility check (rotation-heavy, no foreign pos).
+	if USE_EXTERNAL_MIXAMO_CLIPS:
+		var mixamo := _extract_mixamo_activity_clips()
+		for k in ["idle", "walk", "sit"]:
+			if not mixamo.has(k):
+				continue
+			var anim: Animation = mixamo[k] as Animation
+			if not _mixamo_clip_compatible(anim, sk):
+				push_warning("bell_runtime: refusing incompatible Mixamo clip '%s' (would explode mesh)" % k)
+				continue
+			# Prefer native when present; only fill gaps
+			if k == "idle" and has_idle:
+				continue
+			if k == "walk" and has_walk:
+				continue
+			if k == "sit" and has_sit:
+				continue
+			_ensure_lib_anim(ap, k, anim)
 			if k == "idle":
 				has_idle = true
 			elif k == "walk":
 				has_walk = true
 			elif k == "sit":
 				has_sit = true
-	if has_idle or has_walk or has_sit:
-		print("bell_runtime: using Mixamo activity clips idle=%s walk=%s sit=%s" % [has_idle, has_walk, has_sit])
+			print("bell_runtime: accepted external Mixamo clip ", k)
 
-	# Fall back to clips embedded in production GLB.
-	var src_anims := _extract_native_anims_from_glb()
-	if not has_idle and src_anims.has("idle"):
-		_ensure_lib_anim(ap, "idle", src_anims["idle"] as Animation)
-		has_idle = true
-	if not has_walk and src_anims.has("walk"):
-		_ensure_lib_anim(ap, "walk", src_anims["walk"] as Animation)
-		has_walk = true
-	if not has_sit and src_anims.has("sit"):
-		_ensure_lib_anim(ap, "sit", src_anims["sit"] as Animation)
-		has_sit = true
-
-	# Synthesize only what is still missing (procedural bone keys).
+	# 3) Synthesize only what is still missing (procedural bone keys).
 	_build_bone_anims(ap, sk, not has_idle, not has_walk, not has_sit)
 
 	if ap.has_animation("idle"):
@@ -120,8 +144,39 @@ func _build() -> void:
 		ap.play(ap.get_animation_list()[0])
 
 
+func _mixamo_clip_compatible(anim: Animation, sk: Skeleton3D) -> bool:
+	## Foreign Mixamo FBX clips store absolute positions for another rest pose.
+	## Applying them here detaches limbs. Only accept rotation-only (or hip-only pos).
+	if anim == null:
+		return false
+	var pos_tracks := 0
+	var max_pos := 0.0
+	var non_hip_pos := 0
+	for ti in anim.get_track_count():
+		if anim.track_get_type(ti) != Animation.TYPE_POSITION_3D:
+			continue
+		pos_tracks += 1
+		var p := String(anim.track_get_path(ti)).to_lower()
+		var is_hip := "hips" in p or p.ends_with(":root")
+		if not is_hip:
+			non_hip_pos += 1
+		for ki in anim.track_get_key_count(ti):
+			var v = anim.track_get_key_value(ti, ki)
+			if v is Vector3:
+				max_pos = maxf(max_pos, (v as Vector3).length())
+	# Native Bell clips: ~52 pos tracks at ~cm scale matching this armature.
+	# External downloads often have 90+ pos tracks / mismatched rest → reject.
+	if non_hip_pos > 4:
+		return false
+	if pos_tracks > 8 and max_pos > 1.0:
+		# Many large position keys → almost certainly wrong rest pose
+		return false
+	return true
+
+
 func _extract_mixamo_activity_clips() -> Dictionary:
 	## Prefer baked AnimationLibrary; fall back to Mixamo pack GLB.
+	## Not applied at runtime unless USE_EXTERNAL_MIXAMO_CLIPS and compatibility pass.
 	var out := _extract_anims_from_library(MIXAMO_CLIPS_PATH)
 	if out.has("idle") and out.has("walk") and out.has("sit"):
 		return out

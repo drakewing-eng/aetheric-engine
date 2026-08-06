@@ -47,12 +47,18 @@ assets/characters/mixamo/mixamo_activity_clips.res
 
 with exact clip names: **`idle`**, **`walk`**, **`sit`**.
 
-## Runtime
+## Runtime (safety)
 
-`bell_runtime.gd` loads that library first, remaps bone tracks onto the production
-skeleton, and falls back to `final/bell.glb` native clips, then procedural keys.
+**Do not apply raw Mixamo FBX clips directly onto Bell.** Different downloads use
+different rest poses; absolute position tracks explode the skinned mesh
+(detached limbs, inverted hulls). Observed in play when `mixamo_activity_clips.res`
+was force-applied.
 
-Root **position** tracks on Hips are stripped so NavigationAgent owns movement.
+`bell_runtime.gd` defaults to **native `final/bell.glb` clips only**
+(`USE_EXTERNAL_MIXAMO_CLIPS := false`). External libraries are accepted only after
+Blender retarget onto Bell’s exact armature rest pose (rotation-safe, matching bind).
+
+Root **position** tracks on Hips should be stripped so NavigationAgent owns movement.
 
 ## Clip map
 
