@@ -44,9 +44,10 @@ func _load_room(room_id: String, spawn_override: Variant = null, yaw_override: V
 	room_builder.build(room)
 	await get_tree().process_frame
 
-	# Activity slots (fixed markers — furniture not moved)
+	# Activity slots: register ALL slot-bearing rooms so the registry is complete;
+	# NPCs still use only the current room_id. Furniture not moved.
 	NpcActivity.clear_registry()
-	NpcActivity.register_room_slots(room_id)
+	NpcActivity.register_all_defined_rooms()
 	_ensure_room_navigation(room)
 
 	_clear_npcs()
@@ -77,34 +78,58 @@ func _spawn_npcs(npcs: Array, room_id: String = "") -> void:
 
 
 func _ensure_room_navigation(room: Dictionary) -> void:
-	## Minimal NavigationRegion3D over the room floor so NavigationAgent3D can path.
-	## Does not move furniture. Rebuilt each room load.
+	## NavigationRegion3D over walkable floor + door threshold stubs so agents can
+	## reach activity slots near walls/doors. Does not move furniture.
 	var existing := get_node_or_null("RoomNav") as NavigationRegion3D
 	if existing:
 		existing.queue_free()
 	var size: Array = room.get("size", [10.0, 10.0, 3.5])
-	var half_w := float(size[0]) * 0.5 - 0.4
-	var half_d := float(size[1]) * 0.5 - 0.4
-	if half_w < 1.0:
-		half_w = 3.0
-	if half_d < 1.0:
-		half_d = 3.0
+	# Near full floor (small inset) so slots at edges remain reachable
+	var half_w := maxf(float(size[0]) * 0.5 - 0.12, 1.5)
+	var half_d := maxf(float(size[1]) * 0.5 - 0.12, 1.5)
 	var region := NavigationRegion3D.new()
 	region.name = "RoomNav"
 	var nmesh := NavigationMesh.new()
-	nmesh.agent_radius = 0.35
+	nmesh.agent_radius = 0.28
 	nmesh.agent_height = 1.6
-	nmesh.agent_max_climb = 0.2
-	# Explicit floor polygon (no parse/bake dependency on tree timing)
+	nmesh.agent_max_climb = 0.25
 	var verts := PackedVector3Array([
 		Vector3(-half_w, 0.0, -half_d),
 		Vector3(half_w, 0.0, -half_d),
 		Vector3(half_w, 0.0, half_d),
 		Vector3(-half_w, 0.0, half_d),
 	])
-	var polygons := PackedInt32Array([0, 1, 2, 3])
 	nmesh.vertices = verts
-	nmesh.add_polygon(polygons)
+	nmesh.add_polygon(PackedInt32Array([0, 1, 2, 3]))
+	# Doorway approach pads: small rectangles from door pos toward room centre
+	var doors: Array = room.get("doors", [])
+	var base := 4
+	for door in doors:
+		if not (door is Dictionary):
+			continue
+		var dp: Array = door.get("pos", [0, 0, 0])
+		if dp.size() < 3:
+			continue
+		var dx := float(dp[0])
+		var dz := float(dp[2])
+		# Pad 0.9m toward centre, 1.2m wide
+		var to_c := Vector2(-dx, -dz)
+		if to_c.length() < 0.1:
+			to_c = Vector2(0, 1)
+		to_c = to_c.normalized()
+		var perp := Vector2(-to_c.y, to_c.x)
+		var c0 := Vector3(dx, 0, dz) + Vector3(perp.x, 0, perp.y) * 0.6
+		var c1 := Vector3(dx, 0, dz) - Vector3(perp.x, 0, perp.y) * 0.6
+		var c2 := c1 + Vector3(to_c.x, 0, to_c.y) * 1.1
+		var c3 := c0 + Vector3(to_c.x, 0, to_c.y) * 1.1
+		var i0 := verts.size()
+		verts.append(c0)
+		verts.append(c1)
+		verts.append(c2)
+		verts.append(c3)
+		nmesh.vertices = verts
+		nmesh.add_polygon(PackedInt32Array([i0, i0 + 1, i0 + 2, i0 + 3]))
+		base += 4
 	region.navigation_mesh = nmesh
 	add_child(region)
 

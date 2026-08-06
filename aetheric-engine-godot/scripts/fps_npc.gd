@@ -66,6 +66,12 @@ var _walk_frame := -1
 var _idle_frame := 0
 var _was_dwelling := true
 var _mesh_base_scale := Vector3.ONE
+var _mesh_base_y := 0.0
+var _cutout_pose_scale := Vector3.ONE
+var _cutout_pose_offset := Vector3.ZERO
+var _activity_prop: MeshInstance3D = null
+## One-shot fallback logs per activity state name (cutout missing dedicated art).
+var _pose_fallback_logged: Dictionary = {}
 var _life_t := 0.0
 var _fidget_left := 0.0
 
@@ -317,6 +323,15 @@ static func walk_frame_path(npc_id: String, frame: int) -> String:
 
 static func idle_frame_path(npc_id: String, frame: int) -> String:
 	return SPRITE_DIR + "sprite_%s_idle_%d.png" % [npc_id.to_lower().strip_edges(), frame]
+
+
+static func pose_sprite_path(npc_id: String, suffix: String) -> String:
+	## Optional dedicated cutout art: sprite_<id>_read.png / sprite_<id>_work.png
+	var id := npc_id.to_lower().strip_edges()
+	var suf := suffix.to_lower().strip_edges()
+	if id.is_empty() or suf.is_empty() or suf == "idle" or suf == "walk":
+		return ""
+	return SPRITE_DIR + "sprite_%s_%s.png" % [id, suf]
 
 
 static func default_model_path(npc_id: String) -> String:
@@ -645,6 +660,9 @@ func _setup_sprite(npc_id: String, height: float, data: Dictionary) -> void:
 	_char_mesh = mi
 	_char_mat = mat2
 	_mesh_base_scale = mi.scale
+	_mesh_base_y = mi.position.y
+	_cutout_pose_scale = Vector3.ONE
+	_cutout_pose_offset = Vector3.ZERO
 
 
 func _setup_foot_shadow() -> void:
@@ -737,20 +755,130 @@ func _apply_pose_for_state(s: State) -> void:
 				if _anim_idle != "":
 					_play_anim(_anim_idle, 0.35)
 	else:
-		# Cutout: idle sheet for non-walk; walk frames for Walk.
+		# Cutout: walk frames for Walk; otherwise idle/dedicated sheet + pose visual.
 		if s == State.WALK and not _walk_texs.is_empty():
 			_set_walk_frame(0)
+			_clear_activity_prop()
+			_apply_cutout_visual(NpcActivity.cutout_visual_for_state(NpcActivity.STATE_IDLE))
 		else:
-			if not _idle_texs.is_empty():
-				_set_sprite_tex(_idle_texs[_idle_frame])
-			elif _idle_tex:
-				_set_sprite_tex(_idle_tex)
-			elif not _walk_texs.is_empty():
-				_set_sprite_tex(_walk_texs[0])
-			if s != State.IDLE and s != State.WALK:
-				# No dedicated read/work sprites — Idle fallback (logged once-ish)
+			var sn := _state_to_name(s)
+			var vis: Dictionary = NpcActivity.cutout_visual_for_state(sn)
+			var dedicated := false
+			var suffix := str(vis.get("suffix", ""))
+			var dpath := pose_sprite_path(_npc_id, suffix)
+			if dpath != "":
+				var dtex := _load_texture(dpath)
+				if dtex != null:
+					_set_sprite_tex(dtex)
+					dedicated = true
+			if not dedicated:
+				if not _idle_texs.is_empty():
+					_set_sprite_tex(_idle_texs[_idle_frame])
+				elif _idle_tex:
+					_set_sprite_tex(_idle_tex)
+				elif not _walk_texs.is_empty():
+					_set_sprite_tex(_walk_texs[0])
+				# One-shot: missing dedicated Read/Work art → intentional scale/prop fallback
 				if s == State.READ or s == State.WORK_MACHINE:
-					push_warning("fps_npc: cutout missing pose for %s — Idle fallback" % _state_to_name(s))
+					if not bool(_pose_fallback_logged.get(sn, false)):
+						_pose_fallback_logged[sn] = true
+						push_warning(
+							"fps_npc: cutout missing dedicated pose art for %s (%s) — scale/prop fallback"
+							% [_npc_id, sn]
+						)
+			_apply_cutout_visual(vis)
+
+
+func _apply_cutout_visual(vis: Dictionary) -> void:
+	## Apply pure cutout presentation deltas (scale/offset/modulate + tiny prop).
+	if _char_mesh == null:
+		return
+	_cutout_pose_scale = vis.get("scale", Vector3.ONE) as Vector3
+	if _cutout_pose_scale == Vector3.ZERO:
+		_cutout_pose_scale = Vector3.ONE
+	_cutout_pose_offset = vis.get("offset", Vector3.ZERO) as Vector3
+	if _char_mat:
+		var mod: Color = vis.get("modulate", Color(1, 1, 1, 1)) as Color
+		_char_mat.albedo_color = mod
+	var prop_id := str(vis.get("prop", ""))
+	if prop_id == "":
+		_clear_activity_prop()
+	else:
+		_ensure_activity_prop(prop_id)
+	# Immediate pose (breath multiplies on top each frame)
+	_char_mesh.scale = Vector3(
+		_mesh_base_scale.x * _cutout_pose_scale.x,
+		_mesh_base_scale.y * _cutout_pose_scale.y,
+		_mesh_base_scale.z * _cutout_pose_scale.z
+	)
+	_char_mesh.position = Vector3(
+		_cutout_pose_offset.x,
+		_mesh_base_y * _cutout_pose_scale.y + _cutout_pose_offset.y,
+		_cutout_pose_offset.z
+	)
+
+
+func _ensure_activity_prop(prop_id: String) -> void:
+	## Tiny attachable indicator so Read/Work are obvious even without dedicated sprites.
+	if _char_mesh == null:
+		return
+	if _activity_prop != null and is_instance_valid(_activity_prop):
+		if _activity_prop.name == "ActivityProp_%s" % prop_id:
+			_activity_prop.visible = true
+			return
+		_activity_prop.queue_free()
+		_activity_prop = null
+	var mi := MeshInstance3D.new()
+	mi.name = "ActivityProp_%s" % prop_id
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	if prop_id == "book":
+		var box := BoxMesh.new()
+		box.size = Vector3(0.14, 0.02, 0.18)
+		mi.mesh = box
+		mat.albedo_color = Color(0.45, 0.28, 0.14, 1.0)
+		mi.position = Vector3(0.18, 0.12, 0.08)
+	else:
+		# tool / default: short wand/lever glow
+		var box2 := BoxMesh.new()
+		box2.size = Vector3(0.04, 0.22, 0.04)
+		mi.mesh = box2
+		mat.albedo_color = Color(0.55, 0.75, 0.95, 1.0)
+		mi.position = Vector3(0.22, 0.05, 0.06)
+	mi.material_override = mat
+	_char_mesh.add_child(mi)
+	_activity_prop = mi
+
+
+func _clear_activity_prop() -> void:
+	if _activity_prop != null and is_instance_valid(_activity_prop):
+		_activity_prop.queue_free()
+	_activity_prop = null
+
+
+func get_cutout_presentation_snapshot() -> Dictionary:
+	## Headless-testable cutout presentation state (scale/offset/prop/modulate).
+	var prop_name := ""
+	if _activity_prop != null and is_instance_valid(_activity_prop):
+		prop_name = _activity_prop.name
+	var mod := Color(1, 1, 1, 1)
+	if _char_mat:
+		mod = _char_mat.albedo_color
+	var tex_name := ""
+	if _char_mat and _char_mat.albedo_texture:
+		tex_name = str(_char_mat.albedo_texture.resource_path)
+	return {
+		"present": "cutout" if _present == Present.CUTOUT else "skeletal",
+		"state": _state_to_name(_state),
+		"pose_scale": _cutout_pose_scale,
+		"pose_offset": _cutout_pose_offset,
+		"prop": prop_name,
+		"modulate": mod,
+		"texture": tex_name,
+		"mesh_scale": _char_mesh.scale if _char_mesh else Vector3.ZERO,
+	}
 
 
 func _set_state_idle() -> void:
@@ -1083,9 +1211,20 @@ func _process_cutout_breath(_delta: float) -> void:
 	var scale_amt := BREATH_SCALE_IDLE * (1.2 if _moving else 1.0)
 	var phase := _life_t * TAU * hz
 	var sc := breath_scale_factor(phase, scale_amt)
-	_char_mesh.scale = Vector3(_mesh_base_scale.x * sc, _mesh_base_scale.y * sc, _mesh_base_scale.z)
-	var half_h := _world_h * 0.5
-	_char_mesh.position.y = half_h * sc + 0.01
+	var px := _cutout_pose_scale.x
+	var py := _cutout_pose_scale.y
+	var pz := _cutout_pose_scale.z
+	_char_mesh.scale = Vector3(
+		_mesh_base_scale.x * px * sc,
+		_mesh_base_scale.y * py * sc,
+		_mesh_base_scale.z * pz
+	)
+	var base_y := _mesh_base_y if _mesh_base_y > 0.01 else (_world_h * 0.5 + 0.01)
+	_char_mesh.position = Vector3(
+		_cutout_pose_offset.x,
+		base_y * py * sc + _cutout_pose_offset.y,
+		_cutout_pose_offset.z
+	)
 
 
 func _resolve_player() -> Node3D:

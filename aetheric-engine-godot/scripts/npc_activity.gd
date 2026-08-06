@@ -284,3 +284,62 @@ static func required_slot_ids() -> Dictionary:
 			ids.append(str(s["id"]))
 		out[rid] = ids
 	return out
+
+
+static func all_slot_room_ids() -> Array:
+	return ROOM_SLOTS.keys()
+
+
+static func register_all_defined_rooms() -> void:
+	## Register every room that has fixed slots (exact ids only). Call after clear_registry.
+	for rid in ROOM_SLOTS.keys():
+		register_room_slots(str(rid))
+
+
+static func rooms_fully_registered() -> bool:
+	## True when every ROOM_SLOTS room has all of its slot ids live in the registry.
+	for rid in ROOM_SLOTS.keys():
+		var want: Array = required_slot_ids().get(rid, [])
+		var got: Array = slot_ids_for_room(str(rid))
+		for sid in want:
+			if sid not in got:
+				return false
+	return true
+
+
+static func cutout_visual_for_state(state_name: String) -> Dictionary:
+	## Pure helper: presentation deltas for cutout Read/Work vs Idle.
+	## Returns scale (relative), offset (local), prop id, modulate, dedicated_suffix.
+	match state_name:
+		STATE_READ:
+			return {
+				"scale": Vector3(0.96, 1.04, 1.0),
+				"offset": Vector3(0.0, 0.02, 0.04),
+				"prop": "book",
+				"modulate": Color(1.05, 1.02, 0.92, 1.0),
+				"suffix": "read",
+			}
+		STATE_WORK_MACHINE:
+			return {
+				"scale": Vector3(1.06, 0.98, 1.0),
+				"offset": Vector3(0.0, 0.0, 0.02),
+				"prop": "tool",
+				"modulate": Color(0.95, 1.02, 1.08, 1.0),
+				"suffix": "work",
+			}
+		STATE_SIT:
+			return {
+				"scale": Vector3(1.0, 0.92, 1.0),
+				"offset": Vector3(0.0, -0.08, 0.0),
+				"prop": "",
+				"modulate": Color(1, 1, 1, 1),
+				"suffix": "sit",
+			}
+		_:
+			return {
+				"scale": Vector3.ONE,
+				"offset": Vector3.ZERO,
+				"prop": "",
+				"modulate": Color(1, 1, 1, 1),
+				"suffix": "idle",
+			}

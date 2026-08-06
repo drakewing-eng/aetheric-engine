@@ -19,7 +19,10 @@ func _run() -> void:
 	_failed = 0
 	_failed += _test_structure()
 	_failed += _test_claim_pure()
+	_failed += _test_registration_full()
+	_failed += _test_cutout_visual_pure()
 	_failed += _test_controller_in_tree()
+	_failed += _test_cutout_pose_in_tree()
 
 	var main_src := FileAccess.get_file_as_string("res://scripts/fps_main.gd")
 	if main_src.find("set_talking") < 0:
@@ -32,6 +35,16 @@ func _run() -> void:
 		_failed += 1
 	else:
 		print("OK fps_main registers NpcActivity slots")
+	if main_src.find("register_all_defined_rooms") < 0:
+		print("FAIL fps_main does not call register_all_defined_rooms")
+		_failed += 1
+	else:
+		print("OK fps_main calls register_all_defined_rooms")
+	if main_src.find("RoomNav") < 0:
+		print("FAIL fps_main lost RoomNav navigation builder")
+		_failed += 1
+	else:
+		print("OK fps_main builds RoomNav")
 
 	if _failed == 0:
 		print("=== ALL PASS ===")
@@ -39,6 +52,138 @@ func _run() -> void:
 	else:
 		print("=== FAILED count=", _failed, " ===")
 		quit(1)
+
+
+func _test_registration_full() -> int:
+	var failed := 0
+	NpcActivityScr.clear_registry()
+	NpcActivityScr.register_all_defined_rooms()
+	if not NpcActivityScr.rooms_fully_registered():
+		print("FAIL rooms_fully_registered after register_all_defined_rooms")
+		failed += 1
+	else:
+		print("OK rooms_fully_registered after register_all_defined_rooms")
+	var need_rooms := {
+		"gallery": ["machine_main", "machine_side", "bench_read"],
+		"drawing_room": ["sofa_sit", "armchair_read", "desk_write"],
+		"entrance_hall": ["hall_stand", "hall_table"],
+		"kitchen": ["range_work", "table_sit"],
+		"workshop": ["bench_work", "stool_sit"],
+		"conservatory": ["conserv_sit", "conserv_read"],
+		"morning_room": ["morning_sit", "morning_read"],
+	}
+	for rid in need_rooms.keys():
+		var got: Array = NpcActivityScr.slot_ids_for_room(str(rid))
+		for sid in need_rooms[rid]:
+			if sid in got:
+				print("OK registered live ", rid, "/", sid)
+			else:
+				print("FAIL not live in registry ", rid, "/", sid)
+				failed += 1
+	return failed
+
+
+func _test_cutout_visual_pure() -> int:
+	var failed := 0
+	var idle: Dictionary = NpcActivityScr.cutout_visual_for_state(NpcActivityScr.STATE_IDLE)
+	var read: Dictionary = NpcActivityScr.cutout_visual_for_state(NpcActivityScr.STATE_READ)
+	var work: Dictionary = NpcActivityScr.cutout_visual_for_state(NpcActivityScr.STATE_WORK_MACHINE)
+	if read.get("prop", "") == "":
+		print("FAIL Read visual missing prop")
+		failed += 1
+	else:
+		print("OK Read visual prop=", read.get("prop", ""))
+	if work.get("prop", "") == "":
+		print("FAIL WorkMachine visual missing prop")
+		failed += 1
+	else:
+		print("OK WorkMachine visual prop=", work.get("prop", ""))
+	if read.get("scale") == idle.get("scale") and read.get("offset") == idle.get("offset") and read.get("prop") == idle.get("prop"):
+		print("FAIL Read visual identical to Idle")
+		failed += 1
+	else:
+		print("OK Read visual distinct from Idle")
+	if work.get("scale") == idle.get("scale") and work.get("offset") == idle.get("offset") and work.get("prop") == idle.get("prop"):
+		print("FAIL WorkMachine visual identical to Idle")
+		failed += 1
+	else:
+		print("OK WorkMachine visual distinct from Idle")
+	if str(read.get("suffix", "")) != "read":
+		print("FAIL Read suffix ", read.get("suffix", ""))
+		failed += 1
+	if str(work.get("suffix", "")) != "work":
+		print("FAIL Work suffix ", work.get("suffix", ""))
+		failed += 1
+	return failed
+
+
+func _test_cutout_pose_in_tree() -> int:
+	## Drive cutout presentation path: Read/WorkMachine must differ from Idle.
+	var failed := 0
+	var scene_ps = load("res://scenes/fps_npc.tscn")
+	if scene_ps == null:
+		print("FAIL load fps_npc.tscn for pose test")
+		return 1
+	var holder := Node3D.new()
+	root.add_child(holder)
+	var npc: Node = scene_ps.instantiate()
+	holder.add_child(npc)
+	npc.setup({
+		"id": "selina",
+		"name": "Selina",
+		"height": 1.66,
+		"room_id": "drawing_room",
+		"use_activity": false,
+		"patrol": [[0, 0, 0]],
+		"sprite": "res://assets/characters/sprites/sprite_selina.png",
+	})
+	if not npc.has_method("get_cutout_presentation_snapshot"):
+		print("FAIL missing get_cutout_presentation_snapshot")
+		return 1
+	npc._set_state_idle()
+	var snap_idle: Dictionary = npc.get_cutout_presentation_snapshot()
+	npc._enter_activity_state(npc._name_to_state(NpcActivityScr.STATE_READ))
+	var snap_read: Dictionary = npc.get_cutout_presentation_snapshot()
+	npc._enter_activity_state(npc._name_to_state(NpcActivityScr.STATE_WORK_MACHINE))
+	var snap_work: Dictionary = npc.get_cutout_presentation_snapshot()
+	print("OK pose snaps idle_prop=", snap_idle.get("prop", ""),
+		" read_prop=", snap_read.get("prop", ""),
+		" work_prop=", snap_work.get("prop", ""),
+		" present=", snap_idle.get("present", ""))
+	if str(snap_idle.get("present", "")) != "cutout":
+		print("FAIL expected cutout presentation got ", snap_idle.get("present", ""))
+		failed += 1
+	else:
+		print("OK cutout presentation path")
+	if str(snap_read.get("prop", "")).find("book") < 0:
+		print("FAIL Read missing book prop got ", snap_read.get("prop", ""))
+		failed += 1
+	else:
+		print("OK Read has book prop")
+	if str(snap_work.get("prop", "")).find("tool") < 0:
+		print("FAIL WorkMachine missing tool prop got ", snap_work.get("prop", ""))
+		failed += 1
+	else:
+		print("OK WorkMachine has tool prop")
+	if snap_read.get("pose_scale") == snap_idle.get("pose_scale") and snap_read.get("prop") == snap_idle.get("prop"):
+		print("FAIL Read presentation not distinct from Idle")
+		failed += 1
+	else:
+		print("OK Read presentation distinct from Idle")
+	if snap_work.get("pose_scale") == snap_idle.get("pose_scale") and snap_work.get("prop") == snap_idle.get("prop"):
+		print("FAIL WorkMachine presentation not distinct from Idle")
+		failed += 1
+	else:
+		print("OK WorkMachine presentation distinct from Idle")
+	# Idle clears prop
+	npc._set_state_idle()
+	var snap_back: Dictionary = npc.get_cutout_presentation_snapshot()
+	if str(snap_back.get("prop", "")) != "":
+		print("FAIL Idle still has prop ", snap_back.get("prop", ""))
+		failed += 1
+	else:
+		print("OK Idle clears activity prop")
+	return failed
 
 
 func _test_structure() -> int:
