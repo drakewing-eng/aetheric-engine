@@ -2,7 +2,10 @@ extends Node3D
 
 ## In-world NPC: cutout billboard (legacy) OR 3D skeletal mesh (target).
 ## Presentation selected by data.model / auto path models/<id>/humanoid_stub.glb
-## Behavior: patrol circuit, dwell idle, face travel dir (skeletal), look-at player when near.
+## Activity system (NpcActivity): Idle/Walk/Sit/Read/WorkMachine/Talk + room slots.
+## NavigationAgent3D for slot travel; patrol is fallback when no free slots.
+
+const NpcActivity = preload("res://scripts/npc_activity.gd")
 
 const SPRITE_DIR := "res://assets/characters/sprites/"
 const MODEL_DIR := "res://assets/characters/models/"
@@ -21,7 +24,8 @@ const BREATH_HZ_WALK := 0.85
 const BREATH_SCALE_IDLE := 0.004
 
 enum Present { CUTOUT, SKELETAL }
-enum State { IDLE, WALK, TALK, SIT }
+## Exactly six activity states (spec). Maps to NpcActivity string names.
+enum State { IDLE, WALK, SIT, READ, WORK_MACHINE, TALK }
 
 var npc_data: Dictionary = {}
 var _points: Array[Vector3] = []
@@ -32,6 +36,24 @@ var _base_dwell := 6.0
 var _world_h := 1.7
 var _present: Present = Present.CUTOUT
 var _state: State = State.IDLE
+var _npc_id := ""
+var _room_id := ""
+
+## Activity slots (NpcActivity registry)
+var _slot_id := ""
+var _slot_target := Vector3.ZERO
+var _slot_yaw := 0.0
+var _going_to_slot := false
+var _activity_elapsed := 0.0
+var _activity_cooldown := 60.0
+## Intended activity for current slot (Sit/Read/WorkMachine/Idle) — never Walk/Talk.
+var _intended_activity: State = State.IDLE
+var _resume_slot_id := ""
+var _resume_was_traveling := false
+var _use_activity := true
+
+## Navigation
+var _nav: NavigationAgent3D = null
 
 ## Cutout
 var _char_mesh: MeshInstance3D = null
@@ -86,6 +108,9 @@ func setup(data: Dictionary) -> void:
 		label = get_node_or_null("Label3D") as Label3D
 
 	npc_data = data
+	_npc_id = str(data.get("id", "")).to_lower()
+	_room_id = str(data.get("room_id", ""))
+	_use_activity = bool(data.get("use_activity", true)) and _room_id != ""
 	var patrol: Array = data.get("patrol", [])
 	_points.clear()
 	for p in patrol:
@@ -109,9 +134,17 @@ func setup(data: Dictionary) -> void:
 			_seat = Vector3(float(s[0]), 0.0, float(s[2]))
 			_has_seat = true
 
+	_slot_id = ""
+	_going_to_slot = false
+	_activity_elapsed = 0.0
+	_activity_cooldown = NpcActivity.cooldown_duration(randf())
+	_intended_activity = State.IDLE
+	_resume_slot_id = ""
+	_resume_was_traveling = false
+
 	var h: float = float(data.get("height", 1.7))
 	_world_h = h
-	var npc_id := str(data.get("id", "")).to_lower()
+	var npc_id := _npc_id
 
 	if body_mesh:
 		body_mesh.visible = false
@@ -123,6 +156,7 @@ func setup(data: Dictionary) -> void:
 		_present = Present.CUTOUT
 		_setup_sprite(npc_id, h, data)
 
+	_setup_nav_agent()
 	_setup_foot_shadow()
 
 	if label:
@@ -144,15 +178,83 @@ func setup(data: Dictionary) -> void:
 
 	set_meta("npc", data)
 	_set_state_idle()
+	if _use_activity:
+		_try_begin_activity(true)
 
 
 func set_talking(active: bool) -> void:
-	## Called from dialogue / proximity if available.
+	## Called from dialogue / proximity. Talk suspends movement and activity change.
 	_talking = active
-	if active and _present == Present.SKELETAL:
+	if active:
+		if _state != State.TALK:
+			# Preserve intended activity (never overwrite with Walk).
+			_resume_slot_id = _slot_id
+			_resume_was_traveling = _going_to_slot
+			if _state != State.WALK and _state != State.TALK:
+				_intended_activity = _state
+			# else keep existing _intended_activity set when slot was claimed
+		_going_to_slot = false
+		_going_to_seat = false
+		_moving = false
+		if _nav and is_inside_tree() and _nav.is_inside_tree():
+			_nav.set_target_position(global_position)
 		_set_state_talk()
-	elif not active and _state == State.TALK:
-		_set_state_idle()
+	elif _state == State.TALK:
+		_resume_after_talk()
+
+
+func _resume_after_talk() -> void:
+	## Finish path to slot or re-enter intended activity; never idle-patrol while holding a claim.
+	if _resume_slot_id != "" and _room_id != "":
+		var entry := NpcActivity.get_slot(_room_id, _resume_slot_id)
+		var claimant := str(entry.get("claimant", ""))
+		var still_ours := claimant == _npc_id or claimant == ""
+		if not entry.is_empty() and still_ours:
+			if claimant == "":
+				NpcActivity.claim_slot(_room_id, _resume_slot_id, _npc_id)
+			_slot_id = _resume_slot_id
+			_slot_target = NpcActivity.slot_position(entry)
+			_slot_yaw = NpcActivity.slot_yaw_rad(entry)
+			var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
+			var intended := _intended_activity
+			if intended == State.WALK or intended == State.TALK:
+				var act_name := NpcActivity.pick_activity_for_slot(entry, _npc_id, 0.5)
+				intended = _name_to_state(act_name)
+				_intended_activity = intended
+			# Near slot → enter intended activity; else resume travel.
+			if dist < 0.4:
+				global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
+				_face_yaw = _slot_yaw
+				if _visual:
+					_visual.rotation.y = _face_yaw
+				_going_to_slot = false
+				_resume_was_traveling = false
+				_activity_elapsed = 0.0
+				_enter_activity_state(intended)
+				return
+			_going_to_slot = true
+			_resume_was_traveling = false
+			if _nav and is_inside_tree() and _nav.is_inside_tree():
+				_nav.set_target_position(_slot_target)
+			_set_state_walk()
+			return
+	_try_begin_activity(true)
+
+
+func get_activity_state_name() -> String:
+	return _state_to_name(_state)
+
+
+func get_current_slot_id() -> String:
+	return _slot_id
+
+
+func is_going_to_slot() -> bool:
+	return _going_to_slot
+
+
+func get_navigation_agent() -> NavigationAgent3D:
+	return _nav
 
 
 # --- Pure helpers (tests) -----------------------------------------------------
@@ -219,10 +321,8 @@ static func idle_frame_path(npc_id: String, frame: int) -> String:
 
 static func default_model_path(npc_id: String) -> String:
 	var id := npc_id.to_lower().strip_edges()
-	# Prefer custom character scene, then humanoid stub GLB.
-	var custom := MODEL_DIR + "%s/bell_character.tscn" % id if id == "bell" else ""
-	if custom != "":
-		return custom
+	if id == "bell":
+		return MODEL_DIR + "bell/final/bell_runtime.tscn"
 	return MODEL_DIR + "%s/humanoid_stub.glb" % id
 
 
@@ -231,8 +331,11 @@ func _resolve_model_path(npc_id: String, data: Dictionary) -> String:
 		var mp := str(data.get("model"))
 		if ResourceLoader.exists(mp) or FileAccess.file_exists(ProjectSettings.globalize_path(mp)):
 			return mp
-	# Bell: custom mesh scene first
+	# Bell: production runtime first, then procedural placeholder
 	if npc_id == "bell":
+		var prod := MODEL_DIR + "bell/final/bell_runtime.tscn"
+		if ResourceLoader.exists(prod) or FileAccess.file_exists(ProjectSettings.globalize_path(prod)):
+			return prod
 		var bell_p := MODEL_DIR + "bell/bell_character.tscn"
 		if ResourceLoader.exists(bell_p) or FileAccess.file_exists(ProjectSettings.globalize_path(bell_p)):
 			return bell_p
@@ -566,49 +669,188 @@ func _setup_foot_shadow() -> void:
 
 # --- State / presentation -----------------------------------------------------
 
+func _state_to_name(s: State) -> String:
+	match s:
+		State.WALK:
+			return NpcActivity.STATE_WALK
+		State.SIT:
+			return NpcActivity.STATE_SIT
+		State.READ:
+			return NpcActivity.STATE_READ
+		State.WORK_MACHINE:
+			return NpcActivity.STATE_WORK_MACHINE
+		State.TALK:
+			return NpcActivity.STATE_TALK
+		_:
+			return NpcActivity.STATE_IDLE
+
+
+func _name_to_state(name: String) -> State:
+	match name:
+		NpcActivity.STATE_WALK:
+			return State.WALK
+		NpcActivity.STATE_SIT:
+			return State.SIT
+		NpcActivity.STATE_READ:
+			return State.READ
+		NpcActivity.STATE_WORK_MACHINE:
+			return State.WORK_MACHINE
+		NpcActivity.STATE_TALK:
+			return State.TALK
+		_:
+			return State.IDLE
+
+
+func _setup_nav_agent() -> void:
+	if _nav != null and is_instance_valid(_nav):
+		return
+	_nav = NavigationAgent3D.new()
+	_nav.name = "NavigationAgent3D"
+	_nav.path_desired_distance = 0.28
+	_nav.target_desired_distance = 0.32
+	_nav.avoidance_enabled = false
+	add_child(_nav)
+
+
+func _apply_pose_for_state(s: State) -> void:
+	## Discrete pose/clip. Missing clip → Idle fallback + log (spec).
+	var clip := NpcActivity.pose_clip_for_state(_state_to_name(s))
+	if _present == Present.SKELETAL:
+		if _anim == null:
+			return
+		if clip == "walk" and _anim_walk != "":
+			_play_anim(_anim_walk, 1.0)
+		elif clip == "sit" and _anim.has_animation("sit"):
+			_play_anim("sit", 1.0)
+		elif clip == "idle" or clip == "talk" or clip == "read" or clip == "work":
+			if _anim_idle != "" and _anim.has_animation(_anim_idle):
+				_play_anim(_anim_idle, 0.35)
+			elif _anim.has_animation("idle"):
+				_play_anim("idle", 0.35)
+			else:
+				push_warning("fps_npc: missing pose clip '%s' for %s — Idle fallback" % [clip, _npc_id])
+		else:
+			if _anim.has_animation(clip):
+				_play_anim(clip, 0.4)
+			else:
+				push_warning("fps_npc: missing pose clip '%s' for %s — Idle fallback" % [clip, _npc_id])
+				if _anim_idle != "":
+					_play_anim(_anim_idle, 0.35)
+	else:
+		# Cutout: idle sheet for non-walk; walk frames for Walk.
+		if s == State.WALK and not _walk_texs.is_empty():
+			_set_walk_frame(0)
+		else:
+			if not _idle_texs.is_empty():
+				_set_sprite_tex(_idle_texs[_idle_frame])
+			elif _idle_tex:
+				_set_sprite_tex(_idle_tex)
+			elif not _walk_texs.is_empty():
+				_set_sprite_tex(_walk_texs[0])
+			if s != State.IDLE and s != State.WALK:
+				# No dedicated read/work sprites — Idle fallback (logged once-ish)
+				if s == State.READ or s == State.WORK_MACHINE:
+					push_warning("fps_npc: cutout missing pose for %s — Idle fallback" % _state_to_name(s))
+
+
 func _set_state_idle() -> void:
 	_state = State.IDLE
 	_walk_dist = 0.0
 	_walk_frame = -1
 	_was_dwelling = true
 	_moving = false
-	if _present == Present.SKELETAL:
-		_play_anim(_anim_idle, 0.35)
-	else:
-		if not _idle_texs.is_empty():
-			_set_sprite_tex(_idle_texs[_idle_frame])
-		elif _idle_tex:
-			_set_sprite_tex(_idle_tex)
-		elif not _walk_texs.is_empty():
-			_set_sprite_tex(_walk_texs[0])
+	_apply_pose_for_state(State.IDLE)
 
 
 func _set_state_walk() -> void:
 	_state = State.WALK
 	_was_dwelling = false
 	_moving = true
-	if _present == Present.SKELETAL:
-		_play_anim(_anim_walk, 1.0)
+	_apply_pose_for_state(State.WALK)
 
 
 func _set_state_talk() -> void:
 	_state = State.TALK
 	_moving = false
 	_going_to_seat = false
-	if _present == Present.SKELETAL:
-		_play_anim(_anim_idle, 0.4)
+	_going_to_slot = false
+	_apply_pose_for_state(State.TALK)
 
 
 func _set_state_sit() -> void:
 	_state = State.SIT
 	_moving = false
 	_going_to_seat = false
+	_going_to_slot = false
 	_sit_left = _sit_sec
-	if _present == Present.SKELETAL:
-		if _anim and _anim.has_animation("sit"):
-			_play_anim("sit", 1.0)
+	_apply_pose_for_state(State.SIT)
+
+
+func _enter_activity_state(s: State) -> void:
+	_moving = false
+	_going_to_slot = false
+	match s:
+		State.SIT:
+			_set_state_sit()
+		State.READ:
+			_state = State.READ
+			_apply_pose_for_state(State.READ)
+		State.WORK_MACHINE:
+			_state = State.WORK_MACHINE
+			_apply_pose_for_state(State.WORK_MACHINE)
+		State.TALK:
+			_set_state_talk()
+		State.WALK:
+			_set_state_walk()
+		_:
+			_set_state_idle()
+
+
+func _try_begin_activity(force: bool = false) -> void:
+	## Claim a free preference-weighted slot or fall back to patrol.
+	if not _use_activity or _room_id == "" or _talking:
+		return
+	if not force and not NpcActivity.cooldown_elapsed(_activity_elapsed, _activity_cooldown):
+		return
+	# Release current
+	if _slot_id != "":
+		NpcActivity.release_slot(_room_id, _slot_id, _npc_id)
+		_slot_id = ""
+	var slot := NpcActivity.pick_free_slot(_room_id, _npc_id, randf())
+	if slot.is_empty():
+		_going_to_slot = false
+		_set_state_idle()
+		_dwell_left = _dwell_with_jitter(_base_dwell)
+		return
+	var sid := str(slot.get("id", ""))
+	if not NpcActivity.claim_slot(_room_id, sid, _npc_id):
+		_going_to_slot = false
+		return
+	_slot_id = sid
+	_slot_target = NpcActivity.slot_position(slot)
+	_slot_yaw = NpcActivity.slot_yaw_rad(slot)
+	_activity_elapsed = 0.0
+	_activity_cooldown = NpcActivity.cooldown_duration(randf())
+	var act_name := NpcActivity.pick_activity_for_slot(slot, _npc_id, randf())
+	_intended_activity = _name_to_state(act_name)
+	if _intended_activity == State.WALK or _intended_activity == State.TALK:
+		_intended_activity = State.IDLE
+	# Travel
+	var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
+	if dist < 0.35:
+		if is_inside_tree():
+			global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
 		else:
-			_play_anim(_anim_idle, 0.2)
+			position = Vector3(_slot_target.x, 0.0, _slot_target.z)
+		_face_yaw = _slot_yaw
+		if _visual:
+			_visual.rotation.y = _face_yaw
+		_enter_activity_state(_intended_activity)
+	else:
+		_going_to_slot = true
+		if _nav and is_inside_tree() and _nav.is_inside_tree():
+			_nav.set_target_position(_slot_target)
+		_set_state_walk()
 
 
 func _set_sprite_tex(tex: Texture2D) -> void:
@@ -642,8 +884,19 @@ func _physics_process(delta: float) -> void:
 	if _present == Present.SKELETAL and not _feet_planted:
 		_plant_feet_to_ground()
 
-	if _talking and _present == Present.SKELETAL:
-		_state = State.TALK
+	# Talk has highest priority — suspend movement and activity changes.
+	if _talking:
+		if _state != State.TALK:
+			_set_state_talk()
+		_update_attention(delta)
+		_update_facing(delta)
+		_update_neck_look()
+		if _present == Present.CUTOUT:
+			_process_cutout_breath(delta)
+		return
+
+	if _use_activity and _room_id != "":
+		_process_activity(delta)
 	elif _points.size() >= 2:
 		_moving = _process_patrol(delta)
 	else:
@@ -657,12 +910,82 @@ func _physics_process(delta: float) -> void:
 		_process_cutout_breath(delta)
 
 
+func _process_activity(delta: float) -> void:
+	## Slot-based living-house behaviour.
+	if _going_to_slot:
+		_moving = _move_toward_slot(delta)
+		return
+
+	# Occupying an activity
+	if _slot_id != "" and _state != State.WALK and _state != State.TALK:
+		_activity_elapsed += delta
+		if NpcActivity.cooldown_elapsed(_activity_elapsed, _activity_cooldown):
+			_try_begin_activity(true)
+		return
+
+	# No slot: patrol fallback if points exist
+	if _points.size() >= 2:
+		_moving = _process_patrol(delta)
+	else:
+		_activity_elapsed += delta
+		if NpcActivity.cooldown_elapsed(_activity_elapsed, _activity_cooldown):
+			_try_begin_activity(true)
+
+
+func _move_toward_slot(delta: float) -> bool:
+	## Prefer NavigationAgent3D next path position; fall back to straight-line.
+	if _talking:
+		return false
+	var target := _slot_target
+	if _nav and is_inside_tree() and _nav.is_inside_tree():
+		# Keep agent target fresh; ignore agent errors when no nav map yet.
+		_nav.set_target_position(target)
+		if not _nav.is_navigation_finished():
+			var next_pos: Vector3 = _nav.get_next_path_position()
+			var nflat := Vector2(next_pos.x - global_position.x, next_pos.z - global_position.z)
+			if nflat.length() > 0.05:
+				target = Vector3(next_pos.x, 0.0, next_pos.z)
+
+	var flat := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z)
+	if flat.length() < 0.32:
+		global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
+		_face_yaw = _slot_yaw
+		if _visual:
+			_visual.rotation.y = _face_yaw
+		_going_to_slot = false
+		_activity_elapsed = 0.0
+		var intended := _intended_activity
+		if intended == State.WALK or intended == State.TALK:
+			intended = State.IDLE
+		_enter_activity_state(intended)
+		return false
+
+	var dir := Vector3(target.x - global_position.x, 0.0, target.z - global_position.z)
+	if dir.length_squared() < 0.0001:
+		dir = Vector3(_slot_target.x - global_position.x, 0.0, _slot_target.z - global_position.z)
+	if dir.length_squared() < 0.0001:
+		return false
+	dir = dir.normalized()
+	_last_move_dir = dir
+	var step := _speed * delta
+	global_position += dir * step
+	if _state != State.WALK:
+		_set_state_walk()
+	else:
+		_moving = true
+		if _present == Present.CUTOUT and not _walk_texs.is_empty():
+			_walk_dist += step
+			var frame := select_walk_frame(_walk_dist, WALK_CYCLE_METRES, _walk_texs.size())
+			_set_walk_frame(frame)
+	return true
+
+
 func _process_patrol(delta: float) -> bool:
+	## Fallback when no free activity slots (or activity disabled).
 	if _talking:
 		return false
 
-	# Sitting at activity marker (Phase 2)
-	if _state == State.SIT:
+	if _state == State.SIT and not _use_activity:
 		_sit_left -= delta
 		if _sit_left <= 0.0:
 			_set_state_idle()
@@ -673,6 +996,13 @@ func _process_patrol(delta: float) -> bool:
 		_dwell_left -= delta
 		if _state != State.IDLE:
 			_set_state_idle()
+		# While dwelling in fallback, still try for a free slot occasionally
+		if _use_activity and _room_id != "":
+			_activity_elapsed += delta
+			if NpcActivity.cooldown_elapsed(_activity_elapsed, minf(_activity_cooldown, 20.0)):
+				if not NpcActivity.free_slots(_room_id).is_empty():
+					_try_begin_activity(true)
+					return _going_to_slot
 		return false
 
 	var target: Vector3
@@ -687,7 +1017,6 @@ func _process_patrol(delta: float) -> bool:
 			_set_state_sit()
 			return false
 		_index = (_index + 1) % _points.size()
-		# After a full circuit, skeletal NPCs with a seat may go sit/work.
 		if _index == 0 and _has_seat and _present == Present.SKELETAL and randf() < 0.55:
 			_going_to_seat = true
 			return false

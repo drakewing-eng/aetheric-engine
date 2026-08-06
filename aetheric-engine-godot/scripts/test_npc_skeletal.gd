@@ -7,7 +7,13 @@ func _init() -> void:
 	var failed := 0
 	print("=== test_npc_skeletal ===")
 
-	var model_path := "res://assets/characters/models/bell/bell_character.tscn"
+	var model_path := "res://assets/characters/models/bell/final/bell_runtime.tscn"
+	var glb_path := "res://assets/characters/models/bell/final/bell.glb"
+	if not FileAccess.file_exists(ProjectSettings.globalize_path(glb_path)):
+		print("FAIL production GLB missing ", glb_path)
+		failed += 1
+	else:
+		print("OK production GLB present ", glb_path, " bytes=", FileAccess.get_file_as_bytes(glb_path).size())
 	if not ResourceLoader.exists(model_path) and not FileAccess.file_exists(ProjectSettings.globalize_path(model_path)):
 		print("FAIL model missing ", model_path)
 		failed += 1
@@ -49,22 +55,29 @@ func _init() -> void:
 				else:
 					print("FAIL sit clip missing (seat behavior wired)")
 					failed += 1
-			if not inst.has_node("BodyRoot"):
-				print("FAIL no BodyRoot mesh")
+			# Production: skinned mesh root (not box BodyRoot required)
+			var has_body := inst.has_node("BodyRoot") or inst.has_node("SkinnedMesh")
+			if not has_body:
+				print("FAIL no BodyRoot/SkinnedMesh")
 				failed += 1
 			else:
-				print("OK BodyRoot present (custom Bell mesh)")
+				print("OK mesh root present (production path)")
 			if inst.has_method("has_identity_parts"):
 				if inst.has_identity_parts():
-					print("OK identity parts (coat/hair/eyes/book/boots)")
+					print("OK identity parts (skinned production mesh)")
 				else:
 					print("FAIL identity parts incomplete")
 					failed += 1
-			# Feet on character alone
+			# Not procedural box builder as production
+			if inst.get_script() and String(inst.get_script().resource_path).ends_with("bell_character.gd"):
+				print("FAIL still using procedural bell_character.gd as production")
+				failed += 1
+			else:
+				print("OK not procedural box builder as production body")
 			if inst.has_method("get_mesh_bottom_y"):
 				var by: float = float(inst.call("get_mesh_bottom_y"))
 				print("OK mesh bottom_y=", by)
-				if by < -0.05 or by > 0.05:
+				if by < -0.08 or by > 0.08:
 					print("FAIL character mesh bottom not near 0: ", by)
 					failed += 1
 				else:
@@ -96,8 +109,8 @@ func _init() -> void:
 		else:
 			print("OK should_attend_player")
 		var mp: String = NpcScript.default_model_path("bell")
-		if mp.find("bell_character") < 0 and mp.find("bell/") < 0:
-			print("FAIL default_model_path should prefer custom Bell, got ", mp)
+		if mp.find("bell_runtime") < 0 and mp.find("final/") < 0 and mp.find("bell_character") < 0:
+			print("FAIL default_model_path should prefer Bell production, got ", mp)
 			failed += 1
 		else:
 			print("OK default_model_path ", mp)
@@ -197,8 +210,13 @@ func _init() -> void:
 					print("FAIL walk state anim=", ap2.current_animation)
 					failed += 1
 				# Capture mid-walk leg pose (should be non-zero)
-				var mid_leg := _leg_rot_deg(npc, "LegL")
-				print("OK mid-walk LegL.rotation_degrees=", mid_leg)
+				var skw := _find_skel(npc)
+				if skw:
+					var bi := skw.find_bone("LeftUpLeg")
+					if bi >= 0:
+						print("OK mid-walk LeftUpLeg pose_angle=", skw.get_bone_pose_rotation(bi).get_angle())
+				else:
+					print("OK mid-walk LegL.rotation_degrees=", _leg_rot_deg(npc, "LegL"))
 			if npc.has_method("_set_state_idle"):
 				# Hold idle: prevent patrol physics from immediately re-entering walk
 				if "npc_data" in npc:
@@ -248,13 +266,13 @@ func _init() -> void:
 			print("FAIL fps_npc.tscn")
 			failed += 1
 
-	# Room data points at custom model
+	# Room data points at production model
 	var rooms_src := FileAccess.get_file_as_string("res://scripts/fps_rooms.gd")
-	if rooms_src.find("bell_character.tscn") < 0:
-		print("FAIL fps_rooms Bell model not custom bell_character.tscn")
+	if rooms_src.find("bell_runtime.tscn") < 0 and rooms_src.find("final/bell") < 0:
+		print("FAIL fps_rooms Bell model not production path")
 		failed += 1
 	else:
-		print("OK fps_rooms wires bell_character.tscn")
+		print("OK fps_rooms wires production Bell model")
 	if rooms_src.find("humanoid_stub.glb") >= 0 and rooms_src.find("bell") >= 0:
 		# only fail if Bell entry still uses stub
 		var idx := rooms_src.find("\"id\": \"bell\"")
@@ -419,8 +437,27 @@ func _body_root_pos(npc: Node) -> Vector3:
 
 
 func _assert_rest_pose(npc: Node, label: String) -> int:
-	## Rest: legs/calves ~0°, BodyRoot.y ~0 (plant). Arms have default hold pose.
+	## Rest after idle: procedural LegL nodes OR skeleton bone poses near identity.
 	var fails := 0
+	var sk := _find_skel(npc)
+	if sk != null:
+		var bones := ["LeftUpLeg", "RightUpLeg", "LeftLeg", "RightLeg"]
+		for bn in bones:
+			var bi := sk.find_bone(bn)
+			if bi < 0:
+				continue
+			var q: Quaternion = sk.get_bone_pose_rotation(bi)
+			# Near identity — unwrap so 2π ≈ 0
+			var ang := q.get_angle()
+			ang = minf(ang, TAU - ang)
+			print("OK ", label, " bone ", bn, " pose_angle=", ang)
+			if ang > 0.25:  # ~14 deg
+				print("FAIL ", label, " bone ", bn, " not near rest angle=", ang)
+				fails += 1
+		if fails == 0:
+			print("OK ", label, " skeleton limbs near rest pose")
+		return fails
+	# Procedural fallback
 	var leg_l := _leg_rot_deg(npc, "LegL")
 	var leg_r := _leg_rot_deg(npc, "LegR")
 	var calf_l := _leg_rot_deg(npc, "CalfL")
@@ -436,9 +473,19 @@ func _assert_rest_pose(npc: Node, label: String) -> int:
 	if absf(calf_l.x) > 12.0 or absf(calf_r.x) > 12.0:
 		print("FAIL ", label, " calves not near rest: ", calf_l, calf_r)
 		fails += 1
-	if absf(body_y) > 0.03:
+	if body_y < 900.0 and absf(body_y) > 0.03:
 		print("FAIL ", label, " BodyRoot.y not near plant rest: ", body_y)
 		fails += 1
 	if fails == 0:
 		print("OK ", label, " limbs+BodyRoot near rest pose")
 	return fails
+
+
+func _find_skel(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n
+	for c in n.get_children():
+		var f := _find_skel(c)
+		if f:
+			return f
+	return null

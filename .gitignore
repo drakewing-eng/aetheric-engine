@@ -22,3 +22,6 @@ SCRATCH/screenshots/loop_*/**/*.png
 
 # Local full-tree tarballs (too large for GitHub; code is on main)
 BACKUPS/*.tar.gz
+
+aetheric-engine-godot/assets/characters/models/bell/pipeline/work/
+aetheric-engine-godot/assets/characters/models/bell/final/bell.prev.glb

@@ -11,6 +11,7 @@ extends Node3D
 @onready var bridge: BridgeClient = %BridgeClient
 
 const NPC_SCENE := preload("res://scenes/fps_npc.tscn")
+const NpcActivity = preload("res://scripts/npc_activity.gd")
 const DOOR_PROXIMITY := 2.85  # closed leaf + narrow bound gap — needs reach from approach
 
 var _current_room_id := "drawing_room"
@@ -43,8 +44,13 @@ func _load_room(room_id: String, spawn_override: Variant = null, yaw_override: V
 	room_builder.build(room)
 	await get_tree().process_frame
 
+	# Activity slots (fixed markers — furniture not moved)
+	NpcActivity.clear_registry()
+	NpcActivity.register_room_slots(room_id)
+	_ensure_room_navigation(room)
+
 	_clear_npcs()
-	_spawn_npcs(room.get("npcs", []))
+	_spawn_npcs(room.get("npcs", []), room_id)
 	_bind_doors()
 
 	var spawn: Array = spawn_override if spawn_override != null else room.get("spawn", [0, 0, 0])
@@ -60,11 +66,47 @@ func _clear_npcs() -> void:
 	for child in npc_root.get_children():
 		child.queue_free()
 
-func _spawn_npcs(npcs: Array) -> void:
+func _spawn_npcs(npcs: Array, room_id: String = "") -> void:
 	for data in npcs:
+		var d: Dictionary = data.duplicate(true)
+		if room_id != "":
+			d["room_id"] = room_id
 		var npc := NPC_SCENE.instantiate()
 		npc_root.add_child(npc)
-		npc.setup(data)
+		npc.setup(d)
+
+
+func _ensure_room_navigation(room: Dictionary) -> void:
+	## Minimal NavigationRegion3D over the room floor so NavigationAgent3D can path.
+	## Does not move furniture. Rebuilt each room load.
+	var existing := get_node_or_null("RoomNav") as NavigationRegion3D
+	if existing:
+		existing.queue_free()
+	var size: Array = room.get("size", [10.0, 10.0, 3.5])
+	var half_w := float(size[0]) * 0.5 - 0.4
+	var half_d := float(size[1]) * 0.5 - 0.4
+	if half_w < 1.0:
+		half_w = 3.0
+	if half_d < 1.0:
+		half_d = 3.0
+	var region := NavigationRegion3D.new()
+	region.name = "RoomNav"
+	var nmesh := NavigationMesh.new()
+	nmesh.agent_radius = 0.35
+	nmesh.agent_height = 1.6
+	nmesh.agent_max_climb = 0.2
+	# Explicit floor polygon (no parse/bake dependency on tree timing)
+	var verts := PackedVector3Array([
+		Vector3(-half_w, 0.0, -half_d),
+		Vector3(half_w, 0.0, -half_d),
+		Vector3(half_w, 0.0, half_d),
+		Vector3(-half_w, 0.0, half_d),
+	])
+	var polygons := PackedInt32Array([0, 1, 2, 3])
+	nmesh.vertices = verts
+	nmesh.add_polygon(polygons)
+	region.navigation_mesh = nmesh
+	add_child(region)
 
 func _bind_doors() -> void:
 	_door_areas.clear()

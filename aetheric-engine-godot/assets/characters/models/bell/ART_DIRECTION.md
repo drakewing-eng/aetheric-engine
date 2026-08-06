@@ -1,13 +1,18 @@
 # Ignatius Bell — Art Direction Lock (stylized realist)
 
 **Fidelity bar:** Oblivion-class *game-distance* readability — not MetaHuman photoreal.  
-**Reference:** `assets/characters/sprites/sprite_bell.png` + `assets/portraits/portrait_bell.jpg`  
+**Likeness sources (priority):**
+1. Desk illustration / study (stern intensity, wild greying hair, dark coat under lamp) — primary face & mood  
+2. `assets/characters/sprites/sprite_bell.png` — full-body coat hem/tails, book, stance, palette  
+3. `assets/portraits/portrait_bell.jpg` — face backup (same stern scholarly detective)  
+4. `turnaround_board.png` — front + silhouette landmarks  
+
 **Height:** 1.78 m · **Facing:** +Z forward · **Feet:** y = 0  
 
 ## Pillars (must read at ~3–6 m)
 
-1. **Hair mass** — wild, high, greying volume; not a helmet sphere  
-2. **Stern face** — deep brow ridge, dark sockets, gaunt cheeks  
+1. **Hair mass** — wild, high, greying volume; inverted-V crown wider than skull; not a helmet sphere  
+2. **Stern face** — deep brow ridge, dark sockets, gaunt cheeks, furrowed intensity (desk art)  
 3. **Coat weight** — long dark Victorian frock, heavy hem, rear tails  
 4. **Scholar detective** — book at chest, watch chain, upright posture  
 5. **Palette** — charcoal coat, charcoal/grey trousers, warm skin, steel hair  
@@ -57,10 +62,10 @@
 | `mat_metal` | #C0A35C chain gold | 0.35 metallic |
 
 ## Non-goals
-- Photoreal pores / eye shader  
+- Photoreal pores / eye shader / MetaHuman  
 - Face-card billboard hacks  
 - Changing NPC AI / rooms  
 
-## Placeholder vs final
-- **Now:** improved code mesh (`bell_character.gd`) — silhouette study  
-- **Final:** skinned GLB per `GLB_CONTRACT.md` drop-in  
+## Runtime status
+- **Production path:** `final/bell.glb` + `final/bell_runtime.tscn` (skinned base + silhouette props)  
+- **Still open for full likeness:** stern face sculpt/texture and tailored frock matching desk art — see README honest boundary  

@@ -8,28 +8,24 @@ When a real character is ready, place it here and point room data at it.
 assets/characters/models/bell/
   ART_DIRECTION.md          # fidelity bar + proportions
   GLB_CONTRACT.md           # this file
-  bell_character.tscn       # procedural placeholder (current runtime)
+  bell_character.tscn       # procedural placeholder only (not Drawing Room path)
   bell_character.gd
   humanoid_stub.glb         # legacy scaffold only — do not use for Bell identity
   final/                    # production asset lives here
-    bell.glb                # preferred production mesh
-    bell.glb.import         # Godot import (see settings below)
+    bell.glb                # production mesh (skinned + clips preferred)
+    bell_runtime.tscn/.gd   # loader: plant, native_height 1.78, idle/walk/sit
     textures/               # optional external maps
-      coat_albedo.png
-      skin_albedo.png
-      hair_albedo.png
-      ...
 ```
 
 ## Room data
 
 ```gdscript
-"model": "res://assets/characters/models/bell/final/bell.glb",
+"model": "res://assets/characters/models/bell/final/bell_runtime.tscn",
 "tint_victorian": false,
 "height": 1.78,
 ```
 
-Or keep `bell_character.tscn` until GLB is validated.
+`bell_runtime` loads `final/bell.glb`. Direct `final/bell.glb` also works if it includes named clips and feet at y≈0.
 
 ## Scene requirements
 
