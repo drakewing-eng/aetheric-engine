@@ -46,6 +46,24 @@ func _run() -> void:
 	else:
 		print("OK fps_main builds RoomNav")
 
+	# Seat height helpers for planted sit
+	NpcActivityScr.clear_registry()
+	NpcActivityScr.register_room_slots("drawing_room")
+	var sofa_slot: Dictionary = NpcActivityScr.get_slot("drawing_room", "sofa_sit")
+	var sh: float = NpcActivityScr.slot_seat_height(sofa_slot)
+	if sh < 0.3 or sh > 0.6:
+		print("FAIL sofa seat_height out of range ", sh)
+		_failed += 1
+	else:
+		print("OK sofa seat_height=", sh)
+	var desk_slot: Dictionary = NpcActivityScr.get_slot("drawing_room", "desk_write")
+	var dh: float = NpcActivityScr.slot_seat_height(desk_slot)
+	if dh < 0.3:
+		print("FAIL desk seat_height missing ", dh)
+		_failed += 1
+	else:
+		print("OK desk seat_height=", dh)
+
 	if _failed == 0:
 		print("=== ALL PASS ===")
 		quit(0)

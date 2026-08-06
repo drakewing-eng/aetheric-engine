@@ -44,6 +44,8 @@ var _room_id := ""
 var _slot_id := ""
 var _slot_target := Vector3.ZERO
 var _slot_yaw := 0.0
+## Seat surface height (m) for Sit/Read seats; 0 while standing/walking.
+var _slot_seat_height := 0.0
 var _going_to_slot := false
 var _activity_elapsed := 0.0
 var _activity_cooldown := 60.0
@@ -222,15 +224,16 @@ func _resume_after_talk() -> void:
 			_slot_id = _resume_slot_id
 			_slot_target = NpcActivity.slot_position(entry)
 			_slot_yaw = NpcActivity.slot_yaw_rad(entry)
+			_slot_seat_height = NpcActivity.slot_seat_height(entry)
 			var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
 			var intended := _intended_activity
 			if intended == State.WALK or intended == State.TALK:
 				var act_name := NpcActivity.pick_activity_for_slot(entry, _npc_id, 0.5)
 				intended = _name_to_state(act_name)
 				_intended_activity = intended
-			# Near slot → enter intended activity; else resume travel.
+			# Near slot → enter intended activity; else resume travel on floor.
 			if dist < 0.4:
-				global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
+				global_position = Vector3(_slot_target.x, 0.0, _slot_target.z)
 				_face_yaw = _slot_yaw
 				if _visual:
 					_visual.rotation.y = _face_yaw
@@ -890,6 +893,7 @@ func _set_state_idle() -> void:
 	_walk_frame = -1
 	_was_dwelling = true
 	_moving = false
+	_apply_floor_height()
 	_apply_pose_for_state(State.IDLE)
 
 
@@ -897,6 +901,7 @@ func _set_state_walk() -> void:
 	_state = State.WALK
 	_was_dwelling = false
 	_moving = true
+	_apply_floor_height()
 	_apply_pose_for_state(State.WALK)
 	# Match walk-cycle playback to navigation speed (reduces skate/slide).
 	if _present == Present.SKELETAL and _anim != null and _anim_walk != "":
@@ -920,6 +925,7 @@ func _set_state_sit() -> void:
 	_going_to_seat = false
 	_going_to_slot = false
 	_sit_left = _sit_sec
+	_apply_seat_plant()
 	_apply_pose_for_state(State.SIT)
 
 
@@ -931,9 +937,15 @@ func _enter_activity_state(s: State) -> void:
 			_set_state_sit()
 		State.READ:
 			_state = State.READ
+			# Desk/armchair read also plants on seat when seat_height is set.
+			if _slot_seat_height > 0.01:
+				_apply_seat_plant()
+			else:
+				_apply_floor_height()
 			_apply_pose_for_state(State.READ)
 		State.WORK_MACHINE:
 			_state = State.WORK_MACHINE
+			_apply_floor_height()
 			_apply_pose_for_state(State.WORK_MACHINE)
 		State.TALK:
 			_set_state_talk()
@@ -941,6 +953,44 @@ func _enter_activity_state(s: State) -> void:
 			_set_state_walk()
 		_:
 			_set_state_idle()
+
+
+func _apply_floor_height() -> void:
+	## Standing / walking: root on floor (y = 0).
+	if is_inside_tree():
+		global_position.y = 0.0
+	else:
+		position.y = 0.0
+
+
+func _apply_seat_plant() -> void:
+	## Sit / seated read: raise root to seat surface so Mixamo sit hips land on the cushion.
+	var y := _slot_seat_height
+	if y < 0.05:
+		y = NpcActivity.DEFAULT_SEAT_HEIGHT_CHAIR
+	if is_inside_tree():
+		global_position = Vector3(
+			_slot_target.x if _slot_id != "" else global_position.x,
+			y,
+			_slot_target.z if _slot_id != "" else global_position.z
+		)
+	else:
+		position = Vector3(
+			_slot_target.x if _slot_id != "" else position.x,
+			y,
+			_slot_target.z if _slot_id != "" else position.z
+		)
+	_face_yaw = _slot_yaw
+	if _visual:
+		_visual.rotation.y = _face_yaw
+	elif _present == Present.SKELETAL and _model_root:
+		# Cutout faces via billboard; skeletal needs yaw on visual pivot if present.
+		pass
+	# Ensure skeletal root yaw matches seat when no separate visual pivot.
+	if _present == Present.SKELETAL and _model_root and _visual == null:
+		rotation.y = _face_yaw
+	elif _present == Present.SKELETAL and _visual:
+		_visual.rotation.y = _face_yaw
 
 
 func _try_begin_activity(force: bool = false) -> void:
@@ -966,17 +1016,18 @@ func _try_begin_activity(force: bool = false) -> void:
 	_slot_id = sid
 	_slot_target = NpcActivity.slot_position(slot)
 	_slot_yaw = NpcActivity.slot_yaw_rad(slot)
+	_slot_seat_height = NpcActivity.slot_seat_height(slot)
 	_activity_elapsed = 0.0
 	_activity_cooldown = NpcActivity.cooldown_duration(randf())
 	var act_name := NpcActivity.pick_activity_for_slot(slot, _npc_id, randf())
 	_intended_activity = _name_to_state(act_name)
 	if _intended_activity == State.WALK or _intended_activity == State.TALK:
 		_intended_activity = State.IDLE
-	# Travel
+	# Travel on floor (XZ only)
 	var dist := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z).length()
 	if dist < 0.35:
 		if is_inside_tree():
-			global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
+			global_position = Vector3(_slot_target.x, 0.0, _slot_target.z)
 		else:
 			position = Vector3(_slot_target.x, 0.0, _slot_target.z)
 		_face_yaw = _slot_yaw
@@ -1085,7 +1136,8 @@ func _move_toward_slot(delta: float) -> bool:
 
 	var flat := Vector2(global_position.x - _slot_target.x, global_position.z - _slot_target.z)
 	if flat.length() < 0.32:
-		global_position = Vector3(_slot_target.x, global_position.y, _slot_target.z)
+		# Arrive on floor XZ; sit plant raises Y inside _enter_activity_state.
+		global_position = Vector3(_slot_target.x, 0.0, _slot_target.z)
 		_face_yaw = _slot_yaw
 		if _visual:
 			_visual.rotation.y = _face_yaw
@@ -1094,6 +1146,11 @@ func _move_toward_slot(delta: float) -> bool:
 		var intended := _intended_activity
 		if intended == State.WALK or intended == State.TALK:
 			intended = State.IDLE
+		# Refresh seat height from current claim in case slot was set externally.
+		if _slot_id != "" and _room_id != "":
+			var entry_now := NpcActivity.get_slot(_room_id, _slot_id)
+			if not entry_now.is_empty():
+				_slot_seat_height = NpcActivity.slot_seat_height(entry_now)
 		_enter_activity_state(intended)
 		return false
 

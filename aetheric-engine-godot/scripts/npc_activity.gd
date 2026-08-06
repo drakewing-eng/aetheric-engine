@@ -17,6 +17,11 @@ const ALL_STATES := [
 
 const COOLDOWN_MIN_SEC := 45.0
 const COOLDOWN_MAX_SEC := 90.0
+## Default root Y when sitting (meters). Chairs a bit higher than sofas/benches.
+const DEFAULT_SEAT_HEIGHT_CHAIR := 0.46
+const DEFAULT_SEAT_HEIGHT_SOFA := 0.40
+const DEFAULT_SEAT_HEIGHT_STOOL := 0.50
+const DEFAULT_SEAT_HEIGHT_BENCH := 0.42
 
 ## Soft preferences: preferred activity states per NPC id (lowercase).
 const PREFERENCES := {
@@ -37,15 +42,19 @@ const ROOM_SLOTS := {
 		{"id": "machine_side", "pos": [4.2, 0.0, -3.5], "yaw": 160.0,
 			"allowed": [STATE_WORK_MACHINE, STATE_IDLE], "priority": 6},
 		{"id": "bench_read", "pos": [-5.0, 0.0, -0.8], "yaw": 90.0,
-			"allowed": [STATE_READ, STATE_SIT], "priority": 7},
+			"allowed": [STATE_READ, STATE_SIT], "priority": 7,
+			"seat_height": DEFAULT_SEAT_HEIGHT_BENCH},
 	],
 	"drawing_room": [
 		{"id": "sofa_sit", "pos": [0.0, 0.0, -3.2], "yaw": 0.0,
-			"allowed": [STATE_SIT], "priority": 8},
+			"allowed": [STATE_SIT], "priority": 8,
+			"seat_height": DEFAULT_SEAT_HEIGHT_SOFA},
 		{"id": "armchair_read", "pos": [-2.7, 0.0, 2.1], "yaw": 40.0,
-			"allowed": [STATE_READ], "priority": 7},
+			"allowed": [STATE_READ], "priority": 7,
+			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 		{"id": "desk_write", "pos": [2.5, 0.0, 0.8], "yaw": 90.0,
-			"allowed": [STATE_READ], "priority": 9},
+			"allowed": [STATE_READ], "priority": 9,
+			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 	],
 	"entrance_hall": [
 		{"id": "hall_stand", "pos": [0.0, 0.0, 0.0], "yaw": 0.0,
@@ -57,25 +66,31 @@ const ROOM_SLOTS := {
 		{"id": "range_work", "pos": [0.0, 0.0, 2.6], "yaw": 180.0,
 			"allowed": [STATE_IDLE], "priority": 7},
 		{"id": "table_sit", "pos": [-1.5, 0.0, 0.0], "yaw": 90.0,
-			"allowed": [STATE_SIT], "priority": 6},
+			"allowed": [STATE_SIT], "priority": 6,
+			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 	],
 	"workshop": [
 		{"id": "bench_work", "pos": [-2.0, 0.0, -2.0], "yaw": 0.0,
 			"allowed": [STATE_IDLE, STATE_WORK_MACHINE], "priority": 8},
 		{"id": "stool_sit", "pos": [-1.2, 0.0, -1.4], "yaw": 25.0,
-			"allowed": [STATE_SIT], "priority": 5},
+			"allowed": [STATE_SIT], "priority": 5,
+			"seat_height": DEFAULT_SEAT_HEIGHT_STOOL},
 	],
 	"conservatory": [
 		{"id": "conserv_sit", "pos": [1.0, 0.0, -1.0], "yaw": 0.0,
-			"allowed": [STATE_SIT, STATE_IDLE], "priority": 5},
+			"allowed": [STATE_SIT, STATE_IDLE], "priority": 5,
+			"seat_height": DEFAULT_SEAT_HEIGHT_BENCH},
 		{"id": "conserv_read", "pos": [-1.2, 0.0, 0.5], "yaw": 90.0,
-			"allowed": [STATE_READ, STATE_IDLE], "priority": 6},
+			"allowed": [STATE_READ, STATE_IDLE], "priority": 6,
+			"seat_height": DEFAULT_SEAT_HEIGHT_BENCH},
 	],
 	"morning_room": [
 		{"id": "morning_sit", "pos": [-1.5, 0.0, -0.8], "yaw": 55.0,
-			"allowed": [STATE_SIT, STATE_IDLE], "priority": 5},
+			"allowed": [STATE_SIT, STATE_IDLE], "priority": 5,
+			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 		{"id": "morning_read", "pos": [1.8, 0.0, -1.6], "yaw": -90.0,
-			"allowed": [STATE_READ, STATE_IDLE], "priority": 6},
+			"allowed": [STATE_READ, STATE_IDLE], "priority": 6,
+			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 	],
 }
 
@@ -248,10 +263,23 @@ static func cooldown_elapsed(elapsed_sec: float, required_sec: float) -> bool:
 
 
 static func slot_position(slot: Dictionary) -> Vector3:
+	## Floor XZ for navigation / travel. Vertical plant uses slot_seat_height.
 	var p: Array = slot.get("pos", [0, 0, 0])
 	if p.size() < 3:
 		return Vector3.ZERO
 	return Vector3(float(p[0]), 0.0, float(p[2]))
+
+
+static func slot_seat_height(slot: Dictionary) -> float:
+	## Root Y when occupying a sit/read seat. 0 = stand on floor.
+	if slot.is_empty():
+		return 0.0
+	if slot.has("seat_height"):
+		return maxf(float(slot.get("seat_height", 0.0)), 0.0)
+	var allowed: Array = slot.get("allowed", [])
+	if STATE_SIT in allowed:
+		return DEFAULT_SEAT_HEIGHT_CHAIR
+	return 0.0
 
 
 static func slot_yaw_rad(slot: Dictionary) -> float:

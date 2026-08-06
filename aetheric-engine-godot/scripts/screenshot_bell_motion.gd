@@ -65,31 +65,44 @@ func _run() -> void:
 			_place_cam_three_quarter(_npc.global_position)
 			await _shot("walk_3q_%02d" % i)
 
-	# Force sit on sofa slot
-	if NpcActivityScr.claim_slot("drawing_room", "sofa_sit", "bell"):
-		var sm: Dictionary = NpcActivityScr.get_slot("drawing_room", "sofa_sit")
-		_npc.set("_slot_id", "sofa_sit")
+	# Force sit on sofa, then desk chair
+	for slot_id in ["sofa_sit", "desk_write"]:
+		if not NpcActivityScr.claim_slot("drawing_room", slot_id, "bell"):
+			# free prior
+			NpcActivityScr.release_slot("drawing_room", "sofa_sit", "bell")
+			NpcActivityScr.release_slot("drawing_room", "desk_write", "bell")
+			if not NpcActivityScr.claim_slot("drawing_room", slot_id, "bell"):
+				continue
+		var sm: Dictionary = NpcActivityScr.get_slot("drawing_room", slot_id)
+		_npc.set("_slot_id", slot_id)
 		_npc.set("_slot_target", NpcActivityScr.slot_position(sm))
 		_npc.set("_slot_yaw", NpcActivityScr.slot_yaw_rad(sm))
+		_npc.set("_slot_seat_height", NpcActivityScr.slot_seat_height(sm))
 		_npc.global_position = Vector3(
 			NpcActivityScr.slot_position(sm).x,
 			0.0,
 			NpcActivityScr.slot_position(sm).z
 		)
+		var sit_state = _npc._name_to_state(NpcActivityScr.STATE_SIT)
+		if slot_id == "desk_write":
+			# desk uses Read but we still want seat plant — force Sit for QA photo
+			pass
 		if _npc.has_method("_enter_activity_state"):
-			_npc._enter_activity_state(_npc._name_to_state(NpcActivityScr.STATE_SIT))
+			_npc._enter_activity_state(sit_state)
 		elif _npc.has_method("_set_state_sit"):
 			_npc._set_state_sit()
-	for i in 12:
-		if _npc.has_method("_physics_process"):
-			_npc._physics_process(0.05)
-		await process_frame
-	_place_cam_sit(_npc.global_position)
-	await _shot("sit_front")
-	_place_cam_three_quarter(_npc.global_position + Vector3(0, 0.2, 0))
-	await _shot("sit_3q")
-	_place_cam_side(_npc.global_position)
-	await _shot("sit_side")
+		for i in 16:
+			if _npc.has_method("_physics_process"):
+				_npc._physics_process(0.05)
+			await process_frame
+		print("OK sit plant slot=", slot_id, " y=", _npc.global_position.y, " seat_h=", NpcActivityScr.slot_seat_height(sm))
+		_place_cam_sit(_npc.global_position)
+		await _shot("sit_%s_front" % slot_id)
+		_place_cam_three_quarter(_npc.global_position + Vector3(0, 0.15, 0))
+		await _shot("sit_%s_3q" % slot_id)
+		_place_cam_side(_npc.global_position)
+		await _shot("sit_%s_side" % slot_id)
+		NpcActivityScr.release_slot("drawing_room", slot_id, "bell")
 
 	print("=== screenshot_bell_motion DONE out=", SCRATCH, " ===")
 	quit(0)
