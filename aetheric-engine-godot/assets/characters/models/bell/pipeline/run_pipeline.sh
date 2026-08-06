@@ -56,6 +56,26 @@ for c in \
     break
   fi
 done
+
+# Optional Mixamo realism pass (FBX → pack → bake library)
+if [ -x "$PIPE/sync_mixamo.sh" ]; then
+  echo "=== mixamo activity clips ==="
+  # Install without full reimport if sources already present
+  if [ -n "${BELL_BLENDER:-}" ] && [ -x "${BELL_BLENDER}" ]; then
+    export MIXAMO_SRC="$GODOT/assets/characters/mixamo/source"
+    export BELL_GLB_IN="$PIPE/../final/bell.glb"
+    export BELL_INSTALL=0
+    "$BELL_BLENDER" --background --python "$PIPE/05_mixamo_to_glb_blender.py" 2>&1 | tee "$BELL_PIPE_WORK/mixamo_convert.log" | tail -20 || true
+    if [ -f "$BELL_PIPE_WORK/mixamo_activity_pack.glb" ]; then
+      mkdir -p "$GODOT/assets/characters/mixamo"
+      cp -f "$BELL_PIPE_WORK/mixamo_activity_pack.glb" "$GODOT/assets/characters/mixamo/mixamo_activity_pack.glb"
+    fi
+  fi
+  if [ -n "$GODOT_BIN" ] && [ -f "$GODOT/project.godot" ]; then
+    "$GODOT_BIN" --headless --path "$GODOT" --script res://scripts/bake_mixamo_clips.gd 2>&1 | tee "$BELL_PIPE_WORK/mixamo_bake.log" | grep -E '^(OK|FAIL|NOTE|===)' || true
+  fi
+fi
+
 if [ -n "$GODOT_BIN" ] && [ -f "$GODOT/project.godot" ]; then
   echo "=== headless test ==="
   "$GODOT_BIN" --headless --path "$GODOT" --script res://scripts/test_npc_skeletal.gd 2>&1 | tee "$BELL_PIPE_WORK/headless.log" | grep -E '^(OK|FAIL|===)' || true

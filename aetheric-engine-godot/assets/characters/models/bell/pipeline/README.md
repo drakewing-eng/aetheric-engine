@@ -11,6 +11,16 @@ input/ refs (desk, sprite, portrait)
    ├─ 02_image_to_mesh   → work/bell_i2_3d.glb  (backends below)
    ├─ 03_postprocess     → work/bell_rigged.glb (scale 1.78, plant, idle/walk/sit)
    └─ 04_install         → final/bell.glb + runtime path
+
+Mixamo realism (optional, recommended):
+   playground/Mixamo downloads/*.fbx
+   │
+   ├─ sync_mixamo.sh / 05_mixamo_to_glb_blender.py
+   │     → assets/characters/mixamo/source/*.fbx
+   │     → mixamo_activity_pack.glb
+   └─ bake_mixamo_clips.gd
+         → mixamo_activity_clips.res  (idle / walk / sit)
+   bell_runtime loads Mixamo library first, then GLB native clips.
 ```
 
 ## Image → mesh backends (`02_image_to_mesh.py`)

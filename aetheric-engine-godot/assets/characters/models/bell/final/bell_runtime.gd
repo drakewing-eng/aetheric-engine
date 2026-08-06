@@ -1,9 +1,11 @@
 extends Node3D
 ## Production Bell: skinned humanoid GLB (male Xbot / Mixamo base)
-## + native idle/walk; synthesized sit. Single root AnimationPlayer (no nested AP).
-## Planted ~1.78 m. Not box primitives.
+## + Mixamo activity clips (idle/walk/sit) when baked; else native GLB; else synthesized.
+## Single root AnimationPlayer (no nested AP). Planted ~1.78 m. Not box primitives.
 
 const GLB_PATH := "res://assets/characters/models/bell/final/bell.glb"
+const MIXAMO_CLIPS_PATH := "res://assets/characters/mixamo/mixamo_activity_clips.res"
+const MIXAMO_PACK_PATH := "res://assets/characters/mixamo/mixamo_activity_pack.glb"
 const NATIVE_HEIGHT := 1.78
 
 func _enter_tree() -> void:
@@ -80,19 +82,37 @@ func _build() -> void:
 	# Ensure AP is first child so depth-first find prefers it if reparented later.
 	move_child(ap, 0)
 
-	# Re-load GLB anims from a throwaway instance (we stripped the live one’s AP).
+	# Prefer baked Mixamo activity library (Start Walking / Sitting Idle / Standing Idle).
 	var has_idle := false
 	var has_walk := false
+	var has_sit := false
+	var mixamo := _extract_mixamo_activity_clips()
+	for k in ["idle", "walk", "sit"]:
+		if mixamo.has(k):
+			_ensure_lib_anim(ap, k, mixamo[k] as Animation)
+			if k == "idle":
+				has_idle = true
+			elif k == "walk":
+				has_walk = true
+			elif k == "sit":
+				has_sit = true
+	if has_idle or has_walk or has_sit:
+		print("bell_runtime: using Mixamo activity clips idle=%s walk=%s sit=%s" % [has_idle, has_walk, has_sit])
+
+	# Fall back to clips embedded in production GLB.
 	var src_anims := _extract_native_anims_from_glb()
-	if src_anims.has("idle"):
+	if not has_idle and src_anims.has("idle"):
 		_ensure_lib_anim(ap, "idle", src_anims["idle"] as Animation)
 		has_idle = true
-	if src_anims.has("walk"):
+	if not has_walk and src_anims.has("walk"):
 		_ensure_lib_anim(ap, "walk", src_anims["walk"] as Animation)
 		has_walk = true
+	if not has_sit and src_anims.has("sit"):
+		_ensure_lib_anim(ap, "sit", src_anims["sit"] as Animation)
+		has_sit = true
 
-	# Always synthesize missing clips (sit is never in stock Xbot).
-	_build_bone_anims(ap, sk, not has_idle, not has_walk, not ap.has_animation("sit"))
+	# Synthesize only what is still missing (procedural bone keys).
+	_build_bone_anims(ap, sk, not has_idle, not has_walk, not has_sit)
 
 	if ap.has_animation("idle"):
 		ap.play("idle")
@@ -100,8 +120,65 @@ func _build() -> void:
 		ap.play(ap.get_animation_list()[0])
 
 
+func _extract_mixamo_activity_clips() -> Dictionary:
+	## Prefer baked AnimationLibrary; fall back to Mixamo pack GLB.
+	var out := _extract_anims_from_library(MIXAMO_CLIPS_PATH)
+	if out.has("idle") and out.has("walk") and out.has("sit"):
+		return out
+	var pack := _extract_anims_from_scene(MIXAMO_PACK_PATH)
+	for k in pack.keys():
+		if not out.has(k):
+			out[k] = pack[k]
+	return out
+
+
+func _extract_anims_from_library(path: String) -> Dictionary:
+	var out := {}
+	if not ResourceLoader.exists(path) and not FileAccess.file_exists(ProjectSettings.globalize_path(path)):
+		return out
+	var res = load(path)
+	if res == null or not (res is AnimationLibrary):
+		return out
+	var lib: AnimationLibrary = res as AnimationLibrary
+	for name in ["idle", "walk", "sit"]:
+		if lib.has_animation(name):
+			var a: Animation = lib.get_animation(name)
+			if a:
+				out[name] = a.duplicate(true)
+	return out
+
+
+func _extract_anims_from_scene(path: String) -> Dictionary:
+	var out := {}
+	if not ResourceLoader.exists(path) and not FileAccess.file_exists(ProjectSettings.globalize_path(path)):
+		return out
+	var packed = load(path)
+	if packed == null or not (packed is PackedScene):
+		return out
+	var tmp: Node = (packed as PackedScene).instantiate()
+	var ap := _find_animation_player(tmp)
+	if ap:
+		for c in ap.get_animation_list():
+			var cl := String(c).to_lower()
+			var anim: Animation = ap.get_animation(c)
+			if anim == null:
+				continue
+			var copy: Animation = anim.duplicate(true) as Animation
+			if cl == "idle" or (cl.contains("idle") and not cl.contains("sit") and not cl.contains("walk")):
+				if not out.has("idle"):
+					out["idle"] = copy
+			elif cl == "walk" or cl.contains("walk"):
+				if not out.has("walk"):
+					out["walk"] = copy
+			elif cl == "sit" or cl.contains("sit"):
+				if not out.has("sit"):
+					out["sit"] = copy
+	tmp.free()
+	return out
+
+
 func _extract_native_anims_from_glb() -> Dictionary:
-	## Load GLB once more, copy idle/walk Animation resources, free instance.
+	## Load GLB once more, copy idle/walk/sit Animation resources, free instance.
 	var out := {}
 	var packed = load(GLB_PATH)
 	if packed == null or not (packed is PackedScene):
@@ -115,12 +192,15 @@ func _extract_native_anims_from_glb() -> Dictionary:
 			if anim == null:
 				continue
 			var copy: Animation = anim.duplicate() as Animation
-			if cl == "idle" or ("idle" in cl and "walk" not in cl):
+			if cl == "idle" or ("idle" in cl and "walk" not in cl and "sit" not in cl):
 				if not out.has("idle"):
 					out["idle"] = copy
 			elif cl == "walk" or cl.begins_with("walk"):
 				if not out.has("walk"):
 					out["walk"] = copy
+			elif cl == "sit" or "sit" in cl:
+				if not out.has("sit"):
+					out["sit"] = copy
 	tmp.free()
 	return out
 
@@ -148,13 +228,19 @@ func _ensure_lib_anim(ap: AnimationPlayer, name: String, anim: Animation) -> voi
 		lib.remove_animation(name)
 	if name == "idle" or name == "walk":
 		anim.loop_mode = Animation.LOOP_LINEAR
-	# Remap track paths: native clips target skeleton under SkinnedMesh.
+	elif name == "sit":
+		# Sitting Idle from Mixamo can loop; hold if short one-shot.
+		if anim.length >= 1.0:
+			anim.loop_mode = Animation.LOOP_LINEAR
+		else:
+			anim.loop_mode = Animation.LOOP_NONE
+	# Remap track paths: Mixamo/GLB clips → skeleton under this runtime root.
 	_remap_anim_tracks_to_our_skeleton(anim)
 	lib.add_animation(name, anim)
 
 
 func _remap_anim_tracks_to_our_skeleton(anim: Animation) -> void:
-	## Native Mixamo tracks use paths relative to GLB root; our skeleton is under SkinnedMesh.
+	## Mixamo/GLB tracks use paths relative to import root; our skeleton is under SkinnedMesh.
 	var sk := _find_skeleton(self)
 	if sk == null:
 		return
@@ -166,7 +252,34 @@ func _remap_anim_tracks_to_our_skeleton(anim: Animation) -> void:
 		if colon < 0:
 			continue
 		var bone := p.substr(colon + 1)
+		var resolved := _resolve_skeleton_bone_name(sk, bone)
+		if resolved != "":
+			bone = resolved
 		anim.track_set_path(ti, NodePath(sk_path + ":" + bone))
+
+
+func _resolve_skeleton_bone_name(sk: Skeleton3D, bone: String) -> String:
+	## Match mixamorig:Hips ↔ mixamorig_Hips ↔ Hips across Mixamo import variants.
+	if sk.find_bone(bone) >= 0:
+		return bone
+	var variants: Array[String] = []
+	variants.append(bone.replace("mixamorig:", "mixamorig_"))
+	variants.append(bone.replace("mixamorig_", "mixamorig:"))
+	var bare := bone.replace("mixamorig:", "").replace("mixamorig_", "")
+	variants.append(bare)
+	variants.append("mixamorig_" + bare)
+	variants.append("mixamorig:" + bare)
+	for v in variants:
+		if sk.find_bone(v) >= 0:
+			return v
+	# Fuzzy ends-with
+	var want := bare.to_lower()
+	for bi in sk.get_bone_count():
+		var bn := sk.get_bone_name(bi)
+		var clean := bn.to_lower().replace("mixamorig_", "").replace("mixamorig:", "")
+		if clean == want:
+			return bn
+	return ""
 
 
 func _bone_idx(sk: Skeleton3D, names: Array) -> int:

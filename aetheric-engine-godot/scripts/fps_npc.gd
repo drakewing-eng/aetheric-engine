@@ -20,8 +20,9 @@ const FIDGET_MAX_SEC := 7.5
 
 ## Cutout-only micro-motion (legacy; skipped when skeletal)
 const BREATH_HZ_IDLE := 0.32
-const BREATH_HZ_WALK := 0.85
+const BREATH_HZ_WALK := 1.05
 const BREATH_SCALE_IDLE := 0.004
+const BREATH_SCALE_WALK := 0.012
 
 enum Present { CUTOUT, SKELETAL }
 ## Exactly six activity states (spec). Maps to NpcActivity string names.
@@ -741,19 +742,21 @@ func _apply_pose_for_state(s: State) -> void:
 		elif clip == "sit" and _anim.has_animation("sit"):
 			_play_anim("sit", 1.0)
 		elif clip == "idle" or clip == "talk" or clip == "read" or clip == "work":
+			# Natural Mixamo idle already has weight; keep near 1.0 (was 0.35 for procedural keys).
+			var idle_spd := 1.0 if clip == "idle" or clip == "talk" else 0.85
 			if _anim_idle != "" and _anim.has_animation(_anim_idle):
-				_play_anim(_anim_idle, 0.35)
+				_play_anim(_anim_idle, idle_spd)
 			elif _anim.has_animation("idle"):
-				_play_anim("idle", 0.35)
+				_play_anim("idle", idle_spd)
 			else:
 				push_warning("fps_npc: missing pose clip '%s' for %s — Idle fallback" % [clip, _npc_id])
 		else:
 			if _anim.has_animation(clip):
-				_play_anim(clip, 0.4)
+				_play_anim(clip, 1.0)
 			else:
 				push_warning("fps_npc: missing pose clip '%s' for %s — Idle fallback" % [clip, _npc_id])
 				if _anim_idle != "":
-					_play_anim(_anim_idle, 0.35)
+					_play_anim(_anim_idle, 1.0)
 	else:
 		# Cutout: walk frames for Walk; otherwise idle/dedicated sheet + pose visual.
 		if s == State.WALK and not _walk_texs.is_empty():
@@ -1208,9 +1211,14 @@ func _process_cutout_breath(_delta: float) -> void:
 	if _char_mesh == null:
 		return
 	var hz := BREATH_HZ_WALK if _moving else BREATH_HZ_IDLE
-	var scale_amt := BREATH_SCALE_IDLE * (1.2 if _moving else 1.0)
+	var scale_amt := BREATH_SCALE_WALK if _moving else BREATH_SCALE_IDLE
 	var phase := _life_t * TAU * hz
 	var sc := breath_scale_factor(phase, scale_amt)
+	# Subtle walk lean: tip billboard forward while traveling
+	if _char_mesh and _moving:
+		_char_mesh.rotation_degrees.x = lerpf(_char_mesh.rotation_degrees.x, 4.0, 0.15)
+	elif _char_mesh:
+		_char_mesh.rotation_degrees.x = lerpf(_char_mesh.rotation_degrees.x, 0.0, 0.12)
 	var px := _cutout_pose_scale.x
 	var py := _cutout_pose_scale.y
 	var pz := _cutout_pose_scale.z
