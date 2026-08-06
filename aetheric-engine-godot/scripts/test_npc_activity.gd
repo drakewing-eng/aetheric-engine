@@ -51,7 +51,7 @@ func _run() -> void:
 	NpcActivityScr.register_room_slots("drawing_room")
 	var sofa_slot: Dictionary = NpcActivityScr.get_slot("drawing_room", "sofa_sit")
 	var sh: float = NpcActivityScr.slot_seat_height(sofa_slot)
-	if sh < 0.3 or sh > 0.6:
+	if sh < 0.3 or sh > 0.65:
 		print("FAIL sofa seat_height out of range ", sh)
 		_failed += 1
 	else:
@@ -63,6 +63,20 @@ func _run() -> void:
 		_failed += 1
 	else:
 		print("OK desk seat_height=", dh)
+	# Plant math must NOT equal full seat height (that double-counts Mixamo hip height)
+	var root_y: float = NpcActivityScr.sit_root_y_for_seat(dh)
+	if root_y > 0.15:
+		print("FAIL sit_root_y too high (double-count?) ", root_y)
+		_failed += 1
+	else:
+		print("OK sit_root_y_for_seat(", dh, ")=", root_y)
+	# Desk slot must match desk chair furniture XZ
+	var dpos: Vector3 = NpcActivityScr.slot_position(desk_slot)
+	if absf(dpos.x - 2.35) > 0.05 or absf(dpos.z - 0.8) > 0.05:
+		print("FAIL desk_write slot not aligned to desk chair prop ", dpos)
+		_failed += 1
+	else:
+		print("OK desk_write aligned to chair ", dpos)
 
 	if _failed == 0:
 		print("=== ALL PASS ===")

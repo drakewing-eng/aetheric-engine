@@ -964,33 +964,29 @@ func _apply_floor_height() -> void:
 
 
 func _apply_seat_plant() -> void:
-	## Sit / seated read: raise root to seat surface so Mixamo sit hips land on the cushion.
-	var y := _slot_seat_height
-	if y < 0.05:
-		y = NpcActivity.DEFAULT_SEAT_HEIGHT_CHAIR
-	if is_inside_tree():
-		global_position = Vector3(
-			_slot_target.x if _slot_id != "" else global_position.x,
-			y,
-			_slot_target.z if _slot_id != "" else global_position.z
-		)
-	else:
-		position = Vector3(
-			_slot_target.x if _slot_id != "" else position.x,
-			y,
-			_slot_target.z if _slot_id != "" else position.z
-		)
+	## Sit / seated read on furniture.
+	## Underlying model: Mixamo sit already places hips ~0.55m above root when root is on
+	## the floor. Raising root by full seat_height *double-counts* and looks broken.
+	## Instead: align XZ to the seat slot, tiny root_y from sit_root_y_for_seat(), face yaw.
+	var seat_y := _slot_seat_height
+	if seat_y < 0.05:
+		seat_y = NpcActivity.DEFAULT_SEAT_HEIGHT_CHAIR
+	var root_y := NpcActivity.sit_root_y_for_seat(seat_y)
+	var px := _slot_target.x if _slot_id != "" else (global_position.x if is_inside_tree() else position.x)
+	var pz := _slot_target.z if _slot_id != "" else (global_position.z if is_inside_tree() else position.z)
+	# Sit slightly into the chair (toward seat back) so pelvis rests on the cushion.
 	_face_yaw = _slot_yaw
+	var forward := Vector3(sin(_face_yaw), 0.0, cos(_face_yaw))
+	px -= forward.x * 0.08
+	pz -= forward.z * 0.08
+	if is_inside_tree():
+		global_position = Vector3(px, root_y, pz)
+	else:
+		position = Vector3(px, root_y, pz)
 	if _visual:
 		_visual.rotation.y = _face_yaw
-	elif _present == Present.SKELETAL and _model_root:
-		# Cutout faces via billboard; skeletal needs yaw on visual pivot if present.
-		pass
-	# Ensure skeletal root yaw matches seat when no separate visual pivot.
-	if _present == Present.SKELETAL and _model_root and _visual == null:
+	elif _present == Present.SKELETAL:
 		rotation.y = _face_yaw
-	elif _present == Present.SKELETAL and _visual:
-		_visual.rotation.y = _face_yaw
 
 
 func _try_begin_activity(force: bool = false) -> void:

@@ -17,11 +17,15 @@ const ALL_STATES := [
 
 const COOLDOWN_MIN_SEC := 45.0
 const COOLDOWN_MAX_SEC := 90.0
-## Default root Y when sitting (meters). Chairs a bit higher than sofas/benches.
-const DEFAULT_SEAT_HEIGHT_CHAIR := 0.46
-const DEFAULT_SEAT_HEIGHT_SOFA := 0.40
-const DEFAULT_SEAT_HEIGHT_STOOL := 0.50
-const DEFAULT_SEAT_HEIGHT_BENCH := 0.42
+## Furniture seat *surface* height (meters) — top of cushion, not root offset.
+## Mixamo sit already puts hips ~0.55m above root when root is on the floor;
+## plant math is: root_y = seat_surface - MIXAMO_SIT_HIP_FROM_ROOT (clamped ≥ 0).
+const DEFAULT_SEAT_HEIGHT_CHAIR := 0.50
+const DEFAULT_SEAT_HEIGHT_SOFA := 0.50
+const DEFAULT_SEAT_HEIGHT_STOOL := 0.52
+const DEFAULT_SEAT_HEIGHT_BENCH := 0.45
+## Measured hip height above NPC root for Mixamo Sitting Idle (skeleton-first pack).
+const MIXAMO_SIT_HIP_FROM_ROOT := 0.55
 
 ## Soft preferences: preferred activity states per NPC id (lowercase).
 const PREFERENCES := {
@@ -46,14 +50,15 @@ const ROOM_SLOTS := {
 			"seat_height": DEFAULT_SEAT_HEIGHT_BENCH},
 	],
 	"drawing_room": [
-		{"id": "sofa_sit", "pos": [0.0, 0.0, -3.2], "yaw": 0.0,
+		# Match fps_rooms props: sofa [0,-3.65], desk chair [2.35,0.8], armchair [-2.9,2.0]
+		{"id": "sofa_sit", "pos": [0.0, 0.0, -3.48], "yaw": 0.0,
 			"allowed": [STATE_SIT], "priority": 8,
 			"seat_height": DEFAULT_SEAT_HEIGHT_SOFA},
-		{"id": "armchair_read", "pos": [-2.7, 0.0, 2.1], "yaw": 40.0,
+		{"id": "armchair_read", "pos": [-2.9, 0.0, 2.0], "yaw": 40.0,
 			"allowed": [STATE_READ], "priority": 7,
-			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
-		{"id": "desk_write", "pos": [2.5, 0.0, 0.8], "yaw": 90.0,
-			"allowed": [STATE_READ], "priority": 9,
+			"seat_height": 0.42},
+		{"id": "desk_write", "pos": [2.35, 0.0, 0.8], "yaw": 90.0,
+			"allowed": [STATE_READ, STATE_SIT], "priority": 9,
 			"seat_height": DEFAULT_SEAT_HEIGHT_CHAIR},
 	],
 	"entrance_hall": [
@@ -271,7 +276,7 @@ static func slot_position(slot: Dictionary) -> Vector3:
 
 
 static func slot_seat_height(slot: Dictionary) -> float:
-	## Root Y when occupying a sit/read seat. 0 = stand on floor.
+	## Furniture cushion top Y (meters). Used with sit_root_y_for_seat().
 	if slot.is_empty():
 		return 0.0
 	if slot.has("seat_height"):
@@ -280,6 +285,15 @@ static func slot_seat_height(slot: Dictionary) -> float:
 	if STATE_SIT in allowed:
 		return DEFAULT_SEAT_HEIGHT_CHAIR
 	return 0.0
+
+
+static func sit_root_y_for_seat(seat_surface_y: float) -> float:
+	## NPC root Y so Mixamo sit hips rest just above the seat surface.
+	## Does NOT add full seat height (that double-counts hip height in the clip).
+	if seat_surface_y < 0.05:
+		return 0.0
+	var root_y := seat_surface_y + 0.03 - MIXAMO_SIT_HIP_FROM_ROOT
+	return clampf(root_y, 0.0, 0.12)
 
 
 static func slot_yaw_rad(slot: Dictionary) -> float:
