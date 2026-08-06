@@ -34,10 +34,23 @@ Room data:
 | `turnaround_board.png` | Front + silhouette study from `sprite_bell` |
 | `final/` | Production GLB + runtime scene |
 
+## Phase: skeleton-first (current)
+
+`bell_runtime.gd` sets **`SKELETON_FIRST := true`**.
+
+| Do | Don't |
+|----|--------|
+| Skinned humanoid body only | Projected face sheet / portrait albedo |
+| Flat grey mannequin materials | Coat cylinder / hair sphere prop shells |
+| Native idle / walk / sit on this armature | Raw foreign Mixamo FBX (explodes mesh) |
+| Judge motion, plant, height | Claim likeness / Victorian costume |
+
+You should **not** see Bell's painted face until we deliberately exit skeleton-first and drop a likeness GLB.
+
 ## Honest completion boundary
-**Current production mesh does not claim full painted-sprite / desk-illustration parity.**  
-It is a skinned humanoid with Victorian silhouette props (coat/hair/book), correct height/plant/clips — **not** the stern Bell face of the portrait, and **not** a box puppet.  
-Full likeness still needs artist face sculpt + tailored frock/textures (see `BLENDER_BRIEF.md`).
+**Skeleton-first mannequin ≠ finished character.**  
+Motion and plant are the gate. Likeness (stern desk-illustration face, frock coat) is a later GLB replace — see `BLENDER_BRIEF.md` + `ART_DIRECTION.md`.
 
 ## Highest-leverage next action
-Author or commission a likeness-matching `final/bell.glb` (face + coat textures per `ART_DIRECTION.md`), replace the Xbot-based export, keep `bell_runtime` plant/clip path.
+1. Confirm idle/walk/sit look correct on the grey mannequin in Drawing Room.  
+2. Only then: author likeness `final/bell.glb` and set `SKELETON_FIRST := false`.

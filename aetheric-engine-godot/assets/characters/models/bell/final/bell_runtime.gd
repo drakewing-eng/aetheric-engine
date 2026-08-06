@@ -14,7 +14,11 @@ const MIXAMO_CLIPS_PATH := "res://assets/characters/mixamo/mixamo_activity_clips
 const MIXAMO_PACK_PATH := "res://assets/characters/mixamo/mixamo_activity_pack.glb"
 ## Hard-off until clips are retargeted onto Bell's rest pose (see README).
 const USE_EXTERNAL_MIXAMO_CLIPS := false
+## Skeleton-first: no projected face sheet / coat shells until motion is solid.
+const SKELETON_FIRST := true
 const NATIVE_HEIGHT := 1.78
+## Flat mannequin grey (no albedo textures) so we judge bone motion only.
+const MANNEQUIN_COLOR := Color(0.42, 0.40, 0.38, 1.0)
 
 func _enter_tree() -> void:
 	ensure_built()
@@ -28,6 +32,7 @@ func ensure_built() -> void:
 	set_meta("native_height", NATIVE_HEIGHT)
 	set_meta("bell_custom_mesh", true)
 	set_meta("bell_production_mesh", true)
+	set_meta("bell_skeleton_first", SKELETON_FIRST)
 
 
 func get_mesh_bottom_y() -> float:
@@ -52,6 +57,75 @@ func has_identity_parts() -> bool:
 	return _find_skeleton(self) != null and not _all_meshes(self).is_empty()
 
 
+func is_skeleton_first() -> bool:
+	return SKELETON_FIRST or bool(get_meta("bell_skeleton_first", false))
+
+
+func _apply_skeleton_first_presentation(model: Node) -> void:
+	## Phase: get bones + idle/walk/sit readable before any likeness skin.
+	## 1) Drop non-body prop meshes (coat cylinder, hair sphere, etc.).
+	## 2) Keep skinned body only; force flat unshaded grey (no projected face).
+	var remove: Array[Node] = []
+	_collect_non_body_meshes(model, remove)
+	for n in remove:
+		if is_instance_valid(n):
+			var p := n.get_parent()
+			if p:
+				p.remove_child(n)
+			n.free()
+
+	var kept := 0
+	for mi in _all_meshes(model):
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = MANNEQUIN_COLOR
+		mat.roughness = 0.9
+		mat.metallic = 0.0
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		# Explicitly no albedo texture — kills projected face sheet.
+		mat.albedo_texture = null
+		mi.material_override = mat
+		mi.material_overlay = null
+		kept += 1
+	if kept == 0:
+		push_warning("bell_runtime: skeleton_first left zero meshes")
+	else:
+		print("bell_runtime: skeleton_first body meshes=", kept, " props_removed=", remove.size())
+
+
+func _collect_non_body_meshes(n: Node, out: Array[Node]) -> void:
+	## Remove prop shells that are not the main skinned humanoid surface.
+	if n is MeshInstance3D:
+		var nm := String(n.name).to_lower()
+		var path := String(n.get_path()).to_lower() if n.is_inside_tree() else nm
+		var is_prop := (
+			"coat" in nm
+			or "hair" in nm
+			or "book" in nm
+			or "hat" in nm
+			or nm.begins_with("bellcoat")
+			or nm.begins_with("bellhair")
+			or "cylinder" in nm
+			or "sphere" in nm
+		)
+		# Keep Beta_Surface / body / character / mesh with skin
+		var is_body := (
+			"beta" in nm
+			or "surface" in nm
+			or "body" in nm
+			or "character" in nm
+			or "xbot" in nm
+			or "man" in nm
+		)
+		if is_prop and not is_body:
+			out.append(n)
+		elif is_prop and is_body:
+			# Prefer body; still strip pure prop names
+			if "coat" in nm or "hair" in nm:
+				out.append(n)
+	for c in n.get_children():
+		_collect_non_body_meshes(c, out)
+
+
 func _build() -> void:
 	if not ResourceLoader.exists(GLB_PATH) and not FileAccess.file_exists(ProjectSettings.globalize_path(GLB_PATH)):
 		push_error("bell_runtime: missing " + GLB_PATH)
@@ -67,6 +141,10 @@ func _build() -> void:
 	# Strip nested AnimationPlayers so fps_npc / tests find OUR root AP only.
 	_strip_animation_players(model)
 
+	# Skeleton-first: mannequin only — no face sheet, no prop shells.
+	if SKELETON_FIRST:
+		_apply_skeleton_first_presentation(model)
+
 	var sk := _find_skeleton(model)
 	# Measure raw height before scale (handles Mixamo Armature scale 0.01).
 	var h := _measure_raw_height(model, sk)
@@ -81,8 +159,9 @@ func _build() -> void:
 	model.position.y -= bottom
 	model.position.y += 0.01
 
-	# Keep authored multi-materials (coat/hair/skin/book) from production GLB.
-	# Do not force a flat charcoal override on every surface.
+	if SKELETON_FIRST:
+		print("bell_runtime: SKELETON_FIRST — flat mannequin, no face/skin textures")
+	# else: keep authored multi-materials when full likeness GLB is ready.
 
 	var ap := AnimationPlayer.new()
 	ap.name = "AnimationPlayer"
