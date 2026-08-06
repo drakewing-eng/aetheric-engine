@@ -48,9 +48,10 @@ Room data:
 You should **not** see Bell's painted face until we deliberately exit skeleton-first and drop a likeness GLB.
 
 ## Honest completion boundary
-**Skeleton-first mannequin ≠ finished character.**  
-Motion and plant are the gate. Likeness (stern desk-illustration face, frock coat) is a later GLB replace — see `BLENDER_BRIEF.md` + `ART_DIRECTION.md`.
+**Current production path does not claim painted-sprite / desk-illustration parity.**  
+Skeleton-first mannequin ≠ finished character. Motion and plant are the gate.  
+Likeness (stern desk-illustration face, frock coat) is a later `final/bell.glb` replace — see `BLENDER_BRIEF.md` + `ART_DIRECTION.md`.
 
 ## Highest-leverage next action
 1. Confirm idle/walk/sit look correct on the grey mannequin in Drawing Room.  
-2. Only then: author likeness `final/bell.glb` and set `SKELETON_FIRST := false`.
+2. Only then: author likeness `final/bell.glb` and set `SKELETON_FIRST := false` in `bell_runtime.gd`.
