@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://botiqagr8mfkf"
-path="res://.godot/imported/mixamo_activity_pack.glb-c856c90ce856653fe53adefbefd4b1a1.scn"
+path="res://.godot/imported/mixamo_activity_pack.glb-db0854c1eafc347a70a91ff831131bf8.scn"
 
 [deps]
 
 source_file="res://assets/characters/mixamo/mixamo_activity_pack.glb"
-dest_files=["res://.godot/imported/mixamo_activity_pack.glb-c856c90ce856653fe53adefbefd4b1a1.scn"]
+dest_files=["res://.godot/imported/mixamo_activity_pack.glb-db0854c1eafc347a70a91ff831131bf8.scn"]
 
 [params]
 

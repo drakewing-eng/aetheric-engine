@@ -898,6 +898,12 @@ func _set_state_walk() -> void:
 	_was_dwelling = false
 	_moving = true
 	_apply_pose_for_state(State.WALK)
+	# Match walk-cycle playback to navigation speed (reduces skate/slide).
+	if _present == Present.SKELETAL and _anim != null and _anim_walk != "":
+		# ~1.2 m/s reference for Mixamo in-place walk at speed_scale 1.
+		var ref_mps := 1.15
+		var spd := maxf(_speed, 0.2)
+		_anim.speed_scale = clampf(spd / ref_mps, 0.55, 1.6)
 
 
 func _set_state_talk() -> void:

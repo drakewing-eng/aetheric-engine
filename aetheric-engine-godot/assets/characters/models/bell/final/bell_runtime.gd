@@ -266,22 +266,29 @@ func _build() -> void:
 
 
 func _prepare_mixamo_locomotion(anim: Animation, clip_name: String) -> void:
-	## Loop locomotion; strip hip root translation so NavigationAgent owns travel.
+	## Walk/Idle: in-place (zero hip XZ) so NavigationAgent owns travel; keep Y bounce.
+	## Sit: keep hip position so the pose stays weight-bearing (not a floating yoga fold).
 	if clip_name == "walk" or clip_name == "idle":
 		anim.loop_mode = Animation.LOOP_LINEAR
+		_zero_hip_root_xz(anim)
 	elif clip_name == "sit":
 		anim.loop_mode = Animation.LOOP_LINEAR if anim.length >= 1.0 else Animation.LOOP_NONE
-	var remove: Array[int] = []
+		# Do NOT strip hip position — Sitting Idle needs hip height for a planted sit.
+
+
+func _zero_hip_root_xz(anim: Animation) -> void:
 	for ti in anim.get_track_count():
 		if anim.track_get_type(ti) != Animation.TYPE_POSITION_3D:
 			continue
 		var p := String(anim.track_get_path(ti)).to_lower()
-		if "hips" in p or p.ends_with(":root") or "/root" in p:
-			remove.append(ti)
-	remove.sort()
-	remove.reverse()
-	for ti in remove:
-		anim.remove_track(ti)
+		if "hips" not in p and not p.ends_with(":root") and "/root" not in p:
+			continue
+		for ki in anim.track_get_key_count(ti):
+			var v = anim.track_get_key_value(ti, ki)
+			if v is Vector3:
+				var vv: Vector3 = v
+				# Zero horizontal root motion; keep vertical bounce.
+				anim.track_set_key_value(ti, ki, Vector3(0.0, vv.y, 0.0))
 
 
 func _extract_anims_from_node(root: Node) -> Dictionary:

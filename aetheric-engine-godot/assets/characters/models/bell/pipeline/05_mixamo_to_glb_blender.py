@@ -1,15 +1,18 @@
 """
-Apply Mixamo FBX activity clips onto production bell.glb armature (no Beta mesh).
+Build a clean Mixamo activity pack for skeleton-first Bell.
 
-Writes:
-  work/mixamo_activity_pack.glb  — clips only (reference)
-  final/bell.glb                 — production mesh + idle/walk/sit (if BELL_INSTALL=1)
+- ONE armature + Beta_Surface body (no duplicate FBX bodies, no Beta_Joints viz)
+- idle  <- Standing Idle (preferred) / Idle
+- walk  <- Walking / Walk (preferred) OR looped mid-section of Start Walking
+- sit   <- Sitting Idle (chair-style preferred)
 
 Env:
-  MIXAMO_SRC, BELL_GLB_IN, BELL_PIPE_WORK, BELL_INSTALL (default 1)
+  MIXAMO_SRC, BELL_PIPE_WORK, BELL_INSTALL
 """
 import bpy
 import os
+import math
+from mathutils import Vector, Matrix
 
 WORK = os.environ.get(
     "BELL_PIPE_WORK",
@@ -28,25 +31,37 @@ MIXAMO_SRC = os.path.abspath(
         ),
     )
 )
-BELL_GLB_IN = os.path.abspath(
-    os.environ.get(
-        "BELL_GLB_IN",
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "final", "bell.glb"),
+OUT_PACK = os.path.join(WORK, "mixamo_activity_pack.glb")
+OUT_ASSETS = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "..",
+        "..",
+        "..",
+        "mixamo",
+        "mixamo_activity_pack.glb",
     )
 )
-FINAL_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "final")
-)
-OUT_PACK = os.path.join(WORK, "mixamo_activity_pack.glb")
-OUT_BELL = os.environ.get("BELL_GLB_OUT", os.path.join(FINAL_DIR, "bell.glb"))
-INSTALL = os.environ.get("BELL_INSTALL", "1") != "0"
 
-CLIP_FILES = [
-    ("standing_idle.fbx", "idle"),
-    ("idle.fbx", "idle"),
-    ("start_walking.fbx", "walk"),
-    ("sitting_idle.fbx", "sit"),
-    ("sitting_idle_alt.fbx", "sit"),
+# Preferred files per role (first existing wins for mesh base)
+WALK_CANDIDATES = [
+    "walking.fbx",
+    "walk.fbx",
+    "Walking.fbx",
+    "Walk.fbx",
+    "walking_in_place.fbx",
+    "walk_in_place.fbx",
+    "standard_walk.fbx",
+    "start_walking.fbx",  # last resort — will be mid-looped
+]
+IDLE_CANDIDATES = ["standing_idle.fbx", "Standing Idle.fbx", "idle.fbx", "Idle.fbx"]
+SIT_CANDIDATES = [
+    "sitting.fbx",
+    "Sitting.fbx",
+    "sitting_idle.fbx",
+    "Sitting Idle.fbx",
+    "sitting_idle_alt.fbx",
+    "Sitting Idle (1).fbx",
 ]
 
 
@@ -69,126 +84,153 @@ def clear():
                 pass
 
 
+def find_file(names):
+    for n in names:
+        p = os.path.join(MIXAMO_SRC, n)
+        if os.path.isfile(p):
+            return p
+        # also try original Mixamo downloads folder siblings
+        for alt in (
+            os.path.join(os.path.dirname(MIXAMO_SRC), n),
+            os.path.join(
+                "/Users/babble/ gemini/antigravity/playground/downloads/Mixamo downloads",
+                n,
+            ),
+        ):
+            if os.path.isfile(alt):
+                return alt
+    return None
+
+
 def import_fbx(path):
+    before = set(bpy.context.scene.objects)
     bpy.ops.import_scene.fbx(
         filepath=path,
         automatic_bone_orientation=True,
         use_anim=True,
         ignore_leaf_bones=False,
     )
+    after = set(bpy.context.scene.objects)
+    return list(after - before)
 
 
-def export_glb(path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    bpy.ops.export_scene.gltf(
-        filepath=path,
-        export_format="GLB",
-        export_animations=True,
-        export_nla_strips=True,
-        export_skins=True,
-        export_yup=True,
-        export_texcoords=True,
-        export_normals=True,
-        export_image_format="AUTO",
-    )
-    print("exported", path, os.path.getsize(path) if os.path.isfile(path) else 0)
+def first_armature():
+    arms = [o for o in bpy.context.scene.objects if o.type == "ARMATURE"]
+    return arms[0] if arms else None
 
 
-def bone_name_set(arm):
-    if arm is None or arm.type != "ARMATURE":
-        return set()
-    return {b.name for b in arm.data.bones}
-
-
-def _action_fcurves(action):
-    """Blender 5 layered actions no longer expose Action.fcurves directly."""
-    if action is None:
-        return []
-    # Legacy
-    fcs = getattr(action, "fcurves", None)
-    if fcs is not None:
-        try:
-            return list(fcs)
-        except Exception:
-            pass
-    # Blender 4.4+ / 5.x layered action API
+def body_meshes(arm):
     out = []
-    try:
-        for layer in getattr(action, "layers", []) or []:
-            for strip in getattr(layer, "strips", []) or []:
-                slots = getattr(action, "slots", []) or []
-                if not slots:
-                    bag = getattr(strip, "channelbag", None)
-                    if callable(bag):
-                        try:
-                            cb = bag(None)
-                            if cb and hasattr(cb, "fcurves"):
-                                out.extend(list(cb.fcurves))
-                        except Exception:
-                            pass
-                    continue
-                for slot in slots:
-                    try:
-                        cb = strip.channelbag(slot)
-                        if cb and hasattr(cb, "fcurves"):
-                            out.extend(list(cb.fcurves))
-                    except Exception:
-                        continue
-    except Exception as e:
-        print("NOTE fcurve access", e)
+    for o in bpy.context.scene.objects:
+        if o.type != "MESH":
+            continue
+        nm = o.name.lower()
+        if "joint" in nm:
+            continue
+        if o.find_armature() == arm or any(
+            m for m in o.modifiers if m.type == "ARMATURE" and m.object == arm
+        ):
+            out.append(o)
+        elif "surface" in nm or "body" in nm or "beta_surface" in nm:
+            out.append(o)
     return out
 
 
-def normalize_action_bone_names(action, target_bones):
-    """Rewrite fcurves pose.bones[\"X\"] to match target armature bone names."""
+def delete_objects(objs):
+    for o in objs:
+        if o and o.name in bpy.data.objects:
+            bpy.data.objects.remove(o, do_unlink=True)
+
+
+def make_loop_action(src_action, name, start_frac=0.25, end_frac=0.85):
+    """Copy a mid-section of an action and mark as cyclic for walk loops."""
+    if src_action is None:
+        return None
+    fr0, fr1 = src_action.frame_range
+    span = max(fr1 - fr0, 1.0)
+    a = fr0 + span * start_frac
+    b = fr0 + span * end_frac
+    if b - a < 8:
+        a, b = fr0, fr1
+    new = src_action.copy()
+    new.name = name
+    # Push down unused keys outside range by restricting — Blender 5 layered-safe:
+    # Use frame_range by shifting so walk starts at 1
+    try:
+        # Shift so first frame is 1
+        offset = 1.0 - a
+        fcs = []
+        if hasattr(new, "fcurves") and new.fcurves:
+            fcs = list(new.fcurves)
+        else:
+            for layer in getattr(new, "layers", []) or []:
+                for strip in getattr(layer, "strips", []) or []:
+                    for slot in getattr(new, "slots", []) or [None]:
+                        try:
+                            cb = strip.channelbag(slot) if slot is not None else None
+                            if cb and hasattr(cb, "fcurves"):
+                                fcs.extend(list(cb.fcurves))
+                        except Exception:
+                            pass
+        for fc in fcs:
+            # remove keys outside [a,b], then shift
+            remove_idx = []
+            for i, kp in enumerate(fc.keyframe_points):
+                if kp.co.x < a - 0.01 or kp.co.x > b + 0.01:
+                    remove_idx.append(i)
+            for i in reversed(remove_idx):
+                fc.keyframe_points.remove(fc.keyframe_points[i])
+            for kp in fc.keyframe_points:
+                kp.co.x += offset
+                kp.handle_left.x += offset
+                kp.handle_right.x += offset
+            # Make cyclic: match first/last values
+            if len(fc.keyframe_points) >= 2:
+                first = fc.keyframe_points[0]
+                last = fc.keyframe_points[-1]
+                last.co.y = first.co.y
+                last.handle_left.y = first.handle_left.y
+                last.handle_right.y = first.handle_right.y
+    except Exception as e:
+        print("NOTE loop edit limited", e)
+    new.use_cyclic = True
+    print("loop action", name, "from", a, b, "-> frames", new.frame_range[:])
+    return new
+
+
+def zero_root_xz(action):
+    """Zero hip/root XZ location keys (keep Y for bounce) for in-place walk/idle."""
     if action is None:
         return
-    bare_to_target = {}
-    for bn in target_bones:
-        bare = bn.replace("mixamorig:", "").replace("mixamorig_", "")
-        bare_to_target[bare.lower()] = bn
-        bare_to_target[bn.lower()] = bn
-
-    for fc in _action_fcurves(action):
-        dp = fc.data_path
-        if 'pose.bones["' not in dp:
-            continue
-        try:
-            start = dp.index('pose.bones["') + len('pose.bones["')
-            end = dp.index('"]', start)
-            old = dp[start:end]
-        except ValueError:
-            continue
-        bare = old.replace("mixamorig:", "").replace("mixamorig_", "")
-        new = bare_to_target.get(old.lower()) or bare_to_target.get(bare.lower())
-        if new and new != old:
-            fc.data_path = dp[:start] + new + dp[end:]
-
-
-def strip_root_location(action):
-    """Remove hip/root location fcurves so game navigation owns travel."""
-    if action is None:
+    fcs = []
+    try:
+        if hasattr(action, "fcurves") and action.fcurves is not None:
+            fcs = list(action.fcurves)
+        else:
+            for layer in getattr(action, "layers", []) or []:
+                for strip in getattr(layer, "strips", []) or []:
+                    for slot in getattr(action, "slots", []) or [None]:
+                        try:
+                            cb = strip.channelbag(slot) if slot else None
+                            if cb:
+                                fcs.extend(list(cb.fcurves))
+                        except Exception:
+                            pass
+    except Exception as e:
+        print("NOTE zero_root access", e)
         return
-    fcs = _action_fcurves(action)
-    remove = []
     for fc in fcs:
         dp = fc.data_path.lower()
-        if "location" in dp and ("hips" in dp or "root" in dp):
-            remove.append(fc)
-    # Prefer action.fcurves.remove when available; else channelbag
-    legacy = getattr(action, "fcurves", None)
-    for fc in remove:
-        try:
-            if legacy is not None:
-                legacy.remove(fc)
-            else:
-                # Best-effort: mute track
-                fc.mute = True
-        except Exception:
-            try:
-                fc.mute = True
-            except Exception:
-                pass
+        if "location" not in dp:
+            continue
+        if "hips" not in dp and "root" not in dp:
+            continue
+        # array_index 0=X 1=Y 2=Z
+        if fc.array_index in (0, 2):
+            for kp in fc.keyframe_points:
+                kp.co.y = 0.0
+                kp.handle_left.y = 0.0
+                kp.handle_right.y = 0.0
 
 
 def ensure_nla(arm, names):
@@ -208,158 +250,158 @@ def ensure_nla(arm, names):
         fr0 = int(act.frame_range[0])
         st = tr.strips.new(name, fr0, act)
         st.action = act
-        # loop idle/walk
         if name in ("idle", "walk", "sit"):
-            st.extrapolation = "HOLD"
+            try:
+                st.extrapolation = "HOLD_FORWARD"
+            except Exception:
+                pass
     ad.action = bpy.data.actions.get("idle")
 
 
-def pick_bell_armature():
-    """Armature that drives a non-Beta mesh (production body)."""
-    arms = [o for o in bpy.context.scene.objects if o.type == "ARMATURE"]
-    for a in arms:
-        for m in bpy.context.scene.objects:
-            if m.type != "MESH":
-                continue
-            if m.find_armature() != a:
-                continue
-            nm = m.name.lower()
-            if "beta" in nm:
-                continue
-            return a
-    return arms[0] if arms else None
+def export_glb(path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    bpy.ops.export_scene.gltf(
+        filepath=path,
+        export_format="GLB",
+        export_animations=True,
+        export_nla_strips=True,
+        export_skins=True,
+        export_yup=True,
+        export_texcoords=True,
+        export_normals=True,
+        export_image_format="NONE",
+    )
+    print("exported", path, os.path.getsize(path) if os.path.isfile(path) else 0)
 
 
-def delete_beta_and_extra_armatures(keep_arm):
-    for o in list(bpy.context.scene.objects):
-        nm = o.name.lower()
-        if o.type == "MESH" and "beta" in nm:
-            bpy.data.objects.remove(o, do_unlink=True)
-            continue
-        if o.type == "ARMATURE" and o != keep_arm:
-            # remove if only beta used it
-            bpy.data.objects.remove(o, do_unlink=True)
-
-
-def load_clips_onto_arm(arm):
-    got = {}
-    target_bones = bone_name_set(arm)
-    print("target bones", len(target_bones), "sample", list(target_bones)[:5])
-    for fname, clip in CLIP_FILES:
-        if clip in got:
-            continue
-        path = os.path.join(MIXAMO_SRC, fname)
-        if not os.path.isfile(path):
-            print("NOTE missing", path)
-            continue
-        before_objs = set(bpy.context.scene.objects)
-        before_acts = set(bpy.data.actions.keys())
-        print("import", path, "→", clip)
-        try:
-            import_fbx(path)
-        except Exception as e:
-            print("FAIL import", e)
-            continue
-        # delete imported objects (mesh/armature); keep only new actions
-        for o in list(bpy.context.scene.objects):
-            if o not in before_objs:
-                bpy.data.objects.remove(o, do_unlink=True)
-        new_acts = set(bpy.data.actions.keys()) - before_acts
-        if not new_acts:
-            # maybe reused name — take longest action not in got
-            candidates = [a for a in bpy.data.actions if a.name not in got.values()]
-        else:
-            candidates = [bpy.data.actions[n] for n in new_acts]
-        if not candidates:
-            print("FAIL no action for", clip)
-            continue
-        candidates.sort(
-            key=lambda a: (a.frame_range[1] - a.frame_range[0]), reverse=True
-        )
-        act = candidates[0]
-        # remove other new acts
-        for other in candidates[1:]:
-            if other.name in new_acts:
-                try:
-                    bpy.data.actions.remove(other)
-                except Exception:
-                    pass
-        # rename to clip
-        # remove previous clip action if any
-        old = bpy.data.actions.get(clip)
-        if old and old != act:
+def import_action_only(path, target_arm, clip_name, loop_walk=False):
+    """Import FBX, steal longest action, delete imported objects, keep action on target."""
+    before_acts = set(bpy.data.actions.keys())
+    new_objs = import_fbx(path)
+    new_acts = set(bpy.data.actions.keys()) - before_acts
+    if not new_acts:
+        # Maybe reused — take any action not idle/walk/sit yet
+        candidates = [a for a in bpy.data.actions if a.name not in ("idle", "walk", "sit")]
+    else:
+        candidates = [bpy.data.actions[n] for n in new_acts]
+    if not candidates:
+        print("FAIL no action from", path)
+        delete_objects(new_objs)
+        return None
+    candidates.sort(key=lambda a: a.frame_range[1] - a.frame_range[0], reverse=True)
+    act = candidates[0]
+    # remove other new acts
+    for o in candidates[1:]:
+        if o.name in new_acts:
             try:
-                bpy.data.actions.remove(old)
+                bpy.data.actions.remove(o)
             except Exception:
                 pass
-        act.name = clip
+    # delete imported meshes/armatures (keep only action data)
+    delete_objects(new_objs)
+    # rename
+    old = bpy.data.actions.get(clip_name)
+    if old and old != act:
         try:
-            normalize_action_bone_names(act, target_bones)
-            strip_root_location(act)
-        except Exception as e:
-            print("NOTE curve edit skipped", clip, e)
-        got[clip] = act.name
-        nfc = len(_action_fcurves(act))
-        print("OK", clip, "frames", tuple(act.frame_range), "fcurves", nfc)
-    return got
+            bpy.data.actions.remove(old)
+        except Exception:
+            pass
+    if loop_walk or clip_name == "walk":
+        # Prefer mid-loop if source looks like Start Walking (long non-cycle)
+        fr0, fr1 = act.frame_range
+        if (fr1 - fr0) > 40:
+            looped = make_loop_action(act, clip_name, 0.28, 0.82)
+            if looped:
+                try:
+                    bpy.data.actions.remove(act)
+                except Exception:
+                    pass
+                act = looped
+            else:
+                act.name = clip_name
+        else:
+            act.name = clip_name
+            act.use_cyclic = True
+    else:
+        act.name = clip_name
+    if clip_name in ("walk", "idle"):
+        zero_root_xz(act)
+    # sit: keep hip height (weight-bearing)
+    print("OK action", clip_name, "frames", tuple(act.frame_range), "from", os.path.basename(path))
+    return act
 
 
 def main():
     os.makedirs(WORK, exist_ok=True)
     print("MIXAMO_SRC", MIXAMO_SRC)
-    print("BELL_GLB_IN", BELL_GLB_IN)
-    if not os.path.isfile(BELL_GLB_IN):
-        print("ERROR missing production GLB", BELL_GLB_IN)
+    clear()
+
+    idle_path = find_file(IDLE_CANDIDATES)
+    walk_path = find_file(WALK_CANDIDATES)
+    sit_path = find_file(SIT_CANDIDATES)
+    print("idle", idle_path)
+    print("walk", walk_path)
+    print("sit", sit_path)
+
+    # Base mesh: prefer walk file if it's a full character, else idle
+    base_path = walk_path or idle_path or sit_path
+    if not base_path:
+        print("ERROR no Mixamo FBX found")
         return
+    import_fbx(base_path)
+    arm = first_armature()
+    if arm is None:
+        print("ERROR no armature")
+        return
+    # Remove joint viz meshes
+    for o in list(bpy.context.scene.objects):
+        if o.type == "MESH" and "joint" in o.name.lower():
+            bpy.data.objects.remove(o, do_unlink=True)
+    # Keep only one body mesh under arm
+    bodies = body_meshes(arm)
+    print("body meshes", [b.name for b in bodies])
+    # Drop extras named .001 etc keep first surface
+    keep = None
+    for b in bodies:
+        if "surface" in b.name.lower():
+            keep = b
+            break
+    if keep is None and bodies:
+        keep = bodies[0]
+    for b in bodies:
+        if b != keep:
+            bpy.data.objects.remove(b, do_unlink=True)
 
-    # --- Pack: import FBX alone for reference pack ---
-    clear()
-    dummy_arm = None
-    got_pack = {}
-    for fname, clip in CLIP_FILES:
-        if clip in got_pack:
-            continue
-        path = os.path.join(MIXAMO_SRC, fname)
-        if not os.path.isfile(path):
-            continue
-        before = set(bpy.data.actions.keys())
-        import_fbx(path)
-        new = set(bpy.data.actions.keys()) - before
-        if new:
-            acts = [bpy.data.actions[n] for n in new]
-            acts.sort(key=lambda a: a.frame_range[1] - a.frame_range[0], reverse=True)
-            acts[0].name = clip
-            got_pack[clip] = acts[0].name
-            for a in acts[1:]:
-                try:
-                    bpy.data.actions.remove(a)
-                except Exception:
-                    pass
-    arms = [o for o in bpy.context.scene.objects if o.type == "ARMATURE"]
-    ensure_nla(arms[0] if arms else None, ["idle", "walk", "sit"])
-    export_glb(OUT_PACK)
-    print("pack", list(got_pack.keys()))
+    # Clear base actions then load named clips
+    for a in list(bpy.data.actions):
+        try:
+            bpy.data.actions.remove(a)
+        except Exception:
+            pass
 
-    # --- Production: Bell mesh + Mixamo actions only ---
-    clear()
-    bpy.ops.import_scene.gltf(filepath=BELL_GLB_IN)
-    arm = pick_bell_armature()
-    print("bell armature", arm.name if arm else None)
-    got = load_clips_onto_arm(arm)
-    delete_beta_and_extra_armatures(arm)
+    if idle_path:
+        import_action_only(idle_path, arm, "idle", loop_walk=False)
+    if walk_path:
+        is_start = "start" in os.path.basename(walk_path).lower()
+        import_action_only(walk_path, arm, "walk", loop_walk=is_start)
+    if sit_path:
+        import_action_only(sit_path, arm, "sit", loop_walk=False)
+
+    # Remove any leftover armatures besides our arm
+    for o in list(bpy.context.scene.objects):
+        if o.type == "ARMATURE" and o != arm:
+            bpy.data.objects.remove(o, do_unlink=True)
+
     ensure_nla(arm, ["idle", "walk", "sit"])
-    print("production clips", list(got.keys()), "actions", [a.name for a in bpy.data.actions])
+    export_glb(OUT_PACK)
+    # Install into assets
+    import shutil
 
-    # Backup previous final
-    if INSTALL and os.path.isfile(OUT_BELL):
-        bak = OUT_BELL.replace(".glb", ".pre_mixamo.glb")
-        if not os.path.isfile(bak):
-            import shutil
-
-            shutil.copy2(OUT_BELL, bak)
-            print("backup", bak)
-    export_glb(OUT_BELL if INSTALL else os.path.join(WORK, "bell_with_mixamo.glb"))
-    print("=== 05_mixamo DONE install=", INSTALL, "clips=", list(got.keys()), "===")
+    os.makedirs(os.path.dirname(OUT_ASSETS), exist_ok=True)
+    shutil.copy2(OUT_PACK, OUT_ASSETS)
+    print("installed", OUT_ASSETS)
+    print("actions", [a.name for a in bpy.data.actions])
+    print("=== 05_mixamo clean pack DONE ===")
 
 
 if __name__ == "__main__":
